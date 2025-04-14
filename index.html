@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <title>أذكار الصباح والمساء</title>
+
+   
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        .fade-enter {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s ease;
+        }
+        .fade-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .fade-leave {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.4s ease;
+        }
+        .fade-leave-active {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-b from-gray-100 to-white dark:from-gray-900 dark:to-black text-gray-900 dark:text-white min-h-screen flex flex-col">
+
+    <header class="p-4 text-center text-2xl font-bold bg-gradient-to-r from-green-400 to-blue-500 dark:from-gray-800 dark:to-gray-900 text-white shadow-lg rounded-b-3xl" id="pageTitle">
+        أذكار الصباح والمساء
+    </header>
+
+    <main class="flex-grow flex items-center justify-center">
+        <div id="loadingSpinner" class="fixed inset-0 flex justify-center items-center bg-white dark:bg-black z-50">
+            <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+
+        <div id="home" class="space-y-4 text-center">
+            <button onclick="loadAdhkar('sabah')" id="btnMorning" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-full shadow transition-transform hover:scale-105">أذكار الصباح</button>
+            <button onclick="loadAdhkar('masaa')" id="btnEvening" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-full shadow transition-transform hover:scale-105">أذكار المساء</button>
+        </div>
+
+        <div id="adhkarView" class="hidden max-w-xl p-4 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 space-y-4 text-center">
+            <h2 class="text-xl font-semibold" id="dhikrCounter"></h2>
+            <p class="text-2xl leading-loose" id="arabicText"></p>
+            <span id="repeatCount" class="text-sm text-gray-500 dark:text-gray-400"><span id="repeatLabel">تكرار</span>: <span id="repeatValue"></span></span>
+            <p class="italic" id="transliterationText"></p>
+            <p class="text-sm" id="translationText"></p>
+
+            <div class="flex justify-between mt-4">
+                <button onclick="prevDhikr()" id="btnPrev" class="bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-gray-300 px-6 py-3 rounded shadow hover:scale-105 transform transition-all duration-200 font-semibold">السابق</button>
+                <button onclick="nextDhikr()" id="btnNext" class="bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-gray-300 px-6 py-3 rounded shadow hover:scale-105 transform transition-all duration-200 font-semibold">التالي</button>            </div>
+
+            <button onclick="goHome()" id="btnBack" class="mt-4 text-blue-500 dark:text-blue-300 hover:underline">الرجوع للرئيسية</button>
+        </div>
+    </main>
+
+    <footer class="p-4 text-center space-x-2 border-t border-gray-200 dark:border-gray-700 mt-auto">
+      
+        <button onclick="switchLanguage()" id="langToggle" class="text-sm text-gray-600 dark:text-gray-300 hover:underline">English</button>
+    </footer>
+
+    <script>
+        const adhkar = [];
+        let current = 0;
+        let filteredAdhkar = [];
+        let currentLang = 'ar';
+
+        const languages = {
+            ar: {
+                title: "أذكار الصباح والمساء",
+                morning: "أذكار الصباح",
+                evening: "أذكار المساء",
+                previous: "السابق",
+                next: "التالي",
+                back: "الرجوع للرئيسية",
+                langSwitch: "English",
+                counter: (i, total) => `الذكر ${i} من ${total}`,
+                repeatLabel: "تكرار"
+            },
+            en: {
+                title: "Morning and Evening Adhkar",
+                morning: "Morning Adhkar",
+                evening: "Evening Adhkar",
+                previous: "Previous",
+                next: "Next",
+                back: "Back to Home",
+                langSwitch: "العربية",
+                counter: (i, total) => `Dhikr ${i} of ${total}`,
+                repeatLabel: "Repeat"
+            }
+        };
+
+        function switchLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            updateUI();
+            displayDhikr();
+        }
+
+        function updateUI() {
+            const lang = languages[currentLang];
+            document.getElementById('pageTitle').innerText = lang.title;
+            document.getElementById('btnMorning').innerText = lang.morning;
+            document.getElementById('btnEvening').innerText = lang.evening;
+            document.getElementById('btnPrev').innerText = lang.previous;
+            document.getElementById('btnNext').innerText = lang.next;
+            document.getElementById('btnBack').innerText = lang.back;
+            document.getElementById('langToggle').innerText = lang.langSwitch;
+            document.getElementById('repeatLabel').innerText = lang.repeatLabel; // Update the repeat label
+        }
+
+        fetch('adhkar.json')
+            .then(res => res.json())
+            .then(data => {
+                adhkar.push(...data);
+                document.getElementById('loadingSpinner').classList.add('hidden');
+            })
+            .catch(err => console.error("Error loading adhkar.json:", err));
+
+        function loadAdhkar(time) {
+            filteredAdhkar = adhkar.filter(d => d.time === time);
+            current = 0;
+            document.getElementById('home').classList.add('fade-leave');
+            setTimeout(() => {
+                document.getElementById('home').classList.add('hidden');
+                document.getElementById('adhkarView').classList.remove('hidden', 'fade-leave');
+                document.getElementById('adhkarView').classList.add('fade-enter');
+                requestAnimationFrame(() => document.getElementById('adhkarView').classList.add('fade-enter-active'));
+            }, 300);
+            displayDhikr();
+        }
+
+        function displayDhikr() {
+            if (!filteredAdhkar.length) return;
+            const dhikr = filteredAdhkar[current];
+            document.getElementById('arabicText').innerText = dhikr.arabic;
+            document.getElementById('transliterationText').innerText = dhikr.transliteration;
+            document.getElementById('translationText').innerText = dhikr.translation;
+            document.getElementById('dhikrCounter').innerText = languages[currentLang].counter(current + 1, filteredAdhkar.length);
+            document.getElementById('repeatValue').innerText = dhikr.repeat;
+        }
+
+        function nextDhikr() {
+            if (current < filteredAdhkar.length - 1) {
+                current++;
+                displayDhikr();
+            }
+        }
+
+        function prevDhikr() {
+            if (current > 0) {
+                current--;
+                displayDhikr();
+            }
+        }
+
+        function goHome() {
+            document.getElementById('adhkarView').classList.add('fade-leave');
+            setTimeout(() => {
+                document.getElementById('adhkarView').classList.add('hidden');
+                document.getElementById('home').classList.remove('hidden');
+                document.getElementById('home').classList.add('fade-enter');
+                requestAnimationFrame(() => document.getElementById('home').classList.add('fade-enter-active'));
+            }, 300);
+        }
+
+      
+    </script>
+</body>
+</html>
