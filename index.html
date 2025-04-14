@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-
     <title>أذكار الصباح والمساء</title>
-
-   
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
+        /* Fade-in and fade-out transitions */
         .fade-enter {
             opacity: 0;
             transform: translateY(10px);
@@ -29,42 +27,61 @@
             opacity: 0;
             transform: translateY(10px);
         }
+        
+        /* Prevent text selection during swipe */
+        .no-select {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
     </style>
 </head>
 
 <body class="bg-gradient-to-b from-gray-100 to-white dark:from-gray-900 dark:to-black text-gray-900 dark:text-white min-h-screen flex flex-col">
 
+    <!-- Header Section -->
     <header class="p-4 text-center text-2xl font-bold bg-gradient-to-r from-green-400 to-blue-500 dark:from-gray-800 dark:to-gray-900 text-white shadow-lg rounded-b-3xl" id="pageTitle">
         أذكار الصباح والمساء
     </header>
 
     <main class="flex-grow flex items-center justify-center">
+        <!-- Loading Spinner -->
         <div id="loadingSpinner" class="fixed inset-0 flex justify-center items-center bg-white dark:bg-black z-50">
             <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
 
+        <!-- Main Buttons for Morning/Evening Adhkar -->
         <div id="home" class="space-y-4 text-center">
             <button onclick="loadAdhkar('sabah')" id="btnMorning" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-full shadow transition-transform hover:scale-105">أذكار الصباح</button>
             <button onclick="loadAdhkar('masaa')" id="btnEvening" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-full shadow transition-transform hover:scale-105">أذكار المساء</button>
         </div>
 
-        <div id="adhkarView" class="hidden max-w-xl p-4 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 space-y-4 text-center">
+        <!-- Adhkar View Section -->
+        <div id="adhkarView" class="hidden max-w-xl p-4 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 space-y-4 text-center no-select">
             <h2 class="text-xl font-semibold" id="dhikrCounter"></h2>
             <p class="text-2xl leading-loose" id="arabicText"></p>
-            <span id="repeatCount" class="text-sm text-gray-500 dark:text-gray-400"><span id="repeatLabel">تكرار</span>: <span id="repeatValue"></span></span>
+            <span id="repeatCount" class="text-sm text-gray-500 dark:text-gray-400">
+                <span id="repeatLabel">تكرار</span>: <span id="repeatValue"></span>
+            </span>
             <p class="italic" id="transliterationText"></p>
             <p class="text-sm" id="translationText"></p>
 
+            <!-- Navigation Buttons -->
             <div class="flex justify-between mt-4">
                 <button onclick="prevDhikr()" id="btnPrev" class="bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-gray-300 px-6 py-3 rounded shadow hover:scale-105 transform transition-all duration-200 font-semibold">السابق</button>
-                <button onclick="nextDhikr()" id="btnNext" class="bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-gray-300 px-6 py-3 rounded shadow hover:scale-105 transform transition-all duration-200 font-semibold">التالي</button>            </div>
+                <button onclick="nextDhikr()" id="btnNext" class="bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-gray-300 px-6 py-3 rounded shadow hover:scale-105 transform transition-all duration-200 font-semibold">التالي</button>            
+            </div>
 
+            <!-- Back to Home Button -->
             <button onclick="goHome()" id="btnBack" class="mt-4 text-blue-500 dark:text-blue-300 hover:underline">الرجوع للرئيسية</button>
         </div>
     </main>
 
+    <!-- Footer Section -->
     <footer class="p-4 text-center space-x-2 border-t border-gray-200 dark:border-gray-700 mt-auto">
-      
         <button onclick="switchLanguage()" id="langToggle" class="text-sm text-gray-600 dark:text-gray-300 hover:underline">English</button>
     </footer>
 
@@ -73,6 +90,11 @@
         let current = 0;
         let filteredAdhkar = [];
         let currentLang = 'ar';
+        
+        // Variables for swipe detection
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const swipeThreshold = 50; // Minimum distance to consider as a swipe
 
         const languages = {
             ar: {
@@ -99,6 +121,7 @@
             }
         };
 
+        // Switch Language Function
         function switchLanguage() {
             currentLang = currentLang === 'ar' ? 'en' : 'ar';
             document.documentElement.lang = currentLang;
@@ -107,6 +130,7 @@
             displayDhikr();
         }
 
+        // Update UI Text Based on Language
         function updateUI() {
             const lang = languages[currentLang];
             document.getElementById('pageTitle').innerText = lang.title;
@@ -116,9 +140,10 @@
             document.getElementById('btnNext').innerText = lang.next;
             document.getElementById('btnBack').innerText = lang.back;
             document.getElementById('langToggle').innerText = lang.langSwitch;
-            document.getElementById('repeatLabel').innerText = lang.repeatLabel; // Update the repeat label
+            document.getElementById('repeatLabel').innerText = lang.repeatLabel;
         }
 
+        // Fetch Adhkar Data
         fetch('adhkar.json')
             .then(res => res.json())
             .then(data => {
@@ -127,6 +152,7 @@
             })
             .catch(err => console.error("Error loading adhkar.json:", err));
 
+        // Load Adhkar by Time (Morning or Evening)
         function loadAdhkar(time) {
             filteredAdhkar = adhkar.filter(d => d.time === time);
             current = 0;
@@ -140,6 +166,7 @@
             displayDhikr();
         }
 
+        // Display Dhikr Information
         function displayDhikr() {
             if (!filteredAdhkar.length) return;
             const dhikr = filteredAdhkar[current];
@@ -150,6 +177,7 @@
             document.getElementById('repeatValue').innerText = dhikr.repeat;
         }
 
+        // Navigate to Next Dhikr
         function nextDhikr() {
             if (current < filteredAdhkar.length - 1) {
                 current++;
@@ -157,6 +185,7 @@
             }
         }
 
+        // Navigate to Previous Dhikr
         function prevDhikr() {
             if (current > 0) {
                 current--;
@@ -164,6 +193,7 @@
             }
         }
 
+        // Go Back to Home
         function goHome() {
             document.getElementById('adhkarView').classList.add('fade-leave');
             setTimeout(() => {
@@ -173,8 +203,40 @@
                 requestAnimationFrame(() => document.getElementById('home').classList.add('fade-enter-active'));
             }, 300);
         }
-
-      
+        
+        // Swipe detection functions
+        function handleTouchStart(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }
+        
+        function handleTouchEnd(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }
+        
+        function handleSwipe() {
+            const diff = touchEndX - touchStartX;
+            
+            // Check if swipe distance meets the threshold
+            if (Math.abs(diff) < swipeThreshold) return;
+            
+            if (diff > 0) {
+                // Swiped right to left (next in RTL)
+                nextDhikr();
+            } else {
+                // Swiped left to right (previous in RTL)
+                prevDhikr();
+            }
+        }
+        
+        // Add event listeners for swipe
+        document.addEventListener('DOMContentLoaded', () => {
+            const adhkarView = document.getElementById('adhkarView');
+            if (adhkarView) {
+                adhkarView.addEventListener('touchstart', handleTouchStart, false);
+                adhkarView.addEventListener('touchend', handleTouchEnd, false);
+            }
+        });
     </script>
 </body>
 </html>
