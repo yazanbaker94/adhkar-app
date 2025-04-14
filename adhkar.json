@@ -13,6 +13,16 @@
       "translation": "Say: He is Allah, the One. Allah, the Eternal Refuge. He neither begets nor is born, nor is there to Him any equivalent.",
       "repeat": 3
     },
+    
+    {
+        "time": "sabah",
+        "arabic": "أَصْـبَحْنا وَأَصْـبَحَ المُـلْكُ لله وَالحَمدُ لله ، لا إلهَ إلاّ اللّهُ وَحدَهُ لا شَريكَ لهُ، لهُ المُـلكُ ولهُ الحَمْـد، وهُوَ على كلّ شَيءٍ قدير ، رَبِّ أسْـأَلُـكَ خَـيرَ ما في هـذا اليوم وَخَـيرَ ما بَعْـدَه ، وَأَعـوذُ بِكَ مِنْ شَـرِّ ما في هـذا اليوم وَشَرِّ ما بَعْـدَه، رَبِّ أَعـوذُ بِكَ مِنَ الْكَسَـلِ وَسـوءِ الْكِـبَر ، رَبِّ أَعـوذُ بِكَ مِنْ عَـذابٍ في النّـارِ وَعَـذابٍ في القَـبْر.",
+        "transliteration": "Asbahna wa asbaha al-mulku lillahi walhamdu lillah, la ilaha illa Allah wahdahu la sharika lahu, lahu al-mulku walahu al-hamdu, wahuwa 'ala kulli shay'in qadeer. Rabbi as'alu ka khayra ma fi hadha al-yawm wa khayra ma ba'dah, wa a'udhu bika min sharri ma fi hadha al-yawm wa sharri ma ba'dah, rabbi a'udhu bika min al-kasali wa su'i al-kibar, rabbi a'udhu bika min 'adhabin fi al-nar wa 'adhabin fi al-qabr.",
+        "translation": "We have entered the morning, and all sovereignty belongs to Allah, and all praise belongs to Allah. There is no god but Allah alone, with no partner to Him. To Him belongs the dominion and to Him belongs the praise, and He is over all things capable. My Lord, I ask You for the good of this day and the good after it, and I seek refuge in You from the evil of this day and the evil after it. My Lord, I seek refuge in You from laziness and the evil of old age. My Lord, I seek refuge in You from the punishment of the Hellfire and the punishment of the grave.",
+        "repeat": 3
+      },      
+
+
     {
       "time": "masaa",
       "arabic": "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ...",
@@ -130,7 +140,7 @@
         "arabic": "لَا إلَه إلّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءِ قَدِيرِ.",
         "transliteration": "La ilaha illallahu wahdahu la shareeka lah, lahul-mulku walahul-hamdu wahuwa 'ala kulli shay'in qadeer.",
         "translation": "There is no god but Allah, alone without partner. To Him belongs the dominion, and to Him belongs all praise, and He is able to do all things.",
-        "repeat": 100
+        "repeat": 10
       },
       {
         "time": "sabah",
@@ -312,7 +322,7 @@
         "arabic": "اللَّهُمَّ إِنَّا نَعُوذُ بِكَ مِنْ أَنْ نُشْرِكَ بِكَ شَيْئًا نَعْلَمُهُ ، وَنَسْتَغْفِرُكَ لِمَا لَا نَعْلَمُهُ.",
         "transliteration": "Allahumma inna na'udhu bika min an nushrika bika shay'an na'lamuh, wa nastaghfiruka lima la na'lamuh.",
         "translation": "O Allah, we seek refuge in You from knowingly associating partners with You, and we seek Your forgiveness for what we do unknowingly.",
-        "repeat": 10
+        "repeat": 3
       },
       {
         "time": "masaa",
@@ -340,7 +350,7 @@
         "arabic": "لَا إلَه إلّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءِ قَدِيرِ.",
         "transliteration": "La ilaha ill Allahu wahdahu la sharika lah, lahu al-mulku wa lahu al-hamdu wa huwa 'ala kulli shay'in qadeer.",
         "translation": "There is none worthy of worship except Allah alone, without partner. His is the dominion and His is the praise, and He is over all things omnipotent.",
-        "repeat": 100
+        "repeat": 10
       },
       {
         "time": "masaa",
@@ -348,13 +358,6 @@
         "transliteration": "Allahumma anta Rabbi la ilaha illa Anta, 'alayka tawakkaltu, wa Anta Rabbul-'Arshil-'Adheem. Ma sha'a Allahu kana, wa ma lam yasha' lam yakun, wa la hawla wa la quwwata illa billahil-'Aliyyil-'Adheem. A'lamu annallaha 'ala kulli shay'in qadeer, wa annallaha qad ahata bikulli shay'in 'ilma. Allahumma inni a'oodhu bika min sharri nafsi, wa min sharri kulli dabbatin anta akhidhun binasiyatiha, inna Rabbi 'ala siratin mustaqeem.",
         "translation": "O Allah, You are my Lord, there is no god but You. Upon You I rely, and You are the Lord of the Mighty Throne. What Allah wills happens, and what He does not will does not happen. There is no might and no power except by Allah, the Exalted, the Mighty. I know that Allah has power over all things, and that Allah encompasses all things in knowledge. O Allah, I seek refuge in You from the evil of my own soul and from the evil of every creature that is under Your control. Verily, my Lord is on a straight path.",
         "repeat": 1
-      },
-      {
-        "time": "sabah",
-        "arabic": "سُبْحـانَ اللهِ وَبِحَمْـدِهِ.",
-        "transliteration": "SubhanAllahi wa bihamdihi.",
-        "translation": "Glory be to Allah and praise be to Him.",
-        "repeat": 100
       }
   ]
   

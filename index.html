@@ -37,6 +37,14 @@
             -ms-user-select: none;
             user-select: none;
         }
+
+            /* Add a click effect with a scale and fade-out effect */
+    .clicked {
+        transform: scale(1.1);  /* Slightly enlarge the element */
+        opacity: 0.8;           /* Slightly fade the element */
+        transition: transform 0.2s ease, opacity 0.2s ease; /* Smooth transition */
+    }
+
     </style>
 </head>
 
@@ -61,6 +69,14 @@
 
         <!-- Adhkar View Section -->
         <div id="adhkarView" class="hidden max-w-xl p-4 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 space-y-4 text-center no-select">
+           <!-- Inside the adhkarView div, below the dhikrCounter -->
+           <div id="swipeHint" class="text-sm text-gray-400 mb-2">
+            <i class="fas fa-arrows-alt-h mr-1"></i> <span id="swipeHintText">اسحب لليسار أو اليمين للتنقل</span>
+        </div>
+        <div id="clickHint" class="text-sm text-gray-400 mb-2">
+            <i class="fas fa-hand-pointer mr-1 cursor-pointer"></i> <span id="clickHintText">اضغظ للعد</span>
+        </div>
+        
             <h2 class="text-xl font-semibold" id="dhikrCounter"></h2>
             <p class="text-2xl leading-loose" id="arabicText"></p>
             <span id="repeatCount" class="text-sm text-gray-500 dark:text-gray-400">
@@ -97,51 +113,81 @@
         const swipeThreshold = 50; // Minimum distance to consider as a swipe
 
         const languages = {
-            ar: {
-                title: "أذكار الصباح والمساء",
-                morning: "أذكار الصباح",
-                evening: "أذكار المساء",
-                previous: "السابق",
-                next: "التالي",
-                back: "الرجوع للرئيسية",
-                langSwitch: "English",
-                counter: (i, total) => `الذكر ${i} من ${total}`,
-                repeatLabel: "تكرار"
-            },
-            en: {
-                title: "Morning and Evening Adhkar",
-                morning: "Morning Adhkar",
-                evening: "Evening Adhkar",
-                previous: "Previous",
-                next: "Next",
-                back: "Back to Home",
-                langSwitch: "العربية",
-                counter: (i, total) => `Dhikr ${i} of ${total}`,
-                repeatLabel: "Repeat"
-            }
-        };
+    ar: {
+        title: "أذكار الصباح والمساء",
+        morning: "أذكار الصباح",
+        evening: "أذكار المساء",
+        previous: "السابق",
+        next: "التالي",
+        back: "الرجوع للرئيسية",
+        langSwitch: "English",
+        counter: (i, total) => `الذكر ${i} من ${total}`,
+        repeatLabel: "تكرار",
+        swipeHint: "اسحب لليسار أو اليمين للتنقل",
+        clickHint: "اضغظ للعد"
+    },
+    en: {
+        title: "Morning and Evening Adhkar",
+        morning: "Morning Adhkar",
+        evening: "Evening Adhkar",
+        previous: "Previous",
+        next: "Next",
+        back: "Back to Home",
+        langSwitch: "العربية",
+        counter: (i, total) => `Dhikr ${i} of ${total}`,
+        repeatLabel: "Repeat",
+        swipeHint: "Swipe left or right to navigate",
+        clickHint: "Click to Count"
+    }
+};
 
-        // Switch Language Function
-        function switchLanguage() {
-            currentLang = currentLang === 'ar' ? 'en' : 'ar';
-            document.documentElement.lang = currentLang;
-            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-            updateUI();
-            displayDhikr();
+ // Add this click handler function
+function handleDhikrClick() {
+        // Add the 'clicked' class to the element
+        const arabicText = document.getElementById('arabicText');
+        arabicText.classList.add('clicked');
+        
+        // Optionally, remove the 'clicked' class after the effect completes
+        setTimeout(() => {
+            arabicText.classList.remove('clicked');
+        }, 300);  // Time to match the animation duration
+
+        if (filteredAdhkar[current].remainingRepeats > 0) {
+            filteredAdhkar[current].remainingRepeats--;
+            updateRepeatCounter();
         }
+    }
+
+
+    // Add this function to update counter display
+    function updateRepeatCounter() {
+        document.getElementById('repeatValue').innerText = filteredAdhkar[current].remainingRepeats;
+    }
+
+function switchLanguage() {
+    currentLang = currentLang === 'ar' ? 'en' : 'ar';
+    document.documentElement.lang = currentLang;
+    document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+    updateUI();
+    displayDhikr();
+}
 
         // Update UI Text Based on Language
         function updateUI() {
-            const lang = languages[currentLang];
-            document.getElementById('pageTitle').innerText = lang.title;
-            document.getElementById('btnMorning').innerText = lang.morning;
-            document.getElementById('btnEvening').innerText = lang.evening;
-            document.getElementById('btnPrev').innerText = lang.previous;
-            document.getElementById('btnNext').innerText = lang.next;
-            document.getElementById('btnBack').innerText = lang.back;
-            document.getElementById('langToggle').innerText = lang.langSwitch;
-            document.getElementById('repeatLabel').innerText = lang.repeatLabel;
-        }
+    const lang = languages[currentLang];
+    document.getElementById('pageTitle').innerText = lang.title;
+    document.getElementById('btnMorning').innerText = lang.morning;
+    document.getElementById('btnEvening').innerText = lang.evening;
+    document.getElementById('btnPrev').innerText = lang.previous;
+    document.getElementById('btnNext').innerText = lang.next;
+    document.getElementById('btnBack').innerText = lang.back;
+    document.getElementById('langToggle').innerText = lang.langSwitch;
+    document.getElementById('repeatLabel').innerText = lang.repeatLabel;
+    document.getElementById('swipeHintText').innerText = lang.swipeHint;
+    document.getElementById('clickHintText').innerText = lang.clickHint;
+
+}
+
 
         // Fetch Adhkar Data
         fetch('adhkar.json')
@@ -152,30 +198,32 @@
             })
             .catch(err => console.error("Error loading adhkar.json:", err));
 
-        // Load Adhkar by Time (Morning or Evening)
-        function loadAdhkar(time) {
-            filteredAdhkar = adhkar.filter(d => d.time === time);
-            current = 0;
-            document.getElementById('home').classList.add('fade-leave');
-            setTimeout(() => {
-                document.getElementById('home').classList.add('hidden');
-                document.getElementById('adhkarView').classList.remove('hidden', 'fade-leave');
-                document.getElementById('adhkarView').classList.add('fade-enter');
-                requestAnimationFrame(() => document.getElementById('adhkarView').classList.add('fade-enter-active'));
-            }, 300);
-            displayDhikr();
-        }
+     // Modify loadAdhkar function to initialize remainingRepeats
+     function loadAdhkar(time) {
+        filteredAdhkar = adhkar.filter(d => d.time === time).map(d => ({
+            ...d,
+            remainingRepeats: d.repeat
+        }));
+        current = 0;
+        document.getElementById('home').classList.add('fade-leave');
+        setTimeout(() => {
+            document.getElementById('home').classList.add('hidden');
+            document.getElementById('adhkarView').classList.remove('hidden', 'fade-leave');
+            document.getElementById('adhkarView').classList.add('fade-enter');
+            requestAnimationFrame(() => document.getElementById('adhkarView').classList.add('fade-enter-active'));
+        }, 300);
+        displayDhikr();
+    }
 
-        // Display Dhikr Information
-        function displayDhikr() {
-            if (!filteredAdhkar.length) return;
-            const dhikr = filteredAdhkar[current];
-            document.getElementById('arabicText').innerText = dhikr.arabic;
-            document.getElementById('transliterationText').innerText = dhikr.transliteration;
-            document.getElementById('translationText').innerText = dhikr.translation;
-            document.getElementById('dhikrCounter').innerText = languages[currentLang].counter(current + 1, filteredAdhkar.length);
-            document.getElementById('repeatValue').innerText = dhikr.repeat;
-        }
+    function displayDhikr() {
+        if (!filteredAdhkar.length) return;
+        const dhikr = filteredAdhkar[current];
+        document.getElementById('arabicText').innerText = dhikr.arabic;
+        document.getElementById('transliterationText').innerText = dhikr.transliteration;
+        document.getElementById('translationText').innerText = dhikr.translation;
+        document.getElementById('dhikrCounter').innerText = languages[currentLang].counter(current + 1, filteredAdhkar.length);
+        document.getElementById('repeatValue').innerText = dhikr.remainingRepeats;
+    }
 
         // Navigate to Next Dhikr
         function nextDhikr() {
@@ -229,14 +277,18 @@
             }
         }
         
-        // Add event listeners for swipe
-        document.addEventListener('DOMContentLoaded', () => {
-            const adhkarView = document.getElementById('adhkarView');
-            if (adhkarView) {
-                adhkarView.addEventListener('touchstart', handleTouchStart, false);
-                adhkarView.addEventListener('touchend', handleTouchEnd, false);
-            }
-        });
+         // Add event listener for Arabic text click (add this in DOMContentLoaded)
+    document.addEventListener('DOMContentLoaded', () => {
+        const adhkarView = document.getElementById('adhkarView');
+        const arabicText = document.getElementById('arabicText');
+        if (adhkarView) {
+            adhkarView.addEventListener('touchstart', handleTouchStart, false);
+            adhkarView.addEventListener('touchend', handleTouchEnd, false);
+        }
+        if (arabicText) {
+            arabicText.addEventListener('click', handleDhikrClick);
+        }
+    });
     </script>
 </body>
 </html>
