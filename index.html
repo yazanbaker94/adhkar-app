@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <title>أذكار الصباح والمساء</title>
+    <title>أذكار وأوقات الصلاة</title>
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
@@ -38,13 +38,30 @@
             user-select: none;
         }
 
-            /* Add a click effect with a scale and fade-out effect */
-    .clicked {
-        transform: scale(1.1);  /* Slightly enlarge the element */
-        opacity: 0.8;           /* Slightly fade the element */
-        transition: transform 0.2s ease, opacity 0.2s ease; /* Smooth transition */
-    }
+        /* Add a click effect with a scale and fade-out effect */
+        .clicked {
+            transform: scale(1.1);  /* Slightly enlarge the element */
+            opacity: 0.8;           /* Slightly fade the element */
+            transition: transform 0.2s ease, opacity 0.2s ease; /* Smooth transition */
+        }
 
+        /* Tab styling */
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .tab.active {
+            border-bottom-color: #3B82F6;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
     </style>
 </head>
 
@@ -52,8 +69,14 @@
 
     <!-- Header Section -->
     <header class="p-4 text-center text-2xl font-bold bg-gradient-to-r from-green-400 to-blue-500 dark:from-gray-800 dark:to-gray-900 text-white shadow-lg rounded-b-3xl" id="pageTitle">
-        أذكار الصباح والمساء
+        أذكار وأوقات الصلاة
     </header>
+
+    <!-- Tab Navigation -->
+    <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
+        <div class="tab active" data-tab="adhkar" id="adhkarTab">الأذكار</div>
+        <div class="tab" data-tab="prayer" id="prayerTab">أوقات الصلاة</div>
+    </div>
 
     <main class="flex-grow flex items-center justify-center">
         <!-- Loading Spinner -->
@@ -61,38 +84,73 @@
             <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
 
-        <!-- Main Buttons for Morning/Evening Adhkar -->
-        <div id="home" class="space-y-4 text-center">
-            <button onclick="loadAdhkar('sabah')" id="btnMorning" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-full shadow transition-transform hover:scale-105">أذكار الصباح</button>
-            <button onclick="loadAdhkar('masaa')" id="btnEvening" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-full shadow transition-transform hover:scale-105">أذكار المساء</button>
-        </div>
-
-        <!-- Adhkar View Section -->
-        <div id="adhkarView" class="hidden max-w-xl p-4 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 space-y-4 text-center no-select">
-           <!-- Inside the adhkarView div, below the dhikrCounter -->
-           <div id="swipeHint" class="text-sm text-gray-400 mb-2">
-            <i class="fas fa-arrows-alt-h mr-1"></i> <span id="swipeHintText">اسحب لليسار أو اليمين للتنقل</span>
-        </div>
-        <div id="clickHint" class="text-sm text-gray-400 mb-2">
-            <i class="fas fa-hand-pointer mr-1 cursor-pointer"></i> <span id="clickHintText">اضغظ للعد</span>
-        </div>
-        
-            <h2 class="text-xl font-semibold" id="dhikrCounter"></h2>
-            <p class="text-2xl leading-loose" id="arabicText"></p>
-            <span id="repeatCount" class="text-sm text-gray-500 dark:text-gray-400">
-                <span id="repeatLabel">تكرار</span>: <span id="repeatValue"></span>
-            </span>
-            <p class="italic" id="transliterationText"></p>
-            <p class="text-sm" id="translationText"></p>
-
-            <!-- Navigation Buttons -->
-            <div class="flex justify-between mt-4">
-                <button onclick="prevDhikr()" id="btnPrev" class="bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-gray-300 px-6 py-3 rounded shadow hover:scale-105 transform transition-all duration-200 font-semibold">السابق</button>
-                <button onclick="nextDhikr()" id="btnNext" class="bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-gray-300 px-6 py-3 rounded shadow hover:scale-105 transform transition-all duration-200 font-semibold">التالي</button>            
+        <!-- Adhkar Tab Content -->
+        <div id="adhkarContent" class="tab-content active w-full">
+            <!-- Main Buttons for Morning/Evening Adhkar -->
+            <div id="home" class="space-y-4 text-center">
+                <button onclick="loadAdhkar('sabah')" id="btnMorning" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-full shadow transition-transform hover:scale-105">أذكار الصباح</button>
+                <button onclick="loadAdhkar('masaa')" id="btnEvening" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-full shadow transition-transform hover:scale-105">أذكار المساء</button>
             </div>
 
-            <!-- Back to Home Button -->
-            <button onclick="goHome()" id="btnBack" class="mt-4 text-blue-500 dark:text-blue-300 hover:underline">الرجوع للرئيسية</button>
+            <!-- Adhkar View Section -->
+            <div id="adhkarView" class="hidden max-w-xl p-4 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 space-y-4 text-center no-select mx-auto">
+                <div id="swipeHint" class="text-sm text-gray-400 mb-2">
+                    <i class="fas fa-arrows-alt-h mr-1"></i> <span id="swipeHintText">اسحب لليسار أو اليمين للتنقل</span>
+                </div>
+                <div id="clickHint" class="text-sm text-gray-400 mb-2">
+                    <i class="fas fa-hand-pointer mr-1 cursor-pointer"></i> <span id="clickHintText">اضغظ للعد</span>
+                </div>
+                
+                <h2 class="text-xl font-semibold" id="dhikrCounter"></h2>
+                <p class="text-2xl leading-loose" id="arabicText"></p>
+                <span id="repeatCount" class="text-sm text-gray-500 dark:text-gray-400">
+                    <span id="repeatLabel">تكرار</span>: <span id="repeatValue"></span>
+                </span>
+                <p class="italic" id="transliterationText"></p>
+                <p class="text-sm" id="translationText"></p>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between mt-4">
+                    <button onclick="prevDhikr()" id="btnPrev" class="bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-gray-300 px-6 py-3 rounded shadow hover:scale-105 transform transition-all duration-200 font-semibold">السابق</button>
+                    <button onclick="nextDhikr()" id="btnNext" class="bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-gray-300 px-6 py-3 rounded shadow hover:scale-105 transform transition-all duration-200 font-semibold">التالي</button>            
+                </div>
+
+                <!-- Back to Home Button -->
+                <button onclick="goHome()" id="btnBack" class="mt-4 text-blue-500 dark:text-blue-300 hover:underline">الرجوع للرئيسية</button>
+            </div>
+        </div>
+
+        <!-- Prayer Times Tab Content -->
+        <div id="prayerContent" class="tab-content w-full max-w-md p-4">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                <h2 class="text-xl font-bold text-center mb-4" id="prayerTitle">أوقات الصلاة</h2>
+                <p id="azan-location" class="text-center mb-6">جاري تحديد الموقع...</p>
+                <ul class="space-y-3">
+                    <li class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg flex justify-between" id="azan-fajr">
+                        <span>الفجر:</span>
+                        <span class="font-medium">--:--</span>
+                    </li>
+                    <li class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg flex justify-between" id="azan-dhuhr">
+                        <span>الظهر:</span>
+                        <span class="font-medium">--:--</span>
+                    </li>
+                    <li class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg flex justify-between" id="azan-asr">
+                        <span>العصر:</span>
+                        <span class="font-medium">--:--</span>
+                    </li>
+                    <li class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg flex justify-between" id="azan-maghrib">
+                        <span>المغرب:</span>
+                        <span class="font-medium">--:--</span>
+                    </li>
+                    <li class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg flex justify-between" id="azan-isha">
+                        <span>العشاء:</span>
+                        <span class="font-medium">--:--</span>
+                    </li>
+                </ul>
+                <button id="btnRefresh" onclick="refreshPrayerTimes()" class="mt-6 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow transition-colors">
+                    <i class="fas fa-sync-alt mr-2"></i> Refresh
+                </button>
+            </div>
         </div>
     </main>
 
@@ -106,6 +164,7 @@
         let current = 0;
         let filteredAdhkar = [];
         let currentLang = 'ar';
+        let currentCity = "Amman";
         
         // Variables for swipe detection
         let touchStartX = 0;
@@ -113,81 +172,113 @@
         const swipeThreshold = 50; // Minimum distance to consider as a swipe
 
         const languages = {
-    ar: {
-        title: "أذكار الصباح والمساء",
-        morning: "أذكار الصباح",
-        evening: "أذكار المساء",
-        previous: "السابق",
-        next: "التالي",
-        back: "الرجوع للرئيسية",
-        langSwitch: "English",
-        counter: (i, total) => `الذكر ${i} من ${total}`,
-        repeatLabel: "تكرار",
-        swipeHint: "اسحب لليسار أو اليمين للتنقل",
-        clickHint: "اضغظ للعد"
-    },
-    en: {
-        title: "Morning and Evening Adhkar",
-        morning: "Morning Adhkar",
-        evening: "Evening Adhkar",
-        previous: "Previous",
-        next: "Next",
-        back: "Back to Home",
-        langSwitch: "العربية",
-        counter: (i, total) => `Dhikr ${i} of ${total}`,
-        repeatLabel: "Repeat",
-        swipeHint: "Swipe left or right to navigate",
-        clickHint: "Click to Count"
-    }
-};
+            ar: {
+                title: "أذكار وأوقات الصلاة",
+                morning: "أذكار الصباح",
+                evening: "أذكار المساء",
+                previous: "السابق",
+                next: "التالي",
+                back: "الرجوع للرئيسية",
+                langSwitch: "English",
+                counter: (i, total) => `الذكر ${i} من ${total}`,
+                repeatLabel: "تكرار",
+                swipeHint: "اسحب لليسار أو اليمين للتنقل",
+                clickHint: "اضغظ للعد",
+                prayerTitle: "أوقات الصلاة",
+                fajr: "الفجر",
+                dhuhr: "الظهر",
+                asr: "العصر",
+                maghrib: "المغرب",
+                isha: "العشاء",
+                refresh: "تحديث",
+                  adhkarTab: "الأذكار",
+        prayerTab: "أوقات الصلاة",
+                locationText: (city, timezone) => `المدينة: ${city} | المنطقة الزمنية: ${timezone}`
+            },
+            en: {
+                title: "Adhkar & Prayer Times",
+                morning: "Morning Adhkar",
+                evening: "Evening Adhkar",
+                previous: "Previous",
+                next: "Next",
+                back: "Back to Home",
+                langSwitch: "العربية",
+                counter: (i, total) => `Dhikr ${i} of ${total}`,
+                repeatLabel: "Repeat",
+                swipeHint: "Swipe left or right to navigate",
+                clickHint: "Click to Count",
+                prayerTitle: "Prayer Times",
+                fajr: "Fajr",
+                dhuhr: "Dhuhr",
+                asr: "Asr",
+                maghrib: "Maghrib",
+                isha: "Isha",
+                refresh: "Refresh",
+                 adhkarTab: "Adhkar",
+        prayerTab: "Prayer Times",
+                locationText: (city, timezone) => `City: ${city} | Timezone: ${timezone}`
+            }
+        };
 
- // Add this click handler function
-function handleDhikrClick() {
-        // Add the 'clicked' class to the element
-        const arabicText = document.getElementById('arabicText');
-        arabicText.classList.add('clicked');
-        
-        // Optionally, remove the 'clicked' class after the effect completes
-        setTimeout(() => {
-            arabicText.classList.remove('clicked');
-        }, 300);  // Time to match the animation duration
+        // Add this click handler function
+        function handleDhikrClick() {
+            // Add the 'clicked' class to the element
+            const arabicText = document.getElementById('arabicText');
+            arabicText.classList.add('clicked');
+            
+            // Optionally, remove the 'clicked' class after the effect completes
+            setTimeout(() => {
+                arabicText.classList.remove('clicked');
+            }, 300);  // Time to match the animation duration
 
-        if (filteredAdhkar[current].remainingRepeats > 0) {
-            filteredAdhkar[current].remainingRepeats--;
-            updateRepeatCounter();
+            if (filteredAdhkar[current].remainingRepeats > 0) {
+                filteredAdhkar[current].remainingRepeats--;
+                updateRepeatCounter();
+            }
         }
-    }
 
+        // Add this function to update counter display
+        function updateRepeatCounter() {
+            document.getElementById('repeatValue').innerText = filteredAdhkar[current].remainingRepeats;
+        }
 
-    // Add this function to update counter display
-    function updateRepeatCounter() {
-        document.getElementById('repeatValue').innerText = filteredAdhkar[current].remainingRepeats;
-    }
-
-function switchLanguage() {
-    currentLang = currentLang === 'ar' ? 'en' : 'ar';
-    document.documentElement.lang = currentLang;
-    document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-    updateUI();
-    displayDhikr();
-}
+        function switchLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            updateUI();
+            displayDhikr();
+            updatePrayerTimesUI();
+        }
 
         // Update UI Text Based on Language
         function updateUI() {
-    const lang = languages[currentLang];
-    document.getElementById('pageTitle').innerText = lang.title;
-    document.getElementById('btnMorning').innerText = lang.morning;
-    document.getElementById('btnEvening').innerText = lang.evening;
-    document.getElementById('btnPrev').innerText = lang.previous;
-    document.getElementById('btnNext').innerText = lang.next;
-    document.getElementById('btnBack').innerText = lang.back;
-    document.getElementById('langToggle').innerText = lang.langSwitch;
-    document.getElementById('repeatLabel').innerText = lang.repeatLabel;
-    document.getElementById('swipeHintText').innerText = lang.swipeHint;
-    document.getElementById('clickHintText').innerText = lang.clickHint;
+            const lang = languages[currentLang];
+            document.getElementById('pageTitle').innerText = lang.title;
+            document.getElementById('btnMorning').innerText = lang.morning;
+            document.getElementById('btnEvening').innerText = lang.evening;
+            document.getElementById('btnPrev').innerText = lang.previous;
+            document.getElementById('btnNext').innerText = lang.next;
+            document.getElementById('btnBack').innerText = lang.back;
+            document.getElementById('langToggle').innerText = lang.langSwitch;
+            document.getElementById('repeatLabel').innerText = lang.repeatLabel;
+            document.getElementById('swipeHintText').innerText = lang.swipeHint;
+            document.getElementById('clickHintText').innerText = lang.clickHint;
+            document.getElementById('adhkarTab').innerText = lang.adhkarTab;
+            document.getElementById('prayerTab').innerText = lang.prayerTab;
+    document.getElementById('btnRefresh').innerHTML = `<i class="fas fa-sync-alt mr-2"></i> ${lang.refresh}`;
 
-}
+        }
 
+        function updatePrayerTimesUI() {
+            const lang = languages[currentLang];
+            document.getElementById('prayerTitle').innerText = lang.prayerTitle;
+            document.querySelector('#azan-fajr span:first-child').innerText = lang.fajr + ":";
+            document.querySelector('#azan-dhuhr span:first-child').innerText = lang.dhuhr + ":";
+            document.querySelector('#azan-asr span:first-child').innerText = lang.asr + ":";
+            document.querySelector('#azan-maghrib span:first-child').innerText = lang.maghrib + ":";
+            document.querySelector('#azan-isha span:first-child').innerText = lang.isha + ":";
+        }
 
         // Fetch Adhkar Data
         fetch('adhkar.json')
@@ -198,32 +289,32 @@ function switchLanguage() {
             })
             .catch(err => console.error("Error loading adhkar.json:", err));
 
-     // Modify loadAdhkar function to initialize remainingRepeats
-     function loadAdhkar(time) {
-        filteredAdhkar = adhkar.filter(d => d.time === time).map(d => ({
-            ...d,
-            remainingRepeats: d.repeat
-        }));
-        current = 0;
-        document.getElementById('home').classList.add('fade-leave');
-        setTimeout(() => {
-            document.getElementById('home').classList.add('hidden');
-            document.getElementById('adhkarView').classList.remove('hidden', 'fade-leave');
-            document.getElementById('adhkarView').classList.add('fade-enter');
-            requestAnimationFrame(() => document.getElementById('adhkarView').classList.add('fade-enter-active'));
-        }, 300);
-        displayDhikr();
-    }
+        // Modify loadAdhkar function to initialize remainingRepeats
+        function loadAdhkar(time) {
+            filteredAdhkar = adhkar.filter(d => d.time === time).map(d => ({
+                ...d,
+                remainingRepeats: d.repeat
+            }));
+            current = 0;
+            document.getElementById('home').classList.add('fade-leave');
+            setTimeout(() => {
+                document.getElementById('home').classList.add('hidden');
+                document.getElementById('adhkarView').classList.remove('hidden', 'fade-leave');
+                document.getElementById('adhkarView').classList.add('fade-enter');
+                requestAnimationFrame(() => document.getElementById('adhkarView').classList.add('fade-enter-active'));
+            }, 300);
+            displayDhikr();
+        }
 
-    function displayDhikr() {
-        if (!filteredAdhkar.length) return;
-        const dhikr = filteredAdhkar[current];
-        document.getElementById('arabicText').innerText = dhikr.arabic;
-        document.getElementById('transliterationText').innerText = dhikr.transliteration;
-        document.getElementById('translationText').innerText = dhikr.translation;
-        document.getElementById('dhikrCounter').innerText = languages[currentLang].counter(current + 1, filteredAdhkar.length);
-        document.getElementById('repeatValue').innerText = dhikr.remainingRepeats;
-    }
+        function displayDhikr() {
+            if (!filteredAdhkar.length) return;
+            const dhikr = filteredAdhkar[current];
+            document.getElementById('arabicText').innerText = dhikr.arabic;
+            document.getElementById('transliterationText').innerText = dhikr.transliteration;
+            document.getElementById('translationText').innerText = dhikr.translation;
+            document.getElementById('dhikrCounter').innerText = languages[currentLang].counter(current + 1, filteredAdhkar.length);
+            document.getElementById('repeatValue').innerText = dhikr.remainingRepeats;
+        }
 
         // Navigate to Next Dhikr
         function nextDhikr() {
@@ -276,19 +367,89 @@ function switchLanguage() {
                 prevDhikr();
             }
         }
-        
-         // Add event listener for Arabic text click (add this in DOMContentLoaded)
-    document.addEventListener('DOMContentLoaded', () => {
-        const adhkarView = document.getElementById('adhkarView');
-        const arabicText = document.getElementById('arabicText');
-        if (adhkarView) {
-            adhkarView.addEventListener('touchstart', handleTouchStart, false);
-            adhkarView.addEventListener('touchend', handleTouchEnd, false);
+
+        // Prayer Times Functions
+        async function fetchPrayerTimes(city = "Amman") {
+            const today = new Date().toISOString().split('T')[0];
+            const formattedDate = today.split('-').reverse().join('-');
+            const url = `https://api.aladhan.com/v1/timingsByAddress/${formattedDate}?address=${encodeURIComponent(city)}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.code === 200) {
+                    const timings = data.data.timings;
+                    const location = data.data.meta.timezone;
+
+                    document.getElementById("azan-location").innerText = 
+                        languages[currentLang].locationText(city, location);
+                    
+                    document.querySelector("#azan-fajr span:last-child").innerText = timings.Fajr;
+                    document.querySelector("#azan-dhuhr span:last-child").innerText = timings.Dhuhr;
+                    document.querySelector("#azan-asr span:last-child").innerText = timings.Asr;
+                    document.querySelector("#azan-maghrib span:last-child").innerText = timings.Maghrib;
+                    document.querySelector("#azan-isha span:last-child").innerText = timings.Isha;
+                } else {
+                    document.getElementById("azan-location").innerText = "Failed to fetch prayer times.";
+                }
+
+            } catch (error) {
+                console.error("Error fetching prayer times:", error);
+                document.getElementById("azan-location").innerText = "Error fetching prayer times.";
+            }
         }
-        if (arabicText) {
-            arabicText.addEventListener('click', handleDhikrClick);
+
+        async function detectCityAndFetchTimes() {
+            try {
+                const locationRes = await fetch("https://ipapi.co/json/");
+                const locationData = await locationRes.json();
+                currentCity = locationData.city || "Amman";
+                fetchPrayerTimes(currentCity);
+            } catch (error) {
+                console.error("Could not detect city, falling back to Amman.", error);
+                fetchPrayerTimes("Amman");
+            }
         }
-    });
+
+        function refreshPrayerTimes() {
+            fetchPrayerTimes(currentCity);
+        }
+
+        // Tab switching functionality
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and content
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(`${tabId}Content`).classList.add('active');
+                });
+            });
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            const adhkarView = document.getElementById('adhkarView');
+            const arabicText = document.getElementById('arabicText');
+            
+            if (adhkarView) {
+                adhkarView.addEventListener('touchstart', handleTouchStart, false);
+                adhkarView.addEventListener('touchend', handleTouchEnd, false);
+            }
+            
+            if (arabicText) {
+                arabicText.addEventListener('click', handleDhikrClick);
+            }
+            
+            setupTabs();
+            detectCityAndFetchTimes();
+        });
     </script>
 </body>
 </html>
