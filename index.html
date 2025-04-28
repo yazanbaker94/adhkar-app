@@ -8,6 +8,51 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
+        /* Fallback Compass Styles */
+#compass {
+    position: relative;
+    width: 16rem;
+    height: 16rem;
+    animation: fadeIn 0.5s ease-in;
+}
+
+#qiblaNeedle {
+    transition: transform 0.2s ease-out;
+    transform-origin: bottom center;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Improve AR Indicator */
+#kaabaIndicator {
+    transition: transform 0.2s ease-out, opacity 0.5s;
+}
+
+/* Calibration Prompt */
+#arUnsupported {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Ensure video scaling */
+#arCamera {
+    object-fit: cover;
+    transform: scaleX(-1); /* Mirror camera feed for back camera */
+}
+
+/* Flip camera button hover effect */
+#flipCameraBtn:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+    transition: all 0.2s ease;
+}
         /* AR View Styles */
 #arCamera {
     position: absolute;
@@ -116,8 +161,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qibla">qiblah</div>
-
+        <div class="tab" data-tab="qibla" id="qiblaTab">القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab">أوقات الصلاة</div>
     </div>
@@ -132,13 +176,8 @@
         <div id="qiblaContent" class="tab-content w-full p-4 hidden">
             <!-- AR Viewport -->
             <div class="relative w-full h-[70vh] bg-black rounded-xl overflow-hidden">
-                <!-- Camera Feed -->
                 <video id="arCamera" autoplay playsinline class="w-full h-full object-cover"></video>
-                
-                <!-- AR Overlay Canvas -->
                 <canvas id="arCanvas" class="absolute top-0 left-0 w-full h-full pointer-events-none"></canvas>
-                
-                <!-- UI Controls -->
                 <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-4">
                     <button id="flipCameraBtn" class="bg-white/20 text-white p-3 rounded-full">
                         <i class="fas fa-camera-rotate"></i>
@@ -148,21 +187,17 @@
                         <span id="degreeValue">0°</span>
                     </div>
                 </div>
-                
-                <!-- Kaaba Indicator -->
                 <div id="kaabaIndicator" class="absolute w-12 h-12">
                     <img src="https://cdn-icons-png.flaticon.com/512/7222/7222554.png" alt="Kaaba" class="w-full h-full">
                 </div>
             </div>
-            
-            <!-- Fallback Message -->
             <div id="arUnsupported" class="hidden bg-white dark:bg-gray-800 p-6 rounded-lg text-center mt-4">
                 <i class="fas fa-triangle-exclamation text-yellow-500 text-3xl mb-3"></i>
-                <h3 class="font-bold" id="arErrorTitle">AR Unsupported</h3>
-                <p class="mb-4" id="arErrorMessage">Camera AR requires mobile devices with orientation sensors</p>
+                <h3 class="font-bold" id="arErrorTitle"></h3>
+                <p class="mb-4" id="arErrorMessage"></p>
                 <button onclick="initCompassFallback()" class="bg-blue-500 text-white px-6 py-2 rounded-lg">
                     <i class="fas fa-compass mr-2"></i>
-                    <span id="fallbackBtnText">Use Basic Compass</span>
+                    <span id="fallbackBtnText"></span>
                 </button>
             </div>
         </div>
@@ -241,92 +276,110 @@
     </footer>
 
     <script>
-        let smoothedHeading = 0;
-
         const adhkar = [];
-        let current = 0;
-        let filteredAdhkar = [];
-        let currentLang = 'ar';
-        let currentCity = "Amman";
-        // AR Qibla Finder
+let current = 0;
+let filteredAdhkar = [];
+let currentLang = 'ar';
+let currentCity = "Amman";
+
+// AR Qibla Finder
 let arActive = false;
 let cameraStream = null;
 let facingMode = "environment";
 let currentHeading = 0;
 let qiblaAngle = 0;
 let animationFrameId = null;
-        // Variables for swipe detection
-        let touchStartX = 0;
-        let touchEndX = 0;
-        const swipeThreshold = 50; // Minimum distance to consider as a swipe
+let smoothedHeading = null;
 
-        const languages = {
-            ar: {
-                title: "أذكار وأوقات الصلاة",
-                morning: "أذكار الصباح",
-                evening: "أذكار المساء",
-                previous: "السابق",
-                next: "التالي",
-                back: "الرجوع للرئيسية",
-                langSwitch: "English",
-                counter: (i, total) => `الذكر ${i} من ${total}`,
-                repeatLabel: "تكرار",
-                swipeHint: "اسحب لليسار أو اليمين للتنقل",
-                clickHint: "اضغظ للعد",
-                prayerTitle: "أوقات الصلاة",
-                fajr: "الفجر",
-                dhuhr: "الظهر",
-                asr: "العصر",
-                maghrib: "المغرب",
-                isha: "العشاء",
-                refresh: "تحديث",
-                  adhkarTab: "الأذكار",
+// Variables for swipe detection
+let touchStartX = 0;
+let touchEndX = 0;
+const swipeThreshold = 50;
+
+const languages = {
+    ar: {
+        title: "أذكار وأوقات الصلاة",
+        morning: "أذكار الصباح",
+        evening: "أذكار المساء",
+        previous: "السابق",
+        next: "التالي",
+        back: "الرجوع للرئيسية",
+        langSwitch: "English",
+        counter: (i, total) => `الذكر ${i} من ${total}`,
+        repeatLabel: "تكرار",
+        swipeHint: "اسحب لليسار أو اليمين للتنقل",
+        clickHint: "اضغط للعد",
+        prayerTitle: "أوقات الصلاة",
+        fajr: "الفجر",
+        dhuabihr: "الظهر",
+        asr: "العصر",
+        maghrib: "المغرب",
+        isha: "العشاء",
+        refresh: "تحديث",
+        adhkarTab: "الأذكار",
         prayerTab: "أوقات الصلاة",
-                locationText: (city, timezone) => `المدينة: ${city} | المنطقة الزمنية: ${timezone}`
-            },
-            en: {
-                title: "Adhkar & Prayer Times",
-                morning: "Morning Adhkar",
-                evening: "Evening Adhkar",
-                previous: "Previous",
-                next: "Next",
-                back: "Back to Home",
-                langSwitch: "العربية",
-                counter: (i, total) => `Dhikr ${i} of ${total}`,
-                repeatLabel: "Repeat",
-                swipeHint: "Swipe left or right to navigate",
-                clickHint: "Click to Count",
-                prayerTitle: "Prayer Times",
-                fajr: "Fajr",
-                dhuhr: "Dhuhr",
-                asr: "Asr",
-                maghrib: "Maghrib",
-                isha: "Isha",
-                refresh: "Refresh",
-                 adhkarTab: "Adhkar",
+        qiblaTab: "القبلة",
+        locationText: (city, timezone) => `المدينة: ${city} | المنطقة الزمنية: ${timezone}`,
+        arErrorTitle: "الواقع المعزز غير مدعوم",
+        arErrorMessage: "هذه الميزة تتطلب هاتفاً مزوداً بمستشعرات الحركة",
+        fallbackBtnText: "استخدام البوصلة الأساسية",
+        calibrationMessage: "حرك الجهاز على شكل رقم 8 لمعايرة البوصلة",
+        calibrationDone: "تم"
+    },
+    en: {
+        title: "Adhkar & Prayer Times",
+        morning: "Morning Adhkar",
+        evening: "Evening Adhkar",
+        previous: "Previous",
+        next: "Next",
+        back: "Back to Home",
+        langSwitch: "العربية",
+        counter: (i, total) => `Dhikr ${i} of ${total}`,
+        repeatLabel: "Repeat",
+        swipeHint: "Swipe left or right to navigate",
+        clickHint: "Click to Count",
+        prayerTitle: "Prayer Times",
+        fajr: "Fajr",
+        dhuhr: "Dhuhr",
+        asr: "Asr",
+        maghrib: "Maghrib",
+        isha: "Isha",
+        refresh: "Refresh",
+        adhkarTab: "Adhkar",
         prayerTab: "Prayer Times",
-                locationText: (city, timezone) => `City: ${city} | Timezone: ${timezone}`
-            }
-        };
-
-        // Add to languages object
-languages.ar.arErrorTitle = "الواقع المعزز غير مدعوم";
-languages.ar.arErrorMessage = "هذه الميزة تتطلب هاتفاً مزوداً بمستشعرات الحركة";
-languages.ar.fallbackBtnText = "استخدام البوصلة الأساسية";
-
-languages.en.arErrorTitle = "AR Unsupported";
-languages.en.arErrorMessage = "This feature requires a mobile device with motion sensors";
-languages.en.fallbackBtnText = "Use Basic Compass";
+        qiblaTab: "Qibla",
+        locationText: (city, timezone) => `City: ${city} | Timezone: ${timezone}`,
+        arErrorTitle: "AR Unsupported",
+        arErrorMessage: "This feature requires a mobile device with motion sensors",
+        fallbackBtnText: "Use Basic Compass",
+        calibrationMessage: "Move your device in a figure-8 pattern to calibrate the compass",
+        calibrationDone: "Done"
+    }
+};
 
 async function initARCamera() {
     console.log("Initializing AR Camera...");
 
-    // Check for required APIs
     if (!('DeviceOrientationEvent' in window) || !navigator.mediaDevices) {
-        console.error("Device orientation not supported");
-
+        console.error("Device orientation or camera not supported");
         showARUnsupported();
         return;
+    }
+
+    // Request permission for motion sensors on iOS
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        try {
+            const permission = await DeviceOrientationEvent.requestPermission();
+            if (permission !== 'granted') {
+                console.error("Motion permission denied");
+                showARUnsupported();
+                return;
+            }
+        } catch (error) {
+            console.error("Error requesting motion permission:", error);
+            showARUnsupported();
+            return;
+        }
     }
 
     try {
@@ -341,14 +394,6 @@ async function initARCamera() {
 
         const video = document.getElementById('arCamera');
         video.srcObject = cameraStream;
-        // Check camera capabilities
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const hasCamera = devices.some(device => device.kind === 'videoinput');
-        
-        if (!hasCamera) {
-            throw new Error("No camera found");
-        }
-        
 
         // Get precise location
         const position = await new Promise((resolve, reject) => {
@@ -359,10 +404,7 @@ async function initARCamera() {
         });
 
         // Calculate Qibla direction
-        qiblaAngle = calculateQiblaAngle(
-            position.coords.latitude,
-            position.coords.longitude
-        );
+        qiblaAngle = calculateQiblaAngle(position.coords.latitude, position.coords.longitude);
 
         // Start AR rendering
         arActive = true;
@@ -376,45 +418,65 @@ async function initARCamera() {
 }
 
 function calculateQiblaAngle(lat, lng) {
-    // Kaaba coordinates (21.4225° N, 39.8262° E)
     const kaabaLat = 21.422487;
     const kaabaLng = 39.826206;
-    
-    const φ1 = lat * (Math.PI / 180);
-    const φ2 = kaabaLat * (Math.PI / 180);
-    const Δλ = (kaabaLng - lng) * (Math.PI / 180);
-    
-    const y = Math.sin(Δλ);
-    const x = (Math.cos(φ1) * Math.tan(φ2)) - (Math.sin(φ1) * Math.cos(Δλ));
-    return Math.atan2(y, x) * (180 / Math.PI); // Convert to degrees
+
+    const φ1 = lat * Math.PI / 180;
+    const φ2 = kaabaLat * Math.PI / 180;
+    const Δλ = (kaabaLng - lng) * Math.PI / 180;
+
+    const y = Math.sin(Δλ) * Math.cos(φ2);
+    const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+    let bearing = Math.atan2(y, x) * 180 / Math.PI;
+    return (bearing + 360) % 360;
 }
 
 function handleOrientation(event) {
     if (!event.alpha) return;
-    
-    // Get compass heading (0-360)
+
+    // Check compass accuracy (iOS-specific)
+    if (event.webkitCompassAccuracy && event.webkitCompassAccuracy < 0) {
+        showCalibrationPrompt();
+        return;
+    }
+
     let heading = event.alpha;
-    
-    // Adjust for different device orientations
-    if (window.orientation) {
-        switch(window.orientation) {
-            case 90:
-                heading = (heading + 270) % 360;
-                break;
-            case -90:
-                heading = (heading + 90) % 360;
-                break;
-            case 180:
-                heading = (360 - heading) % 360;
-                break;
-        }
+    const beta = event.beta;
+    const gamma = event.gamma;
+
+    // Adjust for screen orientation
+    const orientation = window.screen.orientation?.angle || 0;
+    switch (orientation) {
+        case 90:
+            heading = (heading + 270) % 360;
+            break;
+        case 270:
+            heading = (heading + 90) % 360;
+            break;
+        case 180:
+            heading = (360 - heading) % 360;
+            break;
     }
-    
-    // Smooth the heading value (reduces jitter)
-    if (Math.abs(heading - currentHeading) > 1) {
-        currentHeading = heading;
-        updateDegreeDisplay();
+
+    // Check for excessive tilt
+    if (Math.abs(beta) > 45 || Math.abs(gamma) > 45) {
+        document.getElementById('degreeValue').textContent = currentLang === 'ar' ? 'أمل جهازك بشكل مسطح' : 'Hold device flat';
+        return;
     }
+
+    // Smooth heading
+    currentHeading = smoothHeading(heading);
+    updateDegreeDisplay();
+}
+
+function smoothHeading(newHeading) {
+    const smoothingFactor = 0.1;
+    if (smoothedHeading === null) {
+        smoothedHeading = newHeading;
+    } else {
+        smoothedHeading += smoothingFactor * (newHeading - smoothedHeading);
+    }
+    return smoothedHeading;
 }
 
 function updateDegreeDisplay() {
@@ -430,45 +492,35 @@ function startARRenderLoop() {
 
     function render() {
         if (!arActive) return;
-        
-        // Ensure video is ready
+
         if (video.readyState !== 4) {
             animationFrameId = requestAnimationFrame(render);
             return;
         }
 
-        // Match canvas to video display size (not video intrinsic size)
         const displayWidth = video.clientWidth;
         const displayHeight = video.clientHeight;
         canvas.width = displayWidth;
         canvas.height = displayHeight;
-        
-        // Calculate relative angle (adjusted for device orientation)
-        smoothedHeading += (currentHeading - smoothedHeading) * 0.1; // Easing factor (0.1 = smooth, adjust if needed)
 
         const relativeAngle = (qiblaAngle - currentHeading + 360) % 360;
         const rad = relativeAngle * (Math.PI / 180);
-        
-        // Calculate position with boundary checks
+
         const centerX = displayWidth / 2;
         const centerY = displayHeight / 2;
-        const radius = Math.min(centerX, centerY) * 0.7; // 70% of screen radius
-        
+        const radius = Math.min(centerX, centerY) * 0.7;
+
         let kaabaX = centerX + Math.sin(rad) * radius;
         let kaabaY = centerY - Math.cos(rad) * radius;
-        
-        // Keep indicator within bounds
+
         kaabaX = Math.max(30, Math.min(displayWidth - 30, kaabaX));
         kaabaY = Math.max(30, Math.min(displayHeight - 30, kaabaY));
-        
-        // Position Kaaba indicator with smooth transition
+
         kaabaIndicator.style.transform = `translate(${kaabaX - 24}px, ${kaabaY - 24}px)`;
         kaabaIndicator.style.opacity = '1';
-        
-        // Clear and redraw AR overlay
+
         ctx.clearRect(0, 0, displayWidth, displayHeight);
-        
-        // Draw direction line (only if Kaaba is off-screen)
+
         if (Math.abs(kaabaX - centerX) > 20 || Math.abs(kaabaY - centerY) > 20) {
             ctx.beginPath();
             ctx.moveTo(centerX, centerY);
@@ -476,30 +528,22 @@ function startARRenderLoop() {
             ctx.strokeStyle = 'rgba(255, 50, 50, 0.8)';
             ctx.lineWidth = 3;
             ctx.stroke();
-            
-            // Draw arrowhead
+
             const headLength = 15;
             const angle = Math.atan2(kaabaY - centerY, kaabaX - centerX);
             ctx.beginPath();
             ctx.moveTo(kaabaX, kaabaY);
-            ctx.lineTo(
-                kaabaX - headLength * Math.cos(angle - Math.PI/6),
-                kaabaY - headLength * Math.sin(angle - Math.PI/6)
-            );
+            ctx.lineTo(kaabaX - headLength * Math.cos(angle - Math.PI / 6), kaabaY - headLength * Math.sin(angle - Math.PI / 6));
             ctx.moveTo(kaabaX, kaabaY);
-            ctx.lineTo(
-                kaabaX - headLength * Math.cos(angle + Math.PI/6),
-                kaabaY - headLength * Math.sin(angle + Math.PI/6)
-            );
+            ctx.lineTo(kaabaX - headLength * Math.cos(angle + Math.PI / 6), kaabaY - headLength * Math.sin(angle + Math.PI / 6));
             ctx.strokeStyle = 'rgba(255, 80, 80, 0.9)';
             ctx.lineWidth = 3;
             ctx.stroke();
         }
-        
+
         animationFrameId = requestAnimationFrame(render);
     }
-    
-    // Initial hide then fade in
+
     kaabaIndicator.style.opacity = '0';
     kaabaIndicator.style.transition = 'opacity 0.5s, transform 0.2s';
     render();
@@ -513,9 +557,81 @@ function showARUnsupported() {
     el.querySelector('#fallbackBtnText').textContent = languages[currentLang].fallbackBtnText;
 }
 
+function showCalibrationPrompt() {
+    const unsupportedDiv = document.getElementById('arUnsupported');
+    unsupportedDiv.classList.remove('hidden');
+    unsupportedDiv.innerHTML = `
+        <i class="fas fa-exclamation-circle text-yellow-500 text-3xl mb-3"></i>
+        <h3 class="font-bold">${languages[currentLang].arErrorTitle}</h3>
+        <p class="mb-4">${languages[currentLang].calibrationMessage}</p>
+        <button onclick="dismissCalibrationPrompt()" class="bg-blue-500 text-white px-6 py-2 rounded-lg">
+            <i class="fas fa-check mr-2"></i>
+            ${languages[currentLang].calibrationDone}
+        </button>
+    `;
+}
+
+function dismissCalibrationPrompt() {
+    document.getElementById('arUnsupported').classList.add('hidden');
+}
+
 function initCompassFallback() {
     stopARCamera();
-    // Implement basic compass version here
+
+    const qiblaContent = document.getElementById('qiblaContent');
+    qiblaContent.innerHTML = `
+        <div class="relative w-full h-[70vh] bg-gray-800 rounded-xl flex items-center justify-center">
+            <div id="compass" class="w-64 h-64 relative">
+                <div class="absolute inset-0 bg-white rounded-full flex items-center justify-center">
+                    <i class="fas fa-compass text-6xl text-blue-500"></i>
+                </div>
+                <div id="qiblaNeedle" class="absolute w-2 h-32 bg-red-500 left-1/2 transform -translate-x-1/2 origin-bottom"></div>
+            </div>
+            <div class="absolute bottom-4 text-white text-lg">
+                <i class="fas fa-compass mr-2"></i>
+                <span id="degreeValue">0°</span>
+            </div>
+        </div>
+    `;
+
+    arActive = true;
+    window.addEventListener('deviceorientation', updateFallbackCompass);
+
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            qiblaAngle = calculateQiblaAngle(position.coords.latitude, position.coords.longitude);
+        },
+        () => {
+            qiblaAngle = 0;
+            updateDegreeDisplay();
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+    );
+}
+
+function updateFallbackCompass(event) {
+    if (!event.alpha || !arActive) return;
+
+    let heading = event.alpha;
+    const orientation = window.screen.orientation?.angle || 0;
+    switch (orientation) {
+        case 90:
+            heading = (heading + 270) % 360;
+            break;
+        case 270:
+            heading = (heading + 90) % 360;
+            break;
+        case 180:
+            heading = (360 - heading) % 360;
+            break;
+    }
+
+    currentHeading = smoothHeading(heading);
+    const relativeAngle = (qiblaAngle - currentHeading + 360) % 360;
+    document.getElementById('degreeValue').textContent = `${Math.round(relativeAngle)}°`;
+
+    const needle = document.getElementById('qiblaNeedle');
+    needle.style.transform = `translateX(-50%) rotate(${relativeAngle}deg)`;
 }
 
 function stopARCamera() {
@@ -527,6 +643,7 @@ function stopARCamera() {
         cameraStream.getTracks().forEach(track => track.stop());
     }
     window.removeEventListener('deviceorientation', handleOrientation);
+    window.removeEventListener('deviceorientation', updateFallbackCompass);
 }
 
 // Event Listeners
@@ -536,243 +653,215 @@ document.getElementById('flipCameraBtn').addEventListener('click', () => {
     initARCamera();
 });
 
-        // Add this click handler function
-        function handleDhikrClick() {
-            // Add the 'clicked' class to the element
-            const arabicText = document.getElementById('arabicText');
-            arabicText.classList.add('clicked');
-            
-            // Optionally, remove the 'clicked' class after the effect completes
-            setTimeout(() => {
-                arabicText.classList.remove('clicked');
-            }, 300);  // Time to match the animation duration
+function handleDhikrClick() {
+    const arabicText = document.getElementById('arabicText');
+    arabicText.classList.add('clicked');
+    setTimeout(() => arabicText.classList.remove('clicked'), 300);
 
-            if (filteredAdhkar[current].remainingRepeats > 0) {
-                filteredAdhkar[current].remainingRepeats--;
-                updateRepeatCounter();
-            }
-        }
+    if (filteredAdhkar[current].remainingRepeats > 0) {
+        filteredAdhkar[current].remainingRepeats--;
+        updateRepeatCounter();
+    }
+}
 
-        // Add this function to update counter display
-        function updateRepeatCounter() {
-            document.getElementById('repeatValue').innerText = filteredAdhkar[current].remainingRepeats;
-        }
+function updateRepeatCounter() {
+    document.getElementById('repeatValue').innerText = filteredAdhkar[current].remainingRepeats;
+}
 
-        function switchLanguage() {
-            currentLang = currentLang === 'ar' ? 'en' : 'ar';
-            document.documentElement.lang = currentLang;
-            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-            updateUI();
-            displayDhikr();
-            updatePrayerTimesUI();
-        }
+function switchLanguage() {
+    currentLang = currentLang === 'ar' ? 'en' : 'ar';
+    document.documentElement.lang = currentLang;
+    document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+    updateUI();
+    displayDhikr();
+    updatePrayerTimesUI();
+}
 
-        // Update UI Text Based on Language
-        function updateUI() {
-            const lang = languages[currentLang];
-            document.getElementById('pageTitle').innerText = lang.title;
-            document.getElementById('btnMorning').innerText = lang.morning;
-            document.getElementById('btnEvening').innerText = lang.evening;
-            document.getElementById('btnPrev').innerText = lang.previous;
-            document.getElementById('btnNext').innerText = lang.next;
-            document.getElementById('btnBack').innerText = lang.back;
-            document.getElementById('langToggle').innerText = lang.langSwitch;
-            document.getElementById('repeatLabel').innerText = lang.repeatLabel;
-            document.getElementById('swipeHintText').innerText = lang.swipeHint;
-            document.getElementById('clickHintText').innerText = lang.clickHint;
-            document.getElementById('adhkarTab').innerText = lang.adhkarTab;
-            document.getElementById('prayerTab').innerText = lang.prayerTab;
+function updateUI() {
+    const lang = languages[currentLang];
+    document.getElementById('pageTitle').innerText = lang.title;
+    document.getElementById('btnMorning').innerText = lang.morning;
+    document.getElementById('btnEvening').innerText = lang.evening;
+    document.getElementById('btnPrev').innerText = lang.previous;
+    document.getElementById('btnNext').innerText = lang.next;
+    document.getElementById('btnBack').innerText = lang.back;
+    document.getElementById('langToggle').innerText = lang.langSwitch;
+    document.getElementById('repeatLabel').innerText = lang.repeatLabel;
+    document.getElementById('swipeHintText').innerText = lang.swipeHint;
+    document.getElementById('clickHintText').innerText = lang.clickHint;
+    document.getElementById('adhkarTab').innerText = lang.adhkarTab;
+    document.getElementById('prayerTab').innerText = lang.prayerTab;
+    document.getElementById('qiblaTab').innerText = lang.qiblaTab;
     document.getElementById('btnRefresh').innerHTML = `<i class="fas fa-sync-alt mr-2"></i> ${lang.refresh}`;
+}
 
+function updatePrayerTimesUI() {
+    const lang = languages[currentLang];
+    document.getElementById('prayerTitle').innerText = lang.prayerTitle;
+    document.querySelector('#azan-fajr span:first-child').innerText = lang.fajr + ":";
+    document.querySelector('#azan-dhuhr span:first-child').innerText = lang.dhuhr + ":";
+    document.querySelector('#azan-asr span:first-child').innerText = lang.asr + ":";
+    document.querySelector('#azan-maghrib span:first-child').innerText = lang.maghrib + ":";
+    document.querySelector('#azan-isha span:first-child').innerText = lang.isha + ":";
+}
+
+fetch('adhkar.json')
+    .then(res => res.json())
+    .then(data => {
+        adhkar.push(...data);
+        document.getElementById('loadingSpinner').classList.add('hidden');
+    })
+    .catch(err => console.error("Error loading adhkar.json:", err));
+
+function loadAdhkar(time) {
+    filteredAdhkar = adhkar.filter(d => d.time === time).map(d => ({
+        ...d,
+        remainingRepeats: d.repeat
+    }));
+    current = 0;
+    document.getElementById('home').classList.add('fade-leave');
+    setTimeout(() => {
+        document.getElementById('home').classList.add('hidden');
+        document.getElementById('adhkarView').classList.remove('hidden', 'fade-leave');
+        document.getElementById('adhkarView').classList.add('fade-enter');
+        requestAnimationFrame(() => document.getElementById('adhkarView').classList.add('fade-enter-active'));
+    }, 300);
+    displayDhikr();
+}
+
+function displayDhikr() {
+    if (!filteredAdhkar.length) return;
+    const dhikr = filteredAdhkar[current];
+    document.getElementById('arabicText').innerText = dhikr.arabic;
+    document.getElementById('transliterationText').innerText = dhikr.transliteration;
+    document.getElementById('translationText').innerText = dhikr.translation;
+    document.getElementById('dhikrCounter').innerText = languages[currentLang].counter(current + 1, filteredAdhkar.length);
+    document.getElementById('repeatValue').innerText = dhikr.remainingRepeats;
+}
+
+function nextDhikr() {
+    if (current < filteredAdhkar.length - 1) {
+        current++;
+        displayDhikr();
+    }
+}
+
+function prevDhikr() {
+    if (current > 0) {
+        current--;
+        displayDhikr();
+    }
+}
+
+function goHome() {
+    document.getElementById('adhkarView').classList.add('fade-leave');
+    setTimeout(() => {
+        document.getElementById('adhkarView').classList.add('hidden');
+        document.getElementById('home').classList.remove('hidden');
+        document.getElementById('home').classList.add('fade-enter');
+        requestAnimationFrame(() => document.getElementById('home').classList.add('fade-enter-active'));
+    }, 300);
+}
+
+function handleTouchStart(e) {
+    touchStartX = e.changedTouches[0].screenX;
+}
+
+function handleTouchEnd(e) {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+}
+
+function handleSwipe() {
+    const diff = touchEndX - touchStartX;
+    if (Math.abs(diff) < swipeThreshold) return;
+    if (diff > 0) {
+        nextDhikr();
+    } else {
+        prevDhikr();
+    }
+}
+
+async function fetchPrayerTimes(city = "Amman") {
+    const today = new Date().toISOString().split('T')[0];
+    const formattedDate = today.split('-').reverse().join('-');
+    const url = `https://api.aladhan.com/v1/timingsByAddress/${formattedDate}?address=${encodeURIComponent(city)}`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.code === 200) {
+            const timings = data.data.timings;
+            const location = data.data.meta.timezone;
+
+            document.getElementById("azan-location").innerText = languages[currentLang].locationText(city, location);
+            document.querySelector("#azan-fajr span:last-child").innerText = timings.Fajr;
+            document.querySelector("#azan-dhuhr span:last-child").innerText = timings.Dhuhr;
+            document.querySelector("#azan-asr span:last-child").innerText = timings.Asr;
+            document.querySelector("#azan-maghrib span:last-child").innerText = timings.Maghrib;
+            document.querySelector("#azan-isha span:last-child").innerText = timings.Isha;
+        } else {
+            document.getElementById("azan-location").innerText = currentLang === 'ar' ? "فشل في جلب أوقات الصلاة" : "Failed to fetch prayer times";
         }
+    } catch (error) {
+        console.error("Error fetching prayer times:", error);
+        document.getElementById("azan-location").innerText = currentLang === 'ar' ? "خطأ في جلب أوقات الصلاة" : "Error fetching prayer times";
+    }
+}
 
-        function updatePrayerTimesUI() {
-            const lang = languages[currentLang];
-            document.getElementById('prayerTitle').innerText = lang.prayerTitle;
-            document.querySelector('#azan-fajr span:first-child').innerText = lang.fajr + ":";
-            document.querySelector('#azan-dhuhr span:first-child').innerText = lang.dhuhr + ":";
-            document.querySelector('#azan-asr span:first-child').innerText = lang.asr + ":";
-            document.querySelector('#azan-maghrib span:first-child').innerText = lang.maghrib + ":";
-            document.querySelector('#azan-isha span:first-child').innerText = lang.isha + ":";
-        }
+async function detectCityAndFetchTimes() {
+    try {
+        const locationRes = await fetch("https://ipapi.co/json/");
+        const locationData = await locationRes.json();
+        currentCity = locationData.city || "Amman";
+        fetchPrayerTimes(currentCity);
+    } catch (error) {
+        console.error("Could not detect city, falling back to Amman.", error);
+        fetchPrayerTimes("Amman");
+    }
+}
 
-        // Fetch Adhkar Data
-        fetch('adhkar.json')
-            .then(res => res.json())
-            .then(data => {
-                adhkar.push(...data);
-                document.getElementById('loadingSpinner').classList.add('hidden');
-            })
-            .catch(err => console.error("Error loading adhkar.json:", err));
+function refreshPrayerTimes() {
+    fetchPrayerTimes(currentCity);
+}
 
-        // Modify loadAdhkar function to initialize remainingRepeats
-        function loadAdhkar(time) {
-            filteredAdhkar = adhkar.filter(d => d.time === time).map(d => ({
-                ...d,
-                remainingRepeats: d.repeat
-            }));
-            current = 0;
-            document.getElementById('home').classList.add('fade-leave');
-            setTimeout(() => {
-                document.getElementById('home').classList.add('hidden');
-                document.getElementById('adhkarView').classList.remove('hidden', 'fade-leave');
-                document.getElementById('adhkarView').classList.add('fade-enter');
-                requestAnimationFrame(() => document.getElementById('adhkarView').classList.add('fade-enter-active'));
-            }, 300);
-            displayDhikr();
-        }
+function setupTabs() {
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-        function displayDhikr() {
-            if (!filteredAdhkar.length) return;
-            const dhikr = filteredAdhkar[current];
-            document.getElementById('arabicText').innerText = dhikr.arabic;
-            document.getElementById('transliterationText').innerText = dhikr.transliteration;
-            document.getElementById('translationText').innerText = dhikr.translation;
-            document.getElementById('dhikrCounter').innerText = languages[currentLang].counter(current + 1, filteredAdhkar.length);
-            document.getElementById('repeatValue').innerText = dhikr.remainingRepeats;
-        }
+            tab.classList.add('active');
+            const tabId = tab.getAttribute('data-tab');
+            document.getElementById(`${tabId}Content`).classList.add('active');
 
-        // Navigate to Next Dhikr
-        function nextDhikr() {
-            if (current < filteredAdhkar.length - 1) {
-                current++;
-                displayDhikr();
-            }
-        }
-
-        // Navigate to Previous Dhikr
-        function prevDhikr() {
-            if (current > 0) {
-                current--;
-                displayDhikr();
-            }
-        }
-
-        // Go Back to Home
-        function goHome() {
-            document.getElementById('adhkarView').classList.add('fade-leave');
-            setTimeout(() => {
-                document.getElementById('adhkarView').classList.add('hidden');
-                document.getElementById('home').classList.remove('hidden');
-                document.getElementById('home').classList.add('fade-enter');
-                requestAnimationFrame(() => document.getElementById('home').classList.add('fade-enter-active'));
-            }, 300);
-        }
-        
-        // Swipe detection functions
-        function handleTouchStart(e) {
-            touchStartX = e.changedTouches[0].screenX;
-        }
-        
-        function handleTouchEnd(e) {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        }
-        
-        function handleSwipe() {
-            const diff = touchEndX - touchStartX;
-            
-            // Check if swipe distance meets the threshold
-            if (Math.abs(diff) < swipeThreshold) return;
-            
-            if (diff > 0) {
-                // Swiped right to left (next in RTL)
-                nextDhikr();
-            } else {
-                // Swiped left to right (previous in RTL)
-                prevDhikr();
-            }
-        }
-
-        // Prayer Times Functions
-        async function fetchPrayerTimes(city = "Amman") {
-            const today = new Date().toISOString().split('T')[0];
-            const formattedDate = today.split('-').reverse().join('-');
-            const url = `https://api.aladhan.com/v1/timingsByAddress/${formattedDate}?address=${encodeURIComponent(city)}`;
-
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-
-                if (data.code === 200) {
-                    const timings = data.data.timings;
-                    const location = data.data.meta.timezone;
-
-                    document.getElementById("azan-location").innerText = 
-                        languages[currentLang].locationText(city, location);
-                    
-                    document.querySelector("#azan-fajr span:last-child").innerText = timings.Fajr;
-                    document.querySelector("#azan-dhuhr span:last-child").innerText = timings.Dhuhr;
-                    document.querySelector("#azan-asr span:last-child").innerText = timings.Asr;
-                    document.querySelector("#azan-maghrib span:last-child").innerText = timings.Maghrib;
-                    document.querySelector("#azan-isha span:last-child").innerText = timings.Isha;
-                } else {
-                    document.getElementById("azan-location").innerText = "Failed to fetch prayer times.";
-                }
-
-            } catch (error) {
-                console.error("Error fetching prayer times:", error);
-                document.getElementById("azan-location").innerText = "Error fetching prayer times.";
-            }
-        }
-
-        async function detectCityAndFetchTimes() {
-            try {
-                const locationRes = await fetch("https://ipapi.co/json/");
-                const locationData = await locationRes.json();
-                currentCity = locationData.city || "Amman";
-                fetchPrayerTimes(currentCity);
-            } catch (error) {
-                console.error("Could not detect city, falling back to Amman.", error);
-                fetchPrayerTimes("Amman");
-            }
-        }
-
-        function refreshPrayerTimes() {
-            fetchPrayerTimes(currentCity);
-        }
-
-        // Tab switching functionality
-        function setupTabs() {
-            const tabs = document.querySelectorAll('.tab');
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    // Remove active class from all tabs and content
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    
-                    // Add active class to clicked tab and corresponding content
-                    tab.classList.add('active');
-                    const tabId = tab.getAttribute('data-tab');
-                    document.getElementById(`${tabId}Content`).classList.add('active');
-
-                    if (tabId === 'qibla') {
+            if (tabId === 'qibla') {
                 initARCamera();
             } else {
                 stopARCamera();
             }
-
-                });
-            });
-        }
-
-        // Initialize the app
-        document.addEventListener('DOMContentLoaded', () => {
-            const adhkarView = document.getElementById('adhkarView');
-            const arabicText = document.getElementById('arabicText');
-            
-            if (adhkarView) {
-                adhkarView.addEventListener('touchstart', handleTouchStart, false);
-                adhkarView.addEventListener('touchend', handleTouchEnd, false);
-            }
-            
-            if (arabicText) {
-                arabicText.addEventListener('click', handleDhikrClick);
-            }
-            
-            setupTabs();
-            detectCityAndFetchTimes();
         });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const adhkarView = document.getElementById('adhkarView');
+    const arabicText = document.getElementById('arabicText');
+
+    if (adhkarView) {
+        adhkarView.addEventListener('touchstart', handleTouchStart, false);
+        adhkarView.addEventListener('touchend', handleTouchEnd, false);
+    }
+
+    if (arabicText) {
+        arabicText.addEventListener('click', handleDhikrClick);
+    }
+
+    setupTabs();
+    detectCityAndFetchTimes();
+});
     </script>
 </body>
 </html>
