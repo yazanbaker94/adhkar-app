@@ -130,9 +130,6 @@
 
         <!-- Adhkar Tab Content -->
         <div id="qiblaContent" class="tab-content w-full p-4 hidden">
-            <div id="compassWarning" style="display:none; color: red; font-size: 18px; position: absolute; top: 20px; left: 50%; transform: translateX(-50%);">
-                Compass is not calibrated. Please move your phone in a figure-8 motion to calibrate.
-            </div>
             <!-- AR Viewport -->
             <div class="relative w-full h-[70vh] bg-black rounded-xl overflow-hidden">
                 <!-- Camera Feed -->
@@ -245,7 +242,6 @@
 
     <script>
         let smoothedHeading = 0;
-        let lastHeading = 0; // Keep track of last heading to detect large changes
 
         const adhkar = [];
         let current = 0;
@@ -425,55 +421,7 @@ function updateDegreeDisplay() {
     const relativeAngle = (qiblaAngle - currentHeading + 360) % 360;
     document.getElementById('degreeValue').textContent = `${Math.round(relativeAngle)}°`;
 }
-function detectCompassCalibration() {
-    if (Math.abs(currentHeading - lastHeading) > 30) {  // If the heading change is greater than 30 degrees
-        showCalibrationWarning(true);
-    } else {
-        showCalibrationWarning(false);
-    }
-    lastHeading = currentHeading;
-}
 
-function showCalibrationWarning(isVisible) {
-    const warningElement = document.getElementById('compassWarning');
-    if (isVisible) {
-        warningElement.style.display = 'block';  // Show warning
-    } else {
-        warningElement.style.display = 'none';   // Hide warning
-    }
-}
-function drawRadar() {
-    // Set radar dimensions
-    const radarSize = Math.min(canvas.width, canvas.height) * 0.4;
-    const radarCenterX = canvas.width / 2;
-    const radarCenterY = canvas.height / 2;
-
-    // Draw the radar circle
-    ctx.beginPath();
-    ctx.arc(radarCenterX, radarCenterY, radarSize, 0, 2 * Math.PI);
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // Draw a smaller circle based on the distance to the Qibla
-    const distanceToQibla = Math.abs(relativeAngle); // You can calculate this as the absolute angle difference
-    const radarRadius = radarSize * (1 - (distanceToQibla / 180)); // The smaller the distance, the closer the circle
-
-    // Draw the smaller circle representing how close you are to the Qibla
-    ctx.beginPath();
-    ctx.arc(radarCenterX, radarCenterY, radarRadius, 0, 2 * Math.PI);
-    ctx.strokeStyle = 'rgba(0, 255, 0, 0.8)'; // Green color for proximity to Qibla
-    ctx.lineWidth = 4;
-    ctx.stroke();
-}
-function checkVibrationFeedback() {
-    const distanceToQibla = Math.abs(relativeAngle);
-    if (distanceToQibla <= 5) {  // If you're within 5 degrees of the Qibla
-        if (navigator.vibrate) {
-            navigator.vibrate(200);  // Vibrate for 200ms
-        }
-    }
-}
 function startARRenderLoop() {
     const video = document.getElementById('arCamera');
     const canvas = document.getElementById('arCanvas');
@@ -481,82 +429,75 @@ function startARRenderLoop() {
     const kaabaIndicator = document.getElementById('kaabaIndicator');
 
     function render() {
-    if (!arActive) return;
-    
-    // Ensure video is ready
-    if (video.readyState !== 4) {
-        animationFrameId = requestAnimationFrame(render);
-        return;
-    }
-
-    // Match canvas to video display size
-    const displayWidth = video.clientWidth;
-    const displayHeight = video.clientHeight;
-    canvas.width = displayWidth;
-    canvas.height = displayHeight;
-    
-    // Calculate relative angle to Qibla
-    smoothedHeading += (currentHeading - smoothedHeading) * 0.1;
-    const relativeAngle = (qiblaAngle - smoothedHeading + 360) % 360;
-    const rad = relativeAngle * (Math.PI / 180);
-    
-    // Radar and Calibration Warning
-    drawRadar();
-    detectCompassCalibration();
-    
-    // Vibration feedback
-    checkVibrationFeedback();
-
-    // Calculate position for Kaaba marker
-    const centerX = displayWidth / 2;
-    const centerY = displayHeight / 2;
-    const radius = Math.min(centerX, centerY) * 0.7;
-    
-    let kaabaX = centerX + Math.sin(rad) * radius;
-    let kaabaY = centerY - Math.cos(rad) * radius;
-
-    // Keep the Kaaba marker within bounds
-    kaabaX = Math.max(30, Math.min(displayWidth - 30, kaabaX));
-    kaabaY = Math.max(30, Math.min(displayHeight - 30, kaabaY));
-    
-    // Position Kaaba indicator with smooth transition
-    kaabaIndicator.style.transform = `translate(${kaabaX - 24}px, ${kaabaY - 24}px)`;
-    kaabaIndicator.style.opacity = '1';
-
-    // Clear and redraw AR overlay
-    ctx.clearRect(0, 0, displayWidth, displayHeight);
-
-    // Draw the direction line and the arrow if Kaaba is off-screen
-    if (Math.abs(kaabaX - centerX) > 20 || Math.abs(kaabaY - centerY) > 20) {
-        ctx.beginPath();
-        ctx.moveTo(centerX, centerY);
-        ctx.lineTo(kaabaX, kaabaY);
-        ctx.strokeStyle = 'rgba(255, 50, 50, 0.8)';
-        ctx.lineWidth = 3;
-        ctx.stroke();
+        if (!arActive) return;
         
-        // Draw arrowhead
-        const headLength = 15;
-        const angle = Math.atan2(kaabaY - centerY, kaabaX - centerX);
-        ctx.beginPath();
-        ctx.moveTo(kaabaX, kaabaY);
-        ctx.lineTo(
-            kaabaX - headLength * Math.cos(angle - Math.PI / 6),
-            kaabaY - headLength * Math.sin(angle - Math.PI / 6)
-        );
-        ctx.moveTo(kaabaX, kaabaY);
-        ctx.lineTo(
-            kaabaX - headLength * Math.cos(angle + Math.PI / 6),
-            kaabaY - headLength * Math.sin(angle + Math.PI / 6)
-        );
-        ctx.strokeStyle = 'rgba(255, 80, 80, 0.9)';
-        ctx.lineWidth = 3;
-        ctx.stroke();
+        // Ensure video is ready
+        if (video.readyState !== 4) {
+            animationFrameId = requestAnimationFrame(render);
+            return;
+        }
+
+        // Match canvas to video display size (not video intrinsic size)
+        const displayWidth = video.clientWidth;
+        const displayHeight = video.clientHeight;
+        canvas.width = displayWidth;
+        canvas.height = displayHeight;
+        
+        // Calculate relative angle (adjusted for device orientation)
+        smoothedHeading += (currentHeading - smoothedHeading) * 0.1; // Easing factor (0.1 = smooth, adjust if needed)
+
+        const relativeAngle = (qiblaAngle - currentHeading + 360) % 360;
+        const rad = relativeAngle * (Math.PI / 180);
+        
+        // Calculate position with boundary checks
+        const centerX = displayWidth / 2;
+        const centerY = displayHeight / 2;
+        const radius = Math.min(centerX, centerY) * 0.7; // 70% of screen radius
+        
+        let kaabaX = centerX + Math.sin(rad) * radius;
+        let kaabaY = centerY - Math.cos(rad) * radius;
+        
+        // Keep indicator within bounds
+        kaabaX = Math.max(30, Math.min(displayWidth - 30, kaabaX));
+        kaabaY = Math.max(30, Math.min(displayHeight - 30, kaabaY));
+        
+        // Position Kaaba indicator with smooth transition
+        kaabaIndicator.style.transform = `translate(${kaabaX - 24}px, ${kaabaY - 24}px)`;
+        kaabaIndicator.style.opacity = '1';
+        
+        // Clear and redraw AR overlay
+        ctx.clearRect(0, 0, displayWidth, displayHeight);
+        
+        // Draw direction line (only if Kaaba is off-screen)
+        if (Math.abs(kaabaX - centerX) > 20 || Math.abs(kaabaY - centerY) > 20) {
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(kaabaX, kaabaY);
+            ctx.strokeStyle = 'rgba(255, 50, 50, 0.8)';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // Draw arrowhead
+            const headLength = 15;
+            const angle = Math.atan2(kaabaY - centerY, kaabaX - centerX);
+            ctx.beginPath();
+            ctx.moveTo(kaabaX, kaabaY);
+            ctx.lineTo(
+                kaabaX - headLength * Math.cos(angle - Math.PI/6),
+                kaabaY - headLength * Math.sin(angle - Math.PI/6)
+            );
+            ctx.moveTo(kaabaX, kaabaY);
+            ctx.lineTo(
+                kaabaX - headLength * Math.cos(angle + Math.PI/6),
+                kaabaY - headLength * Math.sin(angle + Math.PI/6)
+            );
+            ctx.strokeStyle = 'rgba(255, 80, 80, 0.9)';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        }
+        
+        animationFrameId = requestAnimationFrame(render);
     }
-
-    animationFrameId = requestAnimationFrame(render);
-}
-
     
     // Initial hide then fade in
     kaabaIndicator.style.opacity = '0';
