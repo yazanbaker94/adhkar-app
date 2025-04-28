@@ -241,6 +241,8 @@
     </footer>
 
     <script>
+        let smoothedHeading = 0;
+
         const adhkar = [];
         let current = 0;
         let filteredAdhkar = [];
@@ -442,8 +444,30 @@ function startARRenderLoop() {
         canvas.height = displayHeight;
         
         // Calculate relative angle (adjusted for device orientation)
-        const relativeAngle = (qiblaAngle - currentHeading + 360) % 360;
-        const rad = relativeAngle * (Math.PI / 180);
+        smoothedHeading += (currentHeading - smoothedHeading) * 0.1; // Easing factor (0.1 = smooth, adjust if needed)
+
+const relativeAngle = (qiblaAngle - smoothedHeading + 360) % 360;
+const rad = relativeAngle * (Math.PI / 180);
+// === NEW: Fade based on accuracy ===
+let deviation = Math.abs(relativeAngle);
+if (deviation > 180) {
+    deviation = 360 - deviation;
+}
+
+let targetOpacity;
+if (deviation < 5) {
+    targetOpacity = 1;
+} else if (deviation < 30) {
+    targetOpacity = 1 - (deviation - 5) / 25;
+} else {
+    targetOpacity = 0.3;
+}
+
+const currentOpacity = parseFloat(kaabaIndicator.style.opacity) || 0;
+const newOpacity = currentOpacity + (targetOpacity - currentOpacity) * 0.1;
+
+kaabaIndicator.style.opacity = newOpacity.toFixed(2);
+
         
         // Calculate position with boundary checks
         const centerX = displayWidth / 2;
