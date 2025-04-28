@@ -8,6 +8,33 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
+        /* AR View Styles */
+#arCamera, #arCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#kaabaIndicator {
+    transition: left 0.1s, top 0.1s;
+    z-index: 20;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+}
+
+#qiblaDegree {
+    backdrop-filter: blur(10px);
+    font-family: monospace;
+    font-weight: bold;
+}
+
+/* iOS specific fixes */
+@supports (-webkit-touch-callout: none) {
+    #arCamera {
+        object-fit: cover;
+    }
+}
         /* Fade-in and fade-out transitions */
         .fade-enter {
             opacity: 0;
@@ -109,7 +136,7 @@
                 
                 <!-- Kaaba Indicator -->
                 <div id="kaabaIndicator" class="absolute w-12 h-12">
-                    <img src="https://i.ibb.co/0jq4R3J/kaaba-icon.png" alt="Kaaba" class="w-full h-full">
+                    <img src="https://cdn-icons-png.flaticon.com/512/7222/7222554.png" alt="Kaaba" class="w-full h-full">
                 </div>
             </div>
             
