@@ -416,7 +416,7 @@ function handleOrientation(event) {
 }
 
 function updateDegreeDisplay() {
-    const relativeAngle = (currentHeading + qiblaAngle + 360) % 360;
+    const relativeAngle = (qiblaAngle - currentHeading + 360) % 360;
     document.getElementById('degreeValue').textContent = `${Math.round(relativeAngle)}°`;
 }
 
