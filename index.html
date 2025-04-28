@@ -317,8 +317,12 @@ languages.en.arErrorMessage = "This feature requires a mobile device with motion
 languages.en.fallbackBtnText = "Use Basic Compass";
 
 async function initARCamera() {
+    console.log("Initializing AR Camera...");
+
     // Check for required APIs
     if (!('DeviceOrientationEvent' in window) || !navigator.mediaDevices) {
+        console.error("Device orientation not supported");
+
         showARUnsupported();
         return;
     }
@@ -335,6 +339,14 @@ async function initARCamera() {
 
         const video = document.getElementById('arCamera');
         video.srcObject = cameraStream;
+        // Check camera capabilities
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const hasCamera = devices.some(device => device.kind === 'videoinput');
+        
+        if (!hasCamera) {
+            throw new Error("No camera found");
+        }
+        
 
         // Get precise location
         const position = await new Promise((resolve, reject) => {
@@ -376,9 +388,29 @@ function calculateQiblaAngle(lat, lng) {
 }
 
 function handleOrientation(event) {
-    if (event.alpha !== null) {
-        // Adjust for device orientation
-        currentHeading = (360 - event.alpha) % 360;
+    if (!event.alpha) return;
+    
+    // Get compass heading (0-360)
+    let heading = event.alpha;
+    
+    // Adjust for different device orientations
+    if (window.orientation) {
+        switch(window.orientation) {
+            case 90:
+                heading = (heading + 270) % 360;
+                break;
+            case -90:
+                heading = (heading + 90) % 360;
+                break;
+            case 180:
+                heading = (360 - heading) % 360;
+                break;
+        }
+    }
+    
+    // Smooth the heading value (reduces jitter)
+    if (Math.abs(heading - currentHeading) > 1) {
+        currentHeading = heading;
         updateDegreeDisplay();
     }
 }
