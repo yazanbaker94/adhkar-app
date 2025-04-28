@@ -8,20 +8,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        /* Add to your styles */
-#compassNeedle {
-    transition: transform 0.1s ease-out;
-    transform-origin: center;
-}
-
-#qiblaIndicator {
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
-    z-index: 10;
-}
-
-.dark #qiblaContent {
-    background-color: #1a202c;
-}
         /* Fade-in and fade-out transitions */
         .fade-enter {
             opacity: 0;
@@ -88,7 +74,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab">القبلة</div>
+        <div class="tab" data-tab="qibla" id="qibla">qibla</div>
 
         <div class="tab active" data-tab="adhkar" id="adhkarTab">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab">أوقات الصلاة</div>
@@ -99,30 +85,45 @@
         <div id="loadingSpinner" class="fixed inset-0 flex justify-center items-center bg-white dark:bg-black z-50">
             <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
-        <div id="qiblaContent" class="tab-content w-full max-w-md p-4 hidden">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 text-center">
-                <h2 class="text-xl font-bold mb-4" id="qiblaTitle">اتجاه القبلة</h2>
-                
-                <!-- Compass Visual -->
-                <div class="relative mx-auto w-64 h-64 mb-6">
-                    <img src="https://cdn-icons-png.flaticon.com/512/3165/3165298.png" alt="Compass Base" class="absolute w-full h-full">
-                    <img src="https://www.qiblafind.com/images/kibleyonu.png" alt="Compass Needle" 
-                         id="compassNeedle" class="absolute w-full h-full transition-transform duration-100">
-                    <div id="qiblaIndicator" class="absolute w-4 h-4 bg-red-500 rounded-full top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
-                </div>
-                
-                <!-- Location Info -->
-                <p id="qiblaLocation" class="mb-4">جاري تحديد الموقع...</p>
-                <p id="qiblaDirection" class="text-2xl font-bold"></p>
-                
-                <!-- Calibration Hint -->
-                <p class="text-sm text-gray-500 mt-6">
-                    <i class="fas fa-info-circle mr-1"></i> قم بتحريك جهازك في شكل رقم 8 لتحسين الدقة
-                </p>
-            </div>
-        </div>
 
         <!-- Adhkar Tab Content -->
+        <div id="qiblaContent" class="tab-content w-full p-4 hidden">
+            <!-- AR Viewport -->
+            <div class="relative w-full h-[70vh] bg-black rounded-xl overflow-hidden">
+                <!-- Camera Feed -->
+                <video id="arCamera" autoplay playsinline class="w-full h-full object-cover"></video>
+                
+                <!-- AR Overlay Canvas -->
+                <canvas id="arCanvas" class="absolute top-0 left-0 w-full h-full pointer-events-none"></canvas>
+                
+                <!-- UI Controls -->
+                <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-4">
+                    <button id="flipCameraBtn" class="bg-white/20 text-white p-3 rounded-full">
+                        <i class="fas fa-camera-rotate"></i>
+                    </button>
+                    <div id="qiblaDegree" class="bg-white/20 text-white px-4 py-2 rounded-full">
+                        <i class="fas fa-compass mr-2"></i>
+                        <span id="degreeValue">0°</span>
+                    </div>
+                </div>
+                
+                <!-- Kaaba Indicator -->
+                <div id="kaabaIndicator" class="absolute w-12 h-12">
+                    <img src="https://i.ibb.co/0jq4R3J/kaaba-icon.png" alt="Kaaba" class="w-full h-full">
+                </div>
+            </div>
+            
+            <!-- Fallback Message -->
+            <div id="arUnsupported" class="hidden bg-white dark:bg-gray-800 p-6 rounded-lg text-center mt-4">
+                <i class="fas fa-triangle-exclamation text-yellow-500 text-3xl mb-3"></i>
+                <h3 class="font-bold" id="arErrorTitle">AR Unsupported</h3>
+                <p class="mb-4" id="arErrorMessage">Camera AR requires mobile devices with orientation sensors</p>
+                <button onclick="initCompassFallback()" class="bg-blue-500 text-white px-6 py-2 rounded-lg">
+                    <i class="fas fa-compass mr-2"></i>
+                    <span id="fallbackBtnText">Use Basic Compass</span>
+                </button>
+            </div>
+        </div>
         <div id="adhkarContent" class="tab-content active w-full">
             <!-- Main Buttons for Morning/Evening Adhkar -->
             <div id="home" class="space-y-4 text-center">
@@ -198,15 +199,18 @@
     </footer>
 
     <script>
-        let userLocation = null;
-let qiblaDirection = 0;
-let compassPermissionGranted = false;
         const adhkar = [];
         let current = 0;
         let filteredAdhkar = [];
         let currentLang = 'ar';
         let currentCity = "Amman";
-        
+        // AR Qibla Finder
+let arActive = false;
+let cameraStream = null;
+let facingMode = "environment";
+let currentHeading = 0;
+let qiblaAngle = 0;
+let animationFrameId = null;
         // Variables for swipe detection
         let touchStartX = 0;
         let touchEndX = 0;
@@ -234,9 +238,6 @@ let compassPermissionGranted = false;
                 refresh: "تحديث",
                   adhkarTab: "الأذكار",
         prayerTab: "أوقات الصلاة",
-        qiblaTitle: "اتجاه القبلة",
-        qiblaTab: "القبلة",
-        calibrateHint: "قم بتحريك جهازك في شكل رقم 8 لتحسين الدقة",
                 locationText: (city, timezone) => `المدينة: ${city} | المنطقة الزمنية: ${timezone}`
             },
             en: {
@@ -260,12 +261,163 @@ let compassPermissionGranted = false;
                 refresh: "Refresh",
                  adhkarTab: "Adhkar",
         prayerTab: "Prayer Times",
-        qiblaTitle: "Qibla Direction",
-        qiblaTab: "Qibla",
-        calibrateHint: "Move your device in a figure-8 pattern to calibrate",
                 locationText: (city, timezone) => `City: ${city} | Timezone: ${timezone}`
             }
         };
+
+        // Add to languages object
+languages.ar.arErrorTitle = "الواقع المعزز غير مدعوم";
+languages.ar.arErrorMessage = "هذه الميزة تتطلب هاتفاً مزوداً بمستشعرات الحركة";
+languages.ar.fallbackBtnText = "استخدام البوصلة الأساسية";
+
+languages.en.arErrorTitle = "AR Unsupported";
+languages.en.arErrorMessage = "This feature requires a mobile device with motion sensors";
+languages.en.fallbackBtnText = "Use Basic Compass";
+
+async function initARCamera() {
+    // Check for required APIs
+    if (!('DeviceOrientationEvent' in window) || !navigator.mediaDevices) {
+        showARUnsupported();
+        return;
+    }
+
+    try {
+        // Get camera access
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: facingMode,
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            }
+        });
+
+        const video = document.getElementById('arCamera');
+        video.srcObject = cameraStream;
+
+        // Get precise location
+        const position = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+                enableHighAccuracy: true,
+                timeout: 10000
+            });
+        });
+
+        // Calculate Qibla direction
+        qiblaAngle = calculateQiblaAngle(
+            position.coords.latitude,
+            position.coords.longitude
+        );
+
+        // Start AR rendering
+        arActive = true;
+        window.addEventListener('deviceorientation', handleOrientation);
+        startARRenderLoop();
+
+    } catch (error) {
+        console.error("AR initialization failed:", error);
+        showARUnsupported();
+    }
+}
+
+function calculateQiblaAngle(lat, lng) {
+    // Kaaba coordinates (21.4225° N, 39.8262° E)
+    const kaabaLat = 21.422487;
+    const kaabaLng = 39.826206;
+    
+    const φ1 = lat * (Math.PI / 180);
+    const φ2 = kaabaLat * (Math.PI / 180);
+    const Δλ = (kaabaLng - lng) * (Math.PI / 180);
+    
+    const y = Math.sin(Δλ);
+    const x = (Math.cos(φ1) * Math.tan(φ2)) - (Math.sin(φ1) * Math.cos(Δλ));
+    return Math.atan2(y, x) * (180 / Math.PI); // Convert to degrees
+}
+
+function handleOrientation(event) {
+    if (event.alpha !== null) {
+        // Adjust for device orientation
+        currentHeading = (360 - event.alpha) % 360;
+        updateDegreeDisplay();
+    }
+}
+
+function updateDegreeDisplay() {
+    const relativeAngle = (currentHeading + qiblaAngle + 360) % 360;
+    document.getElementById('degreeValue').textContent = `${Math.round(relativeAngle)}°`;
+}
+
+function startARRenderLoop() {
+    const video = document.getElementById('arCamera');
+    const canvas = document.getElementById('arCanvas');
+    const ctx = canvas.getContext('2d');
+    const kaabaIndicator = document.getElementById('kaabaIndicator');
+
+    function render() {
+        if (!arActive) return;
+        
+        // Match canvas to video size
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        
+        // Calculate Kaaba screen position
+        const relativeAngle = (currentHeading + qiblaAngle) % 360;
+        const rad = relativeAngle * (Math.PI / 180);
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = Math.min(centerX, centerY) * 0.8;
+        
+        const kaabaX = centerX + Math.sin(rad) * radius;
+        const kaabaY = centerY - Math.cos(rad) * radius;
+        
+        // Position Kaaba indicator
+        kaabaIndicator.style.left = `${kaabaX - 24}px`;
+        kaabaIndicator.style.top = `${kaabaY - 24}px`;
+        
+        // Draw direction guide
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(kaabaX, kaabaY);
+        ctx.strokeStyle = 'rgba(255, 0, 0, 0.7)';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        
+        animationFrameId = requestAnimationFrame(render);
+    }
+    
+    render();
+}
+
+function showARUnsupported() {
+    const el = document.getElementById('arUnsupported');
+    el.classList.remove('hidden');
+    el.querySelector('#arErrorTitle').textContent = languages[currentLang].arErrorTitle;
+    el.querySelector('#arErrorMessage').textContent = languages[currentLang].arErrorMessage;
+    el.querySelector('#fallbackBtnText').textContent = languages[currentLang].fallbackBtnText;
+}
+
+function initCompassFallback() {
+    stopARCamera();
+    // Implement basic compass version here
+}
+
+function stopARCamera() {
+    arActive = false;
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+    }
+    if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+    }
+    window.removeEventListener('deviceorientation', handleOrientation);
+}
+
+// Event Listeners
+document.getElementById('flipCameraBtn').addEventListener('click', () => {
+    facingMode = facingMode === "user" ? "environment" : "user";
+    stopARCamera();
+    initARCamera();
+});
 
         // Add this click handler function
         function handleDhikrClick() {
@@ -314,97 +466,8 @@ let compassPermissionGranted = false;
             document.getElementById('adhkarTab').innerText = lang.adhkarTab;
             document.getElementById('prayerTab').innerText = lang.prayerTab;
     document.getElementById('btnRefresh').innerHTML = `<i class="fas fa-sync-alt mr-2"></i> ${lang.refresh}`;
-    document.getElementById('qiblaTab').innerText = languages[currentLang].qiblaTab;
-    document.getElementById('qiblaTitle').innerText = languages[currentLang].qiblaTitle;
 
         }
-
-        // New Qibla Functions
-async function initQiblaFinder() {
-    try {
-        // Request location permission
-        userLocation = await getLocation();
-        calculateQiblaDirection();
-        
-        // Request device orientation permission (iOS 13+)
-        if (typeof DeviceOrientationEvent !== 'undefined' && 
-            typeof DeviceOrientationEvent.requestPermission === 'function') {
-            compassPermissionGranted = await DeviceOrientationEvent.requestPermission()
-                .then(response => response === 'granted')
-                .catch(() => false);
-        } else {
-            compassPermissionGranted = true;
-        }
-        
-        if (compassPermissionGranted) {
-            window.addEventListener('deviceorientation', handleOrientation);
-        } else {
-            document.getElementById('qiblaLocation').innerText = 
-                "يجب السماح بوصول البوصلة للاستفادة من هذه الميزة";
-        }
-    } catch (error) {
-        console.error("Qibla init error:", error);
-        document.getElementById('qiblaLocation').innerText = 
-            "خطأ في تحديد الموقع: " + error.message;
-    }
-}
-
-function getLocation() {
-    return new Promise((resolve, reject) => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                position => resolve({
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                }),
-                error => reject(error),
-                { enableHighAccuracy: true, timeout: 10000 }
-            );
-        } else {
-            reject(new Error("Geolocation not supported"));
-        }
-    });
-}
-
-function calculateQiblaDirection() {
-    // Kaaba coordinates
-    const kaabaLat = 21.422487;
-    const kaabaLng = 39.826206;
-    
-    // Convert to radians
-    const φ1 = userLocation.lat * Math.PI / 180;
-    const φ2 = kaabaLat * Math.PI / 180;
-    const Δλ = (kaabaLng - userLocation.lng) * Math.PI / 180;
-    
-    // Calculate qibla direction
-    const y = Math.sin(Δλ);
-    const x = Math.cos(φ1) * Math.tan(φ2) - Math.sin(φ1) * Math.cos(Δλ);
-    qiblaDirection = Math.atan2(y, x) * 180 / Math.PI;
-    
-    // Update UI
-    document.getElementById('qiblaLocation').innerText = 
-        `خط العرض: ${userLocation.lat.toFixed(4)}, خط الطول: ${userLocation.lng.toFixed(4)}`;
-    document.getElementById('qiblaDirection').innerText = 
-        `الاتجاه: ${Math.round(qiblaDirection)}° من الشمال`;
-}
-
-function handleOrientation(event) {
-    if (event.alpha !== null && compassPermissionGranted) {
-        // Compass heading (0-360)
-        const compassHeading = event.alpha; 
-        
-        // Adjust for device orientation
-        const heading = (compassHeading + (window.orientation || 0)) % 360;
-        
-        // Calculate needle rotation (qibla direction - current heading)
-        const needleRotation = (360 - heading + qiblaDirection) % 360;
-        
-        // Apply rotation
-        document.getElementById('compassNeedle').style.transform = 
-            `rotate(${needleRotation}deg)`;
-    }
-}
-
 
         function updatePrayerTimesUI() {
             const lang = languages[currentLang];
@@ -565,9 +628,13 @@ function handleOrientation(event) {
                     tab.classList.add('active');
                     const tabId = tab.getAttribute('data-tab');
                     document.getElementById(`${tabId}Content`).classList.add('active');
+
                     if (tabId === 'qibla') {
-                initQiblaFinder();
+                initARCamera();
+            } else {
+                stopARCamera();
             }
+
                 });
             });
         }
