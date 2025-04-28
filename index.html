@@ -442,7 +442,7 @@ function startARRenderLoop() {
         canvas.height = displayHeight;
         
         // Calculate relative angle (adjusted for device orientation)
-        const relativeAngle = (360 - currentHeading + qiblaAngle) % 360;
+        const relativeAngle = (qiblaAngle - currentHeading + 360) % 360;
         const rad = relativeAngle * (Math.PI / 180);
         
         // Calculate position with boundary checks
