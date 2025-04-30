@@ -26,9 +26,10 @@
             to { opacity: 1; }
         }
 
-        /* Improve AR Indicator */
+        /* AR Indicator */
         #kaabaIndicator {
             transition: transform 0.2s ease-out, opacity 0.5s;
+            opacity: 1 !important; /* Force visibility */
         }
 
         /* Calibration Prompt */
@@ -71,7 +72,6 @@
             z-index: 100;
             pointer-events: none;
             filter: drop-shadow(0 0 12px rgba(255, 200, 50, 0.7));
-            transition: transform 0.2s ease-out, opacity 0.3s ease;
         }
 
         #qiblaDegree {
@@ -79,6 +79,18 @@
             font-family: monospace;
             font-weight: bold;
             transition: background-color 0.3s ease;
+        }
+
+        /* Debug Overlay */
+        #debugOverlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            font-size: 12px;
+            z-index: 1000;
         }
 
         /* Fix for iOS Safari */
@@ -177,6 +189,7 @@
             <div class="relative w-full h-[70vh] bg-black rounded-xl overflow-hidden">
                 <video id="arCamera" autoplay playsinline class="w-full h-full object-cover"></video>
                 <canvas id="arCanvas" class="absolute top-0 left-0 w-full h-full pointer-events-none"></canvas>
+                <div id="debugOverlay" class="hidden"></div>
                 <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-4">
                     <button id="flipCameraBtn" class="bg-white/20 text-white p-3 rounded-full">
                         <i class="fas fa-camera-rotate"></i>
@@ -301,7 +314,7 @@
         let qiblaAngle = 0;
         let animationFrameId = null;
         let smoothedHeading = null;
-        let lastValidHeading = null;
+        let lastValidHeading = 0;
         const isAndroid = /Android/i.test(navigator.userAgent);
 
         // Swipe detection
@@ -378,9 +391,12 @@
 
         async function initARCamera() {
             console.log("Initializing AR Camera...");
+            const debugOverlay = document.getElementById('debugOverlay');
+            debugOverlay.classList.remove('hidden');
 
             if (!('DeviceOrientationEvent' in window) || !navigator.mediaDevices) {
                 console.error("Device orientation or camera not supported");
+                debugOverlay.textContent += "Error: No DeviceOrientation or MediaDevices\n";
                 showARUnsupported();
                 return;
             }
@@ -390,17 +406,20 @@
                     const permission = await DeviceOrientationEvent.requestPermission();
                     if (permission !== 'granted') {
                         console.error("Motion permission denied");
+                        debugOverlay.textContent += "Error: Motion permission denied\n";
                         showARUnsupported();
                         return;
                     }
                 } catch (error) {
                     console.error("Error requesting motion permission:", error);
+                    debugOverlay.textContent += `Error: Motion permission - ${error}\n`;
                     showARUnsupported();
                     return;
                 }
             }
 
             try {
+                console.log("Requesting camera access...");
                 cameraStream = await navigator.mediaDevices.getUserMedia({
                     video: {
                         facingMode: facingMode,
@@ -408,27 +427,30 @@
                         height: { ideal: 720 }
                     }
                 });
+                console.log("Camera access granted");
 
                 const video = document.getElementById('arCamera');
                 video.srcObject = cameraStream;
+                debugOverlay.textContent += "Camera: Initialized\n";
 
+                console.log("Requesting geolocation...");
                 const position = await new Promise((resolve, reject) => {
                     navigator.geolocation.getCurrentPosition(resolve, reject, {
                         enableHighAccuracy: true,
                         timeout: 10000
                     });
                 });
+                console.log("Geolocation acquired:", position.coords.latitude, position.coords.longitude);
 
                 qiblaAngle = calculateQiblaAngle(position.coords.latitude, position.coords.longitude);
+                debugOverlay.textContent += `Qibla Angle: ${qiblaAngle.toFixed(2)}°\n`;
 
                 arActive = true;
                 window.addEventListener('deviceorientation', handleOrientation);
-                if (isAndroid) {
-                    showCalibrationPrompt();
-                }
                 startARRenderLoop();
             } catch (error) {
                 console.error("AR initialization failed:", error);
+                debugOverlay.textContent += `Error: AR init - ${error}\n`;
                 showARUnsupported();
             }
         }
@@ -450,8 +472,16 @@
         function handleOrientation(event) {
             if (!arActive) return;
 
+            const debugOverlay = document.getElementById('debugOverlay');
+            debugOverlay.textContent = `Alpha: ${event.alpha || 'N/A'}\n`;
+            debugOverlay.textContent += `Beta: ${event.beta || 'N/A'}\n`;
+            debugOverlay.textContent += `Gamma: ${event.gamma || 'N/A'}\n`;
+            debugOverlay.textContent += `Compass Accuracy: ${event.webkitCompassAccuracy || 'N/A'}\n`;
+            debugOverlay.textContent += `Absolute: ${event.absolute || 'N/A'}\n`;
+
             if (!event.alpha && !event.webkitCompassHeading) {
-                console.error("No compass data available");
+                console.warn("No compass data available");
+                debugOverlay.textContent += "Warning: No compass data\n";
                 showCalibrationPrompt();
                 return;
             }
@@ -461,6 +491,7 @@
             if (isAndroid && !event.webkitCompassHeading) {
                 const orientation = window.screen.orientation?.angle || window.orientation || 0;
                 console.log("Android Orientation:", orientation, "Alpha:", event.alpha, "Beta:", event.beta, "Gamma:", event.gamma);
+                debugOverlay.textContent += `Orientation: ${orientation}\n`;
 
                 heading = (heading + orientation) % 360;
 
@@ -470,29 +501,33 @@
 
                 if (event.absolute === false || (event.webkitCompassAccuracy && event.webkitCompassAccuracy > 30)) {
                     console.warn("Low compass accuracy:", event.webkitCompassAccuracy || "absolute false");
+                    debugOverlay.textContent += "Warning: Low compass accuracy\n";
                     showCalibrationPrompt();
                     return;
                 }
             } else if (event.webkitCompassAccuracy && event.webkitCompassAccuracy < 0) {
                 console.warn("iOS compass accuracy low:", event.webkitCompassAccuracy);
+                debugOverlay.textContent += "Warning: iOS low compass accuracy\n";
                 showCalibrationPrompt();
                 return;
             }
 
             if (heading < 0 || heading > 360 || isNaN(heading)) {
                 console.error("Invalid heading:", heading);
-                showCalibrationPrompt();
+                debugOverlay.textContent += `Error: Invalid heading ${heading}\n`;
                 return;
             }
 
             currentHeading = smoothHeading(heading);
             lastValidHeading = currentHeading;
+            debugOverlay.textContent += `Heading: ${currentHeading.toFixed(2)}°\n`;
 
             const beta = event.beta || 0;
             const gamma = event.gamma || 0;
             const tiltThreshold = isAndroid ? 60 : 45;
             if (Math.abs(beta) > tiltThreshold || Math.abs(gamma) > tiltThreshold) {
                 document.getElementById('degreeValue').textContent = languages[currentLang].tiltMessage;
+                debugOverlay.textContent += "Warning: Device tilted\n";
                 return;
             }
 
@@ -510,12 +545,7 @@
         }
 
         function updateDegreeDisplay() {
-            if (!lastValidHeading) {
-                document.getElementById('degreeValue').textContent = languages[currentLang].tiltMessage;
-                return;
-            }
-
-            const relativeAngle = (qiblaAngle - lastValidHeading + 360) % 360;
+            const relativeAngle = (qiblaAngle - (lastValidHeading || 0) + 360) % 360;
             const degreeDisplay = document.getElementById('degreeValue');
 
             if (Math.abs(relativeAngle) < 5 || Math.abs(relativeAngle - 360) < 5) {
@@ -525,6 +555,8 @@
                 degreeDisplay.textContent = `${Math.round(relativeAngle)}°`;
                 degreeDisplay.parentElement.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
             }
+
+            document.getElementById('debugOverlay').textContent += `Relative Angle: ${relativeAngle.toFixed(2)}°\n`;
         }
 
         function startARRenderLoop() {
@@ -532,12 +564,17 @@
             const canvas = document.getElementById('arCanvas');
             const ctx = canvas.getContext('2d');
             const kaabaIndicator = document.getElementById('kaabaIndicator');
+            const debugOverlay = document.getElementById('debugOverlay');
+
+            let videoReadyTimeout = setTimeout(() => {
+                console.warn("Video not ready after 5s, forcing render");
+                debugOverlay.textContent += "Warning: Video not ready, forcing render\n";
+                render();
+            }, 5000);
 
             function render() {
-                if (!arActive) return;
-
-                if (video.readyState !== 4) {
-                    animationFrameId = requestAnimationFrame(render);
+                if (!arActive) {
+                    clearTimeout(videoReadyTimeout);
                     return;
                 }
 
@@ -546,7 +583,7 @@
                 canvas.width = displayWidth;
                 canvas.height = displayHeight;
 
-                const relativeAngle = lastValidHeading ? (qiblaAngle - lastValidHeading + 360) % 360 : 0;
+                const relativeAngle = (qiblaAngle - (lastValidHeading || 0) + 360) % 360;
                 const rad = relativeAngle * Math.PI / 180;
 
                 const centerX = displayWidth / 2;
@@ -559,15 +596,17 @@
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
                 ctx.fill();
 
-                const radius = Math.min(centerX, centerY) * 0.5;
-                let kaabaX = centerX + Math.sin(rad) * radius;
-                let kaabaY = centerY - Math.cos(rad) * radius;
+                let kaabaX = centerX + Math.sin(rad) * (Math.min(centerX, centerY) * 0.5);
+                let kaabaY = centerY - Math.cos(rad) * (Math.min(centerX, centerY) * 0.5);
 
                 kaabaX = Math.max(30, Math.min(displayWidth - 30, kaabaX));
                 kaabaY = Math.max(30, Math.min(displayHeight - 30, kaabaY));
 
                 kaabaIndicator.style.transform = `translate(${kaabaX - 24}px, ${kaabaY - 24}px)`;
-                kaabaIndicator.style.opacity = Math.abs(relativeAngle) < 5 || Math.abs(relativeAngle - 360) < 5 ? '0.2' : '1';
+                kaabaIndicator.style.opacity = '1';
+                kaabaIndicator.style.display = 'block';
+
+                debugOverlay.textContent += `Kaaba Pos: (${kaabaX.toFixed(2)}, ${kaabaY.toFixed(2)})\n`;
 
                 if (Math.abs(relativeAngle) < 5 || Math.abs(relativeAngle - 360) < 5) {
                     ctx.beginPath();
@@ -579,9 +618,9 @@
                 animationFrameId = requestAnimationFrame(render);
             }
 
-            kaabaIndicator.style.opacity = '0';
-            kaabaIndicator.style.transition = 'opacity 0.5s, transform 0.2s';
+            kaabaIndicator.style.transition = 'transform 0.2s';
             render();
+            clearTimeout(videoReadyTimeout);
         }
 
         function showARUnsupported() {
@@ -655,6 +694,7 @@
                         </div>
                         <div id="qiblaNeedle" class="absolute w-4 h-32 bg-green-500 left-1/2 transform -translate-x-1/2 origin-bottom rounded-t-full"></div>
                     </div>
+                    <div id="debugOverlay" class="absolute top-10 left-10 bg-black/70 text-white p-2 text-sm"></div>
                     <div class="absolute bottom-4 text-white text-lg">
                         <i class="fas fa-compass mr-2"></i>
                         <span id="degreeValue">0°</span>
@@ -686,6 +726,7 @@
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     qiblaAngle = calculateQiblaAngle(position.coords.latitude, position.coords.longitude);
+                    document.getElementById('debugOverlay').textContent += `Qibla Angle: ${qiblaAngle.toFixed(2)}°\n`;
                 },
                 () => {
                     qiblaAngle = 0;
@@ -698,8 +739,16 @@
         function updateFallbackCompass(event) {
             if (!arActive) return;
 
+            const debugOverlay = document.getElementById('debugOverlay');
+            debugOverlay.textContent = `Alpha: ${event.alpha || 'N/A'}\n`;
+            debugOverlay.textContent += `Beta: ${event.beta || 'N/A'}\n`;
+            debugOverlay.textContent += `Gamma: ${event.gamma || 'N/A'}\n`;
+            debugOverlay.textContent += `Compass Accuracy: ${event.webkitCompassAccuracy || 'N/A'}\n`;
+            debugOverlay.textContent += `Absolute: ${event.absolute || 'N/A'}\n`;
+
             if (!event.alpha && !event.webkitCompassHeading) {
-                console.error("No compass data available");
+                console.warn("No compass data available");
+                debugOverlay.textContent += "Warning: No compass data\n";
                 showCalibrationPrompt();
                 return;
             }
@@ -709,6 +758,7 @@
             if (isAndroid && !event.webkitCompassHeading) {
                 const orientation = window.screen.orientation?.angle || window.orientation || 0;
                 console.log("Fallback Android Orientation:", orientation, "Alpha:", event.alpha, "Beta:", event.beta, "Gamma:", event.gamma);
+                debugOverlay.textContent += `Orientation: ${orientation}\n`;
 
                 heading = (heading + orientation) % 360;
 
@@ -718,6 +768,7 @@
 
                 if (event.absolute === false || (event.webkitCompassAccuracy && event.webkitCompassAccuracy > 30)) {
                     console.warn("Low compass accuracy:", event.webkitCompassAccuracy || "absolute false");
+                    debugOverlay.textContent += "Warning: Low compass accuracy\n";
                     showCalibrationPrompt();
                     return;
                 }
@@ -725,12 +776,13 @@
 
             if (heading < 0 || heading > 360 || isNaN(heading)) {
                 console.error("Invalid heading:", heading);
-                showCalibrationPrompt();
+                debugOverlay.textContent += `Error: Invalid heading ${heading}\n`;
                 return;
             }
 
             currentHeading = smoothHeading(heading);
             lastValidHeading = currentHeading;
+            debugOverlay.textContent += `Heading: ${currentHeading.toFixed(2)}°\n`;
 
             const relativeAngle = (qiblaAngle - currentHeading + 360) % 360;
             const degreeDisplay = document.getElementById('degreeValue');
@@ -745,6 +797,7 @@
 
             const needle = document.getElementById('qiblaNeedle');
             needle.style.transform = `translateX(-50%) rotate(${relativeAngle}deg)`;
+            debugOverlay.textContent += `Relative Angle: ${relativeAngle.toFixed(2)}°\n`;
         }
 
         function stopARCamera() {
@@ -757,6 +810,7 @@
             }
             window.removeEventListener('deviceorientation', handleOrientation);
             window.removeEventListener('deviceorientation', updateFallbackCompass);
+            document.getElementById('debugOverlay').classList.add('hidden');
         }
 
         // Event Listeners
