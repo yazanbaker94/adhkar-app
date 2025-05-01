@@ -269,6 +269,16 @@
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                 <h2 class="text-xl font-bold text-center mb-4" id="prayerTitle">أوقات الصلاة</h2>
                 <p id="azan-location" class="text-center mb-6">جاري تحديد الموقع...</p>
+                
+                <!-- Add Notification Toggle -->
+                <div class="flex items-center justify-between mb-4 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                    <span class="text-sm" id="notificationLabel">إشعارات أوقات الصلاة</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="notificationToggle" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                    </label>
+                </div>
+
                 <ul class="space-y-3">
                     <li class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg flex justify-between" id="azan-fajr">
                         <span>الفجر:</span>
@@ -324,6 +334,11 @@ let touchStartX = 0;
 let touchEndX = 0;
 const swipeThreshold = 50;
 
+// Add these new variables at the top with other variables
+let notificationEnabled = false;
+let prayerNotifications = {};
+let nextPrayerTimeout = null;
+
 const languages = {
     ar: {
         title: "أذكار وأوقات الصلاة",
@@ -354,7 +369,10 @@ const languages = {
         calibrationMessage: "حرك الجهاز على شكل رقم 8 لمعايرة البوصلة",
         calibrationDone: "تم",
         alignedMessage: "موجه نحو القبلة",
-        tiltMessage: "أمل جهازك بشكل مسطح"
+        tiltMessage: "أمل جهازك بشكل مسطح",
+        notificationPermissionDenied: "يرجى السماح بالإشعارات لتلقي تنبيهات أوقات الصلاة",
+        prayerTimeNotification: "حان وقت الصلاة",
+        prayerTimeNotificationBody: "حان وقت الصلاة"
     },
     en: {
         title: "Adhkar & Prayer Times",
@@ -385,7 +403,10 @@ const languages = {
         calibrationMessage: "Move your device in a figure-8 pattern to calibrate the compass",
         calibrationDone: "Done",
         alignedMessage: "Aligned with Qibla",
-        tiltMessage: "Hold device flat"
+        tiltMessage: "Hold device flat",
+        notificationPermissionDenied: "Please allow notifications to receive prayer time alerts",
+        prayerTimeNotification: "Prayer Time",
+        prayerTimeNotificationBody: "It's time for prayer"
     }
 };
 
@@ -851,12 +872,20 @@ async function fetchPrayerTimes(city = "Amman") {
             const timings = data.data.timings;
             const location = data.data.meta.timezone;
 
+            // Store timings for notifications
+            prayerNotifications = timings;
+
             document.getElementById("azan-location").innerText = languages[currentLang].locationText(city, location);
             document.querySelector("#azan-fajr span:last-child").innerText = timings.Fajr;
             document.querySelector("#azan-dhuhr span:last-child").innerText = timings.Dhuhr;
             document.querySelector("#azan-asr span:last-child").innerText = timings.Asr;
             document.querySelector("#azan-maghrib span:last-child").innerText = timings.Maghrib;
             document.querySelector("#azan-isha span:last-child").innerText = timings.Isha;
+
+            // Setup notifications if enabled
+            if (notificationEnabled) {
+                setupPrayerNotifications();
+            }
         } else {
             document.getElementById("azan-location").innerText = languages[currentLang].arErrorMessage;
         }
@@ -902,6 +931,88 @@ function setupTabs() {
     });
 }
 
+// Add these new functions for notification handling
+async function requestNotificationPermission() {
+    try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            notificationEnabled = true;
+            document.getElementById('notificationToggle').checked = true;
+            setupPrayerNotifications();
+        } else {
+            notificationEnabled = false;
+            document.getElementById('notificationToggle').checked = false;
+            alert(languages[currentLang].notificationPermissionDenied);
+        }
+    } catch (error) {
+        console.error('Error requesting notification permission:', error);
+    }
+}
+
+function setupPrayerNotifications() {
+    if (!notificationEnabled) return;
+
+    // Clear any existing notifications
+    if (nextPrayerTimeout) {
+        clearTimeout(nextPrayerTimeout);
+    }
+
+    const now = new Date();
+    const timings = prayerNotifications;
+    let nextPrayer = null;
+    let nextPrayerTime = null;
+
+    // Find the next prayer time
+    for (const [prayer, time] of Object.entries(timings)) {
+        const prayerTime = new Date(`${now.toDateString()} ${time}`);
+        if (prayerTime > now) {
+            if (!nextPrayerTime || prayerTime < nextPrayerTime) {
+                nextPrayer = prayer;
+                nextPrayerTime = prayerTime;
+            }
+        }
+    }
+
+    if (nextPrayer && nextPrayerTime) {
+        const timeUntilNext = nextPrayerTime - now;
+        
+        // Schedule notification 5 minutes before prayer time
+        const notificationTime = timeUntilNext - (5 * 60 * 1000);
+        
+        if (notificationTime > 0) {
+            nextPrayerTimeout = setTimeout(() => {
+                showPrayerNotification(nextPrayer);
+            }, notificationTime);
+        }
+    }
+}
+
+function showPrayerNotification(prayer) {
+    if (!notificationEnabled) return;
+
+    const prayerNames = {
+        'Fajr': currentLang === 'ar' ? 'الفجر' : 'Fajr',
+        'Dhuhr': currentLang === 'ar' ? 'الظهر' : 'Dhuhr',
+        'Asr': currentLang === 'ar' ? 'العصر' : 'Asr',
+        'Maghrib': currentLang === 'ar' ? 'المغرب' : 'Maghrib',
+        'Isha': currentLang === 'ar' ? 'العشاء' : 'Isha'
+    };
+
+    const notification = new Notification(languages[currentLang].prayerTimeNotification, {
+        body: `${prayerNames[prayer]} ${languages[currentLang].prayerTimeNotificationBody}`,
+        icon: '/path/to/your/icon.png', // Add your app icon path here
+        badge: '/path/to/your/badge.png', // Add your badge icon path here
+        vibrate: [200, 100, 200]
+    });
+
+    // Play adhan sound
+    const audio = new Audio('/path/to/your/adhan.mp3'); // Add your adhan sound path here
+    audio.play();
+
+    // Setup next notification
+    setupPrayerNotifications();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const adhkarView = document.getElementById('adhkarView');
     const arabicText = document.getElementById('arabicText');
@@ -917,6 +1028,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setupTabs();
     detectCityAndFetchTimes();
+
+    // Add notification toggle handler
+    const notificationToggle = document.getElementById('notificationToggle');
+    notificationToggle.addEventListener('change', async (e) => {
+        if (e.target.checked) {
+            await requestNotificationPermission();
+        } else {
+            notificationEnabled = false;
+            if (nextPrayerTimeout) {
+                clearTimeout(nextPrayerTimeout);
+            }
+        }
+    });
+
+    // Check if notifications are already enabled
+    if (Notification.permission === 'granted') {
+        notificationEnabled = true;
+        notificationToggle.checked = true;
+    }
 });
     </script>
 </body>
