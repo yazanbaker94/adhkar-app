@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <!-- Add iOS-specific meta tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="أذكار وأوقات الصلاة">
+    <link rel="apple-touch-icon" href="icon1.png">
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <title>أذكار وأوقات الصلاة</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -932,13 +938,52 @@ function setupTabs() {
 }
 
 // Add these new functions for notification handling
+async function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        try {
+            const registration = await navigator.serviceWorker.register('/sw.js');
+            console.log('Service Worker registered with scope:', registration.scope);
+            return registration;
+        } catch (error) {
+            console.error('Service Worker registration failed:', error);
+            return null;
+        }
+    }
+    return null;
+}
+
 async function requestNotificationPermission() {
     try {
+        // Register service worker first
+        const registration = await registerServiceWorker();
+        
+        if (!registration) {
+            throw new Error('Service Worker registration failed');
+        }
+
+        // Request permission
         const permission = await Notification.requestPermission();
+        
         if (permission === 'granted') {
             notificationEnabled = true;
             document.getElementById('notificationToggle').checked = true;
-            setupPrayerNotifications();
+            
+            // Subscribe to push notifications
+            try {
+                const subscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: 'BOPaG1Jwr89JCSdQ1ejhuPmyKXGVQLQjI2SJfeaYT-LiUjf44KtxCS_JSq-cVxE9O0q7sExLbs2mO4aO0KWPJcc'
+                });
+                
+                // Store the subscription
+                localStorage.setItem('pushSubscription', JSON.stringify(subscription));
+                
+                setupPrayerNotifications();
+            } catch (error) {
+                console.error('Push subscription failed:', error);
+                // Fallback to basic notifications for iOS
+                setupBasicNotifications();
+            }
         } else {
             notificationEnabled = false;
             document.getElementById('notificationToggle').checked = false;
@@ -946,7 +991,84 @@ async function requestNotificationPermission() {
         }
     } catch (error) {
         console.error('Error requesting notification permission:', error);
+        // Fallback to basic notifications for iOS
+        setupBasicNotifications();
     }
+}
+
+function setupBasicNotifications() {
+    if (!notificationEnabled) return;
+
+    // Clear any existing notifications
+    if (nextPrayerTimeout) {
+        clearTimeout(nextPrayerTimeout);
+    }
+
+    const now = new Date();
+    const timings = prayerNotifications;
+    let nextPrayer = null;
+    let nextPrayerTime = null;
+
+    // Find the next prayer time
+    for (const [prayer, time] of Object.entries(timings)) {
+        const prayerTime = new Date(`${now.toDateString()} ${time}`);
+        if (prayerTime > now) {
+            if (!nextPrayerTime || prayerTime < nextPrayerTime) {
+                nextPrayer = prayer;
+                nextPrayerTime = prayerTime;
+            }
+        }
+    }
+
+    if (nextPrayer && nextPrayerTime) {
+        const timeUntilNext = nextPrayerTime - now;
+        
+        // Schedule notification 5 minutes before prayer time
+        const notificationTime = timeUntilNext - (5 * 60 * 1000);
+        
+        if (notificationTime > 0) {
+            nextPrayerTimeout = setTimeout(() => {
+                showBasicNotification(nextPrayer);
+            }, notificationTime);
+        }
+    }
+}
+
+function showBasicNotification(prayer) {
+    if (!notificationEnabled) return;
+
+    const prayerNames = {
+        'Fajr': currentLang === 'ar' ? 'الفجر' : 'Fajr',
+        'Dhuhr': currentLang === 'ar' ? 'الظهر' : 'Dhuhr',
+        'Asr': currentLang === 'ar' ? 'العصر' : 'Asr',
+        'Maghrib': currentLang === 'ar' ? 'المغرب' : 'Maghrib',
+        'Isha': currentLang === 'ar' ? 'العشاء' : 'Isha'
+    };
+
+    // For iOS, we'll use a custom alert since notifications might not work
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        const message = `${prayerNames[prayer]} ${languages[currentLang].prayerTimeNotificationBody}`;
+        alert(message);
+        
+        // Play adhan sound
+        const audio = new Audio('adhan.mp3');
+        audio.play();
+    } else {
+        // Use standard notifications for other devices
+        const notification = new Notification(languages[currentLang].prayerTimeNotification, {
+            body: `${prayerNames[prayer]} ${languages[currentLang].prayerTimeNotificationBody}`,
+            icon: 'icon1.png',
+            badge: 'icon1.png',
+            vibrate: [200, 100, 200]
+        });
+
+        // Play adhan sound
+        const audio = new Audio('adhan.mp3');
+        audio.play();
+    }
+
+    // Setup next notification
+    setupBasicNotifications();
 }
 
 function setupPrayerNotifications() {
@@ -1000,13 +1122,13 @@ function showPrayerNotification(prayer) {
 
     const notification = new Notification(languages[currentLang].prayerTimeNotification, {
         body: `${prayerNames[prayer]} ${languages[currentLang].prayerTimeNotificationBody}`,
-        icon: '/path/to/your/icon.png', // Add your app icon path here
-        badge: '/path/to/your/badge.png', // Add your badge icon path here
+        icon: 'icon1.png',
+        badge: 'icon1.png',
         vibrate: [200, 100, 200]
     });
 
     // Play adhan sound
-    const audio = new Audio('/path/to/your/adhan.mp3'); // Add your adhan sound path here
+    const audio = new Audio('adhan.mp3');
     audio.play();
 
     // Setup next notification
@@ -1039,6 +1161,17 @@ document.addEventListener('DOMContentLoaded', () => {
             if (nextPrayerTimeout) {
                 clearTimeout(nextPrayerTimeout);
             }
+            // Unsubscribe from push notifications if they exist
+            const subscription = localStorage.getItem('pushSubscription');
+            if (subscription) {
+                try {
+                    const registration = await navigator.serviceWorker.ready;
+                    await registration.pushManager.unsubscribe(JSON.parse(subscription));
+                    localStorage.removeItem('pushSubscription');
+                } catch (error) {
+                    console.error('Error unsubscribing from push notifications:', error);
+                }
+            }
         }
     });
 
@@ -1046,6 +1179,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (Notification.permission === 'granted') {
         notificationEnabled = true;
         notificationToggle.checked = true;
+        setupBasicNotifications();
     }
 });
     </script>
