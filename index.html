@@ -470,24 +470,8 @@ function handleOrientation(event) {
         // iOS: use the accurate magnetic heading
         heading = event.webkitCompassHeading;
     } else if (typeof event.alpha === "number") {
-        // Android: calculate heading from alpha, beta, and gamma
-        const alpha = event.alpha;
-        const beta = event.beta;
-        const gamma = event.gamma;
-
-        // Convert to radians
-        const alphaRad = alpha * (Math.PI / 180);
-        const betaRad = beta * (Math.PI / 180);
-        const gammaRad = gamma * (Math.PI / 180);
-
-        // Calculate heading using device orientation
-        let x = Math.cos(betaRad) * Math.cos(gammaRad);
-        let y = Math.cos(betaRad) * Math.sin(gammaRad);
-        let z = Math.sin(betaRad);
-
-        // Calculate heading in degrees
-        heading = Math.atan2(y, x) * (180 / Math.PI);
-        heading = (heading + 360) % 360;
+        // Android: calculate heading from alpha
+        heading = 360 - event.alpha;
 
         // Adjust for screen orientation
         const orientation = window.screen.orientation || window.orientation;
@@ -506,10 +490,21 @@ function handleOrientation(event) {
         return;
     }
 
-    currentHeading = heading;
+    // Apply smoothing to reduce jitter
+    if (typeof currentHeading === 'undefined') {
+        currentHeading = heading;
+    } else {
+        // Calculate the shortest path to the new heading
+        let diff = heading - currentHeading;
+        if (diff > 180) diff -= 360;
+        if (diff < -180) diff += 360;
+        
+        // Apply smoothing factor (0.1 = 10% of the difference per update)
+        currentHeading = (currentHeading + diff * 0.1 + 360) % 360;
+    }
+
     updateDegreeDisplay();
 }
-
 
 function smoothHeading(newHeading) {
     const smoothingFactor = 0.1;
@@ -530,7 +525,9 @@ function updateDegreeDisplay() {
         degreeDisplay.textContent = languages[currentLang].alignedMessage;
         degreeDisplay.parentElement.style.backgroundColor = 'rgba(34, 197, 94, 0.8)'; // Green background
     } else {
-        degreeDisplay.textContent = `${Math.round(relativeAngle)}°`;
+        // Round to nearest degree for stability
+        const roundedAngle = Math.round(relativeAngle);
+        degreeDisplay.textContent = `${roundedAngle}°`;
         degreeDisplay.parentElement.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
     }
 }
