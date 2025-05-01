@@ -1,3 +1,53 @@
+// Add background fetch support
+self.addEventListener('fetch', function(event) {
+    event.respondWith(
+        fetch(event.request)
+            .catch(function() {
+                return new Response('Offline');
+            })
+    );
+});
+
+// Add periodic sync for background updates
+self.addEventListener('periodicsync', function(event) {
+    if (event.tag === 'prayer-times-sync') {
+        event.waitUntil(syncPrayerTimes());
+    }
+});
+
+async function syncPrayerTimes() {
+    try {
+        const response = await fetch('https://api.aladhan.com/v1/timingsByAddress/' + 
+            new Date().toISOString().split('T')[0].split('-').reverse().join('-') + 
+            '?address=Amman');
+        const data = await response.json();
+        
+        if (data.code === 200) {
+            const timings = data.data.timings;
+            const now = new Date();
+            
+            // Check each prayer time
+            for (const [prayer, time] of Object.entries(timings)) {
+                const prayerTime = new Date(`${now.toDateString()} ${time}`);
+                const timeUntilPrayer = prayerTime - now;
+                
+                // If prayer time is within 5 minutes
+                if (timeUntilPrayer > 0 && timeUntilPrayer <= 5 * 60 * 1000) {
+                    self.registration.showNotification('Prayer Time', {
+                        body: `${prayer} prayer time is approaching`,
+                        icon: 'icon1.png',
+                        badge: 'icon1.png',
+                        vibrate: [200, 100, 200],
+                        requireInteraction: true
+                    });
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error syncing prayer times:', error);
+    }
+}
+
 self.addEventListener('push', function(event) {
     if (event.data) {
         const data = event.data.json();

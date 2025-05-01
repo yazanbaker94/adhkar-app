@@ -195,7 +195,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab"> 3 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab"> 4 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab">أوقات الصلاة</div>
     </div>
@@ -378,7 +378,9 @@ const languages = {
         tiltMessage: "أمل جهازك بشكل مسطح",
         notificationPermissionDenied: "يرجى السماح بالإشعارات لتلقي تنبيهات أوقات الصلاة",
         prayerTimeNotification: "حان وقت الصلاة",
-        prayerTimeNotificationBody: "حان وقت الصلاة"
+        prayerTimeNotificationBody: "حان وقت الصلاة",
+        prayerTimeApproaching: "حان وقت الصلاة",
+        prayerTimeApproachingBody: "حان وقت صلاة"
     },
     en: {
         title: "Adhkar & Prayer Times",
@@ -412,7 +414,9 @@ const languages = {
         tiltMessage: "Hold device flat",
         notificationPermissionDenied: "Please allow notifications to receive prayer time alerts",
         prayerTimeNotification: "Prayer Time",
-        prayerTimeNotificationBody: "It's time for prayer"
+        prayerTimeNotificationBody: "It's time for prayer",
+        prayerTimeApproaching: "Prayer Time",
+        prayerTimeApproachingBody: "It's time for"
     }
 };
 
@@ -968,22 +972,33 @@ async function requestNotificationPermission() {
             notificationEnabled = true;
             document.getElementById('notificationToggle').checked = true;
             
-            // Subscribe to push notifications
-            try {
-                const subscription = await registration.pushManager.subscribe({
-                    userVisibleOnly: true,
-                    applicationServerKey: 'BOPaG1Jwr89JCSdQ1ejhuPmyKXGVQLQjI2SJfeaYT-LiUjf44KtxCS_JSq-cVxE9O0q7sExLbs2mO4aO0KWPJcc'
-                });
-                
-                // Store the subscription
-                localStorage.setItem('pushSubscription', JSON.stringify(subscription));
-                
-                setupPrayerNotifications();
-            } catch (error) {
-                console.error('Push subscription failed:', error);
-                // Fallback to basic notifications for iOS
-                setupBasicNotifications();
+            // For iOS devices, register for periodic sync
+            if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                try {
+                    // Register for periodic sync (minimum 1 hour interval)
+                    await registration.periodicSync.register('prayer-times-sync', {
+                        minInterval: 60 * 60 * 1000 // 1 hour
+                    });
+                    console.log('Periodic sync registered');
+                } catch (error) {
+                    console.error('Periodic sync registration failed:', error);
+                }
+            } else {
+                // For other devices, use push notifications
+                try {
+                    const subscription = await registration.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: 'BOPaG1Jwr89JCSdQ1ejhuPmyKXGVQLQjI2SJfeaYT-LiUjf44KtxCS_JSq-cVxE9O0q7sExLbs2mO4aO0KWPJcc'
+                    });
+                    
+                    // Store the subscription
+                    localStorage.setItem('pushSubscription', JSON.stringify(subscription));
+                } catch (error) {
+                    console.error('Push subscription failed:', error);
+                }
             }
+            
+            setupPrayerNotifications();
         } else {
             notificationEnabled = false;
             document.getElementById('notificationToggle').checked = false;
@@ -991,7 +1006,6 @@ async function requestNotificationPermission() {
         }
     } catch (error) {
         console.error('Error requesting notification permission:', error);
-        // Fallback to basic notifications for iOS
         setupBasicNotifications();
     }
 }
@@ -1047,7 +1061,7 @@ function showBasicNotification(prayer) {
 
     // For iOS, we'll use a custom alert since notifications might not work
     if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-        const message = `${prayerNames[prayer]} ${languages[currentLang].prayerTimeNotificationBody}`;
+        const message = `${prayerNames[prayer]} ${languages[currentLang].prayerTimeApproachingBody} ${languages[currentLang].prayerTimeApproaching}`;
         alert(message);
         
         // Play adhan sound
@@ -1055,8 +1069,8 @@ function showBasicNotification(prayer) {
         audio.play();
     } else {
         // Use standard notifications for other devices
-        const notification = new Notification(languages[currentLang].prayerTimeNotification, {
-            body: `${prayerNames[prayer]} ${languages[currentLang].prayerTimeNotificationBody}`,
+        const notification = new Notification(languages[currentLang].prayerTimeApproaching, {
+            body: `${prayerNames[prayer]} ${languages[currentLang].prayerTimeApproachingBody} ${languages[currentLang].prayerTimeApproaching}`,
             icon: 'icon1.png',
             badge: 'icon1.png',
             vibrate: [200, 100, 200]
