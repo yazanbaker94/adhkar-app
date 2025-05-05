@@ -887,6 +887,87 @@ function handleSwipe() {
     }
 }
 
+// Add these storage helper functions at the top with other variables
+function savePrayerTimes(timings, location, city) {
+    const data = {
+        timings: timings,
+        location: location,
+        city: city,
+        lastUpdated: new Date().toISOString()
+    };
+
+    // Save to localStorage
+    try {
+        localStorage.setItem('prayerTimes', JSON.stringify(data));
+    } catch (error) {
+        console.error('Error saving to localStorage:', error);
+    }
+
+    // For iOS, also save to sessionStorage as backup
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        try {
+            sessionStorage.setItem('prayerTimes', JSON.stringify(data));
+        } catch (error) {
+            console.error('Error saving to sessionStorage:', error);
+        }
+    }
+}
+
+function loadPrayerTimes() {
+    let savedData = null;
+
+    // Try localStorage first
+    try {
+        const localStorageData = localStorage.getItem('prayerTimes');
+        if (localStorageData) {
+            savedData = JSON.parse(localStorageData);
+        }
+    } catch (error) {
+        console.error('Error reading from localStorage:', error);
+    }
+
+    // If no data in localStorage and on iOS, try sessionStorage
+    if (!savedData && /iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        try {
+            const sessionStorageData = sessionStorage.getItem('prayerTimes');
+            if (sessionStorageData) {
+                savedData = JSON.parse(sessionStorageData);
+            }
+        } catch (error) {
+            console.error('Error reading from sessionStorage:', error);
+        }
+    }
+
+    if (savedData) {
+        const lastUpdated = new Date(savedData.lastUpdated);
+        const now = new Date();
+        
+        // Check if the saved data is from today
+        if (lastUpdated.toDateString() === now.toDateString()) {
+            prayerNotifications = savedData.timings;
+            currentCity = savedData.city;
+            
+            // Update UI with saved times
+            document.getElementById("azan-location").innerText = languages[currentLang].locationText(savedData.city, savedData.location);
+            document.querySelector("#azan-fajr span:last-child").innerText = savedData.timings.Fajr;
+            document.querySelector("#azan-dhuhr span:last-child").innerText = savedData.timings.Dhuhr;
+            document.querySelector("#azan-asr span:last-child").innerText = savedData.timings.Asr;
+            document.querySelector("#azan-maghrib span:last-child").innerText = savedData.timings.Maghrib;
+            document.querySelector("#azan-isha span:last-child").innerText = savedData.timings.Isha;
+            
+            console.log('Loaded saved prayer times:', savedData.timings);
+            
+            // Setup notifications if enabled
+            if (notificationEnabled) {
+                setupPrayerNotifications();
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+// Update the fetchPrayerTimes function
 async function fetchPrayerTimes(city = "Amman") {
     const today = new Date().toISOString().split('T')[0];
     const formattedDate = today.split('-').reverse().join('-');
@@ -902,7 +983,10 @@ async function fetchPrayerTimes(city = "Amman") {
 
             // Store timings for notifications
             prayerNotifications = timings;
-            console.log('Prayer times updated:', timings);
+            
+            // Save to storage
+            savePrayerTimes(timings, location, city);
+            console.log('Prayer times updated and saved:', timings);
 
             document.getElementById("azan-location").innerText = languages[currentLang].locationText(city, location);
             document.querySelector("#azan-fajr span:last-child").innerText = timings.Fajr;
@@ -926,7 +1010,7 @@ async function fetchPrayerTimes(city = "Amman") {
     }
 }
 
-async function detectCityAndFetchTimes() {
+function detectCityAndFetchTimes() {
     try {
         const locationRes = await fetch("https://ipapi.co/json/");
         const locationData = await locationRes.json();
@@ -970,6 +1054,19 @@ async function registerServiceWorker() {
                 scope: './'
             });
             console.log('Service Worker registered with scope:', registration.scope);
+
+            // For iOS, request background fetch permission
+            if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                try {
+                    await registration.periodicSync.register('prayer-times', {
+                        minInterval: 15 * 60 * 1000 // 15 minutes
+                    });
+                    console.log('Periodic sync registered for prayer times');
+                } catch (error) {
+                    console.error('Periodic sync registration failed:', error);
+                }
+            }
+
             return registration;
         } catch (error) {
             console.error('Service Worker registration failed:', error);
@@ -1134,10 +1231,30 @@ function setupBasicNotifications() {
         
         if (notificationTime > 0) {
             console.log('Setting up notification for:', new Date(now.getTime() + notificationTime).toLocaleTimeString());
-            nextPrayerTimeout = setTimeout(() => {
-                console.log('Notification timeout triggered');
-                showBasicNotification(nextPrayer);
-            }, notificationTime);
+            
+            // For iOS in standalone mode, use background fetch
+            if (/iPad|iPhone|iPod/.test(navigator.userAgent) && ('standalone' in navigator) && (navigator.standalone)) {
+                // Schedule a background fetch
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.ready.then(registration => {
+                        registration.backgroundFetch.fetch('prayer-notification', ['adhan.mp3'], {
+                            title: languages[currentLang].prayerTimeNotification,
+                            icons: [{
+                                sizes: '192x192',
+                                src: 'icon1.png',
+                                type: 'image/png',
+                            }],
+                            downloadTotal: 1,
+                        });
+                    });
+                }
+            } else {
+                // For Android or iOS not in standalone mode, use setTimeout
+                nextPrayerTimeout = setTimeout(() => {
+                    console.log('Notification timeout triggered');
+                    showBasicNotification(nextPrayer);
+                }, notificationTime);
+            }
         } else {
             console.log('Notification time has already passed');
         }
@@ -1186,6 +1303,34 @@ function showBasicNotification(prayer) {
 function setupPrayerNotifications() {
     if (!notificationEnabled) return;
 
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isInStandaloneMode = ('standalone' in navigator) && (navigator.standalone);
+
+    // For iOS in standalone mode, use background fetch
+    if (isIOS && isInStandaloneMode) {
+        try {
+            const registration = await navigator.serviceWorker.ready;
+            await registration.periodicSync.register('prayer-times', {
+                minInterval: 15 * 60 * 1000 // 15 minutes
+            });
+            console.log('Periodic sync registered for prayer times');
+        } catch (error) {
+            console.error('Periodic sync registration failed:', error);
+            // Fallback to basic notifications
+            setupBasicNotifications();
+        }
+    } else {
+        // For Android or iOS not in standalone mode, use basic notifications
+        setupBasicNotifications();
+    }
+}
+
+function setupBasicNotifications() {
+    if (!notificationEnabled) {
+        console.log('Notifications not enabled');
+        return;
+    }
+
     // Clear any existing notifications
     if (nextPrayerTimeout) {
         clearTimeout(nextPrayerTimeout);
@@ -1196,9 +1341,14 @@ function setupPrayerNotifications() {
     let nextPrayer = null;
     let nextPrayerTime = null;
 
+    console.log('Current time:', now.toLocaleTimeString());
+    console.log('Prayer times:', timings);
+
     // Find the next prayer time
     for (const [prayer, time] of Object.entries(timings)) {
         const prayerTime = new Date(`${now.toDateString()} ${time}`);
+        console.log(`Checking ${prayer}: ${prayerTime.toLocaleTimeString()}`);
+        
         if (prayerTime > now) {
             if (!nextPrayerTime || prayerTime < nextPrayerTime) {
                 nextPrayer = prayer;
@@ -1209,52 +1359,43 @@ function setupPrayerNotifications() {
 
     if (nextPrayer && nextPrayerTime) {
         const timeUntilNext = nextPrayerTime - now;
+        console.log('Next prayer:', nextPrayer, 'at', nextPrayerTime.toLocaleTimeString());
         
         // Schedule notification 5 minutes before prayer time
         const notificationTime = timeUntilNext - (5 * 60 * 1000);
+        console.log('Time until notification:', Math.floor(notificationTime / 60000), 'minutes');
         
         if (notificationTime > 0) {
-            nextPrayerTimeout = setTimeout(() => {
-                showPrayerNotification(nextPrayer);
-            }, notificationTime);
+            console.log('Setting up notification for:', new Date(now.getTime() + notificationTime).toLocaleTimeString());
+            
+            // For iOS in standalone mode, use background fetch
+            if (/iPad|iPhone|iPod/.test(navigator.userAgent) && ('standalone' in navigator) && (navigator.standalone)) {
+                // Schedule a background fetch
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.ready.then(registration => {
+                        registration.backgroundFetch.fetch('prayer-notification', ['adhan.mp3'], {
+                            title: languages[currentLang].prayerTimeNotification,
+                            icons: [{
+                                sizes: '192x192',
+                                src: 'icon1.png',
+                                type: 'image/png',
+                            }],
+                            downloadTotal: 1,
+                        });
+                    });
+                }
+            } else {
+                // For Android or iOS not in standalone mode, use setTimeout
+                nextPrayerTimeout = setTimeout(() => {
+                    console.log('Notification timeout triggered');
+                    showBasicNotification(nextPrayer);
+                }, notificationTime);
+            }
+        } else {
+            console.log('Notification time has already passed');
         }
-    }
-}
-
-function showPrayerNotification(prayer) {
-    if (!notificationEnabled) return;
-
-    const prayerNames = {
-        'Fajr': currentLang === 'ar' ? 'الفجر' : 'Fajr',
-        'Dhuhr': currentLang === 'ar' ? 'الظهر' : 'Dhuhr',
-        'Asr': currentLang === 'ar' ? 'العصر' : 'Asr',
-        'Maghrib': currentLang === 'ar' ? 'المغرب' : 'Maghrib',
-        'Isha': currentLang === 'ar' ? 'العشاء' : 'Isha'
-    };
-
-    try {
-        const notification = new Notification(languages[currentLang].prayerTimeNotification, {
-            body: `${prayerNames[prayer]} ${languages[currentLang].prayerTimeNotificationBody}`,
-            icon: 'icon1.png',
-            badge: 'icon1.png',
-            vibrate: [200, 100, 200],
-            requireInteraction: true
-        });
-
-        // Play adhan sound
-        const audio = new Audio('adhan.mp3');
-        audio.play().catch(error => console.error('Error playing adhan:', error));
-
-        // Setup next notification
-        setupPrayerNotifications();
-    } catch (error) {
-        console.error('Error showing notification:', error);
-        // Fallback to alert for iOS
-        if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-            alert(`${prayerNames[prayer]} ${languages[currentLang].prayerTimeNotificationBody}`);
-            const audio = new Audio('adhan.mp3');
-            audio.play().catch(error => console.error('Error playing adhan:', error));
-        }
+    } else {
+        console.log('No upcoming prayer times found');
     }
 }
 
@@ -1281,7 +1422,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     setupTabs();
-    detectCityAndFetchTimes();
+
+    // Try to load saved prayer times first
+    if (!loadPrayerTimes()) {
+        // If no saved times or they're from a different day, fetch new times
+        detectCityAndFetchTimes();
+    }
 
     // Add notification toggle handler
     const notificationToggle = document.getElementById('notificationToggle');
@@ -1320,9 +1466,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add periodic checks
     setupPeriodicChecks();
-    
-    // Initial prayer times fetch
-    detectCityAndFetchTimes();
 });
     </script>
 </body>
