@@ -1504,6 +1504,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     notificationToggle.addEventListener('change', async (e) => {
         if (e.target.checked) {
+            // Show tutorial first for iOS users
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isInStandaloneMode = ('standalone' in navigator) && (navigator.standalone);
+            
+            if (isIOS && !isInStandaloneMode) {
+                showTutorial();
+                // Don't proceed with notification setup until user has added to home screen
+                e.target.checked = false;
+                return;
+            }
+            
             await requestNotificationPermission();
         } else {
             notificationEnabled = false;
