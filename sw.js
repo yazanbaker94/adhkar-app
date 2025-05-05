@@ -36,13 +36,22 @@ async function syncPrayerTimes() {
                 
                 // If prayer time is within 5 minutes
                 if (timeUntilPrayer > 0 && timeUntilPrayer <= 5 * 60 * 1000) {
-                    self.registration.showNotification('Prayer Time', {
+                    const options = {
                         body: `${prayer} prayer time is approaching`,
                         icon: 'icon1.png',
                         badge: 'icon1.png',
-                        vibrate: [200, 100, 200],
-                        requireInteraction: true
-                    });
+                        silent: false,
+                        requireInteraction: true,
+                        tag: `prayer-${prayer}`,
+                        renotify: true
+                    };
+
+                    // Add vibrate only for non-iOS devices
+                    if (!/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                        options.vibrate = [200, 100, 200];
+                    }
+
+                    await self.registration.showNotification('Prayer Time', options);
                 }
             }
         }
@@ -55,16 +64,24 @@ async function syncPrayerTimes() {
 self.addEventListener('push', function(event) {
     if (event.data) {
         const data = event.data.json();
+        
         const options = {
             body: data.body,
             icon: 'icon1.png',
             badge: 'icon1.png',
-            vibrate: [200, 100, 200],
+            silent: false,
             requireInteraction: true,
+            tag: data.tag || 'prayer-notification',
+            renotify: true,
             data: {
                 url: data.url
             }
         };
+
+        // Add vibrate only for non-iOS devices
+        if (!/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+            options.vibrate = [200, 100, 200];
+        }
 
         event.waitUntil(
             self.registration.showNotification(data.title, options)

@@ -183,6 +183,24 @@
 .tab-content.active {
     display: block;
 }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -20px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; transform: translate(-50%, 0); }
+    to { opacity: 0; transform: translate(-50%, -20px); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-fade-out {
+    animation: fadeOut 0.3s ease-out forwards;
+}
     </style>
 </head>
 
@@ -195,7 +213,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab"> 5 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab"> 6 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab">أوقات الصلاة</div>
     </div>
@@ -960,6 +978,8 @@ async function registerServiceWorker() {
 
 async function requestNotificationPermission() {
     try {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        
         // Request permission first
         const permission = await Notification.requestPermission();
         
@@ -967,15 +987,25 @@ async function requestNotificationPermission() {
             notificationEnabled = true;
             document.getElementById('notificationToggle').checked = true;
             
-            // Register service worker after permission is granted
-            const registration = await registerServiceWorker();
-            
-            if (registration) {
-                if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-                    // For iOS, use basic notifications
-                    setupBasicNotifications();
-                } else {
-                    // For Android, use push notifications
+            if (isIOS) {
+                // Check if the app is running in standalone mode (added to home screen)
+                const isInStandaloneMode = ('standalone' in navigator) && (navigator.standalone);
+                
+                if (!isInStandaloneMode) {
+                    // Show instructions for adding to home screen
+                    const addToHomeScreenMessage = currentLang === 'ar' 
+                        ? 'لتفعيل الإشعارات، يرجى إضافة التطبيق إلى الشاشة الرئيسية:\n1. اضغط على زر المشاركة\n2. اختر "إضافة إلى الشاشة الرئيسية"\n3. افتح التطبيق من الشاشة الرئيسية'
+                        : 'To enable notifications, please add the app to your home screen:\n1. Tap the share button\n2. Select "Add to Home Screen"\n3. Open the app from your home screen';
+                    
+                    alert(addToHomeScreenMessage);
+                }
+                
+                // For iOS, use basic notifications
+                setupBasicNotifications();
+            } else {
+                // For Android, use push notifications
+                const registration = await registerServiceWorker();
+                if (registration) {
                     try {
                         const subscription = await registration.pushManager.subscribe({
                             userVisibleOnly: true,
@@ -987,9 +1017,9 @@ async function requestNotificationPermission() {
                         console.error('Push subscription failed:', error);
                         setupBasicNotifications();
                     }
+                } else {
+                    setupBasicNotifications();
                 }
-            } else {
-                setupBasicNotifications();
             }
         } else {
             notificationEnabled = false;
@@ -998,45 +1028,9 @@ async function requestNotificationPermission() {
         }
     } catch (error) {
         console.error('Error requesting notification permission:', error);
-        setupBasicNotifications();
-    }
-}
-
-function setupBasicNotifications() {
-    if (!notificationEnabled) return;
-
-    // Clear any existing notifications
-    if (nextPrayerTimeout) {
-        clearTimeout(nextPrayerTimeout);
-    }
-
-    const now = new Date();
-    const timings = prayerNotifications;
-    let nextPrayer = null;
-    let nextPrayerTime = null;
-
-    // Find the next prayer time
-    for (const [prayer, time] of Object.entries(timings)) {
-        const prayerTime = new Date(`${now.toDateString()} ${time}`);
-        if (prayerTime > now) {
-            if (!nextPrayerTime || prayerTime < nextPrayerTime) {
-                nextPrayer = prayer;
-                nextPrayerTime = prayerTime;
-            }
-        }
-    }
-
-    if (nextPrayer && nextPrayerTime) {
-        const timeUntilNext = nextPrayerTime - now;
-        
-        // Schedule notification 5 minutes before prayer time
-        const notificationTime = timeUntilNext - (5 * 60 * 1000);
-        
-        if (notificationTime > 0) {
-            nextPrayerTimeout = setTimeout(() => {
-                showBasicNotification(nextPrayer);
-            }, notificationTime);
-        }
+        notificationEnabled = false;
+        document.getElementById('notificationToggle').checked = false;
+        alert(languages[currentLang].notificationPermissionDenied);
     }
 }
 
@@ -1051,27 +1045,27 @@ function showBasicNotification(prayer) {
         'Isha': currentLang === 'ar' ? 'العشاء' : 'Isha'
     };
 
-    // For iOS, we'll use a custom alert since notifications might not work
-    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-        const message = `${prayerNames[prayer]} ${languages[currentLang].prayerTimeApproachingBody} ${languages[currentLang].prayerTimeApproaching}`;
-        alert(message);
-        
-        // Play adhan sound
-        const audio = new Audio('adhan.mp3');
-        audio.play();
-    } else {
-        // Use standard notifications for other devices
-        const notification = new Notification(languages[currentLang].prayerTimeApproaching, {
-            body: `${prayerNames[prayer]} ${languages[currentLang].prayerTimeApproachingBody} ${languages[currentLang].prayerTimeApproaching}`,
-            icon: 'icon1.png',
-            badge: 'icon1.png',
-            vibrate: [200, 100, 200]
-        });
-
-        // Play adhan sound
-        const audio = new Audio('adhan.mp3');
-        audio.play();
-    }
+    const message = `${prayerNames[prayer]} ${languages[currentLang].prayerTimeApproachingBody} ${languages[currentLang].prayerTimeApproaching}`;
+    
+    // Create a custom notification element
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <i class="fas fa-bell mr-2"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    document.body.appendChild(notification);
+    
+    // Play adhan sound
+    const audio = new Audio('adhan.mp3');
+    audio.play().catch(error => console.error('Error playing adhan:', error));
+    
+    // Remove notification after 5 seconds
+    setTimeout(() => {
+        notification.remove();
+    }, 5000);
 
     // Setup next notification
     setupBasicNotifications();

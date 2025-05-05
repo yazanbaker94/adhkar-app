@@ -18,5 +18,10 @@
             "sizes": "512x512",
             "type": "image/png"
         }
-    ]
+    ],
+    "permissions": [
+        "notifications",
+        "geolocation"
+    ],
+    "gcm_sender_id": "BOPaG1Jwr89JCSdQ1ejhuPmyKXGVQLQjI2SJfeaYT-LiUjf44KtxCS_JSq-cVxE9O0q7sExLbs2mO4aO0KWPJcc"
 } 
