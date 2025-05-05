@@ -213,7 +213,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab"> 10 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab"> 1 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab">أوقات الصلاة</div>
     </div>
@@ -1016,39 +1016,63 @@ async function requestNotificationPermission() {
         console.log('Permission result:', permission);
         
         if (permission === 'granted') {
-            notificationEnabled = true;
-            document.getElementById('notificationToggle').checked = true;
-            
-            if (isIOS) {
-                // For iOS, use basic notifications
-                setupBasicNotifications();
-                // Show success message
-                const successMessage = currentLang === 'ar'
-                    ? 'تم تفعيل الإشعارات بنجاح'
-                    : 'Notifications enabled successfully';
-                alert(successMessage);
-            } else {
-                // For Android, use push notifications
-                const registration = await registerServiceWorker();
-                if (registration) {
-                    try {
-                        const subscription = await registration.pushManager.subscribe({
-                            userVisibleOnly: true,
-                            applicationServerKey: 'BOPaG1Jwr89JCSdQ1ejhuPmyKXGVQLQjI2SJfeaYT-LiUjf44KtxCS_JSq-cVxE9O0q7sExLbs2mO4aO0KWPJcc'
-                        });
-                        localStorage.setItem('pushSubscription', JSON.stringify(subscription));
-                        setupPrayerNotifications();
-                        // Show success message
-                        const successMessage = currentLang === 'ar'
-                            ? 'تم تفعيل الإشعارات بنجاح'
-                            : 'Notifications enabled successfully';
-                        alert(successMessage);
-                    } catch (error) {
-                        console.error('Push subscription failed:', error);
+            try {
+                // Test if we can create a notification
+                const testNotification = new Notification('Test', {
+                    silent: true
+                });
+                testNotification.close();
+                
+                notificationEnabled = true;
+                document.getElementById('notificationToggle').checked = true;
+                
+                if (isIOS) {
+                    // For iOS, use basic notifications
+                    setupBasicNotifications();
+                    // Show success message
+                    const successMessage = currentLang === 'ar'
+                        ? 'تم تفعيل الإشعارات بنجاح'
+                        : 'Notifications enabled successfully';
+                    alert(successMessage);
+                } else {
+                    // For Android, use push notifications
+                    const registration = await registerServiceWorker();
+                    if (registration) {
+                        try {
+                            const subscription = await registration.pushManager.subscribe({
+                                userVisibleOnly: true,
+                                applicationServerKey: 'BOPaG1Jwr89JCSdQ1ejhuPmyKXGVQLQjI2SJfeaYT-LiUjf44KtxCS_JSq-cVxE9O0q7sExLbs2mO4aO0KWPJcc'
+                            });
+                            localStorage.setItem('pushSubscription', JSON.stringify(subscription));
+                            setupPrayerNotifications();
+                            // Show success message
+                            const successMessage = currentLang === 'ar'
+                                ? 'تم تفعيل الإشعارات بنجاح'
+                                : 'Notifications enabled successfully';
+                            alert(successMessage);
+                        } catch (error) {
+                            console.error('Push subscription failed:', error);
+                            setupBasicNotifications();
+                        }
+                    } else {
                         setupBasicNotifications();
                     }
+                }
+            } catch (error) {
+                console.error('Error creating test notification:', error);
+                notificationEnabled = false;
+                document.getElementById('notificationToggle').checked = false;
+                
+                if (isIOS) {
+                    const iosErrorMessage = currentLang === 'ar'
+                        ? 'حدث خطأ في تفعيل الإشعارات. يرجى:\n\n1. التأكد من أن التطبيق مفتوح من الشاشة الرئيسية\n2. التأكد من تفعيل الإشعارات في إعدادات Safari\n3. إعادة تشغيل التطبيق'
+                        : 'Error enabling notifications. Please:\n\n1. Make sure the app is opened from home screen\n2. Check Safari settings for notifications\n3. Restart the app';
+                    alert(iosErrorMessage);
                 } else {
-                    setupBasicNotifications();
+                    const errorMessage = currentLang === 'ar'
+                        ? 'حدث خطأ في تفعيل الإشعارات'
+                        : 'Error enabling notifications';
+                    alert(errorMessage);
                 }
             }
         } else {
@@ -1079,6 +1103,44 @@ async function requestNotificationPermission() {
     }
 }
 
+function setupBasicNotifications() {
+    if (!notificationEnabled) return;
+
+    // Clear any existing notifications
+    if (nextPrayerTimeout) {
+        clearTimeout(nextPrayerTimeout);
+    }
+
+    const now = new Date();
+    const timings = prayerNotifications;
+    let nextPrayer = null;
+    let nextPrayerTime = null;
+
+    // Find the next prayer time
+    for (const [prayer, time] of Object.entries(timings)) {
+        const prayerTime = new Date(`${now.toDateString()} ${time}`);
+        if (prayerTime > now) {
+            if (!nextPrayerTime || prayerTime < nextPrayerTime) {
+                nextPrayer = prayer;
+                nextPrayerTime = prayerTime;
+            }
+        }
+    }
+
+    if (nextPrayer && nextPrayerTime) {
+        const timeUntilNext = nextPrayerTime - now;
+        
+        // Schedule notification 5 minutes before prayer time
+        const notificationTime = timeUntilNext - (5 * 60 * 1000);
+        
+        if (notificationTime > 0) {
+            nextPrayerTimeout = setTimeout(() => {
+                showBasicNotification(nextPrayer);
+            }, notificationTime);
+        }
+    }
+}
+
 function showBasicNotification(prayer) {
     if (!notificationEnabled) return;
 
@@ -1090,30 +1152,30 @@ function showBasicNotification(prayer) {
         'Isha': currentLang === 'ar' ? 'العشاء' : 'Isha'
     };
 
-    const message = `${prayerNames[prayer]} ${languages[currentLang].prayerTimeApproachingBody} ${languages[currentLang].prayerTimeApproaching}`;
-    
-    // Create a custom notification element
-    const notification = document.createElement('div');
-    notification.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
-    notification.innerHTML = `
-        <div class="flex items-center">
-            <i class="fas fa-bell mr-2"></i>
-            <span>${message}</span>
-        </div>
-    `;
-    document.body.appendChild(notification);
-    
-    // Play adhan sound
-    const audio = new Audio('adhan.mp3');
-    audio.play().catch(error => console.error('Error playing adhan:', error));
-    
-    // Remove notification after 5 seconds
-    setTimeout(() => {
-        notification.remove();
-    }, 5000);
+    try {
+        const notification = new Notification(languages[currentLang].prayerTimeNotification, {
+            body: `${prayerNames[prayer]} ${languages[currentLang].prayerTimeApproachingBody}`,
+            icon: 'icon1.png',
+            badge: 'icon1.png',
+            requireInteraction: true,
+            silent: false
+        });
 
-    // Setup next notification
-    setupBasicNotifications();
+        // Play adhan sound
+        const audio = new Audio('adhan.mp3');
+        audio.play().catch(error => console.error('Error playing adhan:', error));
+
+        // Setup next notification
+        setupBasicNotifications();
+    } catch (error) {
+        console.error('Error showing notification:', error);
+        // Fallback to alert for iOS
+        if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+            alert(`${prayerNames[prayer]} ${languages[currentLang].prayerTimeApproachingBody}`);
+            const audio = new Audio('adhan.mp3');
+            audio.play().catch(error => console.error('Error playing adhan:', error));
+        }
+    }
 }
 
 function setupPrayerNotifications() {
