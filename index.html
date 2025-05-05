@@ -213,7 +213,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab"> 6 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab"> 7 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab">أوقات الصلاة</div>
     </div>
@@ -980,7 +980,22 @@ async function requestNotificationPermission() {
     try {
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         
-        // Request permission first
+        // Check if the app is running in standalone mode (added to home screen)
+        const isInStandaloneMode = ('standalone' in navigator) && (navigator.standalone);
+        
+        if (isIOS && !isInStandaloneMode) {
+            // Show instructions for adding to home screen first
+            const addToHomeScreenMessage = currentLang === 'ar' 
+                ? 'لتفعيل الإشعارات، يرجى اتباع الخطوات التالية:\n\n1. اضغط على زر المشاركة (Share) في أسفل المتصفح\n2. اختر "إضافة إلى الشاشة الرئيسية" (Add to Home Screen)\n3. افتح التطبيق من الشاشة الرئيسية\n4. قم بتفعيل الإشعارات مرة أخرى'
+                : 'To enable notifications, please follow these steps:\n\n1. Tap the Share button at the bottom of the browser\n2. Select "Add to Home Screen"\n3. Open the app from your home screen\n4. Enable notifications again';
+            
+            alert(addToHomeScreenMessage);
+            notificationEnabled = false;
+            document.getElementById('notificationToggle').checked = false;
+            return;
+        }
+        
+        // Request permission
         const permission = await Notification.requestPermission();
         
         if (permission === 'granted') {
@@ -988,18 +1003,6 @@ async function requestNotificationPermission() {
             document.getElementById('notificationToggle').checked = true;
             
             if (isIOS) {
-                // Check if the app is running in standalone mode (added to home screen)
-                const isInStandaloneMode = ('standalone' in navigator) && (navigator.standalone);
-                
-                if (!isInStandaloneMode) {
-                    // Show instructions for adding to home screen
-                    const addToHomeScreenMessage = currentLang === 'ar' 
-                        ? 'لتفعيل الإشعارات، يرجى إضافة التطبيق إلى الشاشة الرئيسية:\n1. اضغط على زر المشاركة\n2. اختر "إضافة إلى الشاشة الرئيسية"\n3. افتح التطبيق من الشاشة الرئيسية'
-                        : 'To enable notifications, please add the app to your home screen:\n1. Tap the share button\n2. Select "Add to Home Screen"\n3. Open the app from your home screen';
-                    
-                    alert(addToHomeScreenMessage);
-                }
-                
                 // For iOS, use basic notifications
                 setupBasicNotifications();
             } else {
@@ -1024,7 +1027,16 @@ async function requestNotificationPermission() {
         } else {
             notificationEnabled = false;
             document.getElementById('notificationToggle').checked = false;
-            alert(languages[currentLang].notificationPermissionDenied);
+            
+            // Show more detailed message for iOS
+            if (isIOS) {
+                const iosPermissionMessage = currentLang === 'ar'
+                    ? 'لتفعيل الإشعارات في iOS:\n\n1. افتح إعدادات جهازك\n2. انتقل إلى Safari > الإعدادات\n3. قم بتفعيل "السماح بالإشعارات"\n4. أعد تشغيل التطبيق'
+                    : 'To enable notifications on iOS:\n\n1. Open your device settings\n2. Go to Safari > Settings\n3. Enable "Allow Notifications"\n4. Restart the app';
+                alert(iosPermissionMessage);
+            } else {
+                alert(languages[currentLang].notificationPermissionDenied);
+            }
         }
     } catch (error) {
         console.error('Error requesting notification permission:', error);

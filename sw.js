@@ -141,4 +141,17 @@ self.addEventListener('activate', function(event) {
             })
         ])
     );
+});
+
+// Add message event listener for communication with the main app
+self.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'CHECK_IOS_STANDALONE') {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+        
+        event.ports[0].postMessage({
+            isIOS: isIOS,
+            isStandalone: isStandalone
+        });
+    }
 }); 
