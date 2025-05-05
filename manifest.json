@@ -2,7 +2,7 @@
     "name": "أذكار وأوقات الصلاة",
     "short_name": "أذكار",
     "description": "تطبيق الأذكار وأوقات الصلاة",
-    "start_url": "/",
+    "start_url": "/adhkar-app/",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#3B82F6",
