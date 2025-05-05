@@ -1303,8 +1303,8 @@ function setupBasicNotifications() {
         const timeUntilNext = nextPrayerTime - now;
         console.log('Next prayer:', nextPrayer, 'at', nextPrayerTime.toLocaleTimeString());
         
-        // Schedule notification 5 minutes before prayer time
-        const notificationTime = timeUntilNext - (5 * 60 * 1000);
+        // Schedule notification 2 minutes before prayer time (changed from 5 minutes)
+        const notificationTime = timeUntilNext - (2 * 60 * 1000);
         console.log('Time until notification:', Math.floor(notificationTime / 60000), 'minutes');
         
         if (notificationTime > 0) {
