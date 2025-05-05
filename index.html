@@ -213,7 +213,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab"> 8 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab"> 9 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab">أوقات الصلاة</div>
     </div>
@@ -327,6 +327,10 @@
                 </ul>
                 <button id="btnRefresh" onclick="refreshPrayerTimes()" class="mt-6 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow transition-colors">
                     <i class="fas fa-sync-alt mr-2"></i> Refresh
+                </button>
+                <!-- Add test notification button -->
+                <button onclick="testNotification()" class="mt-4 w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg shadow transition-colors">
+                    <i class="fas fa-bell mr-2"></i> Test Notification
                 </button>
             </div>
         </div>
@@ -1155,6 +1159,43 @@ function showPrayerNotification(prayer) {
             const audio = new Audio('adhan.mp3');
             audio.play().catch(error => console.error('Error playing adhan:', error));
         }
+    }
+}
+
+// Add this function before the DOMContentLoaded event listener
+function testNotification() {
+    if (!notificationEnabled) {
+        alert(languages[currentLang].notificationPermissionDenied);
+        return;
+    }
+
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    
+    if (isIOS) {
+        // For iOS, show a test notification
+        const notification = new Notification(languages[currentLang].prayerTimeNotification, {
+            body: "This is a test notification",
+            icon: 'icon1.png',
+            badge: 'icon1.png',
+            requireInteraction: true
+        });
+
+        // Play adhan sound
+        const audio = new Audio('adhan.mp3');
+        audio.play().catch(error => console.error('Error playing adhan:', error));
+    } else {
+        // For Android, show a test notification
+        const notification = new Notification(languages[currentLang].prayerTimeNotification, {
+            body: "This is a test notification",
+            icon: 'icon1.png',
+            badge: 'icon1.png',
+            vibrate: [200, 100, 200],
+            requireInteraction: true
+        });
+
+        // Play adhan sound
+        const audio = new Audio('adhan.mp3');
+        audio.play().catch(error => console.error('Error playing adhan:', error));
     }
 }
 
