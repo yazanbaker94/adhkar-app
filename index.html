@@ -1057,6 +1057,14 @@ async function fetchPrayerTimes(city = "Amman") {
             const timings = data.data.timings;
             const location = data.data.meta.timezone;
 
+            // TEST: Set Maghrib to 5 minutes from now
+            const now = new Date();
+            const fiveMinutesFromNow = new Date(now.getTime() + 5 * 60 * 1000);
+            const hours = fiveMinutesFromNow.getHours().toString().padStart(2, '0');
+            const minutes = fiveMinutesFromNow.getMinutes().toString().padStart(2, '0');
+            timings.Maghrib = `${hours}:${minutes}`;
+            console.log('Test: Maghrib time set to:', timings.Maghrib);
+
             // Store timings for notifications
             prayerNotifications = timings;
             
@@ -1161,13 +1169,7 @@ async function requestNotificationPermission() {
         
         if (isIOS && !isInStandaloneMode) {
             // Show instructions for adding to home screen first
-            const addToHomeScreenMessage = currentLang === 'ar' 
-                ? 'لتفعيل الإشعارات، يرجى اتباع الخطوات التالية:\n\n1. اضغط على زر المشاركة (Share) في أسفل المتصفح\n2. اختر "إضافة إلى الشاشة الرئيسية" (Add to Home Screen)\n3. افتح التطبيق من الشاشة الرئيسية\n4. قم بتفعيل الإشعارات مرة أخرى'
-                : 'To enable notifications, please follow these steps:\n\n1. Tap the Share button at the bottom of the browser\n2. Select "Add to Home Screen"\n3. Open the app from your home screen\n4. Enable notifications again';
-            
-            alert(addToHomeScreenMessage);
-            notificationEnabled = false;
-            document.getElementById('notificationToggle').checked = false;
+            showTutorial();
             return;
         }
 
@@ -1474,6 +1476,54 @@ function closeTutorial() {
     modal.classList.add('hidden');
 }
 
+// Add this test function after the fetchPrayerTimes function
+async function testNotification() {
+    const now = new Date();
+    const fiveMinutesFromNow = new Date(now.getTime() + 5 * 60 * 1000);
+    const hours = fiveMinutesFromNow.getHours().toString().padStart(2, '0');
+    const minutes = fiveMinutesFromNow.getMinutes().toString().padStart(2, '0');
+    const testTime = `${hours}:${minutes}`;
+
+    // Store original prayer times
+    const originalTimes = { ...prayerNotifications };
+    
+    // Set Maghrib to 5 minutes from now
+    prayerNotifications.Maghrib = testTime;
+    
+    // Update UI to show test time
+    document.querySelector("#azan-maghrib span:last-child").innerText = testTime;
+    
+    // Clear any existing notification timeouts
+    if (nextPrayerTimeout) {
+        clearTimeout(nextPrayerTimeout);
+    }
+
+    // Setup notification immediately
+    if (notificationEnabled) {
+        console.log('Setting up test notification...');
+        console.log('Current time:', now.toLocaleTimeString());
+        console.log('Test notification will trigger at:', testTime);
+        
+        // Calculate time until notification (4 minutes and 55 seconds)
+        const timeUntilNotification = (5 * 60 * 1000) - 5000; // 5 minutes minus 5 seconds
+        
+        nextPrayerTimeout = setTimeout(() => {
+            console.log('Test notification triggered!');
+            showBasicNotification('Maghrib');
+        }, timeUntilNotification);
+    } else {
+        console.log('Notifications are not enabled. Please enable notifications first.');
+        alert(currentLang === 'ar' ? 'يرجى تفعيل الإشعارات أولاً' : 'Please enable notifications first');
+    }
+
+    // Restore original times after 6 minutes
+    setTimeout(() => {
+        prayerNotifications = originalTimes;
+        document.querySelector("#azan-maghrib span:last-child").innerText = originalTimes.Maghrib;
+        console.log('Test completed, restored original prayer times');
+    }, 6 * 60 * 1000);
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     const adhkarView = document.getElementById('adhkarView');
     const arabicText = document.getElementById('arabicText');
@@ -1510,8 +1560,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     notificationToggle.addEventListener('change', async (e) => {
         if (e.target.checked) {
-            // Show tutorial before requesting permission
-            showTutorial();
             await requestNotificationPermission();
         } else {
             notificationEnabled = false;
@@ -1534,6 +1582,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Add periodic checks
     setupPeriodicChecks();
+
+    // Add test button after the refresh button
+    const prayerContent = document.getElementById('prayerContent');
+    const testButton = document.createElement('button');
+    testButton.className = 'mt-2 w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg shadow transition-colors';
+    testButton.innerHTML = '<i class="fas fa-bell mr-2"></i> ' + (currentLang === 'ar' ? 'اختبار الإشعارات (5 دقائق)' : 'Test Notification (5 min)');
+    testButton.onclick = testNotification;
+    prayerContent.querySelector('.bg-white').appendChild(testButton);
 });
     </script>
 </body>
