@@ -195,7 +195,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab"> 4 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab"> 5 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab">أوقات الصلاة</div>
     </div>
@@ -945,7 +945,9 @@ function setupTabs() {
 async function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
         try {
-            const registration = await navigator.serviceWorker.register('/sw.js');
+            const registration = await navigator.serviceWorker.register('sw.js', {
+                scope: './'
+            });
             console.log('Service Worker registered with scope:', registration.scope);
             return registration;
         } catch (error) {
@@ -958,47 +960,37 @@ async function registerServiceWorker() {
 
 async function requestNotificationPermission() {
     try {
-        // Register service worker first
-        const registration = await registerServiceWorker();
-        
-        if (!registration) {
-            throw new Error('Service Worker registration failed');
-        }
-
-        // Request permission
+        // Request permission first
         const permission = await Notification.requestPermission();
         
         if (permission === 'granted') {
             notificationEnabled = true;
             document.getElementById('notificationToggle').checked = true;
             
-            // For iOS devices, register for periodic sync
-            if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-                try {
-                    // Register for periodic sync (minimum 1 hour interval)
-                    await registration.periodicSync.register('prayer-times-sync', {
-                        minInterval: 60 * 60 * 1000 // 1 hour
-                    });
-                    console.log('Periodic sync registered');
-                } catch (error) {
-                    console.error('Periodic sync registration failed:', error);
+            // Register service worker after permission is granted
+            const registration = await registerServiceWorker();
+            
+            if (registration) {
+                if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                    // For iOS, use basic notifications
+                    setupBasicNotifications();
+                } else {
+                    // For Android, use push notifications
+                    try {
+                        const subscription = await registration.pushManager.subscribe({
+                            userVisibleOnly: true,
+                            applicationServerKey: 'BOPaG1Jwr89JCSdQ1ejhuPmyKXGVQLQjI2SJfeaYT-LiUjf44KtxCS_JSq-cVxE9O0q7sExLbs2mO4aO0KWPJcc'
+                        });
+                        localStorage.setItem('pushSubscription', JSON.stringify(subscription));
+                        setupPrayerNotifications();
+                    } catch (error) {
+                        console.error('Push subscription failed:', error);
+                        setupBasicNotifications();
+                    }
                 }
             } else {
-                // For other devices, use push notifications
-                try {
-                    const subscription = await registration.pushManager.subscribe({
-                        userVisibleOnly: true,
-                        applicationServerKey: 'BOPaG1Jwr89JCSdQ1ejhuPmyKXGVQLQjI2SJfeaYT-LiUjf44KtxCS_JSq-cVxE9O0q7sExLbs2mO4aO0KWPJcc'
-                    });
-                    
-                    // Store the subscription
-                    localStorage.setItem('pushSubscription', JSON.stringify(subscription));
-                } catch (error) {
-                    console.error('Push subscription failed:', error);
-                }
+                setupBasicNotifications();
             }
-            
-            setupPrayerNotifications();
         } else {
             notificationEnabled = false;
             document.getElementById('notificationToggle').checked = false;
@@ -1134,19 +1126,30 @@ function showPrayerNotification(prayer) {
         'Isha': currentLang === 'ar' ? 'العشاء' : 'Isha'
     };
 
-    const notification = new Notification(languages[currentLang].prayerTimeNotification, {
-        body: `${prayerNames[prayer]} ${languages[currentLang].prayerTimeNotificationBody}`,
-        icon: 'icon1.png',
-        badge: 'icon1.png',
-        vibrate: [200, 100, 200]
-    });
+    try {
+        const notification = new Notification(languages[currentLang].prayerTimeNotification, {
+            body: `${prayerNames[prayer]} ${languages[currentLang].prayerTimeNotificationBody}`,
+            icon: 'icon1.png',
+            badge: 'icon1.png',
+            vibrate: [200, 100, 200],
+            requireInteraction: true
+        });
 
-    // Play adhan sound
-    const audio = new Audio('adhan.mp3');
-    audio.play();
+        // Play adhan sound
+        const audio = new Audio('adhan.mp3');
+        audio.play().catch(error => console.error('Error playing adhan:', error));
 
-    // Setup next notification
-    setupPrayerNotifications();
+        // Setup next notification
+        setupPrayerNotifications();
+    } catch (error) {
+        console.error('Error showing notification:', error);
+        // Fallback to alert for iOS
+        if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+            alert(`${prayerNames[prayer]} ${languages[currentLang].prayerTimeNotificationBody}`);
+            const audio = new Audio('adhan.mp3');
+            audio.play().catch(error => console.error('Error playing adhan:', error));
+        }
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1193,7 +1196,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (Notification.permission === 'granted') {
         notificationEnabled = true;
         notificationToggle.checked = true;
-        setupBasicNotifications();
+        setupPrayerNotifications();
     }
 });
     </script>

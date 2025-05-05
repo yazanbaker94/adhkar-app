@@ -1,7 +1,10 @@
 // Add background fetch support
 self.addEventListener('fetch', function(event) {
     event.respondWith(
-        fetch(event.request)
+        caches.match(event.request)
+            .then(function(response) {
+                return response || fetch(event.request);
+            })
             .catch(function() {
                 return new Response('Offline');
             })
@@ -48,6 +51,7 @@ async function syncPrayerTimes() {
     }
 }
 
+// Handle push notifications
 self.addEventListener('push', function(event) {
     if (event.data) {
         const data = event.data.json();
@@ -56,6 +60,7 @@ self.addEventListener('push', function(event) {
             icon: 'icon1.png',
             badge: 'icon1.png',
             vibrate: [200, 100, 200],
+            requireInteraction: true,
             data: {
                 url: data.url
             }
@@ -63,10 +68,18 @@ self.addEventListener('push', function(event) {
 
         event.waitUntil(
             self.registration.showNotification(data.title, options)
+                .then(() => {
+                    // Play adhan sound
+                    return new Promise((resolve) => {
+                        const audio = new Audio('adhan.mp3');
+                        audio.play().then(resolve).catch(resolve);
+                    });
+                })
         );
     }
 });
 
+// Handle notification clicks
 self.addEventListener('notificationclick', function(event) {
     event.notification.close();
     
@@ -77,10 +90,38 @@ self.addEventListener('notificationclick', function(event) {
     }
 });
 
+// Handle service worker installation
 self.addEventListener('install', function(event) {
-    event.waitUntil(self.skipWaiting());
+    event.waitUntil(
+        Promise.all([
+            self.skipWaiting(),
+            caches.open('prayer-times-v1').then(function(cache) {
+                return cache.addAll([
+                    'index.html',
+                    'sw.js',
+                    'icon1.png',
+                    'icon2.png',
+                    'adhan.mp3'
+                ]);
+            })
+        ])
+    );
 });
 
+// Handle service worker activation
 self.addEventListener('activate', function(event) {
-    event.waitUntil(self.clients.claim());
+    event.waitUntil(
+        Promise.all([
+            self.clients.claim(),
+            caches.keys().then(function(cacheNames) {
+                return Promise.all(
+                    cacheNames.map(function(cacheName) {
+                        if (cacheName !== 'prayer-times-v1') {
+                            return caches.delete(cacheName);
+                        }
+                    })
+                );
+            })
+        ])
+    );
 }); 
