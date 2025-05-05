@@ -213,7 +213,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab"> 9 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab"> 10 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab">أوقات الصلاة</div>
     </div>
@@ -983,9 +983,12 @@ async function registerServiceWorker() {
 async function requestNotificationPermission() {
     try {
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        console.log('Requesting notification permission...');
+        console.log('Is iOS:', isIOS);
         
         // Check if the app is running in standalone mode (added to home screen)
         const isInStandaloneMode = ('standalone' in navigator) && (navigator.standalone);
+        console.log('Is in standalone mode:', isInStandaloneMode);
         
         if (isIOS && !isInStandaloneMode) {
             // Show instructions for adding to home screen first
@@ -998,9 +1001,19 @@ async function requestNotificationPermission() {
             document.getElementById('notificationToggle').checked = false;
             return;
         }
+
+        // Check if notifications are supported
+        if (!('Notification' in window)) {
+            const notSupportedMessage = currentLang === 'ar'
+                ? 'المتصفح لا يدعم الإشعارات'
+                : 'Notifications are not supported in this browser';
+            alert(notSupportedMessage);
+            return;
+        }
         
         // Request permission
         const permission = await Notification.requestPermission();
+        console.log('Permission result:', permission);
         
         if (permission === 'granted') {
             notificationEnabled = true;
@@ -1009,6 +1022,11 @@ async function requestNotificationPermission() {
             if (isIOS) {
                 // For iOS, use basic notifications
                 setupBasicNotifications();
+                // Show success message
+                const successMessage = currentLang === 'ar'
+                    ? 'تم تفعيل الإشعارات بنجاح'
+                    : 'Notifications enabled successfully';
+                alert(successMessage);
             } else {
                 // For Android, use push notifications
                 const registration = await registerServiceWorker();
@@ -1020,6 +1038,11 @@ async function requestNotificationPermission() {
                         });
                         localStorage.setItem('pushSubscription', JSON.stringify(subscription));
                         setupPrayerNotifications();
+                        // Show success message
+                        const successMessage = currentLang === 'ar'
+                            ? 'تم تفعيل الإشعارات بنجاح'
+                            : 'Notifications enabled successfully';
+                        alert(successMessage);
                     } catch (error) {
                         console.error('Push subscription failed:', error);
                         setupBasicNotifications();
@@ -1039,14 +1062,20 @@ async function requestNotificationPermission() {
                     : 'To enable notifications on iOS:\n\n1. Open your device settings\n2. Go to Safari > Settings\n3. Enable "Allow Notifications"\n4. Restart the app';
                 alert(iosPermissionMessage);
             } else {
-                alert(languages[currentLang].notificationPermissionDenied);
+                const permissionDeniedMessage = currentLang === 'ar'
+                    ? 'يرجى السماح بالإشعارات في إعدادات المتصفح'
+                    : 'Please allow notifications in your browser settings';
+                alert(permissionDeniedMessage);
             }
         }
     } catch (error) {
         console.error('Error requesting notification permission:', error);
         notificationEnabled = false;
         document.getElementById('notificationToggle').checked = false;
-        alert(languages[currentLang].notificationPermissionDenied);
+        const errorMessage = currentLang === 'ar'
+            ? 'حدث خطأ أثناء تفعيل الإشعارات'
+            : 'An error occurred while enabling notifications';
+        alert(errorMessage);
     }
 }
 
@@ -1164,38 +1193,72 @@ function showPrayerNotification(prayer) {
 
 // Add this function before the DOMContentLoaded event listener
 function testNotification() {
+    console.log('Testing notification...');
+    console.log('Notification permission:', Notification.permission);
+    console.log('Notification enabled:', notificationEnabled);
+
+    if (!('Notification' in window)) {
+        const notSupportedMessage = currentLang === 'ar'
+            ? 'المتصفح لا يدعم الإشعارات'
+            : 'Notifications are not supported in this browser';
+        alert(notSupportedMessage);
+        return;
+    }
+
+    if (Notification.permission !== 'granted') {
+        const permissionMessage = currentLang === 'ar'
+            ? 'يرجى تفعيل الإشعارات أولاً'
+            : 'Please enable notifications first';
+        alert(permissionMessage);
+        return;
+    }
+
     if (!notificationEnabled) {
-        alert(languages[currentLang].notificationPermissionDenied);
+        const notEnabledMessage = currentLang === 'ar'
+            ? 'يرجى تفعيل الإشعارات من زر التفعيل'
+            : 'Please enable notifications using the toggle switch';
+        alert(notEnabledMessage);
         return;
     }
 
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    console.log('Is iOS:', isIOS);
     
-    if (isIOS) {
-        // For iOS, show a test notification
-        const notification = new Notification(languages[currentLang].prayerTimeNotification, {
-            body: "This is a test notification",
-            icon: 'icon1.png',
-            badge: 'icon1.png',
-            requireInteraction: true
-        });
+    try {
+        if (isIOS) {
+            // For iOS, show a test notification
+            const notification = new Notification(languages[currentLang].prayerTimeNotification, {
+                body: currentLang === 'ar' ? 'هذه إشعارة تجريبية' : 'This is a test notification',
+                icon: 'icon1.png',
+                badge: 'icon1.png',
+                requireInteraction: true,
+                silent: false
+            });
 
-        // Play adhan sound
-        const audio = new Audio('adhan.mp3');
-        audio.play().catch(error => console.error('Error playing adhan:', error));
-    } else {
-        // For Android, show a test notification
-        const notification = new Notification(languages[currentLang].prayerTimeNotification, {
-            body: "This is a test notification",
-            icon: 'icon1.png',
-            badge: 'icon1.png',
-            vibrate: [200, 100, 200],
-            requireInteraction: true
-        });
+            // Play adhan sound
+            const audio = new Audio('adhan.mp3');
+            audio.play().catch(error => console.error('Error playing adhan:', error));
+        } else {
+            // For Android, show a test notification
+            const notification = new Notification(languages[currentLang].prayerTimeNotification, {
+                body: currentLang === 'ar' ? 'هذه إشعارة تجريبية' : 'This is a test notification',
+                icon: 'icon1.png',
+                badge: 'icon1.png',
+                vibrate: [200, 100, 200],
+                requireInteraction: true,
+                silent: false
+            });
 
-        // Play adhan sound
-        const audio = new Audio('adhan.mp3');
-        audio.play().catch(error => console.error('Error playing adhan:', error));
+            // Play adhan sound
+            const audio = new Audio('adhan.mp3');
+            audio.play().catch(error => console.error('Error playing adhan:', error));
+        }
+    } catch (error) {
+        console.error('Error showing test notification:', error);
+        const errorMessage = currentLang === 'ar'
+            ? 'حدث خطأ أثناء عرض الإشعارة'
+            : 'An error occurred while showing the notification';
+        alert(errorMessage);
     }
 }
 
@@ -1217,6 +1280,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add notification toggle handler
     const notificationToggle = document.getElementById('notificationToggle');
+    
+    // Check initial notification state
+    if (Notification.permission === 'granted') {
+        notificationEnabled = true;
+        notificationToggle.checked = true;
+        setupPrayerNotifications();
+    } else {
+        notificationEnabled = false;
+        notificationToggle.checked = false;
+    }
+
     notificationToggle.addEventListener('change', async (e) => {
         if (e.target.checked) {
             await requestNotificationPermission();
@@ -1238,13 +1312,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-
-    // Check if notifications are already enabled
-    if (Notification.permission === 'granted') {
-        notificationEnabled = true;
-        notificationToggle.checked = true;
-        setupPrayerNotifications();
-    }
 });
     </script>
 </body>
