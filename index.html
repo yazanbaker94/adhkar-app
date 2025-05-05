@@ -234,7 +234,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab"> 3 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab"> 1 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab">أوقات الصلاة</div>
     </div>
@@ -1162,7 +1162,7 @@ async function requestNotificationPermission() {
         if (isIOS && !isInStandaloneMode) {
             // Show instructions for adding to home screen first
             showTutorial();
-            return;
+            return false;
         }
 
         // Check if notifications are supported
@@ -1171,7 +1171,7 @@ async function requestNotificationPermission() {
                 ? 'المتصفح لا يدعم الإشعارات'
                 : 'Notifications are not supported in this browser';
             alert(notSupportedMessage);
-            return;
+            return false;
         }
         
         // Request permission
@@ -1214,6 +1214,7 @@ async function requestNotificationPermission() {
                         setupBasicNotifications();
                     }
                 }
+                return true;
             } catch (error) {
                 console.error('Error setting up notifications:', error);
                 notificationEnabled = false;
@@ -1230,6 +1231,7 @@ async function requestNotificationPermission() {
                         : 'Error enabling notifications';
                     alert(errorMessage);
                 }
+                return false;
             }
         } else {
             notificationEnabled = false;
@@ -1247,6 +1249,7 @@ async function requestNotificationPermission() {
                     : 'Please allow notifications in your browser settings';
                 alert(permissionDeniedMessage);
             }
+            return false;
         }
     } catch (error) {
         console.error('Error requesting notification permission:', error);
@@ -1256,6 +1259,7 @@ async function requestNotificationPermission() {
             ? 'حدث خطأ أثناء تفعيل الإشعارات'
             : 'An error occurred while enabling notifications';
         alert(errorMessage);
+        return false;
     }
 }
 
@@ -1504,18 +1508,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     notificationToggle.addEventListener('change', async (e) => {
         if (e.target.checked) {
-            // Show tutorial first for iOS users
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-            const isInStandaloneMode = ('standalone' in navigator) && (navigator.standalone);
-            
-            if (isIOS && !isInStandaloneMode) {
-                showTutorial();
-                // Don't proceed with notification setup until user has added to home screen
+            const success = await requestNotificationPermission();
+            if (!success) {
                 e.target.checked = false;
-                return;
             }
-            
-            await requestNotificationPermission();
         } else {
             notificationEnabled = false;
             if (nextPrayerTimeout) {
