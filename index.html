@@ -902,6 +902,7 @@ async function fetchPrayerTimes(city = "Amman") {
 
             // Store timings for notifications
             prayerNotifications = timings;
+            console.log('Prayer times updated:', timings);
 
             document.getElementById("azan-location").innerText = languages[currentLang].locationText(city, location);
             document.querySelector("#azan-fajr span:last-child").innerText = timings.Fajr;
@@ -912,9 +913,11 @@ async function fetchPrayerTimes(city = "Amman") {
 
             // Setup notifications if enabled
             if (notificationEnabled) {
+                console.log('Setting up notifications after prayer times update');
                 setupPrayerNotifications();
             }
         } else {
+            console.error('Error fetching prayer times:', data);
             document.getElementById("azan-location").innerText = languages[currentLang].arErrorMessage;
         }
     } catch (error) {
@@ -1090,7 +1093,10 @@ async function requestNotificationPermission() {
 }
 
 function setupBasicNotifications() {
-    if (!notificationEnabled) return;
+    if (!notificationEnabled) {
+        console.log('Notifications not enabled');
+        return;
+    }
 
     // Clear any existing notifications
     if (nextPrayerTimeout) {
@@ -1102,9 +1108,14 @@ function setupBasicNotifications() {
     let nextPrayer = null;
     let nextPrayerTime = null;
 
+    console.log('Current time:', now.toLocaleTimeString());
+    console.log('Prayer times:', timings);
+
     // Find the next prayer time
     for (const [prayer, time] of Object.entries(timings)) {
         const prayerTime = new Date(`${now.toDateString()} ${time}`);
+        console.log(`Checking ${prayer}: ${prayerTime.toLocaleTimeString()}`);
+        
         if (prayerTime > now) {
             if (!nextPrayerTime || prayerTime < nextPrayerTime) {
                 nextPrayer = prayer;
@@ -1115,15 +1126,23 @@ function setupBasicNotifications() {
 
     if (nextPrayer && nextPrayerTime) {
         const timeUntilNext = nextPrayerTime - now;
+        console.log('Next prayer:', nextPrayer, 'at', nextPrayerTime.toLocaleTimeString());
         
         // Schedule notification 5 minutes before prayer time
         const notificationTime = timeUntilNext - (5 * 60 * 1000);
+        console.log('Time until notification:', Math.floor(notificationTime / 60000), 'minutes');
         
         if (notificationTime > 0) {
+            console.log('Setting up notification for:', new Date(now.getTime() + notificationTime).toLocaleTimeString());
             nextPrayerTimeout = setTimeout(() => {
+                console.log('Notification timeout triggered');
                 showBasicNotification(nextPrayer);
             }, notificationTime);
+        } else {
+            console.log('Notification time has already passed');
         }
+    } else {
+        console.log('No upcoming prayer times found');
     }
 }
 
@@ -1239,6 +1258,15 @@ function showPrayerNotification(prayer) {
     }
 }
 
+// Add periodic check for prayer times
+function setupPeriodicChecks() {
+    // Check prayer times every hour
+    setInterval(() => {
+        console.log('Running periodic prayer times check');
+        fetchPrayerTimes(currentCity);
+    }, 60 * 60 * 1000); // Every hour
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const adhkarView = document.getElementById('adhkarView');
     const arabicText = document.getElementById('arabicText');
@@ -1289,6 +1317,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
+    // Add periodic checks
+    setupPeriodicChecks();
+    
+    // Initial prayer times fetch
+    detectCityAndFetchTimes();
 });
     </script>
 </body>
