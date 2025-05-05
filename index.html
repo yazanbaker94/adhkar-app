@@ -328,10 +328,6 @@
                 <button id="btnRefresh" onclick="refreshPrayerTimes()" class="mt-6 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow transition-colors">
                     <i class="fas fa-sync-alt mr-2"></i> Refresh
                 </button>
-                <!-- Add test notification button -->
-                <button onclick="testNotification()" class="mt-4 w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg shadow transition-colors">
-                    <i class="fas fa-bell mr-2"></i> Test Notification
-                </button>
             </div>
         </div>
     </main>
@@ -983,12 +979,9 @@ async function registerServiceWorker() {
 async function requestNotificationPermission() {
     try {
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        console.log('Requesting notification permission...');
-        console.log('Is iOS:', isIOS);
         
         // Check if the app is running in standalone mode (added to home screen)
         const isInStandaloneMode = ('standalone' in navigator) && (navigator.standalone);
-        console.log('Is in standalone mode:', isInStandaloneMode);
         
         if (isIOS && !isInStandaloneMode) {
             // Show instructions for adding to home screen first
@@ -1013,16 +1006,9 @@ async function requestNotificationPermission() {
         
         // Request permission
         const permission = await Notification.requestPermission();
-        console.log('Permission result:', permission);
         
         if (permission === 'granted') {
             try {
-                // Test if we can create a notification
-                const testNotification = new Notification('Test', {
-                    silent: true
-                });
-                testNotification.close();
-                
                 notificationEnabled = true;
                 document.getElementById('notificationToggle').checked = true;
                 
@@ -1059,7 +1045,7 @@ async function requestNotificationPermission() {
                     }
                 }
             } catch (error) {
-                console.error('Error creating test notification:', error);
+                console.error('Error setting up notifications:', error);
                 notificationEnabled = false;
                 document.getElementById('notificationToggle').checked = false;
                 
@@ -1250,77 +1236,6 @@ function showPrayerNotification(prayer) {
             const audio = new Audio('adhan.mp3');
             audio.play().catch(error => console.error('Error playing adhan:', error));
         }
-    }
-}
-
-// Add this function before the DOMContentLoaded event listener
-function testNotification() {
-    console.log('Testing notification...');
-    console.log('Notification permission:', Notification.permission);
-    console.log('Notification enabled:', notificationEnabled);
-
-    if (!('Notification' in window)) {
-        const notSupportedMessage = currentLang === 'ar'
-            ? 'المتصفح لا يدعم الإشعارات'
-            : 'Notifications are not supported in this browser';
-        alert(notSupportedMessage);
-        return;
-    }
-
-    if (Notification.permission !== 'granted') {
-        const permissionMessage = currentLang === 'ar'
-            ? 'يرجى تفعيل الإشعارات أولاً'
-            : 'Please enable notifications first';
-        alert(permissionMessage);
-        return;
-    }
-
-    if (!notificationEnabled) {
-        const notEnabledMessage = currentLang === 'ar'
-            ? 'يرجى تفعيل الإشعارات من زر التفعيل'
-            : 'Please enable notifications using the toggle switch';
-        alert(notEnabledMessage);
-        return;
-    }
-
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    console.log('Is iOS:', isIOS);
-    
-    try {
-        if (isIOS) {
-            // For iOS, show a test notification
-            const notification = new Notification(languages[currentLang].prayerTimeNotification, {
-                body: currentLang === 'ar' ? 'هذه إشعارة تجريبية' : 'This is a test notification',
-                icon: 'icon1.png',
-                badge: 'icon1.png',
-                requireInteraction: true,
-                silent: false
-            });
-
-            // Play adhan sound
-            const audio = new Audio('adhan.mp3');
-            audio.play().catch(error => console.error('Error playing adhan:', error));
-        } else {
-            // For Android, show a test notification
-            const notification = new Notification(languages[currentLang].prayerTimeNotification, {
-                body: currentLang === 'ar' ? 'هذه إشعارة تجريبية' : 'This is a test notification',
-                icon: 'icon1.png',
-                badge: 'icon1.png',
-                vibrate: [200, 100, 200],
-                requireInteraction: true,
-                silent: false
-            });
-
-            // Play adhan sound
-            const audio = new Audio('adhan.mp3');
-            audio.play().catch(error => console.error('Error playing adhan:', error));
-        }
-    } catch (error) {
-        console.error('Error showing test notification:', error);
-        const errorMessage = currentLang === 'ar'
-            ? 'حدث خطأ أثناء عرض الإشعارة'
-            : 'An error occurred while showing the notification';
-        alert(errorMessage);
     }
 }
 
