@@ -1057,11 +1057,11 @@ async function fetchPrayerTimes(city = "Amman") {
             const timings = data.data.timings;
             const location = data.data.meta.timezone;
 
-            // TEST: Set Maghrib to 5 minutes from now
+            // TEST: Set Maghrib to 2 minutes from now
             const now = new Date();
-            const fiveMinutesFromNow = new Date(now.getTime() + 5 * 60 * 1000);
-            const hours = fiveMinutesFromNow.getHours().toString().padStart(2, '0');
-            const minutes = fiveMinutesFromNow.getMinutes().toString().padStart(2, '0');
+            const twoMinutesFromNow = new Date(now.getTime() + 2 * 60 * 1000);
+            const hours = twoMinutesFromNow.getHours().toString().padStart(2, '0');
+            const minutes = twoMinutesFromNow.getMinutes().toString().padStart(2, '0');
             timings.Maghrib = `${hours}:${minutes}`;
             console.log('Test: Maghrib time set to:', timings.Maghrib);
 
