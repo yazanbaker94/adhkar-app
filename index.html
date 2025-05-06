@@ -234,7 +234,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab"> 1 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab"> 2 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab">أوقات الصلاة</div>
     </div>
@@ -1464,12 +1464,18 @@ function showTutorial() {
         });
     }
 
+    // Make sure the modal is visible
+    modal.style.display = 'flex';
     modal.classList.remove('hidden');
+    modal.style.opacity = '1';
+    modal.style.zIndex = '50';
 }
 
 function closeTutorial() {
     const modal = document.getElementById('tutorialModal');
+    modal.style.display = 'none';
     modal.classList.add('hidden');
+    modal.style.opacity = '0';
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1508,6 +1514,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     notificationToggle.addEventListener('change', async (e) => {
         if (e.target.checked) {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isInStandaloneMode = ('standalone' in navigator) && (navigator.standalone);
+            
+            // Show tutorial first for iOS users
+            if (isIOS && !isInStandaloneMode) {
+                showTutorial();
+                e.target.checked = false;
+                return;
+            }
+            
+            // For Android and other devices, show tutorial before requesting permissions
+            if (!isIOS) {
+                showTutorial();
+            }
+            
             const success = await requestNotificationPermission();
             if (!success) {
                 e.target.checked = false;
