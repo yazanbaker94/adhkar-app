@@ -234,7 +234,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab"> 2 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab"> 4 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab">أوقات الصلاة</div>
     </div>
@@ -1410,7 +1410,19 @@ function setupPeriodicChecks() {
 
 // Add these functions to handle the tutorial
 function showTutorial() {
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    // Improved iOS detection
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || 
+                              (window.navigator.standalone === true);
+    
+    console.log('Device Info:', {
+        userAgent: navigator.userAgent,
+        platform: navigator.platform,
+        isIOS: isIOS,
+        isInStandaloneMode: isInStandaloneMode
+    });
+
     const modal = document.getElementById('tutorialModal');
     const iosTutorial = document.getElementById('iosTutorial');
     const androidTutorial = document.getElementById('androidTutorial');
@@ -1514,8 +1526,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     notificationToggle.addEventListener('change', async (e) => {
         if (e.target.checked) {
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-            const isInStandaloneMode = ('standalone' in navigator) && (navigator.standalone);
+            // Improved iOS detection
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || 
+                                     (window.navigator.standalone === true);
+            
+            console.log('Notification Toggle - Device Info:', {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                isIOS: isIOS,
+                isInStandaloneMode: isInStandaloneMode
+            });
             
             // Show tutorial first for iOS users
             if (isIOS && !isInStandaloneMode) {
