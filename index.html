@@ -211,22 +211,24 @@
         أذكار وأوقات الصلاة
     </header>
 
-    <!-- Update the tutorial modal HTML structure -->
-    <div id="tutorialModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden" style="display: none;">
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md mx-4 relative">
-            <div class="text-center mb-4">
-                <i class="fas fa-bell text-3xl text-blue-500 mb-2"></i>
-                <h2 class="text-xl font-bold" id="tutorialTitle"></h2>
-            </div>
-            <div id="iosTutorial" class="hidden">
-                <ol class="list-decimal list-inside space-y-3" id="iosSteps"></ol>
-                <div class="mt-4 text-sm text-gray-500" id="iosNote"></div>
-            </div>
-            <div id="androidTutorial" class="hidden">
-                <ol class="list-decimal list-inside space-y-3" id="androidSteps"></ol>
-            </div>
-            <div class="mt-6 flex justify-center">
-                <button onclick="closeTutorial()" class="bg-blue-500 text-white px-6 py-2 rounded-lg" id="gotItButton"></button>
+    <!-- Replace the tutorial modal with a simpler div -->
+    <div id="tutorialOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="fixed inset-0 flex items-center justify-center p-4">
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md w-full">
+                <div class="text-center mb-4">
+                    <i class="fas fa-bell text-3xl text-blue-500 mb-2"></i>
+                    <h2 class="text-xl font-bold" id="tutorialTitle"></h2>
+                </div>
+                <div id="iosTutorial" class="hidden">
+                    <ol class="list-decimal list-inside space-y-3" id="iosSteps"></ol>
+                    <div class="mt-4 text-sm text-gray-500" id="iosNote"></div>
+                </div>
+                <div id="androidTutorial" class="hidden">
+                    <ol class="list-decimal list-inside space-y-3" id="androidSteps"></ol>
+                </div>
+                <div class="mt-6 flex justify-center">
+                    <button onclick="closeTutorial()" class="bg-blue-500 text-white px-6 py-2 rounded-lg" id="gotItButton"></button>
+                </div>
             </div>
         </div>
     </div>
@@ -850,7 +852,7 @@ function switchLanguage() {
     updatePrayerTimesUI();
     
     // Update tutorial if it's visible
-    const modal = document.getElementById('tutorialModal');
+    const modal = document.getElementById('tutorialOverlay');
     if (!modal.classList.contains('hidden')) {
         showTutorial();
     }
@@ -1418,61 +1420,68 @@ function showTutorial() {
         userAgent: navigator.userAgent
     });
 
-    const lang = languages[currentLang];
-
-    if (isIOS) {
-        // For iOS, use a series of alerts
-        const steps = lang.tutorialIOS.steps.join('\n\n');
-        const message = `${lang.tutorialTitle}\n\n${steps}\n\n${lang.tutorialIOS.note}`;
-        alert(message);
-        return;
-    }
-
-    // For non-iOS devices, use the modal
-    const modal = document.getElementById('tutorialModal');
+    const overlay = document.getElementById('tutorialOverlay');
     const iosTutorial = document.getElementById('iosTutorial');
     const androidTutorial = document.getElementById('androidTutorial');
     const title = document.getElementById('tutorialTitle');
     const gotItButton = document.getElementById('gotItButton');
+    const iosSteps = document.getElementById('iosSteps');
     const androidSteps = document.getElementById('androidSteps');
+    const iosNote = document.getElementById('iosNote');
 
     // Set language-specific content
+    const lang = languages[currentLang];
     title.textContent = lang.tutorialTitle;
     gotItButton.textContent = lang.gotIt;
 
     // Set text alignment based on language
     const textAlignment = currentLang === 'ar' ? 'text-right' : 'text-left';
+    iosSteps.className = `list-decimal list-inside space-y-3 ${textAlignment}`;
     androidSteps.className = `list-decimal list-inside space-y-3 ${textAlignment}`;
+    iosNote.className = `mt-4 text-sm text-gray-500 ${textAlignment}`;
 
-    // Set Android tutorial content
-    iosTutorial.classList.add('hidden');
-    androidTutorial.classList.remove('hidden');
-    
-    // Clear previous steps
-    androidSteps.innerHTML = '';
-    
-    // Add new steps
-    lang.tutorialAndroid.steps.forEach(step => {
-        const li = document.createElement('li');
-        li.textContent = step;
-        androidSteps.appendChild(li);
-    });
+    // Set iOS tutorial content
+    if (isIOS) {
+        iosTutorial.classList.remove('hidden');
+        androidTutorial.classList.add('hidden');
+        
+        // Clear previous steps
+        iosSteps.innerHTML = '';
+        
+        // Add new steps
+        lang.tutorialIOS.steps.forEach(step => {
+            const li = document.createElement('li');
+            li.textContent = step;
+            iosSteps.appendChild(li);
+        });
+        
+        // Add note
+        iosNote.textContent = lang.tutorialIOS.note;
+    } else {
+        // Set Android tutorial content
+        iosTutorial.classList.add('hidden');
+        androidTutorial.classList.remove('hidden');
+        
+        // Clear previous steps
+        androidSteps.innerHTML = '';
+        
+        // Add new steps
+        lang.tutorialAndroid.steps.forEach(step => {
+            const li = document.createElement('li');
+            li.textContent = step;
+            androidSteps.appendChild(li);
+        });
+    }
 
-    // Show modal
-    modal.style.display = 'flex';
-    modal.classList.remove('hidden');
-    modal.style.opacity = '1';
+    // Show overlay
+    overlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // Prevent scrolling
 }
 
 function closeTutorial() {
-    const modal = document.getElementById('tutorialModal');
-    modal.style.opacity = '0';
-    
-    // Wait for fade out animation
-    setTimeout(() => {
-        modal.style.display = 'none';
-        modal.classList.add('hidden');
-    }, 300);
+    const overlay = document.getElementById('tutorialOverlay');
+    overlay.classList.add('hidden');
+    document.body.style.overflow = ''; // Restore scrolling
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
