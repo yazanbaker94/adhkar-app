@@ -1473,13 +1473,11 @@ function showTutorial() {
 
     // For iOS not in standalone mode, use alert
     if (isIOS && !isInStandaloneMode) {
-    const steps = lang.tutorialIOS.steps.join('\n\n');
-    const message = `${lang.tutorialTitle}\n\n${steps}\n\n${lang.tutorialIOS.note}`;
-    alert(message);
-    showTutorial();  // Add this line
-    return;
-}
-
+        const steps = lang.tutorialIOS.steps.join('\n\n');
+        const message = `${lang.tutorialTitle}\n\n${steps}\n\n${lang.tutorialIOS.note}`;
+        alert(message);
+        return;
+    }
 
     // For other cases, use the modal
     const overlay = document.getElementById('tutorialOverlay');
