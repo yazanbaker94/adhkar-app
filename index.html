@@ -235,7 +235,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab"> 3 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab"> 4 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab">أوقات الصلاة</div>
     </div>
@@ -1469,6 +1469,17 @@ function showTutorial() {
         userAgent: navigator.userAgent
     });
 
+    const lang = languages[currentLang];
+
+    // For iOS not in standalone mode, use alert
+    if (isIOS && !isInStandaloneMode) {
+        const steps = lang.tutorialIOS.steps.join('\n\n');
+        const message = `${lang.tutorialTitle}\n\n${steps}\n\n${lang.tutorialIOS.note}`;
+        alert(message);
+        return;
+    }
+
+    // For other cases, use the modal
     const overlay = document.getElementById('tutorialOverlay');
     const iosTutorial = document.getElementById('iosTutorial');
     const androidTutorial = document.getElementById('androidTutorial');
@@ -1479,7 +1490,6 @@ function showTutorial() {
     const iosNote = document.getElementById('iosNote');
 
     // Set language-specific content
-    const lang = languages[currentLang];
     title.textContent = lang.tutorialTitle;
     gotItButton.textContent = lang.gotIt;
 
@@ -1522,7 +1532,7 @@ function showTutorial() {
         });
     }
 
-    // Force the overlay to be visible
+    // Show overlay
     overlay.style.display = 'block';
     overlay.style.opacity = '1';
     overlay.classList.remove('hidden');
@@ -1580,7 +1590,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 userAgent: navigator.userAgent
             });
             
-            // Force show tutorial first
+            // Show tutorial first
             showTutorial();
             
             // For iOS not in standalone mode, don't proceed with permission request
