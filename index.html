@@ -211,30 +211,31 @@
         أذكار وأوقات الصلاة
     </header>
 
-    <!-- Update the tutorial modal HTML structure -->
-    <div id="tutorialModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md mx-4">
-            <div class="text-center mb-4">
-                <i class="fas fa-bell text-3xl text-blue-500 mb-2"></i>
-                <h2 class="text-xl font-bold" id="tutorialTitle"></h2>
-            </div>
-            <div id="iosTutorial" class="hidden">
-                <ol class="list-decimal list-inside space-y-3" id="iosSteps"></ol>
-                <div class="mt-4 text-sm text-gray-500" id="iosNote"></div>
-            </div>
-            <div id="androidTutorial" class="hidden">
-                <ol class="list-decimal list-inside space-y-3" id="androidSteps"></ol>
-            </div>
-            <div class="mt-6 flex justify-center">
-                <button onclick="closeTutorial()" class="bg-blue-500 text-white px-6 py-2 rounded-lg" id="gotItButton">
-                </button>
+    <!-- Replace the tutorial modal with a simpler div -->
+    <div id="tutorialOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="fixed inset-0 flex items-center justify-center p-4">
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md w-full">
+                <div class="text-center mb-4">
+                    <i class="fas fa-bell text-3xl text-blue-500 mb-2"></i>
+                    <h2 class="text-xl font-bold" id="tutorialTitle"></h2>
+                </div>
+                <div id="iosTutorial" class="hidden">
+                    <ol class="list-decimal list-inside space-y-3" id="iosSteps"></ol>
+                    <div class="mt-4 text-sm text-gray-500" id="iosNote"></div>
+                </div>
+                <div id="androidTutorial" class="hidden">
+                    <ol class="list-decimal list-inside space-y-3" id="androidSteps"></ol>
+                </div>
+                <div class="mt-6 flex justify-center">
+                    <button onclick="closeTutorial()" class="bg-blue-500 text-white px-6 py-2 rounded-lg" id="gotItButton"></button>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab"> 1 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab"> 8 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab">أوقات الصلاة</div>
     </div>
@@ -510,6 +511,13 @@ const languages = {
 async function initARCamera() {
     console.log("Initializing AR Camera...");
 
+    // Check if we're in the Qibla tab
+    const qiblaTab = document.getElementById('qiblaTab');
+    if (!qiblaTab || !qiblaTab.classList.contains('active')) {
+        console.log("Not in Qibla tab, skipping AR initialization");
+        return;
+    }
+
     if (!('DeviceOrientationEvent' in window) || !navigator.mediaDevices) {
         console.error("Device orientation or camera not supported");
         showARUnsupported();
@@ -543,6 +551,10 @@ async function initARCamera() {
         });
 
         const video = document.getElementById('arCamera');
+        if (!video) {
+            console.error("AR camera element not found");
+            return;
+        }
         video.srcObject = cameraStream;
 
         // Get precise location
@@ -809,15 +821,28 @@ function updateFallbackCompass(event) {
 }
 
 function stopARCamera() {
+    console.log("Stopping AR Camera...");
     arActive = false;
+    
     if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
     }
+    
     if (cameraStream) {
-        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream.getTracks().forEach(track => {
+            track.stop();
+        });
+        cameraStream = null;
     }
+    
     window.removeEventListener('deviceorientation', handleOrientation);
     window.removeEventListener('deviceorientation', updateFallbackCompass);
+    
+    const video = document.getElementById('arCamera');
+    if (video && video.srcObject) {
+        video.srcObject = null;
+    }
 }
 
 // Event Listeners
@@ -851,7 +876,7 @@ function switchLanguage() {
     updatePrayerTimesUI();
     
     // Update tutorial if it's visible
-    const modal = document.getElementById('tutorialModal');
+    const modal = document.getElementById('tutorialOverlay');
     if (!modal.classList.contains('hidden')) {
         showTutorial();
     }
@@ -1106,20 +1131,45 @@ function setupTabs() {
     const tabs = document.querySelectorAll('.tab');
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
+            // Remove active class from all tabs and content
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => {
+                c.classList.remove('active');
+                c.classList.add('hidden');
+            });
 
+            // Add active class to clicked tab
             tab.classList.add('active');
             const tabId = tab.getAttribute('data-tab');
-            document.getElementById(`${tabId}Content`).classList.add('active');
+            const content = document.getElementById(`${tabId}Content`);
+            content.classList.remove('hidden');
+            content.classList.add('active');
 
+            // Handle Qibla tab specifically
             if (tabId === 'qibla') {
-                initARCamera();
+                // Stop any existing AR camera
+                stopARCamera();
+                // Initialize AR camera with a small delay to ensure DOM is ready
+                setTimeout(() => {
+                    initARCamera();
+                }, 100);
             } else {
+                // Stop AR camera when switching to other tabs
                 stopARCamera();
             }
         });
     });
+
+    // Initialize the active tab content
+    const activeTab = document.querySelector('.tab.active');
+    if (activeTab) {
+        const tabId = activeTab.getAttribute('data-tab');
+        const content = document.getElementById(`${tabId}Content`);
+        if (content) {
+            content.classList.remove('hidden');
+            content.classList.add('active');
+        }
+    }
 }
 
 // Add these new functions for notification handling
@@ -1411,7 +1461,15 @@ function setupPeriodicChecks() {
 // Add these functions to handle the tutorial
 function showTutorial() {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const modal = document.getElementById('tutorialModal');
+    const isInStandaloneMode = window.navigator.standalone === true;
+    
+    console.log('Showing tutorial for:', {
+        isIOS,
+        isInStandaloneMode,
+        userAgent: navigator.userAgent
+    });
+
+    const overlay = document.getElementById('tutorialOverlay');
     const iosTutorial = document.getElementById('iosTutorial');
     const androidTutorial = document.getElementById('androidTutorial');
     const title = document.getElementById('tutorialTitle');
@@ -1464,12 +1522,15 @@ function showTutorial() {
         });
     }
 
-    modal.classList.remove('hidden');
+    // Show overlay
+    overlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // Prevent scrolling
 }
 
 function closeTutorial() {
-    const modal = document.getElementById('tutorialModal');
-    modal.classList.add('hidden');
+    const overlay = document.getElementById('tutorialOverlay');
+    overlay.classList.add('hidden');
+    document.body.style.overflow = ''; // Restore scrolling
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1508,6 +1569,27 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     notificationToggle.addEventListener('change', async (e) => {
         if (e.target.checked) {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isInStandaloneMode = window.navigator.standalone === true;
+            
+            console.log('Notification toggle clicked:', {
+                isIOS,
+                isInStandaloneMode,
+                userAgent: navigator.userAgent
+            });
+            
+            // Show tutorial first for iOS users
+            if (isIOS && !isInStandaloneMode) {
+                showTutorial();
+                e.target.checked = false;
+                return;
+            }
+            
+            // For Android and other devices, show tutorial before requesting permissions
+            if (!isIOS) {
+                showTutorial();
+            }
+            
             const success = await requestNotificationPermission();
             if (!success) {
                 e.target.checked = false;
