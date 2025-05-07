@@ -1462,24 +1462,8 @@ function setupPeriodicChecks() {
 function showTutorial() {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const isInStandaloneMode = window.navigator.standalone === true;
-    
-    console.log('Showing tutorial for:', {
-        isIOS,
-        isInStandaloneMode,
-        userAgent: navigator.userAgent
-    });
 
     const lang = languages[currentLang];
-
-    // For iOS not in standalone mode, use alert
-    if (isIOS && !isInStandaloneMode) {
-        const steps = lang.tutorialIOS.steps.join('\n\n');
-        const message = `${lang.tutorialTitle}\n\n${steps}\n\n${lang.tutorialIOS.note}`;
-        alert(message);
-        return;
-    }
-
-    // For other cases, use the modal
     const overlay = document.getElementById('tutorialOverlay');
     const iosTutorial = document.getElementById('iosTutorial');
     const androidTutorial = document.getElementById('androidTutorial');
@@ -1489,42 +1473,31 @@ function showTutorial() {
     const androidSteps = document.getElementById('androidSteps');
     const iosNote = document.getElementById('iosNote');
 
-    // Set language-specific content
+    // Set content
     title.textContent = lang.tutorialTitle;
     gotItButton.textContent = lang.gotIt;
 
-    // Set text alignment based on language
     const textAlignment = currentLang === 'ar' ? 'text-right' : 'text-left';
     iosSteps.className = `list-decimal list-inside space-y-3 ${textAlignment}`;
     androidSteps.className = `list-decimal list-inside space-y-3 ${textAlignment}`;
     iosNote.className = `mt-4 text-sm text-gray-500 ${textAlignment}`;
 
-    // Show appropriate tutorial based on device
     if (isIOS) {
         iosTutorial.classList.remove('hidden');
         androidTutorial.classList.add('hidden');
-        
-        // Clear previous steps
+
         iosSteps.innerHTML = '';
-        
-        // Add new steps
         lang.tutorialIOS.steps.forEach(step => {
             const li = document.createElement('li');
             li.textContent = step;
             iosSteps.appendChild(li);
         });
-        
-        // Add note
         iosNote.textContent = lang.tutorialIOS.note;
     } else {
-        // Set Android tutorial content
         iosTutorial.classList.add('hidden');
         androidTutorial.classList.remove('hidden');
-        
-        // Clear previous steps
+
         androidSteps.innerHTML = '';
-        
-        // Add new steps
         lang.tutorialAndroid.steps.forEach(step => {
             const li = document.createElement('li');
             li.textContent = step;
@@ -1532,12 +1505,23 @@ function showTutorial() {
         });
     }
 
-    // Show overlay
-    overlay.style.display = 'flex';
-    overlay.style.opacity = '1';
-    overlay.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
+    // Optional alert for iOS if not standalone
+    if (isIOS && !isInStandaloneMode) {
+        const steps = lang.tutorialIOS.steps.join('\n\n');
+        const message = `${lang.tutorialTitle}\n\n${steps}\n\n${lang.tutorialIOS.note}`;
+        alert(message); // fallback instruction — still allow modal to open
+    }
+
+    // Force Safari repaint and show modal
+    setTimeout(() => {
+        overlay.classList.remove('hidden');
+        overlay.style.display = 'flex';
+        overlay.style.opacity = '1';
+        overlay.style.zIndex = '9999';
+        document.body.style.overflow = 'hidden';
+    }, 100);
 }
+
 
 function closeTutorial() {
     const overlay = document.getElementById('tutorialOverlay');
