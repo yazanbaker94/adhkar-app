@@ -235,7 +235,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab"> 8 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab"> 1 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab">أوقات الصلاة</div>
     </div>
@@ -1585,7 +1585,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 userAgent: navigator.userAgent
             });
             
-            // Show tutorial for all devices
+            // Show tutorial first for all devices
             showTutorial();
             
             // For iOS not in standalone mode, don't proceed with permission request
@@ -1594,10 +1594,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
             
-            const success = await requestNotificationPermission();
-            if (!success) {
-                e.target.checked = false;
-            }
+            // Wait a bit before requesting permissions to ensure tutorial is seen
+            setTimeout(async () => {
+                const success = await requestNotificationPermission();
+                if (!success) {
+                    e.target.checked = false;
+                }
+            }, 500);
         } else {
             notificationEnabled = false;
             if (nextPrayerTimeout) {
