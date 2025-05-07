@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <title>أذكار وأوقات الصلاة</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Add Tesseract.js in the head section -->
+    <script src='https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js'></script>
 
     <style>
         /* Fallback Compass Styles */
@@ -235,9 +237,10 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab"> 3  القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab"> 4 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab">أوقات الصلاة</div>
+        <div class="tab" data-tab="scan" id="scanTab">مسح الكلمات</div>
     </div>
 
     <main class="flex-grow flex items-center justify-center">
@@ -359,6 +362,43 @@
                 </button>
             </div>
         </div>
+
+        <!-- Add new Scan Tab Content -->
+        <div id="scanContent" class="tab-content w-full p-4 hidden">
+            <div class="relative w-full h-[70vh] bg-black rounded-xl overflow-hidden">
+                <video id="scanCamera" autoplay playsinline class="w-full h-full object-cover"></video>
+                <canvas id="scanCanvas" class="absolute top-0 left-0 w-full h-full pointer-events-none"></canvas>
+                
+                <!-- Scanning UI -->
+                <div class="absolute top-4 left-0 right-0 flex justify-center">
+                    <div class="bg-black/50 text-white px-4 py-2 rounded-full text-sm">
+                        <i class="fas fa-camera mr-2"></i>
+                        <span id="scanStatus">جاهز للمسح</span>
+                    </div>
+                </div>
+
+                <!-- Word Result -->
+                <div id="wordResult" class="hidden absolute bottom-4 left-4 right-4 bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-lg font-bold" id="scannedWord"></h3>
+                        <button onclick="closeWordResult()" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300" id="wordMeaning"></p>
+                </div>
+
+                <!-- Camera Controls -->
+                <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-4">
+                    <button id="flipScanCameraBtn" class="bg-white/20 text-white p-3 rounded-full">
+                        <i class="fas fa-camera-rotate"></i>
+                    </button>
+                    <button id="captureBtn" class="bg-blue-500 text-white p-3 rounded-full">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- Footer Section -->
@@ -391,6 +431,12 @@ const swipeThreshold = 50;
 let notificationEnabled = false;
 let prayerNotifications = {};
 let nextPrayerTimeout = null;
+
+// Add these variables at the top with other variables
+let scanStream = null;
+let scanFacingMode = "environment";
+let isScanning = false;
+let isProcessing = false;
 
 const languages = {
     ar: {
@@ -1152,17 +1198,21 @@ function setupTabs() {
             content.classList.remove('hidden');
             content.classList.add('active');
 
-            // Handle Qibla tab specifically
+            // Handle specific tabs
             if (tabId === 'qibla') {
-                // Stop any existing AR camera
+                stopScanCamera();
                 stopARCamera();
-                // Initialize AR camera with a small delay to ensure DOM is ready
                 setTimeout(() => {
                     initARCamera();
                 }, 100);
-            } else {
-                // Stop AR camera when switching to other tabs
+            } else if (tabId === 'scan') {
                 stopARCamera();
+                setTimeout(() => {
+                    initScanCamera();
+                }, 100);
+            } else {
+                stopARCamera();
+                stopScanCamera();
             }
         });
     });
@@ -1217,7 +1267,7 @@ async function requestNotificationPermission() {
         const isInStandaloneMode = ('standalone' in navigator) && (navigator.standalone);
         
         if (isIOS && !isInStandaloneMode) {
-            // Show instructions for adding to home screen first
+            // Show tutorial first
             showTutorial();
             return false;
         }
@@ -1487,6 +1537,7 @@ function showTutorial() {
         });
         tutorialNote.textContent = lang.tutorialIOS.note;
 
+        // Always show tutorial for iOS, regardless of standalone mode
         tutorialDiv.classList.remove('hidden');
         
         // If not in standalone mode, scroll to tutorial
@@ -1526,6 +1577,207 @@ function closeTutorial() {
     overlay.style.display = 'none';
     overlay.classList.add('hidden');
     document.body.style.overflow = '';
+}
+
+// Add these new functions for OCR and word lookup
+async function captureAndProcessImage() {
+    if (isProcessing) return;
+    isProcessing = true;
+
+    const video = document.getElementById('scanCamera');
+    const canvas = document.getElementById('scanCanvas');
+    const ctx = canvas.getContext('2d');
+    const statusElement = document.getElementById('scanStatus');
+
+    try {
+        // Update status
+        statusElement.textContent = "جاري معالجة الصورة...";
+
+        // Draw current frame to canvas
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0);
+
+        // Convert canvas to base64
+        const imageData = canvas.toDataURL('image/jpeg', 0.8);
+        const base64Image = imageData.split(',')[1];
+
+        // Call OCR
+        const ocrResult = await performOCR(base64Image);
+        
+        if (ocrResult && ocrResult.text) {
+            // Process the detected text
+            const words = processArabicText(ocrResult.text);
+            
+            if (words.length > 0) {
+                // Look up the first word's meaning
+                const wordMeaning = await lookupWordMeaning(words[0]);
+                if (wordMeaning) {
+                    showWordResult(words[0], wordMeaning);
+                    statusElement.textContent = "تم العثور على كلمة";
+                } else {
+                    statusElement.textContent = "لم يتم العثور على معنى للكلمة";
+                }
+            } else {
+                statusElement.textContent = "لم يتم العثور على نص عربي";
+            }
+        } else {
+            statusElement.textContent = "لم يتم العثور على نص";
+        }
+    } catch (error) {
+        console.error('Error processing image:', error);
+        statusElement.textContent = "حدث خطأ في معالجة الصورة";
+    } finally {
+        isProcessing = false;
+    }
+}
+
+async function performOCR(base64Image) {
+    try {
+        const worker = await Tesseract.createWorker('ara');
+        const result = await worker.recognize(base64Image);
+        await worker.terminate();
+        return { text: result.data.text };
+    } catch (error) {
+        console.error('OCR error:', error);
+        throw error;
+    }
+}
+
+function processArabicText(text) {
+    // Remove non-Arabic characters and split into words
+    const arabicWords = text
+        .replace(/[^\u0600-\u06FF\s]/g, '') // Keep only Arabic characters and spaces
+        .split(/\s+/)
+        .filter(word => word.length > 1); // Filter out single characters
+
+    return arabicWords;
+}
+
+async function lookupWordMeaning(word) {
+    try {
+        // Try the Quran API first
+        const response = await fetch(`https://api.alquran.cloud/v1/search/${word}/all/ar`);
+        const data = await response.json();
+
+        if (data.code === 200 && data.data.matches.length > 0) {
+            // Get the first occurrence of the word
+            const match = data.data.matches[0];
+            return {
+                word: word,
+                meaning: `موجودة في سورة ${match.surah.name} - الآية ${match.numberInSurah}`,
+                context: match.text
+            };
+        }
+
+        // If not found in Quran, try the free Arabic dictionary API
+        const dictResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/ar/${word}`);
+        const dictData = await dictResponse.json();
+
+        if (dictData && dictData.length > 0) {
+            return {
+                word: word,
+                meaning: dictData[0].meanings[0].definitions[0].definition,
+                context: 'معنى من القاموس'
+            };
+        }
+
+        // If still not found, try the free Arabic Wiktionary API
+        const wikiResponse = await fetch(`https://ar.wiktionary.org/w/api.php?action=query&format=json&prop=extracts&titles=${word}&exintro=1&explaintext=1&origin=*`);
+        const wikiData = await wikiResponse.json();
+
+        if (wikiData.query && wikiData.query.pages) {
+            const page = Object.values(wikiData.query.pages)[0];
+            if (page.extract) {
+                return {
+                    word: word,
+                    meaning: page.extract.split('\n')[0], // Get first line of definition
+                    context: 'معنى من ويكاموس'
+                };
+            }
+        }
+
+        return null;
+    } catch (error) {
+        console.error('Word lookup error:', error);
+        return null;
+    }
+}
+
+// Update the showWordResult function to handle the new data structure
+function showWordResult(word, result) {
+    const resultDiv = document.getElementById('wordResult');
+    document.getElementById('scannedWord').textContent = word;
+    
+    let meaningHtml = `<div class="mb-2">${result.meaning}</div>`;
+    if (result.context) {
+        meaningHtml += `<div class="text-sm text-gray-500">${result.context}</div>`;
+    }
+    
+    document.getElementById('wordMeaning').innerHTML = meaningHtml;
+    resultDiv.classList.remove('hidden');
+}
+
+// Add camera permission handling
+async function requestCameraPermission() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        stream.getTracks().forEach(track => track.stop()); // Stop the stream immediately
+        return true;
+    } catch (error) {
+        console.error('Camera permission error:', error);
+        const statusElement = document.getElementById('scanStatus');
+        statusElement.textContent = "يرجى السماح بالوصول إلى الكاميرا";
+        return false;
+    }
+}
+
+// Update initScanCamera to handle permissions
+async function initScanCamera() {
+    console.log("Initializing Scan Camera...");
+
+    const scanTab = document.getElementById('scanTab');
+    if (!scanTab || !scanTab.classList.contains('active')) {
+        console.log("Not in Scan tab, skipping camera initialization");
+        return;
+    }
+
+    if (!navigator.mediaDevices) {
+        console.error("Camera not supported");
+        document.getElementById('scanStatus').textContent = "الكاميرا غير مدعومة";
+        return;
+    }
+
+    // Request camera permission first
+    const hasPermission = await requestCameraPermission();
+    if (!hasPermission) {
+        return;
+    }
+
+    try {
+        scanStream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: scanFacingMode,
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            }
+        });
+
+        const video = document.getElementById('scanCamera');
+        if (!video) {
+            console.error("Scan camera element not found");
+            return;
+        }
+        video.srcObject = scanStream;
+        document.getElementById('scanStatus').textContent = "جاهز للمسح";
+
+        // Start scanning loop
+        startScanningLoop();
+
+    } catch (error) {
+        console.error("Scan camera initialization failed:", error);
+        document.getElementById('scanStatus').textContent = "فشل في تشغيل الكاميرا";
+    }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
