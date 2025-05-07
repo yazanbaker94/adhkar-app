@@ -12,8 +12,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <title>أذكار وأوقات الصلاة</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Add Tesseract.js in the head section -->
-    <script src='https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js'></script>
 
     <style>
         /* Fallback Compass Styles */
@@ -213,34 +211,31 @@
         أذكار وأوقات الصلاة
     </header>
 
-    <!-- Replace the tutorial modal with a simpler div -->
-    <div id="tutorialOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
-        <div class="fixed inset-0 flex items-center justify-center p-4">
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md w-full">
-                <div class="text-center mb-4">
-                    <i class="fas fa-bell text-3xl text-blue-500 mb-2"></i>
-                    <h2 class="text-xl font-bold" id="tutorialTitle"></h2>
-                </div>
-                <div id="iosTutorial" class="hidden">
-                    <ol class="list-decimal list-inside space-y-3" id="iosSteps"></ol>
-                    <div class="mt-4 text-sm text-gray-500" id="iosNote"></div>
-                </div>
-                <div id="androidTutorial" class="hidden">
-                    <ol class="list-decimal list-inside space-y-3" id="androidSteps"></ol>
-                </div>
-                <div class="mt-6 flex justify-center">
-                    <button onclick="closeTutorial()" class="bg-blue-500 text-white px-6 py-2 rounded-lg" id="gotItButton"></button>
-                </div>
+    <!-- Update the tutorial modal HTML structure -->
+    <div id="tutorialModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden" style="display: none;">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md mx-4 relative">
+            <div class="text-center mb-4">
+                <i class="fas fa-bell text-3xl text-blue-500 mb-2"></i>
+                <h2 class="text-xl font-bold" id="tutorialTitle"></h2>
+            </div>
+            <div id="iosTutorial" class="hidden">
+                <ol class="list-decimal list-inside space-y-3" id="iosSteps"></ol>
+                <div class="mt-4 text-sm text-gray-500" id="iosNote"></div>
+            </div>
+            <div id="androidTutorial" class="hidden">
+                <ol class="list-decimal list-inside space-y-3" id="androidSteps"></ol>
+            </div>
+            <div class="mt-6 flex justify-center">
+                <button onclick="closeTutorial()" class="bg-blue-500 text-white px-6 py-2 rounded-lg" id="gotItButton"></button>
             </div>
         </div>
     </div>
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab"> 4 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab"> 5 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab">أوقات الصلاة</div>
-        <div class="tab" data-tab="scan" id="scanTab">مسح الكلمات</div>
     </div>
 
     <main class="flex-grow flex items-center justify-center">
@@ -316,13 +311,6 @@
         <!-- Prayer Times Tab Content -->
         <div id="prayerContent" class="tab-content w-full max-w-md p-4">
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-                <!-- Add iOS Tutorial Section -->
-                <div id="iosTutorialSteps" class="hidden mb-6 p-4 bg-blue-50 dark:bg-blue-900 rounded-lg">
-                    <h3 class="font-bold mb-3" id="iosTutorialTitle"></h3>
-                    <ol class="list-decimal list-inside space-y-2" id="iosTutorialList"></ol>
-                    <p class="mt-3 text-sm text-gray-600 dark:text-gray-300" id="iosTutorialNote"></p>
-                </div>
-
                 <h2 class="text-xl font-bold text-center mb-4" id="prayerTitle">أوقات الصلاة</h2>
                 <p id="azan-location" class="text-center mb-6">جاري تحديد الموقع...</p>
                 
@@ -362,43 +350,6 @@
                 </button>
             </div>
         </div>
-
-        <!-- Add new Scan Tab Content -->
-        <div id="scanContent" class="tab-content w-full p-4 hidden">
-            <div class="relative w-full h-[70vh] bg-black rounded-xl overflow-hidden">
-                <video id="scanCamera" autoplay playsinline class="w-full h-full object-cover"></video>
-                <canvas id="scanCanvas" class="absolute top-0 left-0 w-full h-full pointer-events-none"></canvas>
-                
-                <!-- Scanning UI -->
-                <div class="absolute top-4 left-0 right-0 flex justify-center">
-                    <div class="bg-black/50 text-white px-4 py-2 rounded-full text-sm">
-                        <i class="fas fa-camera mr-2"></i>
-                        <span id="scanStatus">جاهز للمسح</span>
-                    </div>
-                </div>
-
-                <!-- Word Result -->
-                <div id="wordResult" class="hidden absolute bottom-4 left-4 right-4 bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg">
-                    <div class="flex justify-between items-start mb-2">
-                        <h3 class="text-lg font-bold" id="scannedWord"></h3>
-                        <button onclick="closeWordResult()" class="text-gray-500 hover:text-gray-700">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <p class="text-gray-600 dark:text-gray-300" id="wordMeaning"></p>
-                </div>
-
-                <!-- Camera Controls -->
-                <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-4">
-                    <button id="flipScanCameraBtn" class="bg-white/20 text-white p-3 rounded-full">
-                        <i class="fas fa-camera-rotate"></i>
-                    </button>
-                    <button id="captureBtn" class="bg-blue-500 text-white p-3 rounded-full">
-                        <i class="fas fa-camera"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
     </main>
 
     <!-- Footer Section -->
@@ -431,12 +382,6 @@ const swipeThreshold = 50;
 let notificationEnabled = false;
 let prayerNotifications = {};
 let nextPrayerTimeout = null;
-
-// Add these variables at the top with other variables
-let scanStream = null;
-let scanFacingMode = "environment";
-let isScanning = false;
-let isProcessing = false;
 
 const languages = {
     ar: {
@@ -564,13 +509,6 @@ const languages = {
 async function initARCamera() {
     console.log("Initializing AR Camera...");
 
-    // Check if we're in the Qibla tab
-    const qiblaTab = document.getElementById('qiblaTab');
-    if (!qiblaTab || !qiblaTab.classList.contains('active')) {
-        console.log("Not in Qibla tab, skipping AR initialization");
-        return;
-    }
-
     if (!('DeviceOrientationEvent' in window) || !navigator.mediaDevices) {
         console.error("Device orientation or camera not supported");
         showARUnsupported();
@@ -604,10 +542,6 @@ async function initARCamera() {
         });
 
         const video = document.getElementById('arCamera');
-        if (!video) {
-            console.error("AR camera element not found");
-            return;
-        }
         video.srcObject = cameraStream;
 
         // Get precise location
@@ -874,28 +808,15 @@ function updateFallbackCompass(event) {
 }
 
 function stopARCamera() {
-    console.log("Stopping AR Camera...");
     arActive = false;
-    
     if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
-        animationFrameId = null;
     }
-    
     if (cameraStream) {
-        cameraStream.getTracks().forEach(track => {
-            track.stop();
-        });
-        cameraStream = null;
+        cameraStream.getTracks().forEach(track => track.stop());
     }
-    
     window.removeEventListener('deviceorientation', handleOrientation);
     window.removeEventListener('deviceorientation', updateFallbackCompass);
-    
-    const video = document.getElementById('arCamera');
-    if (video && video.srcObject) {
-        video.srcObject = null;
-    }
 }
 
 // Event Listeners
@@ -929,7 +850,7 @@ function switchLanguage() {
     updatePrayerTimesUI();
     
     // Update tutorial if it's visible
-    const modal = document.getElementById('tutorialOverlay');
+    const modal = document.getElementById('tutorialModal');
     if (!modal.classList.contains('hidden')) {
         showTutorial();
     }
@@ -1184,49 +1105,20 @@ function setupTabs() {
     const tabs = document.querySelectorAll('.tab');
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
-            // Remove active class from all tabs and content
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => {
-                c.classList.remove('active');
-                c.classList.add('hidden');
-            });
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-            // Add active class to clicked tab
             tab.classList.add('active');
             const tabId = tab.getAttribute('data-tab');
-            const content = document.getElementById(`${tabId}Content`);
-            content.classList.remove('hidden');
-            content.classList.add('active');
+            document.getElementById(`${tabId}Content`).classList.add('active');
 
-            // Handle specific tabs
             if (tabId === 'qibla') {
-                stopScanCamera();
-                stopARCamera();
-                setTimeout(() => {
-                    initARCamera();
-                }, 100);
-            } else if (tabId === 'scan') {
-                stopARCamera();
-                setTimeout(() => {
-                    initScanCamera();
-                }, 100);
+                initARCamera();
             } else {
                 stopARCamera();
-                stopScanCamera();
             }
         });
     });
-
-    // Initialize the active tab content
-    const activeTab = document.querySelector('.tab.active');
-    if (activeTab) {
-        const tabId = activeTab.getAttribute('data-tab');
-        const content = document.getElementById(`${tabId}Content`);
-        if (content) {
-            content.classList.remove('hidden');
-            content.classList.add('active');
-        }
-    }
 }
 
 // Add these new functions for notification handling
@@ -1267,7 +1159,7 @@ async function requestNotificationPermission() {
         const isInStandaloneMode = ('standalone' in navigator) && (navigator.standalone);
         
         if (isIOS && !isInStandaloneMode) {
-            // Show tutorial first
+            // Show instructions for adding to home screen first
             showTutorial();
             return false;
         }
@@ -1517,385 +1409,95 @@ function setupPeriodicChecks() {
 
 // Add these functions to handle the tutorial
 function showTutorial() {
+    // Basic iOS detection
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const isInStandaloneMode = window.navigator.standalone === true;
+    
+    console.log('Showing tutorial for:', {
+        isIOS,
+        isInStandaloneMode,
+        userAgent: navigator.userAgent
+    });
+
+    const modal = document.getElementById('tutorialModal');
+    const iosTutorial = document.getElementById('iosTutorial');
+    const androidTutorial = document.getElementById('androidTutorial');
+    const title = document.getElementById('tutorialTitle');
+    const gotItButton = document.getElementById('gotItButton');
+    const iosSteps = document.getElementById('iosSteps');
+    const androidSteps = document.getElementById('androidSteps');
+    const iosNote = document.getElementById('iosNote');
+
+    // Set language-specific content
     const lang = languages[currentLang];
+    title.textContent = lang.tutorialTitle;
+    gotItButton.textContent = lang.gotIt;
 
+    // Set text alignment based on language
+    const textAlignment = currentLang === 'ar' ? 'text-right' : 'text-left';
+    iosSteps.className = `list-decimal list-inside space-y-3 ${textAlignment}`;
+    androidSteps.className = `list-decimal list-inside space-y-3 ${textAlignment}`;
+    iosNote.className = `mt-4 text-sm text-gray-500 ${textAlignment}`;
+
+    // Set iOS tutorial content
     if (isIOS) {
-        // Show tutorial steps in the prayer times section
-        const tutorialDiv = document.getElementById('iosTutorialSteps');
-        const tutorialTitle = document.getElementById('iosTutorialTitle');
-        const tutorialList = document.getElementById('iosTutorialList');
-        const tutorialNote = document.getElementById('iosTutorialNote');
-
-        tutorialTitle.textContent = lang.tutorialIOS.title;
-        tutorialList.innerHTML = '';
+        iosTutorial.classList.remove('hidden');
+        androidTutorial.classList.add('hidden');
+        
+        // Clear previous steps
+        iosSteps.innerHTML = '';
+        
+        // Add new steps
         lang.tutorialIOS.steps.forEach(step => {
             const li = document.createElement('li');
             li.textContent = step;
-            tutorialList.appendChild(li);
+            iosSteps.appendChild(li);
         });
-        tutorialNote.textContent = lang.tutorialIOS.note;
-
-        // Always show tutorial for iOS, regardless of standalone mode
-        tutorialDiv.classList.remove('hidden');
         
-        // If not in standalone mode, scroll to tutorial
-        if (!isInStandaloneMode) {
-            tutorialDiv.scrollIntoView({ behavior: 'smooth' });
-        }
+        // Add note
+        iosNote.textContent = lang.tutorialIOS.note;
     } else {
-        // For non-iOS devices, use the modal
-        const overlay = document.getElementById('tutorialOverlay');
-        const androidTutorial = document.getElementById('androidTutorial');
-        const title = document.getElementById('tutorialTitle');
-        const gotItButton = document.getElementById('gotItButton');
-        const androidSteps = document.getElementById('androidSteps');
-
-        title.textContent = lang.tutorialTitle;
-        gotItButton.textContent = lang.gotIt;
-
+        // Set Android tutorial content
+        iosTutorial.classList.add('hidden');
         androidTutorial.classList.remove('hidden');
+        
+        // Clear previous steps
         androidSteps.innerHTML = '';
         
+        // Add new steps
         lang.tutorialAndroid.steps.forEach(step => {
             const li = document.createElement('li');
             li.textContent = step;
             androidSteps.appendChild(li);
         });
+    }
 
-        overlay.style.display = 'flex';
-        overlay.style.opacity = '1';
-        overlay.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
+    // Show modal with iOS-specific handling
+    modal.style.display = 'flex';
+    modal.classList.remove('hidden');
+    
+    // Force a reflow to ensure the modal is visible
+    modal.offsetHeight;
+    
+    // Add a small delay for iOS
+    if (isIOS) {
+        setTimeout(() => {
+            modal.style.opacity = '1';
+        }, 50);
+    } else {
+        modal.style.opacity = '1';
     }
 }
 
 function closeTutorial() {
-    const overlay = document.getElementById('tutorialOverlay');
-    overlay.style.opacity = '0';
-    overlay.style.display = 'none';
-    overlay.classList.add('hidden');
-    document.body.style.overflow = '';
-}
-
-// Add these new functions for OCR and word lookup
-async function captureAndProcessImage() {
-    if (isProcessing) return;
-    isProcessing = true;
-
-    const video = document.getElementById('scanCamera');
-    const canvas = document.getElementById('scanCanvas');
-    const ctx = canvas.getContext('2d');
-    const statusElement = document.getElementById('scanStatus');
-
-    try {
-        // Update status
-        statusElement.textContent = "جاري معالجة الصورة...";
-
-        // Draw current frame to canvas
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        ctx.drawImage(video, 0, 0);
-
-        // Convert canvas to base64
-        const imageData = canvas.toDataURL('image/jpeg', 0.8);
-        const base64Image = imageData.split(',')[1];
-
-        // Call OCR
-        const ocrResult = await performOCR(base64Image);
-        
-        if (ocrResult && ocrResult.text) {
-            // Process the detected text
-            const words = processArabicText(ocrResult.text);
-            
-            if (words.length > 0) {
-                // Look up the first word's meaning
-                const wordMeaning = await lookupWordMeaning(words[0]);
-                if (wordMeaning) {
-                    showWordResult(words[0], wordMeaning);
-                    statusElement.textContent = "تم العثور على كلمة";
-                } else {
-                    statusElement.textContent = "لم يتم العثور على معنى للكلمة";
-                }
-            } else {
-                statusElement.textContent = "لم يتم العثور على نص عربي";
-            }
-        } else {
-            statusElement.textContent = "لم يتم العثور على نص";
-        }
-    } catch (error) {
-        console.error('Error processing image:', error);
-        statusElement.textContent = "حدث خطأ في معالجة الصورة";
-    } finally {
-        isProcessing = false;
-    }
-}
-
-async function performOCR(base64Image) {
-    try {
-        const worker = await Tesseract.createWorker('ara');
-        const result = await worker.recognize(base64Image);
-        await worker.terminate();
-        return { text: result.data.text };
-    } catch (error) {
-        console.error('OCR error:', error);
-        throw error;
-    }
-}
-
-function processArabicText(text) {
-    // Remove non-Arabic characters and split into words
-    const arabicWords = text
-        .replace(/[^\u0600-\u06FF\s]/g, '') // Keep only Arabic characters and spaces
-        .split(/\s+/)
-        .filter(word => word.length > 1); // Filter out single characters
-
-    return arabicWords;
-}
-
-async function lookupWordMeaning(word) {
-    try {
-        // Try the Quran API first
-        const response = await fetch(`https://api.alquran.cloud/v1/search/${word}/all/ar`);
-        const data = await response.json();
-
-        if (data.code === 200 && data.data.matches.length > 0) {
-            // Get the first occurrence of the word
-            const match = data.data.matches[0];
-            return {
-                word: word,
-                meaning: `موجودة في سورة ${match.surah.name} - الآية ${match.numberInSurah}`,
-                context: match.text
-            };
-        }
-
-        // If not found in Quran, try the free Arabic dictionary API
-        const dictResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/ar/${word}`);
-        const dictData = await dictResponse.json();
-
-        if (dictData && dictData.length > 0) {
-            return {
-                word: word,
-                meaning: dictData[0].meanings[0].definitions[0].definition,
-                context: 'معنى من القاموس'
-            };
-        }
-
-        // If still not found, try the free Arabic Wiktionary API
-        const wikiResponse = await fetch(`https://ar.wiktionary.org/w/api.php?action=query&format=json&prop=extracts&titles=${word}&exintro=1&explaintext=1&origin=*`);
-        const wikiData = await wikiResponse.json();
-
-        if (wikiData.query && wikiData.query.pages) {
-            const page = Object.values(wikiData.query.pages)[0];
-            if (page.extract) {
-                return {
-                    word: word,
-                    meaning: page.extract.split('\n')[0], // Get first line of definition
-                    context: 'معنى من ويكاموس'
-                };
-            }
-        }
-
-        return null;
-    } catch (error) {
-        console.error('Word lookup error:', error);
-        return null;
-    }
-}
-
-// Update the showWordResult function to handle the new data structure
-function showWordResult(word, result) {
-    const resultDiv = document.getElementById('wordResult');
-    document.getElementById('scannedWord').textContent = word;
+    const modal = document.getElementById('tutorialModal');
+    modal.style.opacity = '0';
     
-    let meaningHtml = `<div class="mb-2">${result.meaning}</div>`;
-    if (result.context) {
-        meaningHtml += `<div class="text-sm text-gray-500">${result.context}</div>`;
-    }
-    
-    document.getElementById('wordMeaning').innerHTML = meaningHtml;
-    resultDiv.classList.remove('hidden');
-}
-
-// Add camera permission handling
-async function requestCameraPermission() {
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        stream.getTracks().forEach(track => track.stop()); // Stop the stream immediately
-        return true;
-    } catch (error) {
-        console.error('Camera permission error:', error);
-        const statusElement = document.getElementById('scanStatus');
-        statusElement.textContent = "يرجى السماح بالوصول إلى الكاميرا";
-        return false;
-    }
-}
-
-// Update initScanCamera to handle permissions
-async function initScanCamera() {
-    console.log("Initializing Scan Camera...");
-
-    const scanTab = document.getElementById('scanTab');
-    if (!scanTab || !scanTab.classList.contains('active')) {
-        console.log("Not in Scan tab, skipping camera initialization");
-        return;
-    }
-
-    if (!navigator.mediaDevices) {
-        console.error("Camera not supported");
-        document.getElementById('scanStatus').textContent = "الكاميرا غير مدعومة";
-        return;
-    }
-
-    try {
-        // Stop any existing stream first
-        if (scanStream) {
-            scanStream.getTracks().forEach(track => track.stop());
-            scanStream = null;
-        }
-
-        // Request camera permission first
-        const hasPermission = await requestCameraPermission();
-        if (!hasPermission) {
-            return;
-        }
-
-        // Get the video element
-        const video = document.getElementById('scanCamera');
-        if (!video) {
-            console.error("Scan camera element not found");
-            return;
-        }
-
-        // Request camera stream
-        scanStream = await navigator.mediaDevices.getUserMedia({
-            video: {
-                facingMode: scanFacingMode,
-                width: { ideal: 1280 },
-                height: { ideal: 720 }
-            }
-        });
-
-        // Set the stream to the video element
-        video.srcObject = scanStream;
-
-        // Wait for the video to be ready
-        await new Promise((resolve) => {
-            video.onloadedmetadata = () => {
-                video.play()
-                    .then(() => {
-                        document.getElementById('scanStatus').textContent = "جاهز للمسح";
-                        resolve();
-                    })
-                    .catch(error => {
-                        console.error("Error playing video:", error);
-                        document.getElementById('scanStatus').textContent = "فشل في تشغيل الكاميرا";
-                    });
-            };
-        });
-
-        // Add event listener for the capture button
-        const captureBtn = document.getElementById('captureBtn');
-        if (captureBtn) {
-            captureBtn.onclick = captureAndProcessImage;
-        }
-
-        // Add event listener for the flip camera button
-        const flipBtn = document.getElementById('flipScanCameraBtn');
-        if (flipBtn) {
-            flipBtn.onclick = () => {
-                scanFacingMode = scanFacingMode === "user" ? "environment" : "user";
-                initScanCamera();
-            };
-        }
-
-    } catch (error) {
-        console.error("Scan camera initialization failed:", error);
-        document.getElementById('scanStatus').textContent = "فشل في تشغيل الكاميرا";
-        
-        // Try to recover by attempting to use the other camera
-        if (scanFacingMode === "environment") {
-            scanFacingMode = "user";
-            await initScanCamera();
-        }
-    }
-}
-
-// Update the stopScanCamera function
-function stopScanCamera() {
-    console.log("Stopping Scan Camera...");
-    
-    if (scanStream) {
-        scanStream.getTracks().forEach(track => {
-            track.stop();
-        });
-        scanStream = null;
-    }
-    
-    const video = document.getElementById('scanCamera');
-    if (video && video.srcObject) {
-        video.srcObject = null;
-    }
-    
-    // Reset status
-    document.getElementById('scanStatus').textContent = "جاهز للمسح";
-}
-
-// Update the setupTabs function to properly handle camera initialization
-function setupTabs() {
-    const tabs = document.querySelectorAll('.tab');
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            // Remove active class from all tabs and content
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => {
-                c.classList.remove('active');
-                c.classList.add('hidden');
-            });
-
-            // Add active class to clicked tab
-            tab.classList.add('active');
-            const tabId = tab.getAttribute('data-tab');
-            const content = document.getElementById(`${tabId}Content`);
-            content.classList.remove('hidden');
-            content.classList.add('active');
-
-            // Handle specific tabs
-            if (tabId === 'qibla') {
-                stopScanCamera();
-                stopARCamera();
-                setTimeout(() => {
-                    initARCamera();
-                }, 100);
-            } else if (tabId === 'scan') {
-                stopARCamera();
-                // Add a small delay before initializing the scan camera
-                setTimeout(() => {
-                    initScanCamera();
-                }, 100);
-            } else {
-                stopARCamera();
-                stopScanCamera();
-            }
-        });
-    });
-
-    // Initialize the active tab content
-    const activeTab = document.querySelector('.tab.active');
-    if (activeTab) {
-        const tabId = activeTab.getAttribute('data-tab');
-        const content = document.getElementById(`${tabId}Content`);
-        if (content) {
-            content.classList.remove('hidden');
-            content.classList.add('active');
-            if (tabId === 'scan') {
-                setTimeout(() => {
-                    initScanCamera();
-                }, 100);
-            }
-        }
-    }
+    // Wait for fade out animation
+    setTimeout(() => {
+        modal.style.display = 'none';
+        modal.classList.add('hidden');
+    }, 300);
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1937,26 +1539,29 @@ document.addEventListener('DOMContentLoaded', async () => {
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
             const isInStandaloneMode = window.navigator.standalone === true;
             
-            // Show tutorial first
-            showTutorial();
+            console.log('Notification toggle clicked:', {
+                isIOS,
+                isInStandaloneMode,
+                userAgent: navigator.userAgent
+            });
             
-            // For iOS not in standalone mode, don't proceed with permission request
+            // Show tutorial first for iOS users
             if (isIOS && !isInStandaloneMode) {
+                showTutorial();
                 e.target.checked = false;
                 return;
             }
             
-            // For other devices or iOS in standalone mode, proceed with permission request
+            // For Android and other devices, show tutorial before requesting permissions
+            if (!isIOS) {
+                showTutorial();
+            }
+            
             const success = await requestNotificationPermission();
             if (!success) {
                 e.target.checked = false;
             }
         } else {
-            // Hide tutorial if visible
-            const tutorialDiv = document.getElementById('iosTutorialSteps');
-            if (tutorialDiv) {
-                tutorialDiv.classList.add('hidden');
-            }
             notificationEnabled = false;
             if (nextPrayerTimeout) {
                 clearTimeout(nextPrayerTimeout);
