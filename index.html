@@ -235,7 +235,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab"> 8 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab"> 9 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab">أوقات الصلاة</div>
     </div>
@@ -508,15 +508,28 @@ const languages = {
     }
 };
 
+function setupTabs() {
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            tab.classList.add('active');
+            const tabId = tab.getAttribute('data-tab');
+            document.getElementById(`${tabId}Content`).classList.add('active');
+
+            if (tabId === 'qibla') {
+                initARCamera();
+            } else {
+                stopARCamera();
+            }
+        });
+    });
+}
+
 async function initARCamera() {
     console.log("Initializing AR Camera...");
-
-    // Check if we're in the Qibla tab
-    const qiblaTab = document.getElementById('qiblaTab');
-    if (!qiblaTab || !qiblaTab.classList.contains('active')) {
-        console.log("Not in Qibla tab, skipping AR initialization");
-        return;
-    }
 
     if (!('DeviceOrientationEvent' in window) || !navigator.mediaDevices) {
         console.error("Device orientation or camera not supported");
@@ -551,10 +564,6 @@ async function initARCamera() {
         });
 
         const video = document.getElementById('arCamera');
-        if (!video) {
-            console.error("AR camera element not found");
-            return;
-        }
         video.srcObject = cameraStream;
 
         // Get precise location
@@ -821,28 +830,15 @@ function updateFallbackCompass(event) {
 }
 
 function stopARCamera() {
-    console.log("Stopping AR Camera...");
     arActive = false;
-    
     if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
-        animationFrameId = null;
     }
-    
     if (cameraStream) {
-        cameraStream.getTracks().forEach(track => {
-            track.stop();
-        });
-        cameraStream = null;
+        cameraStream.getTracks().forEach(track => track.stop());
     }
-    
     window.removeEventListener('deviceorientation', handleOrientation);
     window.removeEventListener('deviceorientation', updateFallbackCompass);
-    
-    const video = document.getElementById('arCamera');
-    if (video && video.srcObject) {
-        video.srcObject = null;
-    }
 }
 
 // Event Listeners
@@ -1125,51 +1121,6 @@ async function detectCityAndFetchTimes() {
 
 function refreshPrayerTimes() {
     fetchPrayerTimes(currentCity);
-}
-
-function setupTabs() {
-    const tabs = document.querySelectorAll('.tab');
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            // Remove active class from all tabs and content
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => {
-                c.classList.remove('active');
-                c.classList.add('hidden');
-            });
-
-            // Add active class to clicked tab
-            tab.classList.add('active');
-            const tabId = tab.getAttribute('data-tab');
-            const content = document.getElementById(`${tabId}Content`);
-            content.classList.remove('hidden');
-            content.classList.add('active');
-
-            // Handle Qibla tab specifically
-            if (tabId === 'qibla') {
-                // Stop any existing AR camera
-                stopARCamera();
-                // Initialize AR camera with a small delay to ensure DOM is ready
-                setTimeout(() => {
-                    initARCamera();
-                }, 100);
-            } else {
-                // Stop AR camera when switching to other tabs
-                stopARCamera();
-            }
-        });
-    });
-
-    // Initialize the active tab content
-    const activeTab = document.querySelector('.tab.active');
-    if (activeTab) {
-        const tabId = activeTab.getAttribute('data-tab');
-        const content = document.getElementById(`${tabId}Content`);
-        if (content) {
-            content.classList.remove('hidden');
-            content.classList.add('active');
-        }
-    }
 }
 
 // Add these new functions for notification handling
