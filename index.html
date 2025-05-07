@@ -1489,7 +1489,7 @@ function showTutorial() {
     androidSteps.className = `list-decimal list-inside space-y-3 ${textAlignment}`;
     iosNote.className = `mt-4 text-sm text-gray-500 ${textAlignment}`;
 
-    // Set iOS tutorial content
+    // Show appropriate tutorial based on device
     if (isIOS) {
         iosTutorial.classList.remove('hidden');
         androidTutorial.classList.add('hidden');
@@ -1522,9 +1522,16 @@ function showTutorial() {
         });
     }
 
-    // Show overlay
-    overlay.classList.remove('hidden');
-    document.body.style.overflow = 'hidden'; // Prevent scrolling
+    // Show overlay with a small delay for iOS
+    if (isIOS) {
+        setTimeout(() => {
+            overlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }, 100);
+    } else {
+        overlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
 }
 
 function closeTutorial() {
@@ -1578,16 +1585,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 userAgent: navigator.userAgent
             });
             
-            // Show tutorial first for iOS users
+            // Show tutorial for all devices
+            showTutorial();
+            
+            // For iOS not in standalone mode, don't proceed with permission request
             if (isIOS && !isInStandaloneMode) {
-                showTutorial();
                 e.target.checked = false;
                 return;
-            }
-            
-            // For Android and other devices, show tutorial before requesting permissions
-            if (!isIOS) {
-                showTutorial();
             }
             
             const success = await requestNotificationPermission();
