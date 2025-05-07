@@ -235,7 +235,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab"> 4 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab"> 5  القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab">أوقات الصلاة</div>
     </div>
@@ -1533,7 +1533,7 @@ function showTutorial() {
     }
 
     // Show overlay
-    overlay.style.display = 'block';
+    overlay.style.display = 'flex';
     overlay.style.opacity = '1';
     overlay.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
@@ -1541,8 +1541,10 @@ function showTutorial() {
 
 function closeTutorial() {
     const overlay = document.getElementById('tutorialOverlay');
+    overlay.style.opacity = '0';
+    overlay.style.display = 'none';
     overlay.classList.add('hidden');
-    document.body.style.overflow = ''; // Restore scrolling
+    document.body.style.overflow = '';
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
