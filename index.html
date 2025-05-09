@@ -1859,7 +1859,23 @@ async function loadQuranData() {
         logToDebugPanel(`Quran text loaded successfully: ${quranData.length} surahs`, 'success');
         
         // Populate surah select immediately after loading Quran data
-        populateSurahSelect();
+        const select = document.getElementById('surahSelect');
+        if (!select) {
+            throw new Error('Surah select element not found');
+        }
+        
+        // Clear existing options
+        select.innerHTML = '<option value="">' + languages[currentLang].selectSurah + '</option>';
+        
+        // Create options for each surah
+        quranData.forEach((surah, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = `${surah.number}. ${surah.name}`;
+            select.appendChild(option);
+        });
+        
+        logToDebugPanel(`Surah select populated with ${select.options.length} options`, 'success');
         
         // Then load translation
         logToDebugPanel('Loading translation...', 'info');
