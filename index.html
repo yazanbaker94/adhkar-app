@@ -1842,49 +1842,25 @@ async function loadQuranData() {
         logToDebugPanel(`Browser: ${navigator.userAgent}`, 'info');
         logToDebugPanel(`Platform: ${navigator.platform}`, 'info');
         
-        // First try to load from local files
-        logToDebugPanel('Attempting to load from local files...', 'info');
-        
-        const quranPath = 'quran-uthmani.json';
-        const translationPath = 'en.sahih.json';
-        
-        logToDebugPanel(`Loading from: ${quranPath} and ${translationPath}`, 'info');
-        
-        // Load both files in parallel with detailed error handling
-        const [quranResponse, translationResponse] = await Promise.all([
-            fetch(quranPath).catch(error => {
-                logToDebugPanel(`Error loading Quran file: ${error.message}`, 'error');
-                throw error;
-            }),
-            fetch(translationPath).catch(error => {
-                logToDebugPanel(`Error loading translation file: ${error.message}`, 'error');
-                throw error;
-            })
-        ]);
-
+        // Load Quran text first
+        logToDebugPanel('Loading Quran text...', 'info');
+        const quranResponse = await fetch('quran-uthmani.json');
         if (!quranResponse.ok) {
-            throw new Error(`Failed to load Quran file: ${quranResponse.status} ${quranResponse.statusText}`);
+            throw new Error(`Failed to load Quran file: ${quranResponse.status}`);
         }
-        if (!translationResponse.ok) {
-            throw new Error(`Failed to load translation file: ${translationResponse.status} ${translationResponse.statusText}`);
-        }
-
-        logToDebugPanel('Files fetched successfully, parsing JSON...', 'info');
-
         const quranJson = await quranResponse.json();
-        const translationJson = await translationResponse.json();
-
-        if (!quranJson.data || !quranJson.data.surahs) {
-            throw new Error('Invalid Quran data format');
-        }
-        if (!translationJson.data || !translationJson.data.surahs) {
-            throw new Error('Invalid translation data format');
-        }
-
         quranData = quranJson.data.surahs;
-        translationData = translationJson.data.surahs;
+        logToDebugPanel('Quran text loaded successfully', 'success');
         
-        logToDebugPanel(`Data loaded successfully: ${quranData.length} surahs`, 'success');
+        // Then load translation
+        logToDebugPanel('Loading translation...', 'info');
+        const translationResponse = await fetch('en.sahih.json');
+        if (!translationResponse.ok) {
+            throw new Error(`Failed to load translation file: ${translationResponse.status}`);
+        }
+        const translationJson = await translationResponse.json();
+        translationData = translationJson.data.surahs;
+        logToDebugPanel('Translation loaded successfully', 'success');
         
         // Reset current state
         currentSurah = null;
