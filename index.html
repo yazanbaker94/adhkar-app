@@ -277,21 +277,47 @@
         /* iOS-specific fixes */
         @supports (-webkit-touch-callout: none) {
             select {
+                -webkit-appearance: none;
+                appearance: none;
                 background-color: #fff;
                 border-radius: 0.5rem;
-                padding: 0.5rem;
+                padding: 0.5rem 2.5rem 0.5rem 0.5rem;
                 font-size: 1rem;
+                width: 100%;
+                border: 1px solid #e5e7eb;
+                background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+                background-repeat: no-repeat;
+                background-position: right 0.5rem center;
+                background-size: 1.5em 1.5em;
             }
 
-            /* Fix dropdown appearance on iOS */
             select:focus {
                 outline: none;
                 border-color: #3B82F6;
+                box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
             }
 
-            /* Ensure dropdowns are clickable */
             select option {
                 padding: 0.5rem;
+                font-size: 1rem;
+                background-color: #fff;
+            }
+
+            /* Fix for iOS select dropdown */
+            select::-ms-expand {
+                display: none;
+            }
+
+            /* Ensure the select is clickable */
+            select:active,
+            select:focus {
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            /* Fix for iOS select text alignment */
+            select option {
+                text-align: right;
+                direction: rtl;
             }
         }
 
@@ -354,14 +380,18 @@
                 <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                     <h2 class="text-xl font-bold" id="quranTitle">القرآن الكريم</h2>
                     <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
-                        <select id="surahSelect" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 w-full md:w-auto" title="Select Surah - اختر السورة">
-                            <option value="">اختر السورة</option>
-                        </select>
-                        <select id="translationSelect" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 w-full md:w-auto" title="Select Translation - اختر الترجمة">
-                            <option value="en.sahih">English (Sahih International)</option>
-                            <option value="en.pickthall">English (Pickthall)</option>
-                            <option value="en.yusufali">English (Yusuf Ali)</option>
-                        </select>
+                        <div class="select-container">
+                            <select id="surahSelect" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 w-full md:w-auto" title="Select Surah - اختر السورة">
+                                <option value="">اختر السورة</option>
+                            </select>
+                        </div>
+                        <div class="select-container">
+                            <select id="translationSelect" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 w-full md:w-auto" title="Select Translation - اختر الترجمة">
+                                <option value="en.sahih">English (Sahih International)</option>
+                                <option value="en.pickthall">English (Pickthall)</option>
+                                <option value="en.yusufali">English (Yusuf Ali)</option>
+                            </select>
+                        </div>
                         <div class="flex gap-2">
                             <button id="toggleTranslation" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2" title="Toggle Translation - تبديل الترجمة">
                                 <i class="fas fa-eye"></i>
