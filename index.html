@@ -416,7 +416,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 8 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 9 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab" title="الأذكار - Daily Remembrance">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab" title="أوقات الصلاة - Prayer Times">أوقات الصلاة</div>
         <div class="tab" data-tab="quran" id="quranTab" title="القرآن - Holy Quran">القرآن</div>
@@ -1838,171 +1838,35 @@ function closeTutorial() {
 // Add Quran-related functions
 async function loadQuranData() {
     try {
-        logToDebugPanel('Loading Quran data...', 'info');
+        logToDebugPanel('Loading Quran data from local files...', 'info');
         
-        // Check if running in standalone mode on iOS
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        const isStandalone = window.navigator.standalone === true;
-        
-        logToDebugPanel(`App mode: iOS=${isIOS}, Standalone=${isStandalone}`, 'info');
+        // Load both files in parallel
+        const [quranResponse, translationResponse] = await Promise.all([
+            fetch('quran-uthmani.json'),
+            fetch('en.sahih.json')
+        ]);
 
-        // For iOS Safari in browser mode, use a different approach
-        if (isIOS && !isStandalone) {
-            logToDebugPanel('Running in iOS Safari browser mode', 'info');
-            
-            try {
-                // Try direct API call first to check CORS
-                logToDebugPanel('Attempting direct API call to check CORS...', 'info');
-                
-                // Create a new promise that will resolve with the fetch result or reject with detailed error
-                const testFetch = new Promise((resolve, reject) => {
-                    fetch('https://api.alquran.cloud/v1/quran/quran-uthmani', {
-                        method: 'GET',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json',
-                            'Connection': 'keep-alive',
-                            'Keep-Alive': 'timeout=5, max=1000',
-                            'Origin': window.location.origin,
-                            'Access-Control-Request-Method': 'GET',
-                            'Access-Control-Request-Headers': 'Content-Type'
-                        },
-                        mode: 'cors',
-                        credentials: 'omit',
-                        cache: 'no-cache'
-                    }).then(resolve).catch(error => {
-                        // Log detailed error information
-                        logToDebugPanel(`CORS Error Details: ${error.name} - ${error.message}`, 'error');
-                        if (error.name === 'TypeError') {
-                            logToDebugPanel('This is a CORS error - the API is not allowing requests from this origin', 'error');
-                            logToDebugPanel(`Current origin: ${window.location.origin}`, 'error');
-                        }
-                        reject(error);
-                    });
-                });
-
-                // Wait for the fetch with a timeout
-                const timeoutPromise = new Promise((_, reject) => {
-                    setTimeout(() => reject(new Error('Request timeout')), 10000);
-                });
-
-                const testResponse = await Promise.race([testFetch, timeoutPromise]);
-                
-                // If we get here, CORS is not the issue
-                logToDebugPanel('Direct API call successful - CORS is not the issue', 'success');
-                
-                // Continue with normal data loading
-                const [quranResponse, translationResponse] = await Promise.all([
-                    fetch('https://api.alquran.cloud/v1/quran/quran-uthmani', {
-                        method: 'GET',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json',
-                            'Connection': 'keep-alive',
-                            'Keep-Alive': 'timeout=5, max=1000',
-                            'Origin': window.location.origin
-                        },
-                        mode: 'cors',
-                        credentials: 'omit',
-                        cache: 'no-cache'
-                    }),
-                    fetch('https://api.alquran.cloud/v1/quran/en.sahih', {
-                        method: 'GET',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json',
-                            'Connection': 'keep-alive',
-                            'Keep-Alive': 'timeout=5, max=1000',
-                            'Origin': window.location.origin
-                        },
-                        mode: 'cors',
-                        credentials: 'omit',
-                        cache: 'no-cache'
-                    })
-                ]);
-
-                const quranJson = await quranResponse.json();
-                const translationJson = await translationResponse.json();
-
-                if (quranJson.code === 200 && translationJson.code === 200) {
-                    quranData = quranJson.data.surahs;
-                    translationData = translationJson.data.surahs;
-                    
-                    logToDebugPanel(`Data loaded: ${quranData.length} surahs`, 'success');
-                    
-                    // Reset current state
-                    currentSurah = null;
-                    currentAyah = 0;
-                    
-                    // Populate select after data is loaded
-                    populateSurahSelect();
-                    resetQuranContent();
-                    
-                    logToDebugPanel('Quran data loaded successfully in browser mode', 'success');
-                } else {
-                    logToDebugPanel(`Error loading Quran data: Quran=${quranJson.code}, Translation=${translationJson.code}`, 'error');
-                }
-            } catch (error) {
-                logToDebugPanel(`Error in iOS Safari browser mode: ${error.name} - ${error.message}`, 'error');
-                
-                // Show user-friendly message with CORS explanation
-                const arabicText = document.getElementById('arabicText');
-                arabicText.innerHTML = `
-                    <div class="text-center py-8">
-                        <i class="fas fa-info-circle text-4xl text-blue-500 mb-4"></i>
-                        <p class="text-xl mb-4">لتحسين تجربة التطبيق</p>
-                        <p class="text-lg mb-4">For better experience</p>
-                        <div class="bg-blue-100 dark:bg-blue-900 p-4 rounded-lg mb-4">
-                            <p class="mb-2">1. اضغط على زر المشاركة (Share) في أسفل المتصفح</p>
-                            <p class="mb-2">2. اختر "إضافة إلى الشاشة الرئيسية" (Add to Home Screen)</p>
-                            <p class="mb-2">3. اضغط "إضافة" (Add) في الأعلى</p>
-                            <p class="mb-2">4. افتح التطبيق من الشاشة الرئيسية</p>
-                        </div>
-                        <p class="text-sm text-gray-500 mb-4">
-                            Note: This is a browser security restriction. Adding to home screen will resolve this issue.
-                        </p>
-                        <button onclick="loadQuranData()" class="bg-blue-500 text-white px-6 py-2 rounded-lg">
-                            <i class="fas fa-sync-alt mr-2"></i>
-                            Try Loading Again
-                        </button>
-                    </div>
-                `;
-            }
-        } else {
-            // Rest of the existing code for standalone mode or non-iOS...
-            logToDebugPanel('Running in standalone mode or non-iOS', 'info');
-            try {
-                const [quranResponse, translationResponse] = await Promise.all([
-                    fetch('https://api.alquran.cloud/v1/quran/quran-uthmani'),
-                    fetch('https://api.alquran.cloud/v1/quran/en.sahih')
-                ]);
-
-                const quranJson = await quranResponse.json();
-                const translationJson = await translationResponse.json();
-
-                if (quranJson.code === 200 && translationJson.code === 200) {
-                    quranData = quranJson.data.surahs;
-                    translationData = translationJson.data.surahs;
-                    
-                    logToDebugPanel(`Data loaded: ${quranData.length} surahs`, 'success');
-                    
-                    // Reset current state
-                    currentSurah = null;
-                    currentAyah = 0;
-                    
-                    // Populate select after data is loaded
-                    populateSurahSelect();
-                    resetQuranContent();
-                    
-                    logToDebugPanel('Quran data loaded successfully in standalone mode', 'success');
-                } else {
-                    logToDebugPanel(`Error loading Quran data: Quran=${quranJson.code}, Translation=${translationJson.code}`, 'error');
-                }
-            } catch (error) {
-                logToDebugPanel(`Fetch error: ${error.name} - ${error.message}`, 'error');
-                throw error;
-            }
+        if (!quranResponse.ok || !translationResponse.ok) {
+            throw new Error(`Failed to load local files: Quran=${quranResponse.status}, Translation=${translationResponse.status}`);
         }
+
+        const quranJson = await quranResponse.json();
+        const translationJson = await translationResponse.json();
+
+        quranData = quranJson.data.surahs;
+        translationData = translationJson.data.surahs;
+        
+        logToDebugPanel(`Data loaded: ${quranData.length} surahs`, 'success');
+        
+        // Reset current state
+        currentSurah = null;
+        currentAyah = 0;
+        
+        // Populate select after data is loaded
+        populateSurahSelect();
+        resetQuranContent();
+        
+        logToDebugPanel('Quran data loaded successfully from local files', 'success');
     } catch (error) {
         logToDebugPanel(`Error loading Quran data: ${error.name} - ${error.message}`, 'error');
         // Show user-friendly error message
@@ -2013,12 +1877,45 @@ async function loadQuranData() {
                     <i class="fas fa-exclamation-circle text-4xl mb-4"></i>
                     <p class="text-xl">حدث خطأ في تحميل البيانات</p>
                     <p class="text-lg mt-2">Error loading data</p>
-                    <p class="text-sm mt-4">Please try adding to home screen for better experience</p>
+                    <p class="text-sm mt-4">Please check if the Quran data files are available</p>
                 </div>
             `;
         }
     }
 }
+
+// Update translation select handler to use local files
+document.getElementById('translationSelect').addEventListener('change', async (e) => {
+    const translation = e.target.value;
+    logToDebugPanel(`Loading translation: ${translation}`, 'info');
+    
+    try {
+        const response = await fetch(`${translation}.json`);
+        if (!response.ok) {
+            throw new Error(`Failed to load translation: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.code === 200) {
+            logToDebugPanel(`Translation loaded successfully: ${translation}`, 'success');
+            translationData = data.data.surahs;
+            
+            // Update display based on current mode
+            if (currentSurah !== null) {
+                if (isReadingMode) {
+                    loadReadingModeAyahs();
+                } else {
+                    displayAyah();
+                }
+            }
+        } else {
+            logToDebugPanel(`Error loading translation: ${data.code}`, 'error');
+        }
+    } catch (error) {
+        logToDebugPanel(`Error loading translation: ${error.name} - ${error.message}`, 'error');
+    }
+});
 
 function displayAyah() {
     const arabicTextElement = document.getElementById('arabicText');
