@@ -416,7 +416,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 12 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 1 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab" title="الأذكار - Daily Remembrance">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab" title="أوقات الصلاة - Prayer Times">أوقات الصلاة</div>
         <div class="tab" data-tab="quran" id="quranTab" title="القرآن - Holy Quran">القرآن</div>
@@ -1849,8 +1849,17 @@ async function loadQuranData() {
             throw new Error(`Failed to load Quran file: ${quranResponse.status}`);
         }
         const quranJson = await quranResponse.json();
+        
+        // Validate Quran data structure
+        if (!quranJson.data || !quranJson.data.surahs) {
+            throw new Error('Invalid Quran data format');
+        }
+        
         quranData = quranJson.data.surahs;
-        logToDebugPanel('Quran text loaded successfully', 'success');
+        logToDebugPanel(`Quran text loaded successfully: ${quranData.length} surahs`, 'success');
+        
+        // Populate surah select immediately after loading Quran data
+        populateSurahSelect();
         
         // Then load translation
         logToDebugPanel('Loading translation...', 'info');
@@ -1859,6 +1868,12 @@ async function loadQuranData() {
             throw new Error(`Failed to load translation file: ${translationResponse.status}`);
         }
         const translationJson = await translationResponse.json();
+        
+        // Validate translation data structure
+        if (!translationJson.data || !translationJson.data.surahs) {
+            throw new Error('Invalid translation data format');
+        }
+        
         translationData = translationJson.data.surahs;
         logToDebugPanel('Translation loaded successfully', 'success');
         
@@ -1866,8 +1881,7 @@ async function loadQuranData() {
         currentSurah = null;
         currentAyah = 0;
         
-        // Populate select after data is loaded
-        populateSurahSelect();
+        // Reset Quran content
         resetQuranContent();
         
         logToDebugPanel('Quran data initialization complete', 'success');
