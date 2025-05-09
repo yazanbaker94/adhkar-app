@@ -416,7 +416,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 11 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 12 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab" title="الأذكار - Daily Remembrance">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab" title="أوقات الصلاة - Prayer Times">أوقات الصلاة</div>
         <div class="tab" data-tab="quran" id="quranTab" title="القرآن - Holy Quran">القرآن</div>
@@ -1838,25 +1838,53 @@ function closeTutorial() {
 // Add Quran-related functions
 async function loadQuranData() {
     try {
-        logToDebugPanel('Loading Quran data from local files...', 'info');
+        logToDebugPanel('Starting Quran data load...', 'info');
+        logToDebugPanel(`Browser: ${navigator.userAgent}`, 'info');
+        logToDebugPanel(`Platform: ${navigator.platform}`, 'info');
         
-        // Load both files in parallel
+        // First try to load from local files
+        logToDebugPanel('Attempting to load from local files...', 'info');
+        
+        const quranPath = 'quran-uthmani.json';
+        const translationPath = 'en.sahih.json';
+        
+        logToDebugPanel(`Loading from: ${quranPath} and ${translationPath}`, 'info');
+        
+        // Load both files in parallel with detailed error handling
         const [quranResponse, translationResponse] = await Promise.all([
-            fetch('quran-uthmani.json'),
-            fetch('en.sahih.json')
+            fetch(quranPath).catch(error => {
+                logToDebugPanel(`Error loading Quran file: ${error.message}`, 'error');
+                throw error;
+            }),
+            fetch(translationPath).catch(error => {
+                logToDebugPanel(`Error loading translation file: ${error.message}`, 'error');
+                throw error;
+            })
         ]);
 
-        if (!quranResponse.ok || !translationResponse.ok) {
-            throw new Error(`Failed to load local files: Quran=${quranResponse.status}, Translation=${translationResponse.status}`);
+        if (!quranResponse.ok) {
+            throw new Error(`Failed to load Quran file: ${quranResponse.status} ${quranResponse.statusText}`);
         }
+        if (!translationResponse.ok) {
+            throw new Error(`Failed to load translation file: ${translationResponse.status} ${translationResponse.statusText}`);
+        }
+
+        logToDebugPanel('Files fetched successfully, parsing JSON...', 'info');
 
         const quranJson = await quranResponse.json();
         const translationJson = await translationResponse.json();
 
+        if (!quranJson.data || !quranJson.data.surahs) {
+            throw new Error('Invalid Quran data format');
+        }
+        if (!translationJson.data || !translationJson.data.surahs) {
+            throw new Error('Invalid translation data format');
+        }
+
         quranData = quranJson.data.surahs;
         translationData = translationJson.data.surahs;
         
-        logToDebugPanel(`Data loaded: ${quranData.length} surahs`, 'success');
+        logToDebugPanel(`Data loaded successfully: ${quranData.length} surahs`, 'success');
         
         // Reset current state
         currentSurah = null;
@@ -1866,9 +1894,11 @@ async function loadQuranData() {
         populateSurahSelect();
         resetQuranContent();
         
-        logToDebugPanel('Quran data loaded successfully from local files', 'success');
+        logToDebugPanel('Quran data initialization complete', 'success');
     } catch (error) {
         logToDebugPanel(`Error loading Quran data: ${error.name} - ${error.message}`, 'error');
+        logToDebugPanel(`Stack trace: ${error.stack}`, 'error');
+        
         // Show user-friendly error message
         const arabicText = document.getElementById('arabicText');
         if (arabicText) {
@@ -1877,7 +1907,7 @@ async function loadQuranData() {
                     <i class="fas fa-exclamation-circle text-4xl mb-4"></i>
                     <p class="text-xl">حدث خطأ في تحميل البيانات</p>
                     <p class="text-lg mt-2">Error loading data</p>
-                    <p class="text-sm mt-4">Please check if the Quran data files are available</p>
+                    <p class="text-sm mt-4">${error.message}</p>
                 </div>
             `;
         }
