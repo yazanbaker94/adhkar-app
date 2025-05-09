@@ -416,7 +416,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 6 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 7 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab" title="الأذكار - Daily Remembrance">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab" title="أوقات الصلاة - Prayer Times">أوقات الصلاة</div>
         <div class="tab" data-tab="quran" id="quranTab" title="القرآن - Holy Quran">القرآن</div>
@@ -1857,8 +1857,16 @@ async function loadQuranData() {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
+                        'Content-Type': 'application/json',
+                        'Connection': 'keep-alive',
+                        'Keep-Alive': 'timeout=5, max=1000',
+                        'Origin': window.location.origin,
+                        'Access-Control-Request-Method': 'GET',
+                        'Access-Control-Request-Headers': 'Content-Type'
+                    },
+                    mode: 'cors',
+                    credentials: 'omit',
+                    cache: 'no-cache'
                 }).catch(error => {
                     logToDebugPanel(`CORS Error Details: ${error.message}`, 'error');
                     if (error.name === 'TypeError') {
@@ -1872,8 +1880,32 @@ async function loadQuranData() {
                 
                 // Continue with normal data loading
                 const [quranResponse, translationResponse] = await Promise.all([
-                    fetch('https://api.alquran.cloud/v1/quran/quran-uthmani'),
-                    fetch('https://api.alquran.cloud/v1/quran/en.sahih')
+                    fetch('https://api.alquran.cloud/v1/quran/quran-uthmani', {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'Connection': 'keep-alive',
+                            'Keep-Alive': 'timeout=5, max=1000',
+                            'Origin': window.location.origin
+                        },
+                        mode: 'cors',
+                        credentials: 'omit',
+                        cache: 'no-cache'
+                    }),
+                    fetch('https://api.alquran.cloud/v1/quran/en.sahih', {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'Connection': 'keep-alive',
+                            'Keep-Alive': 'timeout=5, max=1000',
+                            'Origin': window.location.origin
+                        },
+                        mode: 'cors',
+                        credentials: 'omit',
+                        cache: 'no-cache'
+                    })
                 ]);
 
                 const quranJson = await quranResponse.json();
@@ -2608,18 +2640,69 @@ function bookmarkAyah(surah, ayah) {
 
 // Add debug logging functions at the start of your script
 function logToDebugPanel(message, type = 'info') {
-    const debugPanel = document.getElementById('debugPanel');
-    const logEntry = document.createElement('div');
-    logEntry.className = `debug-log debug-${type}`;
-    logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-    debugPanel.appendChild(logEntry);
-    debugPanel.scrollTop = debugPanel.scrollHeight;
+    try {
+        const debugPanel = document.getElementById('debugPanel');
+        if (!debugPanel) {
+            console.error('Debug panel not found');
+            return;
+        }
+
+        // Create log entry
+        const logEntry = document.createElement('div');
+        logEntry.className = `debug-log debug-${type}`;
+        
+        // Add timestamp and message
+        const timestamp = new Date().toLocaleTimeString();
+        logEntry.textContent = `[${timestamp}] ${message}`;
+        
+        // Ensure the panel is visible
+        debugPanel.classList.add('visible');
+        
+        // Add the log entry
+        debugPanel.appendChild(logEntry);
+        
+        // Scroll to bottom
+        debugPanel.scrollTop = debugPanel.scrollHeight;
+        
+        // Also log to console for backup
+        console.log(`[${type.toUpperCase()}] ${message}`);
+    } catch (error) {
+        console.error('Error in logToDebugPanel:', error);
+    }
 }
 
 function toggleDebugPanel() {
-    const debugPanel = document.getElementById('debugPanel');
-    debugPanel.classList.toggle('visible');
+    try {
+        const debugPanel = document.getElementById('debugPanel');
+        if (!debugPanel) {
+            console.error('Debug panel not found');
+            return;
+        }
+        
+        debugPanel.classList.toggle('visible');
+        
+        // If we're showing the panel, add an initial log
+        if (debugPanel.classList.contains('visible')) {
+            logToDebugPanel('Debug panel opened', 'info');
+            logToDebugPanel(`User Agent: ${navigator.userAgent}`, 'info');
+            logToDebugPanel(`Platform: ${navigator.platform}`, 'info');
+            logToDebugPanel(`Standalone: ${window.navigator.standalone}`, 'info');
+        }
+    } catch (error) {
+        console.error('Error in toggleDebugPanel:', error);
+    }
 }
+
+// Add initial logging when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    // Log initial state
+    logToDebugPanel('Page loaded', 'info');
+    logToDebugPanel(`Browser: ${navigator.userAgent}`, 'info');
+    logToDebugPanel(`Platform: ${navigator.platform}`, 'info');
+    logToDebugPanel(`Standalone: ${window.navigator.standalone}`, 'info');
+    
+    // Rest of your existing DOMContentLoaded code...
+});
     </script>
 </body>
 </html>
