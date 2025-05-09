@@ -416,7 +416,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 7 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 8 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab" title="الأذكار - Daily Remembrance">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab" title="أوقات الصلاة - Prayer Times">أوقات الصلاة</div>
         <div class="tab" data-tab="quran" id="quranTab" title="القرآن - Holy Quran">القرآن</div>
@@ -1853,28 +1853,41 @@ async function loadQuranData() {
             try {
                 // Try direct API call first to check CORS
                 logToDebugPanel('Attempting direct API call to check CORS...', 'info');
-                const testResponse = await fetch('https://api.alquran.cloud/v1/quran/quran-uthmani', {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'Connection': 'keep-alive',
-                        'Keep-Alive': 'timeout=5, max=1000',
-                        'Origin': window.location.origin,
-                        'Access-Control-Request-Method': 'GET',
-                        'Access-Control-Request-Headers': 'Content-Type'
-                    },
-                    mode: 'cors',
-                    credentials: 'omit',
-                    cache: 'no-cache'
-                }).catch(error => {
-                    logToDebugPanel(`CORS Error Details: ${error.message}`, 'error');
-                    if (error.name === 'TypeError') {
-                        logToDebugPanel('This is a CORS error - the API is not allowing requests from this origin', 'error');
-                    }
-                    throw error;
+                
+                // Create a new promise that will resolve with the fetch result or reject with detailed error
+                const testFetch = new Promise((resolve, reject) => {
+                    fetch('https://api.alquran.cloud/v1/quran/quran-uthmani', {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'Connection': 'keep-alive',
+                            'Keep-Alive': 'timeout=5, max=1000',
+                            'Origin': window.location.origin,
+                            'Access-Control-Request-Method': 'GET',
+                            'Access-Control-Request-Headers': 'Content-Type'
+                        },
+                        mode: 'cors',
+                        credentials: 'omit',
+                        cache: 'no-cache'
+                    }).then(resolve).catch(error => {
+                        // Log detailed error information
+                        logToDebugPanel(`CORS Error Details: ${error.name} - ${error.message}`, 'error');
+                        if (error.name === 'TypeError') {
+                            logToDebugPanel('This is a CORS error - the API is not allowing requests from this origin', 'error');
+                            logToDebugPanel(`Current origin: ${window.location.origin}`, 'error');
+                        }
+                        reject(error);
+                    });
                 });
 
+                // Wait for the fetch with a timeout
+                const timeoutPromise = new Promise((_, reject) => {
+                    setTimeout(() => reject(new Error('Request timeout')), 10000);
+                });
+
+                const testResponse = await Promise.race([testFetch, timeoutPromise]);
+                
                 // If we get here, CORS is not the issue
                 logToDebugPanel('Direct API call successful - CORS is not the issue', 'success');
                 
@@ -1930,7 +1943,7 @@ async function loadQuranData() {
                     logToDebugPanel(`Error loading Quran data: Quran=${quranJson.code}, Translation=${translationJson.code}`, 'error');
                 }
             } catch (error) {
-                logToDebugPanel(`Error in iOS Safari browser mode: ${error.message}`, 'error');
+                logToDebugPanel(`Error in iOS Safari browser mode: ${error.name} - ${error.message}`, 'error');
                 
                 // Show user-friendly message with CORS explanation
                 const arabicText = document.getElementById('arabicText');
@@ -1986,12 +1999,12 @@ async function loadQuranData() {
                     logToDebugPanel(`Error loading Quran data: Quran=${quranJson.code}, Translation=${translationJson.code}`, 'error');
                 }
             } catch (error) {
-                logToDebugPanel(`Fetch error: ${error.message}`, 'error');
+                logToDebugPanel(`Fetch error: ${error.name} - ${error.message}`, 'error');
                 throw error;
             }
         }
     } catch (error) {
-        logToDebugPanel(`Error loading Quran data: ${error.message}`, 'error');
+        logToDebugPanel(`Error loading Quran data: ${error.name} - ${error.message}`, 'error');
         // Show user-friendly error message
         const arabicText = document.getElementById('arabicText');
         if (arabicText) {
