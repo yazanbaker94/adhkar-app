@@ -362,7 +362,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 4 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 3 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab" title="الأذكار - Daily Remembrance">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab" title="أوقات الصلاة - Prayer Times">أوقات الصلاة</div>
         <div class="tab" data-tab="quran" id="quranTab" title="القرآن - Holy Quran">القرآن</div>
@@ -1793,6 +1793,13 @@ async function loadQuranData() {
         const quranJson = await quranResponse.json();
         const translationJson = await translationResponse.json();
 
+        console.log('API responses received:', {
+            quranStatus: quranResponse.status,
+            translationStatus: translationResponse.status,
+            quranDataReceived: !!quranJson.data,
+            translationDataReceived: !!translationJson.data
+        });
+
         if (quranJson.code === 200 && translationJson.code === 200) {
             quranData = quranJson.data.surahs;
             translationData = translationJson.data.surahs;
@@ -1808,15 +1815,14 @@ async function loadQuranData() {
                 number: firstSurah.number,
                 totalAyahs: firstSurah.ayahs.length,
                 firstAyah: firstSurah.ayahs[0],
-                lastAyah: firstSurah.ayahs[firstSurah.ayahs.length - 1],
-                allAyahs: firstSurah.ayahs.map(ayah => ({
-                    number: ayah.numberInSurah,
-                    text: ayah.text.substring(0, 50) + '...'
-                }))
+                lastAyah: firstSurah.ayahs[firstSurah.ayahs.length - 1]
             });
             
+            // Populate select after data is loaded
             populateSurahSelect();
             resetQuranContent();
+            
+            console.log('Quran data loaded successfully');
         } else {
             console.error('Error loading Quran data:', {
                 quranCode: quranJson.code,
@@ -2063,17 +2069,54 @@ function prevAyah() {
 
 // Update populateSurahSelect to properly handle surah selection
 function populateSurahSelect() {
+    console.log('Populating surah select...');
     const select = document.getElementById('surahSelect');
+    
+    // Clear existing options
     select.innerHTML = '<option value="">' + languages[currentLang].selectSurah + '</option>';
     
+    // Debug log for quranData
+    console.log('Quran data available:', {
+        hasData: !!quranData,
+        surahsCount: quranData ? quranData.length : 0,
+        firstSurah: quranData ? quranData[0] : null
+    });
+    
+    if (!quranData || !quranData.length) {
+        console.error('No Quran data available for populating select');
+        return;
+    }
+    
+    // Create options for each surah
     quranData.forEach((surah, index) => {
         const option = document.createElement('option');
         option.value = index;
         option.textContent = `${surah.number}. ${surah.name}`;
+        
+        // Debug log for each option
+        console.log('Creating option:', {
+            index,
+            value: option.value,
+            text: option.textContent
+        });
+        
         select.appendChild(option);
     });
+    
+    // Debug log for final select state
+    console.log('Select populated:', {
+        optionsCount: select.options.length,
+        firstOption: select.options[0]?.text,
+        lastOption: select.options[select.options.length - 1]?.text
+    });
 
+    // Add change event listener
     select.addEventListener('change', (e) => {
+        console.log('Surah selected:', {
+            value: e.target.value,
+            text: e.target.options[e.target.selectedIndex]?.text
+        });
+        
         if (e.target.value !== '') {
             currentSurah = parseInt(e.target.value);
             currentAyah = 0;
