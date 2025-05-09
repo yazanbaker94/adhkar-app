@@ -362,7 +362,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 3 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 2 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab" title="الأذكار - Daily Remembrance">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab" title="أوقات الصلاة - Prayer Times">أوقات الصلاة</div>
         <div class="tab" data-tab="quran" id="quranTab" title="القرآن - Holy Quran">القرآن</div>
@@ -1785,54 +1785,135 @@ function closeTutorial() {
 async function loadQuranData() {
     try {
         console.log('Loading Quran data...');
-        const [quranResponse, translationResponse] = await Promise.all([
-            fetch('https://api.alquran.cloud/v1/quran/quran-uthmani'),
-            fetch('https://api.alquran.cloud/v1/quran/en.sahih')
-        ]);
-
-        const quranJson = await quranResponse.json();
-        const translationJson = await translationResponse.json();
-
-        console.log('API responses received:', {
-            quranStatus: quranResponse.status,
-            translationStatus: translationResponse.status,
-            quranDataReceived: !!quranJson.data,
-            translationDataReceived: !!translationJson.data
+        
+        // Check if running in standalone mode on iOS
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const isStandalone = window.navigator.standalone === true;
+        
+        console.log('App mode:', {
+            isIOS,
+            isStandalone,
+            userAgent: navigator.userAgent
         });
 
-        if (quranJson.code === 200 && translationJson.code === 200) {
-            quranData = quranJson.data.surahs;
-            translationData = translationJson.data.surahs;
-            
-            // Reset current state
-            currentSurah = null;
-            currentAyah = 0;
-            
-            // Validate first surah data
-            const firstSurah = quranData[0];
-            console.log('First surah validation:', {
-                name: firstSurah.name,
-                number: firstSurah.number,
-                totalAyahs: firstSurah.ayahs.length,
-                firstAyah: firstSurah.ayahs[0],
-                lastAyah: firstSurah.ayahs[firstSurah.ayahs.length - 1]
+        // For iOS Safari in browser mode, use a different approach
+        if (isIOS && !isStandalone) {
+            console.log('Running in iOS Safari browser mode');
+            // Use a more compatible fetch approach
+            const quranResponse = await fetch('https://api.alquran.cloud/v1/quran/quran-uthmani', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                mode: 'cors',
+                cache: 'no-cache'
             });
             
-            // Populate select after data is loaded
-            populateSurahSelect();
-            resetQuranContent();
-            
-            console.log('Quran data loaded successfully');
+            const translationResponse = await fetch('https://api.alquran.cloud/v1/quran/en.sahih', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                mode: 'cors',
+                cache: 'no-cache'
+            });
+
+            const quranJson = await quranResponse.json();
+            const translationJson = await translationResponse.json();
+
+            console.log('API responses received:', {
+                quranStatus: quranResponse.status,
+                translationStatus: translationResponse.status,
+                quranDataReceived: !!quranJson.data,
+                translationDataReceived: !!translationJson.data
+            });
+
+            if (quranJson.code === 200 && translationJson.code === 200) {
+                quranData = quranJson.data.surahs;
+                translationData = translationJson.data.surahs;
+                
+                // Reset current state
+                currentSurah = null;
+                currentAyah = 0;
+                
+                // Validate first surah data
+                const firstSurah = quranData[0];
+                console.log('First surah validation:', {
+                    name: firstSurah.name,
+                    number: firstSurah.number,
+                    totalAyahs: firstSurah.ayahs.length,
+                    firstAyah: firstSurah.ayahs[0],
+                    lastAyah: firstSurah.ayahs[firstSurah.ayahs.length - 1]
+                });
+                
+                // Populate select after data is loaded
+                populateSurahSelect();
+                resetQuranContent();
+                
+                console.log('Quran data loaded successfully in browser mode');
+            } else {
+                console.error('Error loading Quran data:', {
+                    quranCode: quranJson.code,
+                    translationCode: translationJson.code
+                });
+            }
         } else {
-            console.error('Error loading Quran data:', {
-                quranCode: quranJson.code,
-                translationCode: translationJson.code,
-                quranData: quranJson,
-                translationData: translationJson
-            });
+            // For standalone mode or non-iOS, use the original approach
+            console.log('Running in standalone mode or non-iOS');
+            const [quranResponse, translationResponse] = await Promise.all([
+                fetch('https://api.alquran.cloud/v1/quran/quran-uthmani'),
+                fetch('https://api.alquran.cloud/v1/quran/en.sahih')
+            ]);
+
+            const quranJson = await quranResponse.json();
+            const translationJson = await translationResponse.json();
+
+            if (quranJson.code === 200 && translationJson.code === 200) {
+                quranData = quranJson.data.surahs;
+                translationData = translationJson.data.surahs;
+                
+                // Reset current state
+                currentSurah = null;
+                currentAyah = 0;
+                
+                // Validate first surah data
+                const firstSurah = quranData[0];
+                console.log('First surah validation:', {
+                    name: firstSurah.name,
+                    number: firstSurah.number,
+                    totalAyahs: firstSurah.ayahs.length,
+                    firstAyah: firstSurah.ayahs[0],
+                    lastAyah: firstSurah.ayahs[firstSurah.ayahs.length - 1]
+                });
+                
+                // Populate select after data is loaded
+                populateSurahSelect();
+                resetQuranContent();
+                
+                console.log('Quran data loaded successfully in standalone mode');
+            } else {
+                console.error('Error loading Quran data:', {
+                    quranCode: quranJson.code,
+                    translationCode: translationJson.code
+                });
+            }
         }
     } catch (error) {
         console.error('Error loading Quran data:', error);
+        // Show user-friendly error message
+        const arabicText = document.getElementById('arabicText');
+        if (arabicText) {
+            arabicText.innerHTML = `
+                <div class="text-red-500 dark:text-red-400 py-8">
+                    <i class="fas fa-exclamation-circle text-4xl mb-4"></i>
+                    <p class="text-xl">حدث خطأ في تحميل البيانات</p>
+                    <p class="text-lg mt-2">Error loading data</p>
+                    <p class="text-sm mt-4">Please try adding to home screen for better experience</p>
+                </div>
+            `;
+        }
     }
 }
 
