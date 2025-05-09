@@ -2468,40 +2468,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Load Quran data
     await loadQuranData();
     
-    // Add translation select handler
-    document.getElementById('translationSelect').addEventListener('change', async (e) => {
-        const translation = e.target.value;
-        console.log('Loading translation:', translation);
-        
-        try {
-            const response = await fetch(`https://api.alquran.cloud/v1/quran/${translation}`);
-            const data = await response.json();
-            
-            if (data.code === 200) {
-                console.log('Translation loaded successfully:', {
-                    translation,
-                    surahs: data.data.surahs.length,
-                    firstSurah: data.data.surahs[0].name
-                });
-                
-                translationData = data.data.surahs;
-                
-                // Update display based on current mode
-                if (currentSurah !== null) {
-                    if (isReadingMode) {
-                        loadReadingModeAyahs();
-                    } else {
-                        displayAyah();
-                    }
-                }
-            } else {
-                console.error('Error loading translation:', data);
-            }
-        } catch (error) {
-            console.error('Error loading translation:', error);
-        }
-    });
-
     // Add translation toggle handler
     document.getElementById('toggleTranslation').addEventListener('click', toggleTranslation);
     
