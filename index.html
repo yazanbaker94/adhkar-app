@@ -416,7 +416,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 9 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 10 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab" title="الأذكار - Daily Remembrance">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab" title="أوقات الصلاة - Prayer Times">أوقات الصلاة</div>
         <div class="tab" data-tab="quran" id="quranTab" title="القرآن - Holy Quran">القرآن</div>
@@ -1896,21 +1896,17 @@ document.getElementById('translationSelect').addEventListener('change', async (e
         }
         
         const data = await response.json();
+        translationData = data.data.surahs;
         
-        if (data.code === 200) {
-            logToDebugPanel(`Translation loaded successfully: ${translation}`, 'success');
-            translationData = data.data.surahs;
-            
-            // Update display based on current mode
-            if (currentSurah !== null) {
-                if (isReadingMode) {
-                    loadReadingModeAyahs();
-                } else {
-                    displayAyah();
-                }
+        logToDebugPanel(`Translation loaded successfully: ${translation}`, 'success');
+        
+        // Update display based on current mode
+        if (currentSurah !== null) {
+            if (isReadingMode) {
+                loadReadingModeAyahs();
+            } else {
+                displayAyah();
             }
-        } else {
-            logToDebugPanel(`Error loading translation: ${data.code}`, 'error');
         }
     } catch (error) {
         logToDebugPanel(`Error loading translation: ${error.name} - ${error.message}`, 'error');
