@@ -416,7 +416,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 2 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 1 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab" title="الأذكار - Daily Remembrance">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab" title="أوقات الصلاة - Prayer Times">أوقات الصلاة</div>
         <div class="tab" data-tab="quran" id="quranTab" title="القرآن - Holy Quran">القرآن</div>
@@ -1849,95 +1849,148 @@ async function loadQuranData() {
         // For iOS Safari in browser mode, use a different approach
         if (isIOS && !isStandalone) {
             logToDebugPanel('Running in iOS Safari browser mode', 'info');
+            
+            // Show user-friendly message
+            const arabicText = document.getElementById('arabicText');
+            arabicText.innerHTML = `
+                <div class="text-center py-8">
+                    <i class="fas fa-info-circle text-4xl text-blue-500 mb-4"></i>
+                    <p class="text-xl mb-4">لتحسين تجربة التطبيق</p>
+                    <p class="text-lg mb-4">For better experience</p>
+                    <div class="bg-blue-100 dark:bg-blue-900 p-4 rounded-lg mb-4">
+                        <p class="mb-2">1. اضغط على زر المشاركة (Share) في أسفل المتصفح</p>
+                        <p class="mb-2">2. اختر "إضافة إلى الشاشة الرئيسية" (Add to Home Screen)</p>
+                        <p class="mb-2">3. اضغط "إضافة" (Add) في الأعلى</p>
+                        <p class="mb-2">4. افتح التطبيق من الشاشة الرئيسية</p>
+                    </div>
+                    <button onclick="loadQuranData()" class="bg-blue-500 text-white px-6 py-2 rounded-lg">
+                        <i class="fas fa-sync-alt mr-2"></i>
+                        Try Loading Again
+                    </button>
+                </div>
+            `;
+
             try {
-                const quranResponse = await fetch('https://api.alquran.cloud/v1/quran/quran-uthmani', {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    mode: 'cors',
-                    cache: 'no-cache'
-                });
-                
-                const translationResponse = await fetch('https://api.alquran.cloud/v1/quran/en.sahih', {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    mode: 'cors',
-                    cache: 'no-cache'
-                });
+                // Try loading from a CORS proxy first
+                const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+                const quranUrl = 'https://api.alquran.cloud/v1/quran/quran-uthmani';
+                const translationUrl = 'https://api.alquran.cloud/v1/quran/en.sahih';
 
-                logToDebugPanel(`API responses received: Quran=${quranResponse.status}, Translation=${translationResponse.status}`, 'info');
+                logToDebugPanel('Attempting to load through CORS proxy...', 'info');
 
-                const quranJson = await quranResponse.json();
-                const translationJson = await translationResponse.json();
-
-                if (quranJson.code === 200 && translationJson.code === 200) {
-                    quranData = quranJson.data.surahs;
-                    translationData = translationJson.data.surahs;
-                    
-                    logToDebugPanel(`Data loaded: ${quranData.length} surahs`, 'success');
-                    
-                    // Reset current state
-                    currentSurah = null;
-                    currentAyah = 0;
-                    
-                    // Validate first surah data
-                    const firstSurah = quranData[0];
-                    logToDebugPanel(`First surah: ${firstSurah.name} (${firstSurah.ayahs.length} ayahs)`, 'info');
-                    
-                    // Populate select after data is loaded
-                    populateSurahSelect();
-                    resetQuranContent();
-                    
-                    logToDebugPanel('Quran data loaded successfully in browser mode', 'success');
-                } else {
-                    logToDebugPanel(`Error loading Quran data: Quran=${quranJson.code}, Translation=${translationJson.code}`, 'error');
-                }
-            } catch (error) {
-                logToDebugPanel(`Fetch error: ${error.message}`, 'error');
-                throw error;
-            }
-        } else {
-            logToDebugPanel('Running in standalone mode or non-iOS', 'info');
-            try {
                 const [quranResponse, translationResponse] = await Promise.all([
-                    fetch('https://api.alquran.cloud/v1/quran/quran-uthmani'),
-                    fetch('https://api.alquran.cloud/v1/quran/en.sahih')
+                    fetch(corsProxy + quranUrl, {
+                        method: 'GET',
+                        headers: {
+                            'Origin': window.location.origin,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    }),
+                    fetch(corsProxy + translationUrl, {
+                        method: 'GET',
+                        headers: {
+                            'Origin': window.location.origin,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
                 ]);
 
-                const quranJson = await quranResponse.json();
-                const translationJson = await translationResponse.json();
+                logToDebugPanel(`CORS proxy responses: Quran=${quranResponse.status}, Translation=${translationResponse.status}`, 'info');
 
-                if (quranJson.code === 200 && translationJson.code === 200) {
+                if (quranResponse.ok && translationResponse.ok) {
+                    const quranJson = await quranResponse.json();
+                    const translationJson = await translationResponse.json();
+
+                    if (quranJson.code === 200 && translationJson.code === 200) {
+                        quranData = quranJson.data.surahs;
+                        translationData = translationJson.data.surahs;
+                        
+                        logToDebugPanel(`Data loaded through CORS proxy: ${quranData.length} surahs`, 'success');
+                        
+                        // Reset current state
+                        currentSurah = null;
+                        currentAyah = 0;
+                        
+                        // Populate select after data is loaded
+                        populateSurahSelect();
+                        resetQuranContent();
+                        
+                        return;
+                    }
+                }
+            } catch (error) {
+                logToDebugPanel(`CORS proxy error: ${error.message}`, 'error');
+            }
+
+            // If CORS proxy fails, try loading from local JSON files
+            try {
+                logToDebugPanel('Attempting to load from local JSON files...', 'info');
+                
+                const [quranResponse, translationResponse] = await Promise.all([
+                    fetch('quran-uthmani.json'),
+                    fetch('en.sahih.json')
+                ]);
+
+                if (quranResponse.ok && translationResponse.ok) {
+                    const quranJson = await quranResponse.json();
+                    const translationJson = await translationResponse.json();
+
                     quranData = quranJson.data.surahs;
                     translationData = translationJson.data.surahs;
                     
-                    logToDebugPanel(`Data loaded: ${quranData.length} surahs`, 'success');
+                    logToDebugPanel(`Data loaded from local files: ${quranData.length} surahs`, 'success');
                     
                     // Reset current state
                     currentSurah = null;
                     currentAyah = 0;
                     
-                    // Validate first surah data
-                    const firstSurah = quranData[0];
-                    logToDebugPanel(`First surah: ${firstSurah.name} (${firstSurah.ayahs.length} ayahs)`, 'info');
-                    
                     // Populate select after data is loaded
                     populateSurahSelect();
                     resetQuranContent();
                     
-                    logToDebugPanel('Quran data loaded successfully in standalone mode', 'success');
-                } else {
-                    logToDebugPanel(`Error loading Quran data: Quran=${quranJson.code}, Translation=${translationJson.code}`, 'error');
+                    return;
                 }
             } catch (error) {
-                logToDebugPanel(`Fetch error: ${error.message}`, 'error');
-                throw error;
+                logToDebugPanel(`Local file loading error: ${error.message}`, 'error');
             }
+
+            // If both methods fail, show error message
+            logToDebugPanel('All loading methods failed', 'error');
+            return;
+        }
+
+        // For standalone mode or non-iOS, use the original approach
+        logToDebugPanel('Running in standalone mode or non-iOS', 'info');
+        try {
+            const [quranResponse, translationResponse] = await Promise.all([
+                fetch('https://api.alquran.cloud/v1/quran/quran-uthmani'),
+                fetch('https://api.alquran.cloud/v1/quran/en.sahih')
+            ]);
+
+            const quranJson = await quranResponse.json();
+            const translationJson = await translationResponse.json();
+
+            if (quranJson.code === 200 && translationJson.code === 200) {
+                quranData = quranJson.data.surahs;
+                translationData = translationJson.data.surahs;
+                
+                logToDebugPanel(`Data loaded: ${quranData.length} surahs`, 'success');
+                
+                // Reset current state
+                currentSurah = null;
+                currentAyah = 0;
+                
+                // Populate select after data is loaded
+                populateSurahSelect();
+                resetQuranContent();
+                
+                logToDebugPanel('Quran data loaded successfully in standalone mode', 'success');
+            } else {
+                logToDebugPanel(`Error loading Quran data: Quran=${quranJson.code}, Translation=${translationJson.code}`, 'error');
+            }
+        } catch (error) {
+            logToDebugPanel(`Fetch error: ${error.message}`, 'error');
+            throw error;
         }
     } catch (error) {
         logToDebugPanel(`Error loading Quran data: ${error.message}`, 'error');
