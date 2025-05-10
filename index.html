@@ -385,9 +385,7 @@
 </head>
 
 <body class="bg-gradient-to-b from-gray-100 to-white dark:from-gray-900 dark:to-black text-gray-900 dark:text-white min-h-screen flex flex-col">
-    <!-- Add debug panel -->
-    <div id="debugPanel"></div>
-    <div id="debugToggle" onclick="toggleDebugPanel()">Debug Log</div>
+    <!-- Remove debug panel -->
     
     <!-- Header Section -->
     <header class="p-4 text-center text-2xl font-bold bg-gradient-to-r from-green-400 to-blue-500 dark:from-gray-800 dark:to-gray-900 text-white shadow-lg rounded-b-3xl" id="pageTitle">
@@ -1838,12 +1836,7 @@ function closeTutorial() {
 // Add Quran-related functions
 async function loadQuranData() {
     try {
-        logToDebugPanel('Starting Quran data load...', 'info');
-        logToDebugPanel(`Browser: ${navigator.userAgent}`, 'info');
-        logToDebugPanel(`Platform: ${navigator.platform}`, 'info');
-        
         // Load Quran text first
-        logToDebugPanel('Loading Quran text...', 'info');
         const quranResponse = await fetch('quran-uthmani.json');
         if (!quranResponse.ok) {
             throw new Error(`Failed to load Quran file: ${quranResponse.status}`);
@@ -1856,7 +1849,6 @@ async function loadQuranData() {
         }
         
         quranData = quranJson.data.surahs;
-        logToDebugPanel(`Quran text loaded successfully: ${quranData.length} surahs`, 'success');
         
         // Populate surah select immediately after loading Quran data
         const select = document.getElementById('surahSelect');
@@ -1875,10 +1867,24 @@ async function loadQuranData() {
             select.appendChild(option);
         });
         
-        logToDebugPanel(`Surah select populated with ${select.options.length} options`, 'success');
+        // Remove any existing event listeners
+        const newSelect = select.cloneNode(true);
+        select.parentNode.replaceChild(newSelect, select);
+        
+        // Add the event listener
+        newSelect.addEventListener('change', (e) => {
+            if (e.target.value !== '') {
+                currentSurah = parseInt(e.target.value);
+                currentAyah = 0;
+                isReadingMode = false;
+                document.getElementById('btnReadingMode').innerHTML = '<i class="fas fa-book-open"></i>';
+                displayAyah();
+            } else {
+                resetQuranContent();
+            }
+        });
         
         // Then load translation
-        logToDebugPanel('Loading translation...', 'info');
         const translationResponse = await fetch('en.sahih.json');
         if (!translationResponse.ok) {
             throw new Error(`Failed to load translation file: ${translationResponse.status}`);
@@ -1891,7 +1897,6 @@ async function loadQuranData() {
         }
         
         translationData = translationJson.data.surahs;
-        logToDebugPanel('Translation loaded successfully', 'success');
         
         // Reset current state
         currentSurah = null;
@@ -1900,10 +1905,8 @@ async function loadQuranData() {
         // Reset Quran content
         resetQuranContent();
         
-        logToDebugPanel('Quran data initialization complete', 'success');
     } catch (error) {
-        logToDebugPanel(`Error loading Quran data: ${error.name} - ${error.message}`, 'error');
-        logToDebugPanel(`Stack trace: ${error.stack}`, 'error');
+        console.error('Error loading Quran data:', error);
         
         // Show user-friendly error message
         const arabicText = document.getElementById('arabicText');
@@ -1923,8 +1926,6 @@ async function loadQuranData() {
 // Update translation select handler to use local files
 document.getElementById('translationSelect').addEventListener('change', async (e) => {
     const translation = e.target.value;
-    logToDebugPanel(`Loading translation: ${translation}`, 'info');
-    
     try {
         const response = await fetch(`${translation}.json`);
         if (!response.ok) {
@@ -1933,8 +1934,6 @@ document.getElementById('translationSelect').addEventListener('change', async (e
         
         const data = await response.json();
         translationData = data.data.surahs;
-        
-        logToDebugPanel(`Translation loaded successfully: ${translation}`, 'success');
         
         // Update display based on current mode
         if (currentSurah !== null) {
@@ -1945,7 +1944,7 @@ document.getElementById('translationSelect').addEventListener('change', async (e
             }
         }
     } catch (error) {
-        logToDebugPanel(`Error loading translation: ${error.name} - ${error.message}`, 'error');
+        console.error('Error loading translation:', error);
     }
 });
 
@@ -1954,7 +1953,6 @@ function displayAyah() {
     const translationTextElement = document.getElementById('translationText');
     
     if (currentSurah === null || !quranData || !translationData) {
-        console.log('No surah selected or data not loaded');
         arabicTextElement.innerHTML = `
             <div class="text-gray-500 dark:text-gray-400 py-8">
                 <i class="fas fa-book-quran text-4xl mb-4"></i>
@@ -1988,22 +1986,6 @@ function displayAyah() {
         if (!surah.ayahs[currentAyah] || !translation.ayahs[currentAyah]) {
             throw new Error(`Invalid ayah data for index ${currentAyah}`);
         }
-
-        // Debug log for current state
-        console.log('Displaying ayah:', {
-            currentSurah,
-            currentAyah,
-            surahName: surah.name,
-            totalAyahs: surah.ayahs.length,
-            currentAyahData: {
-                number: surah.ayahs[currentAyah].numberInSurah,
-                text: surah.ayahs[currentAyah].text.substring(0, 50) + '...'
-            },
-            translationData: {
-                number: translation.ayahs[currentAyah].numberInSurah,
-                text: translation.ayahs[currentAyah].text.substring(0, 50) + '...'
-            }
-        });
 
         const ayah = surah.ayahs[currentAyah];
         const translationAyah = translation.ayahs[currentAyah];
@@ -2045,13 +2027,6 @@ function displayAyah() {
         } else {
             bookmarkBtn.innerHTML = '<i class="far fa-bookmark"></i>';
         }
-
-        // Log successful display
-        console.log('Successfully displayed ayah:', {
-            ayahNumber: currentAyah + 1,
-            totalAyahs: surah.ayahs.length,
-            nextButtonEnabled: !document.getElementById('btnNextAyah').disabled
-        });
 
     } catch (error) {
         console.error('Error displaying ayah:', error);
@@ -2178,51 +2153,6 @@ function prevAyah() {
             displayAyah();
         }
     }
-}
-
-// Update populateSurahSelect to properly handle surah selection
-function populateSurahSelect() {
-    logToDebugPanel('Populating surah select...', 'info');
-    const select = document.getElementById('surahSelect');
-    
-    // Clear existing options
-    select.innerHTML = '<option value="">' + languages[currentLang].selectSurah + '</option>';
-    
-    // Debug log for quranData
-    logToDebugPanel(`Quran data available: ${!!quranData}, Surahs count: ${quranData ? quranData.length : 0}`, 'info');
-    
-    if (!quranData || !quranData.length) {
-        logToDebugPanel('No Quran data available for populating select', 'error');
-        return;
-    }
-    
-    // Create options for each surah
-    quranData.forEach((surah, index) => {
-        const option = document.createElement('option');
-        option.value = index;
-        option.textContent = `${surah.number}. ${surah.name}`;
-        select.appendChild(option);
-    });
-    
-    logToDebugPanel(`Select populated with ${select.options.length} options`, 'success');
-
-    // Add change event listener
-    select.addEventListener('change', (e) => {
-        logToDebugPanel(`Surah selected: ${e.target.value} - ${e.target.options[e.target.selectedIndex]?.text}`, 'info');
-        
-        if (e.target.value !== '') {
-            currentSurah = parseInt(e.target.value);
-            currentAyah = 0;
-            isReadingMode = false;
-            document.getElementById('btnReadingMode').innerHTML = '<i class="fas fa-book-open"></i>';
-            
-            logToDebugPanel(`Selected surah: ${quranData[currentSurah].name} (${quranData[currentSurah].ayahs.length} ayahs)`, 'info');
-            
-            displayAyah();
-        } else {
-            resetQuranContent();
-        }
-    });
 }
 
 function loadReadingModeAyahs() {
@@ -2545,72 +2475,6 @@ function bookmarkAyah(surah, ayah) {
         displayAyah();
     }
 }
-
-// Add debug logging functions at the start of your script
-function logToDebugPanel(message, type = 'info') {
-    try {
-        const debugPanel = document.getElementById('debugPanel');
-        if (!debugPanel) {
-            console.error('Debug panel not found');
-            return;
-        }
-
-        // Create log entry
-        const logEntry = document.createElement('div');
-        logEntry.className = `debug-log debug-${type}`;
-        
-        // Add timestamp and message
-        const timestamp = new Date().toLocaleTimeString();
-        logEntry.textContent = `[${timestamp}] ${message}`;
-        
-        // Ensure the panel is visible
-        debugPanel.classList.add('visible');
-        
-        // Add the log entry
-        debugPanel.appendChild(logEntry);
-        
-        // Scroll to bottom
-        debugPanel.scrollTop = debugPanel.scrollHeight;
-        
-        // Also log to console for backup
-        console.log(`[${type.toUpperCase()}] ${message}`);
-    } catch (error) {
-        console.error('Error in logToDebugPanel:', error);
-    }
-}
-
-function toggleDebugPanel() {
-    try {
-        const debugPanel = document.getElementById('debugPanel');
-        if (!debugPanel) {
-            console.error('Debug panel not found');
-            return;
-        }
-        
-        debugPanel.classList.toggle('visible');
-        
-        // If we're showing the panel, add an initial log
-        if (debugPanel.classList.contains('visible')) {
-            logToDebugPanel('Debug panel opened', 'info');
-            logToDebugPanel(`User Agent: ${navigator.userAgent}`, 'info');
-            logToDebugPanel(`Platform: ${navigator.platform}`, 'info');
-            logToDebugPanel(`Standalone: ${window.navigator.standalone}`, 'info');
-        }
-    } catch (error) {
-        console.error('Error in toggleDebugPanel:', error);
-    }
-}
-
-// Add initial logging when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-    // Log initial state
-    logToDebugPanel('Page loaded', 'info');
-    logToDebugPanel(`Browser: ${navigator.userAgent}`, 'info');
-    logToDebugPanel(`Platform: ${navigator.platform}`, 'info');
-    logToDebugPanel(`Standalone: ${window.navigator.standalone}`, 'info');
-    
-    // Rest of your existing DOMContentLoaded code...
-});
     </script>
 </body>
 </html>
