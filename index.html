@@ -458,7 +458,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 2 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 3 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab" title="الأذكار - Daily Remembrance">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab" title="أوقات الصلاة - Prayer Times">أوقات الصلاة</div>
         <div class="tab" data-tab="quran" id="quranTab" title="القرآن - Holy Quran">القرآن</div>
@@ -1759,18 +1759,45 @@ function resetQuranContent() {
     currentAyah = 0;
     document.getElementById('surahSelect').value = '';
     
-    // Check for existing bookmark
-    const savedBookmark = localStorage.getItem('quranBookmark');
+    // Check for existing bookmark in both storage types
+    let savedBookmark = null;
+    
+    // Try localStorage first
+    try {
+        const localStorageBookmark = localStorage.getItem('quranBookmark');
+        if (localStorageBookmark) {
+            savedBookmark = JSON.parse(localStorageBookmark);
+        }
+    } catch (error) {
+        console.error('Error reading from localStorage:', error);
+    }
+    
+    // If no bookmark in localStorage, try sessionStorage
+    if (!savedBookmark) {
+        try {
+            const sessionStorageBookmark = sessionStorage.getItem('quranBookmark');
+            if (sessionStorageBookmark) {
+                savedBookmark = JSON.parse(sessionStorageBookmark);
+            }
+        } catch (error) {
+            console.error('Error reading from sessionStorage:', error);
+        }
+    }
+    
     if (savedBookmark) {
         try {
             logDebug('Found saved bookmark, attempting to load...');
-            const bookmark = JSON.parse(savedBookmark);
-            currentBookmark = bookmark;
+            currentBookmark = savedBookmark;
             document.getElementById('toggleBookmark').innerHTML = '<i class="fas fa-bookmark"></i>';
             logDebug('Bookmark loaded successfully');
         } catch (error) {
             logDebug(`Error loading bookmark: ${error.message}`, 'error');
-            localStorage.removeItem('quranBookmark');
+            try {
+                localStorage.removeItem('quranBookmark');
+                sessionStorage.removeItem('quranBookmark');
+            } catch (storageError) {
+                console.error('Error removing invalid bookmark:', storageError);
+            }
             currentBookmark = null;
         }
     } else {
@@ -1785,12 +1812,6 @@ function resetQuranContent() {
     `;
     
     document.getElementById('translationText').innerHTML = '';
-    
-    // Disable navigation buttons but keep bookmark button enabled
-    document.getElementById('btnPrevAyah').disabled = true;
-    document.getElementById('btnNextAyah').disabled = true;
-    document.getElementById('btnReadingMode').disabled = true;
-    logDebug('Quran content reset complete');
 }
 
 // Add these new functions for notification handling
@@ -2540,13 +2561,32 @@ function bookmarkAyah(surah, ayah) {
     if (currentBookmark && currentBookmark.surah === surah && currentBookmark.ayah === ayah) {
         // Remove bookmark
         currentBookmark = null;
-        localStorage.removeItem('quranBookmark');
+        try {
+            localStorage.removeItem('quranBookmark');
+            sessionStorage.removeItem('quranBookmark');
+        } catch (error) {
+            console.error('Error removing bookmark:', error);
+        }
         document.getElementById('toggleBookmark').innerHTML = '<i class="far fa-bookmark"></i>';
         showToast(currentLang === 'ar' ? 'تم إزالة العلامة المرجعية' : 'Bookmark removed', 'info');
     } else {
         // Set bookmark
         currentBookmark = bookmark;
-        localStorage.setItem('quranBookmark', JSON.stringify(bookmark));
+        try {
+            localStorage.setItem('quranBookmark', JSON.stringify(bookmark));
+            // For iOS, also save to sessionStorage as backup
+            if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                sessionStorage.setItem('quranBookmark', JSON.stringify(bookmark));
+            }
+        } catch (error) {
+            console.error('Error saving bookmark:', error);
+            // If localStorage fails, try sessionStorage
+            try {
+                sessionStorage.setItem('quranBookmark', JSON.stringify(bookmark));
+            } catch (sessionError) {
+                console.error('Error saving bookmark to sessionStorage:', sessionError);
+            }
+        }
         document.getElementById('toggleBookmark').innerHTML = '<i class="fas fa-bookmark"></i>';
         showToast(currentLang === 'ar' ? 'تم إضافة العلامة المرجعية' : 'Bookmark added', 'success');
     }
@@ -2566,14 +2606,35 @@ function toggleBookmark() {
 }
 
 function goToBookmark() {
-    const savedBookmark = localStorage.getItem('quranBookmark');
+    let savedBookmark = null;
+    
+    // Try localStorage first
+    try {
+        const localStorageBookmark = localStorage.getItem('quranBookmark');
+        if (localStorageBookmark) {
+            savedBookmark = JSON.parse(localStorageBookmark);
+        }
+    } catch (error) {
+        console.error('Error reading from localStorage:', error);
+    }
+    
+    // If no bookmark in localStorage, try sessionStorage
+    if (!savedBookmark) {
+        try {
+            const sessionStorageBookmark = sessionStorage.getItem('quranBookmark');
+            if (sessionStorageBookmark) {
+                savedBookmark = JSON.parse(sessionStorageBookmark);
+            }
+        } catch (error) {
+            console.error('Error reading from sessionStorage:', error);
+        }
+    }
+    
     if (savedBookmark) {
         try {
-            const bookmark = JSON.parse(savedBookmark);
-            
             // Set the current surah and ayah
-            currentSurah = bookmark.surah;
-            currentAyah = bookmark.ayah;
+            currentSurah = savedBookmark.surah;
+            currentAyah = savedBookmark.ayah;
             
             // Update surah select dropdown
             const surahSelect = document.getElementById('surahSelect');
@@ -2611,9 +2672,10 @@ function goToBookmark() {
             }
         } catch (error) {
             console.error('Error loading bookmark:', error);
-            localStorage.removeItem('quranBookmark');
-            currentBookmark = null;
+            showToast(currentLang === 'ar' ? 'حدث خطأ في تحميل العلامة المرجعية' : 'Error loading bookmark', 'error');
         }
+    } else {
+        showToast(currentLang === 'ar' ? 'لا توجد علامة مرجعية محفوظة' : 'No saved bookmark', 'info');
     }
 }
 
