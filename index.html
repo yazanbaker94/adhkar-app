@@ -1518,10 +1518,7 @@ function loadPrayerTimes() {
             document.querySelector("#azan-asr span:last-child").innerText = savedData.timings.Asr;
             document.querySelector("#azan-maghrib span:last-child").innerText = savedData.timings.Maghrib;
             document.querySelector("#azan-isha span:last-child").innerText = savedData.timings.Isha;
-            
-            console.log('Loaded saved prayer times:', savedData.timings);
-            
-            // Setup notifications if enabled
+
             if (notificationEnabled) {
                 setupPrayerNotifications();
             }
@@ -1650,6 +1647,17 @@ function setupTabs() {
                     }
                 } catch (error) {
                     logDebug(`Error loading Quran data: ${error.message}`, 'error');
+                    // Show user-friendly error message
+                    const arabicText = document.getElementById('arabicText');
+                    if (arabicText) {
+                        arabicText.innerHTML = `
+                            <div class="text-red-500 dark:text-red-400 py-8">
+                                <i class="fas fa-exclamation-circle text-4xl mb-4"></i>
+                                <p class="text-xl">${currentLang === 'ar' ? 'حدث خطأ في تحميل البيانات' : 'Error loading data'}</p>
+                                <p class="text-sm mt-4">${error.message}</p>
+                            </div>
+                        `;
+                    }
                 }
             }
         });
@@ -1740,19 +1748,7 @@ async function loadQuranData() {
         
     } catch (error) {
         logDebug(`Error loading Quran data: ${error.message}`, 'error');
-        
-        // Show user-friendly error message
-        const arabicText = document.getElementById('arabicText');
-        if (arabicText) {
-            arabicText.innerHTML = `
-                <div class="text-red-500 dark:text-red-400 py-8">
-                    <i class="fas fa-exclamation-circle text-4xl mb-4"></i>
-                    <p class="text-xl">حدث خطأ في تحميل البيانات</p>
-                    <p class="text-lg mt-2">Error loading data</p>
-                    <p class="text-sm mt-4">${error.message}</p>
-                </div>
-            `;
-        }
+        throw error; // Re-throw to be handled by the caller
     }
 }
 
@@ -1767,54 +1763,26 @@ function resetQuranContent() {
     const savedBookmark = localStorage.getItem('quranBookmark');
     if (savedBookmark) {
         try {
+            logDebug('Found saved bookmark, attempting to load...');
             const bookmark = JSON.parse(savedBookmark);
-            logDebug(`Found saved bookmark: Surah ${bookmark.surah + 1}, Ayah ${bookmark.ayah + 1}`);
-            // Get surah name from the select options
-            const surahSelect = document.getElementById('surahSelect');
-            const surahName = surahSelect.options[bookmark.surah + 1]?.text || '';
-            
-            document.getElementById('arabicText').innerHTML = `
-                <div class="text-center mb-8 animate-fade-in">
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 max-w-md mx-auto transform transition-all duration-300 hover:scale-[1.02]">
-                        <div class="flex items-center justify-center gap-3 mb-4">
-                            <i class="fas fa-bookmark text-blue-500 text-2xl"></i>
-                            <h3 class="text-xl font-semibold">${currentLang === 'ar' ? 'متابعة القراءة' : 'Continue Reading'}</h3>
-                        </div>
-                        <div class="text-gray-600 dark:text-gray-300 mb-4">
-                            <p class="mb-2">${currentLang === 'ar' ? 'السورة' : 'Surah'}: <span class="font-semibold">${surahName}</span></p>
-                            <p>${currentLang === 'ar' ? 'الآية' : 'Verse'}: <span class="font-semibold">${bookmark.ayah + 1}</span></p>
-                        </div>
-                        <button onclick="goToBookmark()" 
-                                class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105 flex items-center justify-center gap-2 mx-auto w-full">
-                            <i class="fas fa-play"></i>
-                            <span>${currentLang === 'ar' ? 'استمر في القراءة' : 'Continue'}</span>
-                        </button>
-                    </div>
-                </div>
-                <div class="text-gray-500 dark:text-gray-400 py-8">
-                    <i class="fas fa-book-quran text-4xl mb-4"></i>
-                    <p class="text-xl">${currentLang === 'ar' ? 'اختر سورة للبدء' : 'Select a Surah to begin'}</p>
-                </div>
-            `;
+            currentBookmark = bookmark;
+            document.getElementById('toggleBookmark').innerHTML = '<i class="fas fa-bookmark"></i>';
+            logDebug('Bookmark loaded successfully');
         } catch (error) {
             logDebug(`Error loading bookmark: ${error.message}`, 'error');
             localStorage.removeItem('quranBookmark');
-            document.getElementById('arabicText').innerHTML = `
-                <div class="text-gray-500 dark:text-gray-400 py-8">
-                    <i class="fas fa-book-quran text-4xl mb-4"></i>
-                    <p class="text-xl">${currentLang === 'ar' ? 'اختر سورة للبدء' : 'Select a Surah to begin'}</p>
-                </div>
-            `;
+            currentBookmark = null;
         }
     } else {
         logDebug('No saved bookmark found');
-        document.getElementById('arabicText').innerHTML = `
-            <div class="text-gray-500 dark:text-gray-400 py-8">
-                <i class="fas fa-book-quran text-4xl mb-4"></i>
-                <p class="text-xl">${currentLang === 'ar' ? 'اختر سورة للبدء' : 'Select a Surah to begin'}</p>
-            </div>
-        `;
     }
+    
+    document.getElementById('arabicText').innerHTML = `
+        <div class="text-gray-500 dark:text-gray-400 py-8">
+            <i class="fas fa-book-quran text-4xl mb-4"></i>
+            <p class="text-xl">${currentLang === 'ar' ? 'اختر سورة للبدء' : 'Select a Surah to begin'}</p>
+        </div>
+    `;
     
     document.getElementById('translationText').innerHTML = '';
     
