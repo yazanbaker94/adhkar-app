@@ -637,6 +637,17 @@
         <button onclick="switchLanguage()" id="langToggle" class="text-sm text-gray-600 dark:text-gray-300 hover:underline" title="Switch Language - تبديل اللغة">English</button>
     </footer>
 
+    <!-- Add debug panel HTML before the closing body tag -->
+    <div id="debugPanel" class="fixed bottom-0 left-0 right-0 bg-black bg-opacity-90 text-white p-4 font-mono text-sm max-h-48 overflow-y-auto z-50 hidden">
+        <div class="flex justify-between items-center mb-2">
+            <h3 class="font-bold">Debug Panel</h3>
+            <button onclick="toggleDebugPanel()" class="text-white hover:text-gray-300">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="debugContent"></div>
+    </div>
+
     <script>
       const adhkar = [];
 let current = 0;
@@ -822,63 +833,185 @@ const languages = {
     }
 };
 
+// Add these debug functions at the top of your script
+function logDebug(message, type = 'info') {
+    const debugPanel = document.getElementById('debugPanel');
+    const debugContent = document.getElementById('debugContent');
+    
+    if (!debugPanel || !debugContent) return;
+    
+    const timestamp = new Date().toLocaleTimeString();
+    const logEntry = document.createElement('div');
+    logEntry.className = `mb-1 ${type === 'error' ? 'text-red-400' : type === 'success' ? 'text-green-400' : 'text-blue-400'}`;
+    logEntry.textContent = `[${timestamp}] ${message}`;
+    
+    debugContent.appendChild(logEntry);
+    debugContent.scrollTop = debugContent.scrollHeight;
+}
+
+function toggleDebugPanel() {
+    const debugPanel = document.getElementById('debugPanel');
+    debugPanel.classList.toggle('hidden');
+}
+
+// Add debug logging to API calls
+async function fetchPrayerTimes(city = "Amman") {
+    logDebug(`Fetching prayer times for ${city}...`);
+    const today = new Date().toISOString().split('T')[0];
+    const formattedDate = today.split('-').reverse().join('-');
+    const cacheKey = `prayer-${city}-${formattedDate}`;
+    
+    const strategies = [
+        async () => {
+            logDebug('Strategy 1: Direct API call');
+            const url = `https://api.aladhan.com/v1/timingsByAddress/${formattedDate}?address=${encodeURIComponent(city)}`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`Direct API failed: ${response.status}`);
+            return response.json();
+        },
+        
+        async () => {
+            logDebug('Strategy 2: Service Worker cache');
+            const cache = await caches.open('api-cache-v1');
+            const cached = await cache.match(`https://api.aladhan.com/v1/timingsByAddress/${formattedDate}?address=${encodeURIComponent(city)}`);
+            if (!cached) throw new Error('No cache available');
+            return cached.json();
+        },
+        
+        async () => {
+            logDebug('Strategy 3: localStorage fallback');
+            const stored = localStorage.getItem(cacheKey);
+            if (!stored) throw new Error('No localStorage data');
+            return JSON.parse(stored);
+        }
+    ];
+
+    for (const strategy of strategies) {
+        try {
+            const data = await strategy();
+            logDebug(`Strategy succeeded: ${JSON.stringify(data.code)}`, 'success');
+            
+            localStorage.setItem(cacheKey, JSON.stringify(data));
+            
+            if (data.code === 200) {
+                const timings = data.data.timings;
+                const location = data.data.meta.timezone;
+                
+                prayerNotifications = timings;
+                savePrayerTimes(timings, location, city);
+                logDebug('Prayer times updated successfully', 'success');
+
+                document.getElementById("azan-location").innerText = languages[currentLang].locationText(city, location);
+                document.querySelector("#azan-fajr span:last-child").innerText = timings.Fajr;
+                document.querySelector("#azan-sunrise span:last-child").innerText = timings.Sunrise;
+                document.querySelector("#azan-dhuhr span:last-child").innerText = timings.Dhuhr;
+                document.querySelector("#azan-asr span:last-child").innerText = timings.Asr;
+                document.querySelector("#azan-maghrib span:last-child").innerText = timings.Maghrib;
+                document.querySelector("#azan-isha span:last-child").innerText = timings.Isha;
+
+                if (notificationEnabled) {
+                    logDebug('Setting up notifications', 'info');
+                    setupPrayerNotifications();
+                }
+                return;
+            }
+        } catch (error) {
+            logDebug(`Strategy failed: ${error.message}`, 'error');
+            continue;
+        }
+    }
+
+    logDebug('All strategies failed', 'error');
+    document.getElementById("azan-location").innerText = languages[currentLang].arErrorMessage;
+    throw new Error('All prayer time fetch strategies failed');
+}
+
+// Update initARCamera to include debug logging
 async function initARCamera() {
-    console.log("Initializing AR Camera...");
+    logDebug('Initializing AR Camera...');
+    
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    const isStandalone = window.navigator.standalone === true;
+    
+    logDebug(`Device Info - iOS: ${isIOS}, Safari: ${isSafari}, Standalone: ${isStandalone}`);
+
+    if (isIOS && isSafari && !isStandalone) {
+        logDebug('Safari not in standalone mode - showing instructions', 'info');
+        showARUnsupported();
+        const message = currentLang === 'ar' 
+            ? 'لتفعيل ميزة القبلة، يرجى إضافة التطبيق إلى الشاشة الرئيسية'
+            : 'To enable Qibla feature, please add the app to your home screen';
+        document.getElementById('arErrorMessage').textContent = message;
+        return;
+    }
 
     if (!('DeviceOrientationEvent' in window) || !navigator.mediaDevices) {
-        console.error("Device orientation or camera not supported");
+        logDebug('Device orientation or camera not supported', 'error');
         showARUnsupported();
         return;
     }
 
-    // Request permission for motion sensors on iOS
-    if (typeof DeviceOrientationEvent.requestPermission === 'function') {   
-        try {
+    try {
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+            logDebug('Requesting motion permission...');
             const permission = await DeviceOrientationEvent.requestPermission();
+            logDebug(`Motion permission: ${permission}`);
             if (permission !== 'granted') {
-                console.error("Motion permission denied");
+                logDebug('Motion permission denied', 'error');
                 showARUnsupported();
                 return;
             }
-        } catch (error) {
-            console.error("Error requesting motion permission:", error);
-            showARUnsupported();
-            return;
         }
-    }
 
-    try {
-        // Get camera access
-        cameraStream = await navigator.mediaDevices.getUserMedia({
+        logDebug('Requesting camera access...');
+        const constraints = {
             video: {
                 facingMode: facingMode,
                 width: { ideal: 1280 },
                 height: { ideal: 720 }
             }
-        });
+        };
+
+        if (isSafari) {
+            constraints.video.width = { min: 640, ideal: 1280, max: 1920 };
+            constraints.video.height = { min: 480, ideal: 720, max: 1080 };
+        }
+
+        cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+        logDebug('Camera access granted', 'success');
 
         const video = document.getElementById('arCamera');
         video.srcObject = cameraStream;
 
-        // Get precise location
+        logDebug('Requesting location...');
         const position = await new Promise((resolve, reject) => {
             navigator.geolocation.getCurrentPosition(resolve, reject, {
                 enableHighAccuracy: true,
-                timeout: 10000
+                timeout: 10000,
+                maximumAge: 0
             });
         });
+        logDebug(`Location received: ${position.coords.latitude}, ${position.coords.longitude}`, 'success');
 
-        // Calculate Qibla direction
         qiblaAngle = calculateQiblaAngle(position.coords.latitude, position.coords.longitude);
+        logDebug(`Qibla angle calculated: ${qiblaAngle}°`, 'success');
 
-        // Start AR rendering
         arActive = true;
         window.addEventListener('deviceorientation', handleOrientation);
         startARRenderLoop();
+        logDebug('AR initialization complete', 'success');
 
     } catch (error) {
-        console.error("AR initialization failed:", error);
+        logDebug(`AR initialization failed: ${error.message}`, 'error');
         showARUnsupported();
+        
+        if (isSafari) {
+            const message = currentLang === 'ar'
+                ? 'يرجى التأكد من السماح بالوصول إلى الكاميرا والموقع في إعدادات Safari'
+                : 'Please ensure camera and location access is allowed in Safari settings';
+            document.getElementById('arErrorMessage').textContent = message;
+        }
     }
 }
 
@@ -2633,7 +2766,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Add iOS-specific handling
     if (isIOS() && !isIOSStandalone()) {
-        showIOSInstallPrompt();
+        // Add a small delay before showing the modal
+        setTimeout(() => {
+            showIOSInstallPrompt();
+        }, 1000);
         
         // Add a persistent banner for iOS users
         const banner = document.createElement('div');
@@ -2646,6 +2782,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         `;
         document.body.appendChild(banner);
     }
+
+    // Add debug panel toggle button
+    const debugToggle = document.createElement('button');
+    debugToggle.className = 'fixed bottom-4 right-4 bg-gray-800 text-white p-2 rounded-full shadow-lg z-50';
+    debugToggle.innerHTML = '<i class="fas fa-bug"></i>';
+    debugToggle.onclick = toggleDebugPanel;
+    document.body.appendChild(debugToggle);
 });
 
 // Add this function to show toast notifications
@@ -2692,16 +2835,26 @@ function isIOS() {
 function showIOSInstallPrompt() {
     if (isIOS() && !isIOSStandalone()) {
         const modal = document.getElementById('iosInstallModal') || createIOSInstallModal();
+        // Force a reflow to ensure the modal is visible
+        modal.offsetHeight;
+        modal.style.display = 'flex';
         modal.classList.remove('hidden');
+        
+        // Add a small delay for Safari
+        setTimeout(() => {
+            modal.style.opacity = '1';
+        }, 50);
     }
 }
 
 function createIOSInstallModal() {
     const modal = document.createElement('div');
     modal.id = 'iosInstallModal';
-    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden';
+    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+    modal.style.opacity = '0';
+    modal.style.transition = 'opacity 0.3s ease';
     modal.innerHTML = `
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md mx-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md mx-4 relative">
             <div class="text-center mb-4">
                 <i class="fas fa-home text-3xl text-blue-500 mb-2"></i>
                 <h3 class="text-xl font-bold">${languages[currentLang].tutorialTitle}</h3>
@@ -2712,7 +2865,7 @@ function createIOSInstallModal() {
                 <li>${languages[currentLang].tutorialIOS.steps[2]}</li>
             </ol>
             <div class="mt-6 flex justify-center">
-                <button onclick="document.getElementById('iosInstallModal').classList.add('hidden')" 
+                <button onclick="closeIOSInstallModal()" 
                         class="bg-blue-500 text-white px-6 py-2 rounded-lg">
                     ${languages[currentLang].gotIt}
                 </button>
@@ -2721,6 +2874,17 @@ function createIOSInstallModal() {
     `;
     document.body.appendChild(modal);
     return modal;
+}
+
+function closeIOSInstallModal() {
+    const modal = document.getElementById('iosInstallModal');
+    if (modal) {
+        modal.style.opacity = '0';
+        setTimeout(() => {
+            modal.style.display = 'none';
+            modal.classList.add('hidden');
+        }, 300);
+    }
 }
     </script>
 </body>
