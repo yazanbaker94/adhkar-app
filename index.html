@@ -1625,6 +1625,7 @@ function setupTabs() {
             tab.classList.add('active');
             const tabId = tab.getAttribute('data-tab');
             document.getElementById(`${tabId}Content`).classList.add('active');
+            console.log('Tab clicked', tabId);
 
             logDebug(`Switching to tab: ${tabId}`);
 
