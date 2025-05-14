@@ -458,7 +458,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 5 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 6 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab" title="الأذكار - Daily Remembrance">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab" title="أوقات الصلاة - Prayer Times">أوقات الصلاة</div>
         <div class="tab" data-tab="quran" id="quranTab" title="القرآن - Holy Quran">القرآن</div>
@@ -1625,7 +1625,7 @@ function setupTabs() {
             tab.classList.add('active');
             const tabId = tab.getAttribute('data-tab');
             document.getElementById(`${tabId}Content`).classList.add('active');
-            console.log('Tab clicked', tabId);
+            alert('Quran tab code triggered');
 
             logDebug(`Switching to tab: ${tabId}`);
 
