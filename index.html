@@ -458,7 +458,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 6 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 7 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab" title="الأذكار - Daily Remembrance">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab" title="أوقات الصلاة - Prayer Times">أوقات الصلاة</div>
         <div class="tab" data-tab="quran" id="quranTab" title="القرآن - Holy Quran">القرآن</div>
@@ -1626,7 +1626,9 @@ function setupTabs() {
             const tabId = tab.getAttribute('data-tab');
             document.getElementById(`${tabId}Content`).classList.add('active');
             alert('Quran tab code triggered');
-
+            <div id="testModal" style="position: fixed; top: 20%; left: 10%; background: white; z-index: 9999; padding: 1em; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
+  Test Modal
+</div>
             logDebug(`Switching to tab: ${tabId}`);
 
             if (tabId === 'qibla') {
