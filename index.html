@@ -485,7 +485,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 9 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 1 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab" title="الأذكار - Daily Remembrance">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab" title="أوقات الصلاة - Prayer Times">أوقات الصلاة</div>
         <div class="tab" data-tab="quran" id="quranTab" title="القرآن - Holy Quran">القرآن</div>
@@ -1652,7 +1652,6 @@ function setupTabs() {
             tab.classList.add('active');
             const tabId = tab.getAttribute('data-tab');
             document.getElementById(`${tabId}Content`).classList.add('active');
-            alert('Quran tab code triggered');
            
             logDebug(`Switching to tab: ${tabId}`);
 
@@ -2698,7 +2697,6 @@ function goToBookmark() {
     
     if (savedBookmark) {
         try {
-            alert('Bookmark found');
 
             // Set the current surah and ayah
             currentSurah = savedBookmark.surah;
@@ -2750,19 +2748,7 @@ function goToBookmark() {
             bookmarkInfo.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
             bookmarkInfo.style.direction = currentLang === 'ar' ? 'rtl' : 'ltr';
             
-            const surahName = quranData[currentSurah].name;
-            bookmarkInfo.innerHTML = `
-                <div class="text-lg font-bold mb-2">${currentLang === 'ar' ? 'متابعة القراءة' : 'Continue Reading'}</div>
-                <div class="text-sm text-gray-600 dark:text-gray-400">
-                    ${currentLang === 'ar' ? 'السورة:' : 'Surah:'} ${surahName}
-                </div>
-                <div class="text-sm text-gray-600 dark:text-gray-400">
-                    ${currentLang === 'ar' ? 'الآية:' : 'Verse:'} ${currentAyah + 1}
-                </div>
-            `;
-            
-            document.body.appendChild(bookmarkInfo);
-            
+           
             // Remove the info box after 3 seconds
             setTimeout(() => {
                 bookmarkInfo.classList.add('animate-fade-out');
