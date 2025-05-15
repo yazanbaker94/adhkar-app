@@ -1939,6 +1939,7 @@ async function requestNotificationPermission() {
                 document.getElementById('notificationToggle').checked = true;
                 
                 if (isIOS) {
+                    alert('isIOS');
                     // For iOS, use basic notifications
                     setupBasicNotifications();
                     // Show success message
@@ -2676,6 +2677,7 @@ function goToBookmark() {
     try {
         const localStorageBookmark = localStorage.getItem('quranBookmark');
         if (localStorageBookmark) {
+            
             savedBookmark = JSON.parse(localStorageBookmark);
         }
     } catch (error) {
@@ -2695,8 +2697,9 @@ function goToBookmark() {
     }
     
     if (savedBookmark) {
-        alert('Bookmark found');
         try {
+            alert('Bookmark found');
+
             // Set the current surah and ayah
             currentSurah = savedBookmark.surah;
             currentAyah = savedBookmark.ayah;
