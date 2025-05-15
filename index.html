@@ -425,6 +425,33 @@
         .toast.info {
             background: rgba(59, 130, 246, 0.9);
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -20px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translate(-50%, 0); }
+            to { opacity: 0; transform: translate(-50%, -20px); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        .animate-fade-out {
+            animation: fadeOut 0.3s ease-out forwards;
+        }
+
+        /* iOS Safari specific fixes */
+        @supports (-webkit-touch-callout: none) {
+            .fixed {
+                position: fixed;
+                -webkit-transform: translate(-50%, 0);
+                transform: translate(-50%, 0);
+            }
+        }
     </style>
 </head>
 
@@ -1744,6 +1771,36 @@ async function loadQuranData() {
         currentSurah = null;
         currentAyah = 0;
         
+        // Enable bookmark button since data is loaded
+        document.getElementById('btnBookmark').disabled = false;
+        
+        // Check for existing bookmark
+        let savedBookmark = null;
+        try {
+            const localStorageBookmark = localStorage.getItem('quranBookmark');
+            if (localStorageBookmark) {
+                savedBookmark = JSON.parse(localStorageBookmark);
+            }
+        } catch (error) {
+            console.error('Error reading from localStorage:', error);
+        }
+        
+        if (!savedBookmark) {
+            try {
+                const sessionStorageBookmark = sessionStorage.getItem('quranBookmark');
+                if (sessionStorageBookmark) {
+                    savedBookmark = JSON.parse(sessionStorageBookmark);
+                }
+            } catch (error) {
+                console.error('Error reading from sessionStorage:', error);
+            }
+        }
+        
+        if (savedBookmark) {
+            currentBookmark = savedBookmark;
+            document.getElementById('toggleBookmark').innerHTML = '<i class="fas fa-bookmark"></i>';
+        }
+        
         // Reset Quran content
         resetQuranContent();
         logDebug('Quran data initialization complete', 'success');
@@ -1754,7 +1811,7 @@ async function loadQuranData() {
     }
 }
 
-// Update resetQuranContent to include logging
+// Update resetQuranContent to not disable the bookmark button
 function resetQuranContent() {
     logDebug('Resetting Quran content...');
     currentSurah = null;
@@ -1814,6 +1871,11 @@ function resetQuranContent() {
     `;
     
     document.getElementById('translationText').innerHTML = '';
+    
+    // Only disable navigation buttons, not the bookmark button
+    document.getElementById('btnPrevAyah').disabled = true;
+    document.getElementById('btnNextAyah').disabled = true;
+    document.getElementById('btnReadingMode').disabled = true;
 }
 
 // Add these new functions for notification handling
@@ -2672,6 +2734,39 @@ function goToBookmark() {
                 document.getElementById('btnNextAyah').disabled = false;
                 document.getElementById('btnReadingMode').disabled = false;
             }
+
+            // Show bookmark info box
+            const bookmarkInfo = document.createElement('div');
+            bookmarkInfo.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg z-50 text-center animate-fade-in';
+            bookmarkInfo.style.maxWidth = '90%';
+            bookmarkInfo.style.width = 'auto';
+            bookmarkInfo.style.minWidth = '300px';
+            bookmarkInfo.style.backdropFilter = 'blur(10px)';
+            bookmarkInfo.style.webkitBackdropFilter = 'blur(10px)';
+            bookmarkInfo.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+            bookmarkInfo.style.direction = currentLang === 'ar' ? 'rtl' : 'ltr';
+            
+            const surahName = quranData[currentSurah].name;
+            bookmarkInfo.innerHTML = `
+                <div class="text-lg font-bold mb-2">${currentLang === 'ar' ? 'متابعة القراءة' : 'Continue Reading'}</div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">
+                    ${currentLang === 'ar' ? 'السورة:' : 'Surah:'} ${surahName}
+                </div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">
+                    ${currentLang === 'ar' ? 'الآية:' : 'Verse:'} ${currentAyah + 1}
+                </div>
+            `;
+            
+            document.body.appendChild(bookmarkInfo);
+            
+            // Remove the info box after 3 seconds
+            setTimeout(() => {
+                bookmarkInfo.classList.add('animate-fade-out');
+                setTimeout(() => {
+                    bookmarkInfo.remove();
+                }, 300);
+            }, 3000);
+
         } catch (error) {
             console.error('Error loading bookmark:', error);
             showToast(currentLang === 'ar' ? 'حدث خطأ في تحميل العلامة المرجعية' : 'Error loading bookmark', 'error');
