@@ -485,7 +485,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 8 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 9 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab" title="الأذكار - Daily Remembrance">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab" title="أوقات الصلاة - Prayer Times">أوقات الصلاة</div>
         <div class="tab" data-tab="quran" id="quranTab" title="القرآن - Holy Quran">القرآن</div>
@@ -1657,9 +1657,9 @@ function setupTabs() {
             logDebug(`Switching to tab: ${tabId}`);
 
             if (tabId === 'qibla') {
-                initARCamera();
+               await initARCamera();
             } else {
-                stopARCamera();
+                await stopARCamera();
             }
 
             // Reset Quran content when switching to Quran tab
