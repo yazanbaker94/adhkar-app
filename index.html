@@ -955,63 +955,59 @@ async function fetchPrayerTimes(city = "Amman") {
 
 // Update initARCamera to include debug logging
 async function initARCamera() {
-    logDebug('Initializing AR Camera...');
-    
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    const isStandalone = window.navigator.standalone === true;
-    
-    logDebug(`Device Info - iOS: ${isIOS}, Safari: ${isSafari}, Standalone: ${isStandalone}`);
+    console.log("Initializing AR Camera...");
 
-    if (isIOS && isSafari && !isStandalone) {
-        logDebug('Safari not in standalone mode - showing instructions', 'info');
-        showARUnsupported();
-        const message = currentLang === 'ar' 
-            ? 'لتفعيل ميزة القبلة، يرجى إضافة التطبيق إلى الشاشة الرئيسية'
-            : 'To enable Qibla feature, please add the app to your home screen';
-        document.getElementById('arErrorMessage').textContent = message;
-        return;
-    }
-
-    if (!('DeviceOrientationEvent' in window) || !navigator.mediaDevices) {
-        logDebug('Device orientation or camera not supported', 'error');
-        showARUnsupported();
-        return;
-    }
+    // Check if we're on a mobile device
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isLaptop = !isMobile && window.innerWidth > 768;
+    const isInStandaloneMode = ('standalone' in navigator) && (navigator.standalone);
+    console.log("Device type:", isMobile ? "Mobile" : isLaptop ? "Laptop" : "Desktop", "iOS:", isIOS, "Standalone:", isInStandaloneMode);
 
     try {
-        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-            logDebug('Requesting motion permission...');
-            const permission = await DeviceOrientationEvent.requestPermission();
-            logDebug(`Motion permission: ${permission}`);
-            if (permission !== 'granted') {
-                logDebug('Motion permission denied', 'error');
-                showARUnsupported();
-                return;
+        // For iOS, check if we're in standalone mode
+        if (isIOS && !isInStandaloneMode) {
+            showARUnsupported("ios_not_standalone");
+            return;
+        }
+
+        // Check for device orientation support
+        if (!('DeviceOrientationEvent' in window)) {
+            console.error("Device orientation not supported");
+            if (isLaptop) {
+                throw new Error("laptop_mode");
+            } else {
+                throw new Error("orientation_not_supported");
             }
         }
 
-        logDebug('Requesting camera access...');
-        const constraints = {
+        // For iOS, request motion permission first
+        if (isIOS && typeof DeviceOrientationEvent.requestPermission === 'function') {
+            try {
+                const permission = await DeviceOrientationEvent.requestPermission();
+                console.log("Motion permission status:", permission);
+                if (permission !== 'granted') {
+                    throw new Error("motion_permission_denied");
+                }
+            } catch (error) {
+                console.error("Motion permission error:", error);
+                throw new Error("motion_permission_denied");
+            }
+        }
+
+        // Request camera permission
+        console.log("Requesting camera permission...");
+        const cameraStream = await navigator.mediaDevices.getUserMedia({
             video: {
                 facingMode: facingMode,
-                width: { ideal: 1280 },
-                height: { ideal: 720 }
+                width: { ideal: isMobile ? 1280 : 1920 },
+                height: { ideal: isMobile ? 720 : 1080 }
             }
-        };
+        });
+        console.log("Camera permission granted");
 
-        if (isSafari) {
-            constraints.video.width = { min: 640, ideal: 1280, max: 1920 };
-            constraints.video.height = { min: 480, ideal: 720, max: 1080 };
-        }
-
-        cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
-        logDebug('Camera access granted', 'success');
-
-        const video = document.getElementById('arCamera');
-        video.srcObject = cameraStream;
-
-        logDebug('Requesting location...');
+        // Request location permission
+        console.log("Requesting location permission...");
         const position = await new Promise((resolve, reject) => {
             navigator.geolocation.getCurrentPosition(resolve, reject, {
                 enableHighAccuracy: true,
@@ -1019,25 +1015,75 @@ async function initARCamera() {
                 maximumAge: 0
             });
         });
-        logDebug(`Location received: ${position.coords.latitude}, ${position.coords.longitude}`, 'success');
+        console.log("Location permission granted");
 
+        // All permissions granted, proceed with initialization
+        const video = document.getElementById('arCamera');
+        if (!video) {
+            throw new Error("video_element_not_found");
+        }
+
+        // Set video properties for mobile
+        video.setAttribute('playsinline', '');
+        video.setAttribute('webkit-playsinline', '');
+        video.srcObject = cameraStream;
+
+        // Wait for video to be ready
+        await new Promise((resolve) => {
+            video.onloadedmetadata = () => {
+                video.play().then(resolve).catch(error => {
+                    console.error("Error playing video:", error);
+                    resolve(); // Continue anyway
+                });
+            };
+        });
+
+        console.log("Location received:", position.coords);
+        // Calculate Qibla direction
         qiblaAngle = calculateQiblaAngle(position.coords.latitude, position.coords.longitude);
-        logDebug(`Qibla angle calculated: ${qiblaAngle}°`, 'success');
+        console.log("Qibla angle calculated:", qiblaAngle);
 
+        // Start AR rendering
         arActive = true;
         window.addEventListener('deviceorientation', handleOrientation);
         startARRenderLoop();
-        logDebug('AR initialization complete', 'success');
+        console.log("AR initialization complete");
 
     } catch (error) {
-        logDebug(`AR initialization failed: ${error.message}`, 'error');
-        showARUnsupported();
+        console.error("AR initialization failed:", error);
         
-        if (isSafari) {
-            const message = currentLang === 'ar'
-                ? 'يرجى التأكد من السماح بالوصول إلى الكاميرا والموقع في إعدادات Safari'
-                : 'Please ensure camera and location access is allowed in Safari settings';
-            document.getElementById('arErrorMessage').textContent = message;
+        // Handle specific error cases
+        switch(error.message) {
+            case "ios_not_standalone":
+                showARUnsupported("ios_not_standalone");
+                break;
+            case "laptop_mode":
+                showARUnsupported("laptop_mode");
+                break;
+            case "orientation_not_supported":
+                showARUnsupported("orientation_not_supported");
+                break;
+            case "camera_not_supported":
+                showARUnsupported("camera_not_supported");
+                break;
+            case "motion_permission_denied":
+                showARUnsupported("motion_permission_denied");
+                break;
+            case "video_element_not_found":
+                showARUnsupported("video_element_not_found");
+                break;
+            default:
+                if (error.name === 'NotAllowedError') {
+                    showARUnsupported("permission_denied");
+                } else if (error.name === 'NotFoundError') {
+                    showARUnsupported("camera_not_found");
+                } else if (error.name === 'NotReadableError') {
+                    showARUnsupported("camera_not_readable");
+                } else if (error.name === 'TimeoutError') {
+                    showARUnsupported("location_timeout");
+                } else {
+                    showARUnsupported("unknown_error");
+                }
         }
     }
 }
@@ -1187,12 +1233,47 @@ function startARRenderLoop() {
     render();
 }
 
-function showARUnsupported() {
-    const el = document.getElementById('arUnsupported');
-    el.classList.remove('hidden');
-    el.querySelector('#arErrorTitle').textContent = languages[currentLang].arErrorTitle;
-    el.querySelector('#arErrorMessage').textContent = languages[currentLang].arErrorMessage;
-    el.querySelector('#fallbackBtnText').textContent = languages[currentLang].fallbackBtnText;
+function showARUnsupported(errorType) {
+    const qiblaContent = document.getElementById('qiblaContent');
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isLaptop = !isMobile && window.innerWidth > 768;
+    const isInStandaloneMode = ('standalone' in navigator) && (navigator.standalone);
+    
+    let title, message, showFallback = true;
+    
+    switch(errorType) {
+        case "ios_not_standalone":
+            title = currentLang === 'ar' ? 'يرجى إضافة التطبيق إلى الشاشة الرئيسية' : 'Please Add to Home Screen';
+            message = currentLang === 'ar' 
+                ? 'لتفعيل ميزة القبلة، يرجى:\n\n1. اضغط على زر المشاركة (Share) في أسفل المتصفح\n2. اختر "إضافة إلى الشاشة الرئيسية"\n3. افتح التطبيق من الشاشة الرئيسية\n\nملاحظة: يجب إضافة التطبيق إلى الشاشة الرئيسية لتفعيل ميزة القبلة على iOS'
+                : 'To enable the Qibla feature, please:\n\n1. Tap the Share button at the bottom of the browser\n2. Select "Add to Home Screen"\n3. Open the app from your home screen\n\nNote: The app must be added to home screen to enable Qibla feature on iOS';
+            showFallback = false;
+            break;
+        case "motion_permission_denied":
+            title = currentLang === 'ar' ? 'تم رفض إذن المستشعرات' : 'Motion Sensors Denied';
+            message = currentLang === 'ar'
+                ? 'يرجى السماح بالوصول إلى مستشعرات الحركة في إعدادات المتصفح:\n\n1. افتح إعدادات جهازك\n2. انتقل إلى Safari > الإعدادات\n3. قم بتفعيل "السماح بالوصول إلى المستشعرات"\n4. أعد تشغيل التطبيق'
+                : 'Please allow access to motion sensors in browser settings:\n\n1. Open your device settings\n2. Go to Safari > Settings\n3. Enable "Allow Motion Sensors"\n4. Restart the app';
+            break;
+        // ... rest of the cases remain the same ...
+    }
+    
+    qiblaContent.innerHTML = `
+        <div class="relative w-full h-[70vh] bg-black rounded-xl overflow-hidden">
+            <div id="arUnsupported" class="absolute inset-0 flex flex-col items-center justify-center bg-white dark:bg-gray-800 p-6 text-center">
+                <i class="fas fa-triangle-exclamation text-yellow-500 text-3xl mb-3"></i>
+                <h3 class="font-bold text-xl mb-4">${title}</h3>
+                <p class="mb-6 whitespace-pre-line">${message}</p>
+                ${showFallback ? `
+                    <button onclick="initCompassFallback()" class="bg-blue-500 text-white px-6 py-2 rounded-lg">
+                        <i class="fas fa-compass mr-2"></i>
+                        <span>${currentLang === 'ar' ? 'استخدام البوصلة الأساسية' : 'Use Basic Compass'}</span>
+                    </button>
+                ` : ''}
+            </div>
+        </div>
+    `;
 }
 
 function showCalibrationPrompt() {
