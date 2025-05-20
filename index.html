@@ -1417,27 +1417,40 @@ function switchLanguage() {
 
 function updateUI() {
     const lang = languages[currentLang];
+    
+    // Update page title and navigation
     document.getElementById('pageTitle').innerText = lang.title;
+    document.getElementById('langToggle').innerText = lang.langSwitch;
+    
+    // Update tab navigation
+    document.getElementById('adhkarTab').innerText = lang.adhkarTab;
+    document.getElementById('prayerTab').innerText = lang.prayerTab;
+    document.getElementById('qiblaTab').innerText = lang.qiblaTab;
+    document.getElementById('quranTab').innerText = lang.quranTab;
+    
+    // Update Adhkar page
     document.getElementById('btnMorning').innerText = lang.morning;
     document.getElementById('btnEvening').innerText = lang.evening;
     document.getElementById('btnPrev').innerText = lang.previous;
     document.getElementById('btnNext').innerText = lang.next;
     document.getElementById('btnBack').innerText = lang.back;
-    document.getElementById('langToggle').innerText = lang.langSwitch;
     document.getElementById('repeatLabel').innerText = lang.repeatLabel;
     document.getElementById('swipeHintText').innerText = lang.swipeHint;
     document.getElementById('clickHintText').innerText = lang.clickHint;
-    document.getElementById('adhkarTab').innerText = lang.adhkarTab;
-    document.getElementById('prayerTab').innerText = lang.prayerTab;
-    document.getElementById('qiblaTab').innerText = lang.qiblaTab;
-    document.getElementById('quranTab').innerText = lang.quranTab;  // Add this line
-    document.getElementById('btnRefresh').innerHTML = `<i class="fas fa-sync-alt mr-2"></i> ${lang.refresh}`;
+    
+    // Update Prayer Times page
+    document.getElementById('prayerTitle').innerText = lang.prayerTitle;
     document.getElementById('notificationLabel').innerText = lang.notificationLabel;
+    document.querySelector('#azan-fajr span:first-child').innerText = lang.fajr + ":";
+    document.querySelector('#azan-sunrise span:first-child').innerText = lang.sunrise + ":";
+    document.querySelector('#azan-dhuhr span:first-child').innerText = lang.dhuhr + ":";
+    document.querySelector('#azan-asr span:first-child').innerText = lang.asr + ":";
+    document.querySelector('#azan-maghrib span:first-child').innerText = lang.maghrib + ":";
+    document.querySelector('#azan-isha span:first-child').innerText = lang.isha + ":";
+    
+    // Update Quran page
     document.getElementById('quranTitle').innerText = lang.quranTitle;
     document.getElementById('surahSelect').firstElementChild.textContent = lang.selectSurah;
-    document.querySelector('#translationSelect option[value="en.sahih"]').textContent = lang.translationNames["en.sahih"];
-    document.querySelector('#translationSelect option[value="en.pickthall"]').textContent = lang.translationNames["en.pickthall"];
-    document.querySelector('#translationSelect option[value="en.yusufali"]').textContent = lang.translationNames["en.yusufali"];
     document.getElementById('btnPrevAyah').innerText = lang.previous;
     document.getElementById('btnNextAyah').innerText = lang.next;
     
@@ -1455,6 +1468,38 @@ function updateUI() {
         }
         translationSelect.appendChild(option);
     });
+    
+    // Update Qibla page
+    const arUnsupported = document.getElementById('arUnsupported');
+    if (arUnsupported) {
+        const arErrorTitle = arUnsupported.querySelector('#arErrorTitle');
+        const arErrorMessage = arUnsupported.querySelector('#arErrorMessage');
+        const fallbackBtnText = arUnsupported.querySelector('#fallbackBtnText');
+        
+        if (arErrorTitle) arErrorTitle.innerText = lang.arErrorTitle;
+        if (arErrorMessage) arErrorMessage.innerText = lang.arErrorMessage;
+        if (fallbackBtnText) fallbackBtnText.innerText = lang.fallbackBtnText;
+    }
+    
+    // Update location text if it exists
+    const locationElement = document.getElementById('azan-location');
+    if (locationElement && currentCity) {
+        locationElement.innerText = lang.locationText(currentCity, locationElement.dataset.timezone || '');
+    }
+    
+    // Update current dhikr display if visible
+    if (filteredAdhkar.length > 0) {
+        displayDhikr();
+    }
+    
+    // Update Quran display if visible
+    if (currentSurah !== null) {
+        if (isReadingMode) {
+            loadReadingModeAyahs();
+        } else {
+            displayAyah();
+        }
+    }
 }
 
 function updatePrayerTimesUI() {
