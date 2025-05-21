@@ -331,57 +331,11 @@
             }
         }
         
-        /* Add debug panel styles */
-        #debugPanel {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            padding: 10px;
-            font-family: monospace;
-            font-size: 12px;
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 9999;
-            display: none;
-        }
+      
         
-        #debugPanel.visible {
-            display: block;
-        }
+      
         
-        #debugToggle {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            background: #333;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            z-index: 10000;
-            cursor: pointer;
-        }
-        
-        .debug-log {
-            margin: 2px 0;
-            padding: 2px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .debug-error {
-            color: #ff6b6b;
-        }
-        
-        .debug-success {
-            color: #51cf66;
-        }
-        
-        .debug-info {
-            color: #339af0;
-        }
-
+       
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -664,17 +618,6 @@
         <button onclick="switchLanguage()" id="langToggle" class="text-sm text-gray-600 dark:text-gray-300 hover:underline" title="Switch Language - تبديل اللغة">English</button>
     </footer>
 
-    <!-- Add debug panel HTML before the closing body tag -->
-    <div id="debugPanel" class="fixed bottom-0 left-0 right-0 bg-black bg-opacity-90 text-white p-4 font-mono text-sm max-h-48 overflow-y-auto z-50 hidden">
-        <div class="flex justify-between items-center mb-2">
-            <h3 class="font-bold">Debug Panel</h3>
-            <button onclick="toggleDebugPanel()" class="text-white hover:text-gray-300">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div id="debugContent"></div>
-    </div>
-
     <script>
       const adhkar = [];
 let current = 0;
@@ -860,37 +803,15 @@ const languages = {
     }
 };
 
-// Add these debug functions at the top of your script
-function logDebug(message, type = 'info') {
-    const debugPanel = document.getElementById('debugPanel');
-    const debugContent = document.getElementById('debugContent');
-    
-    if (!debugPanel || !debugContent) return;
-    
-    const timestamp = new Date().toLocaleTimeString();
-    const logEntry = document.createElement('div');
-    logEntry.className = `mb-1 ${type === 'error' ? 'text-red-400' : type === 'success' ? 'text-green-400' : 'text-blue-400'}`;
-    logEntry.textContent = `[${timestamp}] ${message}`;
-    
-    debugContent.appendChild(logEntry);
-    debugContent.scrollTop = debugContent.scrollHeight;
-}
-
-function toggleDebugPanel() {
-    const debugPanel = document.getElementById('debugPanel');
-    debugPanel.classList.toggle('hidden');
-}
 
 // Add debug logging to API calls
 async function fetchPrayerTimes(city = "Amman") {
-    logDebug(`Fetching prayer times for ${city}...`);
     const today = new Date().toISOString().split('T')[0];
     const formattedDate = today.split('-').reverse().join('-');
     const cacheKey = `prayer-${city}-${formattedDate}`;
     
     const strategies = [
         async () => {
-            logDebug('Strategy 1: Direct API call');
             const url = `https://api.aladhan.com/v1/timingsByAddress/${formattedDate}?address=${encodeURIComponent(city)}`;
             const response = await fetch(url);
             if (!response.ok) throw new Error(`Direct API failed: ${response.status}`);
@@ -898,7 +819,6 @@ async function fetchPrayerTimes(city = "Amman") {
         },
         
         async () => {
-            logDebug('Strategy 2: Service Worker cache');
             const cache = await caches.open('api-cache-v1');
             const cached = await cache.match(`https://api.aladhan.com/v1/timingsByAddress/${formattedDate}?address=${encodeURIComponent(city)}`);
             if (!cached) throw new Error('No cache available');
@@ -906,7 +826,6 @@ async function fetchPrayerTimes(city = "Amman") {
         },
         
         async () => {
-            logDebug('Strategy 3: localStorage fallback');
             const stored = localStorage.getItem(cacheKey);
             if (!stored) throw new Error('No localStorage data');
             return JSON.parse(stored);
@@ -916,8 +835,6 @@ async function fetchPrayerTimes(city = "Amman") {
     for (const strategy of strategies) {
         try {
             const data = await strategy();
-            logDebug(`Strategy succeeded: ${JSON.stringify(data.code)}`, 'success');
-            
             localStorage.setItem(cacheKey, JSON.stringify(data));
             
             if (data.code === 200) {
@@ -926,7 +843,6 @@ async function fetchPrayerTimes(city = "Amman") {
                 
                 prayerNotifications = timings;
                 savePrayerTimes(timings, location, city);
-                logDebug('Prayer times updated successfully', 'success');
 
                 document.getElementById("azan-location").innerText = languages[currentLang].locationText(city, location);
                 document.querySelector("#azan-fajr span:last-child").innerText = timings.Fajr;
@@ -937,18 +853,15 @@ async function fetchPrayerTimes(city = "Amman") {
                 document.querySelector("#azan-isha span:last-child").innerText = timings.Isha;
 
                 if (notificationEnabled) {
-                    logDebug('Setting up notifications', 'info');
                     setupPrayerNotifications();
                 }
                 return;
             }
         } catch (error) {
-            logDebug(`Strategy failed: ${error.message}`, 'error');
             continue;
         }
     }
 
-    logDebug('All strategies failed', 'error');
     document.getElementById("azan-location").innerText = languages[currentLang].arErrorMessage;
     throw new Error('All prayer time fetch strategies failed');
 }
@@ -1417,40 +1330,27 @@ function switchLanguage() {
 
 function updateUI() {
     const lang = languages[currentLang];
-    
-    // Update page title and navigation
     document.getElementById('pageTitle').innerText = lang.title;
-    document.getElementById('langToggle').innerText = lang.langSwitch;
-    
-    // Update tab navigation
-    document.getElementById('adhkarTab').innerText = lang.adhkarTab;
-    document.getElementById('prayerTab').innerText = lang.prayerTab;
-    document.getElementById('qiblaTab').innerText = lang.qiblaTab;
-    document.getElementById('quranTab').innerText = lang.quranTab;
-    
-    // Update Adhkar page
     document.getElementById('btnMorning').innerText = lang.morning;
     document.getElementById('btnEvening').innerText = lang.evening;
     document.getElementById('btnPrev').innerText = lang.previous;
     document.getElementById('btnNext').innerText = lang.next;
     document.getElementById('btnBack').innerText = lang.back;
+    document.getElementById('langToggle').innerText = lang.langSwitch;
     document.getElementById('repeatLabel').innerText = lang.repeatLabel;
     document.getElementById('swipeHintText').innerText = lang.swipeHint;
     document.getElementById('clickHintText').innerText = lang.clickHint;
-    
-    // Update Prayer Times page
-    document.getElementById('prayerTitle').innerText = lang.prayerTitle;
+    document.getElementById('adhkarTab').innerText = lang.adhkarTab;
+    document.getElementById('prayerTab').innerText = lang.prayerTab;
+    document.getElementById('qiblaTab').innerText = lang.qiblaTab;
+    document.getElementById('quranTab').innerText = lang.quranTab;  // Add this line
+    document.getElementById('btnRefresh').innerHTML = `<i class="fas fa-sync-alt mr-2"></i> ${lang.refresh}`;
     document.getElementById('notificationLabel').innerText = lang.notificationLabel;
-    document.querySelector('#azan-fajr span:first-child').innerText = lang.fajr + ":";
-    document.querySelector('#azan-sunrise span:first-child').innerText = lang.sunrise + ":";
-    document.querySelector('#azan-dhuhr span:first-child').innerText = lang.dhuhr + ":";
-    document.querySelector('#azan-asr span:first-child').innerText = lang.asr + ":";
-    document.querySelector('#azan-maghrib span:first-child').innerText = lang.maghrib + ":";
-    document.querySelector('#azan-isha span:first-child').innerText = lang.isha + ":";
-    
-    // Update Quran page
     document.getElementById('quranTitle').innerText = lang.quranTitle;
     document.getElementById('surahSelect').firstElementChild.textContent = lang.selectSurah;
+    document.querySelector('#translationSelect option[value="en.sahih"]').textContent = lang.translationNames["en.sahih"];
+    document.querySelector('#translationSelect option[value="en.pickthall"]').textContent = lang.translationNames["en.pickthall"];
+    document.querySelector('#translationSelect option[value="en.yusufali"]').textContent = lang.translationNames["en.yusufali"];
     document.getElementById('btnPrevAyah').innerText = lang.previous;
     document.getElementById('btnNextAyah').innerText = lang.next;
     
@@ -1468,38 +1368,6 @@ function updateUI() {
         }
         translationSelect.appendChild(option);
     });
-    
-    // Update Qibla page
-    const arUnsupported = document.getElementById('arUnsupported');
-    if (arUnsupported) {
-        const arErrorTitle = arUnsupported.querySelector('#arErrorTitle');
-        const arErrorMessage = arUnsupported.querySelector('#arErrorMessage');
-        const fallbackBtnText = arUnsupported.querySelector('#fallbackBtnText');
-        
-        if (arErrorTitle) arErrorTitle.innerText = lang.arErrorTitle;
-        if (arErrorMessage) arErrorMessage.innerText = lang.arErrorMessage;
-        if (fallbackBtnText) fallbackBtnText.innerText = lang.fallbackBtnText;
-    }
-    
-    // Update location text if it exists
-    const locationElement = document.getElementById('azan-location');
-    if (locationElement && currentCity) {
-        locationElement.innerText = lang.locationText(currentCity, locationElement.dataset.timezone || '');
-    }
-    
-    // Update current dhikr display if visible
-    if (filteredAdhkar.length > 0) {
-        displayDhikr();
-    }
-    
-    // Update Quran display if visible
-    if (currentSurah !== null) {
-        if (isReadingMode) {
-            loadReadingModeAyahs();
-        } else {
-            displayAyah();
-        }
-    }
 }
 
 function updatePrayerTimesUI() {
@@ -1759,6 +1627,8 @@ async function detectCityAndFetchTimes() {
 }
 
 function setupTabs() {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
     const tabs = document.querySelectorAll('.tab');
     tabs.forEach(tab => {
         tab.addEventListener('click', async () => {
@@ -1768,8 +1638,6 @@ function setupTabs() {
             tab.classList.add('active');
             const tabId = tab.getAttribute('data-tab');
             document.getElementById(`${tabId}Content`).classList.add('active');
-           
-            logDebug(`Switching to tab: ${tabId}`);
 
             if (tabId === 'qibla') {
                await initARCamera();
@@ -1777,21 +1645,19 @@ function setupTabs() {
                 await stopARCamera();
             }
 
-            // Reset Quran content when switching to Quran tab
+            
+            if (tabId === 'prayer' && isIOS) {
+                
+            } 
+
             if (tabId === 'quran') {
-                console.log('Quran tab selected - initializing Quran data');
-                logDebug('Quran tab selected - initializing Quran data');
                 try {
                     if (!quranData || !translationData) {
-                        logDebug('Quran data not loaded - fetching from API');
                         await loadQuranData();
                     } else {
-                        logDebug('Quran data already loaded - resetting display');
                         resetQuranContent();
                     }
                 } catch (error) {
-                    logDebug(`Error loading Quran data: ${error.message}`, 'error');
-                    // Show user-friendly error message
                     const arabicText = document.getElementById('arabicText');
                     if (arabicText) {
                         arabicText.innerHTML = `
@@ -1810,49 +1676,36 @@ function setupTabs() {
 
 // Update loadQuranData function to include more detailed logging
 async function loadQuranData() {
-    logDebug('Starting Quran data load...');
     try {
-        // Load Quran text from API
-        logDebug('Fetching Quran text from API...');
         const quranResponse = await fetch('https://api.alquran.cloud/v1/quran/quran-uthmani');
         if (!quranResponse.ok) {
             throw new Error(`Failed to load Quran data: ${quranResponse.status}`);
         }
         const quranJson = await quranResponse.json();
-        logDebug('Quran text fetched successfully', 'success');
         
-        // Validate Quran data structure
         if (!quranJson.data || !quranJson.data.surahs) {
             throw new Error('Invalid Quran data format');
         }
         
         quranData = quranJson.data.surahs;
-        logDebug(`Loaded ${quranData.length} surahs`, 'success');
         
-        // Populate surah select immediately after loading Quran data
         const select = document.getElementById('surahSelect');
         if (!select) {
             throw new Error('Surah select element not found');
         }
         
-        logDebug('Populating surah select dropdown...');
-        // Clear existing options
         select.innerHTML = '<option value="">' + languages[currentLang].selectSurah + '</option>';
         
-        // Create options for each surah
         quranData.forEach((surah, index) => {
             const option = document.createElement('option');
             option.value = index;
             option.textContent = `${surah.number}. ${surah.name}`;
             select.appendChild(option);
         });
-        logDebug('Surah select dropdown populated', 'success');
         
-        // Remove any existing event listeners
         const newSelect = select.cloneNode(true);
         select.parentNode.replaceChild(newSelect, select);
         
-        // Add the event listener
         newSelect.addEventListener('change', (e) => {
             if (e.target.value !== '') {
                 currentSurah = parseInt(e.target.value);
@@ -1865,31 +1718,23 @@ async function loadQuranData() {
             }
         });
         
-        // Then load translation from API
-        logDebug('Fetching translation from API...');
         const translationResponse = await fetch('https://api.alquran.cloud/v1/quran/en.sahih');
         if (!translationResponse.ok) {
             throw new Error(`Failed to load translation: ${translationResponse.status}`);
         }
         const translationJson = await translationResponse.json();
-        logDebug('Translation fetched successfully', 'success');
         
-        // Validate translation data structure
         if (!translationJson.data || !translationJson.data.surahs) {
             throw new Error('Invalid translation data format');
         }
         
         translationData = translationJson.data.surahs;
-        logDebug(`Loaded ${translationData.length} surah translations`, 'success');
         
-        // Reset current state
         currentSurah = null;
         currentAyah = 0;
         
-        // Enable bookmark button since data is loaded
         document.getElementById('btnBookmark').disabled = false;
         
-        // Check for existing bookmark
         let savedBookmark = null;
         try {
             const localStorageBookmark = localStorage.getItem('quranBookmark');
@@ -1916,27 +1761,20 @@ async function loadQuranData() {
             document.getElementById('toggleBookmark').innerHTML = '<i class="fas fa-bookmark"></i>';
         }
         
-        // Reset Quran content
         resetQuranContent();
-        logDebug('Quran data initialization complete', 'success');
         
     } catch (error) {
-        logDebug(`Error loading Quran data: ${error.message}`, 'error');
-        throw error; // Re-throw to be handled by the caller
+        throw error;
     }
 }
 
-// Update resetQuranContent to not disable the bookmark button
 function resetQuranContent() {
-    logDebug('Resetting Quran content...');
     currentSurah = null;
     currentAyah = 0;
     document.getElementById('surahSelect').value = '';
     
-    // Check for existing bookmark in both storage types
     let savedBookmark = null;
     
-    // Try localStorage first
     try {
         const localStorageBookmark = localStorage.getItem('quranBookmark');
         if (localStorageBookmark) {
@@ -1946,7 +1784,6 @@ function resetQuranContent() {
         console.error('Error reading from localStorage:', error);
     }
     
-    // If no bookmark in localStorage, try sessionStorage
     if (!savedBookmark) {
         try {
             const sessionStorageBookmark = sessionStorage.getItem('quranBookmark');
@@ -1960,12 +1797,9 @@ function resetQuranContent() {
     
     if (savedBookmark) {
         try {
-            logDebug('Found saved bookmark, attempting to load...');
             currentBookmark = savedBookmark;
             document.getElementById('toggleBookmark').innerHTML = '<i class="fas fa-bookmark"></i>';
-            logDebug('Bookmark loaded successfully');
         } catch (error) {
-            logDebug(`Error loading bookmark: ${error.message}`, 'error');
             try {
                 localStorage.removeItem('quranBookmark');
                 sessionStorage.removeItem('quranBookmark');
@@ -1974,8 +1808,6 @@ function resetQuranContent() {
             }
             currentBookmark = null;
         }
-    } else {
-        logDebug('No saved bookmark found');
     }
     
     document.getElementById('arabicText').innerHTML = `
@@ -1987,7 +1819,6 @@ function resetQuranContent() {
     
     document.getElementById('translationText').innerHTML = '';
     
-    // Only disable navigation buttons, not the bookmark button
     document.getElementById('btnPrevAyah').disabled = true;
     document.getElementById('btnNextAyah').disabled = true;
     document.getElementById('btnReadingMode').disabled = true;
@@ -2137,7 +1968,7 @@ async function requestNotificationPermission() {
 
 function setupBasicNotifications() {
     if (!notificationEnabled) {
-        console.log('Notifications not enabled');
+        alert('Notifications not enabled');
         return;
     }
 
@@ -2882,21 +2713,22 @@ function goToBookmark() {
     }
 }
 
+function alert22() {
+    alert("xo")
+}
 document.addEventListener('DOMContentLoaded', async () => {
     const adhkarView = document.getElementById('adhkarView');
     const adhkarArabicText = document.getElementById('adhkarArabicText');
-
     if (adhkarView) {
         adhkarView.addEventListener('touchstart', handleTouchStart, false);
         adhkarView.addEventListener('touchend', handleTouchEnd, false);
     }
-
     if (adhkarArabicText) {
         adhkarArabicText.addEventListener('click', handleDhikrClick);
     }
 
     setupTabs();
-
+    
     // Try to load saved prayer times first
     if (!loadPrayerTimes()) {
         // If no saved times or they're from a different day, fetch new times
@@ -2906,21 +2738,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Add notification toggle handler
     const notificationToggle = document.getElementById('notificationToggle');
     
+
     // Check initial notification state
     if (Notification.permission === 'granted') {
         notificationEnabled = true;
         notificationToggle.checked = true;
         await setupPrayerNotifications();
+        
     } else {
         notificationEnabled = false;
         notificationToggle.checked = false;
+        
     }
+    
 
     notificationToggle.addEventListener('change', async (e) => {
         if (e.target.checked) {
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
             const isInStandaloneMode = window.navigator.standalone === true;
-            
+            alert("hey")
             console.log('Notification toggle clicked:', {
                 isIOS,
                 isInStandaloneMode,
@@ -3018,12 +2854,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.body.appendChild(banner);
     }
 
-    // Add debug panel toggle button
-    const debugToggle = document.createElement('button');
-    debugToggle.className = 'fixed bottom-4 right-4 bg-gray-800 text-white p-2 rounded-full shadow-lg z-50';
-    debugToggle.innerHTML = '<i class="fas fa-bug"></i>';
-    debugToggle.onclick = toggleDebugPanel;
-    document.body.appendChild(debugToggle);
+    
 });
 
 // Add this function to show toast notifications
