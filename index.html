@@ -398,18 +398,11 @@
             animation: fadeOut 0.3s ease-out forwards;
         }
 
-        /* iOS Safari specific fixes */
-        @supports (-webkit-touch-callout: none) {
-            .fixed {
-                position: fixed;
-                -webkit-transform: translate(-50%, 0);
-                transform: translate(-50%, 0);
-            }
-        }
+    
     </style>
 </head>
 
-<body class="bg-gradient-to-b from-gray-100 to-white dark:from-gray-900 dark:to-black text-gray-900 dark:text-white min-h-screen flex flex-col">
+<body  class="bg-gradient-to-b from-gray-100 to-white dark:from-gray-900 dark:to-black text-gray-900 dark:text-white min-h-screen flex flex-col">
     <!-- Remove debug panel -->
     
     <!-- Header Section -->
@@ -417,25 +410,31 @@
         أذكار وأوقات الصلاة
     </header>
 
-    <!-- Update the tutorial modal HTML structure -->
-    <div id="tutorialModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden" style="display: none;">
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md mx-4 relative">
-            <div class="text-center mb-4">
-                <i class="fas fa-bell text-3xl text-blue-500 mb-2"></i>
-                <h2 class="text-xl font-bold" id="tutorialTitle"></h2>
-            </div>
-            <div id="iosTutorial" class="hidden">
-                <ol class="list-decimal list-inside space-y-3" id="iosSteps"></ol>
-                <div class="mt-4 text-sm text-gray-500" id="iosNote"></div>
-            </div>
-            <div id="androidTutorial" class="hidden">
-                <ol class="list-decimal list-inside space-y-3" id="androidSteps"></ol>
-            </div>
-            <div class="mt-6 flex justify-center">
-                <button onclick="closeTutorial()" class="bg-blue-500 text-white px-6 py-2 rounded-lg" id="gotItButton"></button>
-            </div>
-        </div>
+ <!-- Tutorial Modal -->
+ <div id="tutorialModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+    <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg text-right">
+  
+      <div class="text-center mb-4">
+        <i class="fas fa-bell text-3xl text-blue-500 mb-2"></i>
+        <h2 class="text-xl font-bold" id="tutorialTitle"></h2>
+      </div>
+  
+      <div id="iosTutorial" class="hidden">
+        <ol class="list-decimal list-inside space-y-3" id="iosSteps"></ol>
+        <div class="mt-4 text-sm text-gray-500" id="iosNote"></div>
+      </div>
+  
+      <div id="androidTutorial" class="hidden">
+        <ol class="list-decimal list-inside space-y-3" id="androidSteps"></ol>
+      </div>
+  
+      <div class="mt-6 flex justify-center">
+        <button onclick="closeTutorial()" class="bg-blue-500 text-white px-6 py-2 rounded-lg" id="gotItButton"></button>
+      </div>
     </div>
+  </div>
+  
+  
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
@@ -1172,7 +1171,7 @@ function showARUnsupported(errorType) {
                     <button onclick="initCompassFallback()" class="bg-blue-500 text-white px-6 py-2 rounded-lg">
                         <i class="fas fa-compass mr-2"></i>
                         <span>${currentLang === 'ar' ? 'استخدام البوصلة الأساسية' : 'Use Basic Compass'}</span>
-                    </button>
+                </button>
                 ` : ''}
             </div>
         </div>
@@ -1287,6 +1286,7 @@ document.getElementById('flipCameraBtn').addEventListener('click', () => {
 });
 
 function handleDhikrClick() {
+    
     const arabicText = document.getElementById('adhkarArabicText');
     arabicText.classList.add('clicked');
     setTimeout(() => arabicText.classList.remove('clicked'), 300);
@@ -2765,9 +2765,35 @@ function goToBookmark() {
     }
 }
 
-function alert22() {
-    alert("xo")
+function handleNotificationToggleClick(e) {
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  const isInStandaloneMode = window.navigator.standalone === true;
+
+  if (!e.target.checked) {
+    notificationEnabled = false;
+    return;
+  }
+
+  if (isIOS && !isInStandaloneMode) {
+    showTutorial();
+
+   
+
+
+    e.preventDefault();
+    e.target.checked = false;
+    return;
+  }
+
+  showTutorial();
+
+  requestNotificationPermission().then((success) => {
+    if (!success) {
+      e.target.checked = false;
+    }
+  });
 }
+
 document.addEventListener('DOMContentLoaded', async () => {
     const adhkarView = document.getElementById('adhkarView');
     const adhkarArabicText = document.getElementById('adhkarArabicText');
@@ -2790,76 +2816,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Add notification toggle handler
     const notificationToggle = document.getElementById('notificationToggle');
     
+                
+    console.log(notificationToggle.checked)
+    if (notificationToggle) {
+    notificationToggle.addEventListener('click', handleNotificationToggleClick);
+  }
 
-    // Check initial notification state
-    if (Notification.permission === 'granted') {
-        notificationEnabled = true;
-        notificationToggle.checked = true;
-        await setupPrayerNotifications();
-        
-    } else {
-        notificationEnabled = false;
-        notificationToggle.checked = false;
-        
-    }
-    
-
-    notificationToggle.addEventListener('change', async (e) => {
-        if (e.target.checked) {
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-            const isInStandaloneMode = window.navigator.standalone === true;
-            console.log('Notification toggle clicked:', {
-                isIOS,
-                isInStandaloneMode,
-                userAgent: navigator.userAgent
-            });
-            
-            // Show tutorial first for iOS users
-            if (isIOS && !isInStandaloneMode) {
-                showTutorial();
-                 // Add a persistent banner
-        const banner = document.createElement('div');
-        banner.className = 'fixed bottom-4 left-4 right-4 bg-blue-500 text-white p-4 rounded-lg shadow-lg flex justify-between items-center';
-        banner.innerHTML = `
-            <span>${currentLang === 'ar' ? 'أضف إلى الشاشة الرئيسية للحصول على أفضل تجربة' : 'Add to Home Screen for the best experience'}</span>
-            <button onclick="showTutorial()" class="bg-white text-blue-500 px-3 py-1 rounded">Learn How</button>
-        `;
-        document.body.appendChild(banner);
-                e.target.checked = false;
-                return;
-            }
-            
-            // For Android and other devices, show tutorial before requesting permissions
-            if (!isIOS) {
-                showTutorial();
-            }
-            
-            const success = await requestNotificationPermission();
-            if (!success) {
-                e.target.checked = false;
-            }
-        } else {
-            notificationEnabled = false;
-            if (nextPrayerTimeout) {
-                clearTimeout(nextPrayerTimeout);
-            }
-            // Unsubscribe from push notifications if they exist
-            const subscription = localStorage.getItem('pushSubscription');
-            if (subscription) {
-                try {
-                    const registration = await navigator.serviceWorker.ready;
-                    const pushSubscription = JSON.parse(subscription);
-                    if (pushSubscription && pushSubscription.unsubscribe) {
-                        await pushSubscription.unsubscribe();
-                    }
-                    localStorage.removeItem('pushSubscription');
-                    console.log('Successfully unsubscribed from push notifications');
-                } catch (error) {
-                    console.error('Error unsubscribing from push notifications:', error);
-                }
-            }
-        }
-    });
 
     // Add periodic checks
     setupPeriodicChecks();
@@ -2886,24 +2848,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Add iOS-specific handling
-    if (isIOS() && !isIOSStandalone()) {
-        // Add a small delay before showing the modal
-        setTimeout(() => {
-            showIOSInstallPrompt();
-        }, 1000);
-        
-        // Add a persistent banner for iOS users
-        const banner = document.createElement('div');
-        banner.className = 'fixed bottom-4 left-4 right-4 bg-blue-500 text-white p-4 rounded-lg shadow-lg flex justify-between items-center z-50';
-        banner.innerHTML = `
-            <span>${currentLang === 'ar' ? 'أضف إلى الشاشة الرئيسية للحصول على أفضل تجربة' : 'Add to Home Screen for the best experience'}</span>
-            <button onclick="showIOSInstallPrompt()" class="bg-white text-blue-500 px-3 py-1 rounded">
-                ${currentLang === 'ar' ? 'كيفية الإضافة' : 'Learn How'}
-            </button>
-        `;
-        document.body.appendChild(banner);
-    }
+   
 
     
 });
@@ -2971,7 +2916,7 @@ function createIOSInstallModal() {
     modal.style.opacity = '0';
     modal.style.transition = 'opacity 0.3s ease';
     modal.innerHTML = `
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md mx-4 relative">
+<div class="bg-white dark:bg-gray-800 rounded-xl p-6 w-[90%] max-w-md relative">
             <div class="text-center mb-4">
                 <i class="fas fa-home text-3xl text-blue-500 mb-2"></i>
                 <h3 class="text-xl font-bold">${languages[currentLang].tutorialTitle}</h3>
