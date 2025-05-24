@@ -439,7 +439,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 3 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 2 القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab" title="الأذكار - Daily Remembrance">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab" title="أوقات الصلاة - Prayer Times">أوقات الصلاة</div>
         <div class="tab" data-tab="quran" id="quranTab" title="القرآن - Holy Quran">القرآن</div>
@@ -1330,48 +1330,100 @@ function switchLanguage() {
 
 function updateUI() {
     const lang = languages[currentLang];
-    document.getElementById('pageTitle').innerText = lang.title;
-    document.getElementById('btnMorning').innerText = lang.morning;
-    document.getElementById('btnEvening').innerText = lang.evening;
-    document.getElementById('btnPrev').innerText = lang.previous;
-    document.getElementById('btnNext').innerText = lang.next;
-    document.getElementById('btnBack').innerText = lang.back;
-    document.getElementById('langToggle').innerText = lang.langSwitch;
-    document.getElementById('repeatLabel').innerText = lang.repeatLabel;
-    document.getElementById('swipeHintText').innerText = lang.swipeHint;
-    document.getElementById('clickHintText').innerText = lang.clickHint;
-    document.getElementById('adhkarTab').innerText = lang.adhkarTab;
-    document.getElementById('prayerTab').innerText = lang.prayerTab;
-    document.getElementById('qiblaTab').innerText = lang.qiblaTab;
-    document.getElementById('quranTab').innerText = lang.quranTab;  // Add this line
-    document.getElementById('btnRefresh').innerHTML = `<i class="fas fa-sync-alt mr-2"></i> ${lang.refresh}`;
-    document.getElementById('notificationLabel').innerText = lang.notificationLabel;
-    document.getElementById('quranTitle').innerText = lang.quranTitle;
-    document.getElementById('surahSelect').firstElementChild.textContent = lang.selectSurah;
-    document.querySelector('#translationSelect option[value="en.sahih"]').textContent = lang.translationNames["en.sahih"];
-    document.querySelector('#translationSelect option[value="en.pickthall"]').textContent = lang.translationNames["en.pickthall"];
-    document.querySelector('#translationSelect option[value="en.yusufali"]').textContent = lang.translationNames["en.yusufali"];
-    document.getElementById('btnPrevAyah').innerText = lang.previous;
-    document.getElementById('btnNextAyah').innerText = lang.next;
-    
+    const elements = {
+        'pageTitle': lang.title,
+        'btnMorning': lang.morning,
+        'btnEvening': lang.evening,
+        'btnPrev': lang.previous,
+        'btnNext': lang.next,
+        'btnBack': lang.back,
+        'langToggle': lang.langSwitch,
+        'repeatLabel': lang.repeatLabel,
+        'swipeHintText': lang.swipeHint,
+        'clickHintText': lang.clickHint,
+        'adhkarTab': lang.adhkarTab,
+        'prayerTab': lang.prayerTab,
+        'qiblaTab': lang.qiblaTab,
+        'quranTab': lang.quranTab,
+        'notificationLabel': lang.notificationLabel,
+        'quranTitle': lang.quranTitle,
+        'btnPrevAyah': lang.previous,
+        'btnNextAyah': lang.next
+    };
+
+    // Update each element if it exists
+    for (const [id, text] of Object.entries(elements)) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.innerText = text;
+        }
+    }
+
+    // Special case for btnRefresh which has an icon
+    const btnRefresh = document.getElementById('btnRefresh');
+    if (btnRefresh) {
+        btnRefresh.innerHTML = `<i class="fas fa-sync-alt mr-2"></i> ${lang.refresh}`;
+    }
+
+    // Special case for surahSelect first child
+    const surahSelect = document.getElementById('surahSelect');
+    if (surahSelect && surahSelect.firstElementChild) {
+        surahSelect.firstElementChild.textContent = lang.selectSurah;
+    }
+
     // Update translation select options
     const translationSelect = document.getElementById('translationSelect');
-    const currentTranslation = translationSelect.value;
-    translationSelect.innerHTML = '';
-    
-    Object.entries(languages[currentLang].translationNames).forEach(([value, name]) => {
-        const option = document.createElement('option');
-        option.value = value;
-        option.textContent = name;
-        if (value === currentTranslation) {
-            option.selected = true;
+    if (translationSelect) {
+        const currentTranslation = translationSelect.value;
+        translationSelect.innerHTML = '';
+        
+        // Add options based on current language
+        if (currentLang === 'ar') {
+            translationSelect.innerHTML = `
+                <option value="en.sahih">${lang.translationNames["en.sahih"]}</option>
+                <option value="en.pickthall">${lang.translationNames["en.pickthall"]}</option>
+                <option value="en.yusufali">${lang.translationNames["en.yusufali"]}</option>
+            `;
+        } else {
+            translationSelect.innerHTML = `
+                <option value="en.sahih">${lang.translationNames["en.sahih"]}</option>
+                <option value="en.pickthall">${lang.translationNames["en.pickthall"]}</option>
+                <option value="en.yusufali">${lang.translationNames["en.yusufali"]}</option>
+            `;
         }
-        translationSelect.appendChild(option);
-    });
+
+        // Restore the previously selected translation if it exists
+        if (currentTranslation) {
+            
+            translationSelect.value = currentTranslation;
+        }
+
+        // Add change event listener to update translation when selection changes
+        translationSelect.addEventListener('change', async function() {
+            const selectedTranslation = this.value;
+            try {
+                const response = await fetch(`https://api.alquran.cloud/v1/quran/${selectedTranslation}`);
+                if (!response.ok) throw new Error('Failed to fetch translation');
+                const data = await response.json();
+                translationData = data.data.surahs;
+                if (currentSurah !== null) {
+                    if (isReadingMode) {
+                        loadReadingModeAyahs();
+                    } else {
+                        displayAyah();
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading translation:', error);
+                showToast(currentLang === 'ar' ? 'حدث خطأ في تحميل الترجمة' : 'Error loading translation', 'error');
+            }
+        });
+    }
 }
 
 function updatePrayerTimesUI() {
     const lang = languages[currentLang];
+    console.log("lang", lang)
     document.getElementById('prayerTitle').innerText = lang.prayerTitle;
     document.querySelector('#azan-fajr span:first-child').innerText = lang.fajr + ":";
     document.querySelector('#azan-sunrise span:first-child').innerText = lang.sunrise + ":";
@@ -2756,7 +2808,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (e.target.checked) {
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
             const isInStandaloneMode = window.navigator.standalone === true;
-            alert("hey")
             console.log('Notification toggle clicked:', {
                 isIOS,
                 isInStandaloneMode,
