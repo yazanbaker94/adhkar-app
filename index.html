@@ -442,7 +442,7 @@
 
     <!-- Tab Navigation -->
     <div class="flex justify-center border-b border-gray-200 dark:border-gray-700">
-        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction"> 2 القبلة</div>
+        <div class="tab" data-tab="qibla" id="qiblaTab" title="القبلة - Qibla Direction">القبلة</div>
         <div class="tab active" data-tab="adhkar" id="adhkarTab" title="الأذكار - Daily Remembrance">الأذكار</div>
         <div class="tab" data-tab="prayer" id="prayerTab" title="أوقات الصلاة - Prayer Times">أوقات الصلاة</div>
         <div class="tab" data-tab="quran" id="quranTab" title="القرآن - Holy Quran">القرآن</div>
@@ -1941,7 +1941,6 @@ async function requestNotificationPermission() {
                 document.getElementById('notificationToggle').checked = true;
                 
                 if (isIOS) {
-                    alert('isIOS');
                     // For iOS, use basic notifications
                     setupBasicNotifications();
                     // Show success message
@@ -2058,12 +2057,11 @@ function setupBasicNotifications() {
         const timeUntilNext = nextPrayerTime - now;
         console.log('Next prayer:', nextPrayer, 'at', nextPrayerTime.toLocaleTimeString());
         
-        // Schedule notification 5 minutes before prayer time
-        const notificationTime = timeUntilNext - (5 * 60 * 1000);
-        console.log('Time until notification:', Math.floor(notificationTime / 60000), 'minutes');
+        // Schedule notification at prayer time
+        console.log('Time until notification:', Math.floor(timeUntilNext / 60000), 'minutes');
         
-        if (notificationTime > 0) {
-            console.log('Setting up notification for:', new Date(now.getTime() + notificationTime).toLocaleTimeString());
+        if (timeUntilNext > 0) {
+            console.log('Setting up notification for:', nextPrayerTime.toLocaleTimeString());
             
             // For iOS in standalone mode, use background fetch
             if (/iPad|iPhone|iPod/.test(navigator.userAgent) && ('standalone' in navigator) && (navigator.standalone)) {
@@ -2086,7 +2084,7 @@ function setupBasicNotifications() {
                 nextPrayerTimeout = setTimeout(() => {
                     console.log('Notification timeout triggered');
                     showBasicNotification(nextPrayer);
-                }, notificationTime);
+                }, timeUntilNext);
             }
         } else {
             console.log('Notification time has already passed');
