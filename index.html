@@ -538,10 +538,6 @@
             <div id="home" class="space-y-4 text-center">
                 <button onclick="loadAdhkar('sabah')" id="btnMorning" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-full shadow transition-transform hover:scale-105" title="Morning Adhkar - أذكار الصباح">أذكار الصباح</button>
                 <button onclick="loadAdhkar('masaa')" id="btnEvening" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-full shadow transition-transform hover:scale-105" title="Evening Adhkar - أذكار المساء">أذكار المساء</button>
-                <button id="notificationToggle" class="bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-full shadow transition-transform hover:scale-105" title="Notifications - الإشعارات">
-                    <i class="fas fa-bell-slash mr-2"></i>
-                    <span id="notificationToggleText">تفعيل الإشعارات</span>
-                </button>
             </div>
 
             <!-- Adhkar View Section -->
@@ -578,6 +574,15 @@
                 <h2 class="text-xl font-bold text-center mb-4" id="prayerTitle">أوقات الصلاة</h2>
                 <p id="azan-location" class="text-center mb-6">جاري تحديد الموقع...</p>
                 
+                <!-- Add Notification Toggle -->
+                <div class="flex items-center justify-between mb-4 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                    <span class="text-sm" id="notificationLabel">إشعارات أوقات الصلاة</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="notificationToggle" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                    </label>
+                </div>
+
                 <ul class="space-y-3">
                     <li class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg flex justify-between" id="azan-fajr">
                         <span>الفجر:</span>
@@ -1282,7 +1287,6 @@ document.getElementById('flipCameraBtn').addEventListener('click', () => {
 });
 
 function handleDhikrClick() {
-    
     const arabicText = document.getElementById('adhkarArabicText');
     arabicText.classList.add('clicked');
     setTimeout(() => arabicText.classList.remove('clicked'), 300);
@@ -1930,9 +1934,10 @@ async function requestNotificationPermission() {
         if (permission === 'granted') {
             try {
                 notificationEnabled = true;
-                updateNotificationButton(true);
+                document.getElementById('notificationToggle').checked = true;
                 
                 if (isIOS) {
+                    alert('isIOS');
                     // For iOS, use basic notifications
                     setupBasicNotifications();
                     // Show success message
@@ -1968,7 +1973,7 @@ async function requestNotificationPermission() {
             } catch (error) {
                 console.error('Error setting up notifications:', error);
                 notificationEnabled = false;
-                updateNotificationButton(false);
+                document.getElementById('notificationToggle').checked = false;
                 
                 if (isIOS) {
                     const iosErrorMessage = currentLang === 'ar'
@@ -1985,7 +1990,7 @@ async function requestNotificationPermission() {
             }
         } else {
             notificationEnabled = false;
-            updateNotificationButton(false);
+            document.getElementById('notificationToggle').checked = false;
             
             // Show more detailed message for iOS
             if (isIOS) {
@@ -2004,25 +2009,12 @@ async function requestNotificationPermission() {
     } catch (error) {
         console.error('Error requesting notification permission:', error);
         notificationEnabled = false;
-        updateNotificationButton(false);
+        document.getElementById('notificationToggle').checked = false;
         const errorMessage = currentLang === 'ar'
             ? 'حدث خطأ أثناء تفعيل الإشعارات'
             : 'An error occurred while enabling notifications';
         alert(errorMessage);
         return false;
-    }
-}
-
-function updateNotificationButton(enabled) {
-    const button = document.getElementById('notificationToggle');
-    const text = document.getElementById('notificationToggleText');
-    
-    if (enabled) {
-        button.className = 'bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors';
-        button.innerHTML = `<i class="fas fa-bell mr-2"></i><span>${currentLang === 'ar' ? 'الإشعارات مفعلة' : 'Notifications Enabled'}</span>`;
-    } else {
-        button.className = 'bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors';
-        button.innerHTML = `<i class="fas fa-bell-slash mr-2"></i><span>${currentLang === 'ar' ? 'تفعيل الإشعارات' : 'Enable Notifications'}</span>`;
     }
 }
 
@@ -2773,101 +2765,148 @@ function goToBookmark() {
     }
 }
 
-
-    // Separate function for handling notification toggle
-    async function handleNotificationToggle(e) {
-        alert("hey")
-
-        console.log('Notification toggle clicked', e.target);
-        const notificationToggle = e.target;
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        const isInStandaloneMode = window.navigator.standalone === true;
-
-        console.log('isIOS:', isIOS, 'isInStandaloneMode:', isInStandaloneMode);
-
-        // Show tutorial first for iOS users who are not in standalone mode
-        if (isIOS && !isInStandaloneMode) {
-            showTutorial();
-            
-            const banner = document.createElement('div');
-            banner.className = 'fixed bottom-4 left-4 right-4 bg-blue-500 text-white p-4 rounded-lg shadow-lg flex justify-between items-center';
-            banner.innerHTML = `
-                <span>${currentLang === 'ar' ? 'أضف إلى الشاشة الرئيسية للحصول على أفضل تجربة' : 'Add to Home Screen for the best experience'}</span>
-                <button onclick="showTutorial()" class="bg-white text-blue-500 px-3 py-1 rounded">Learn How</button>
-            `;
-            document.body.appendChild(banner);
-            
-            notificationToggle.checked = false;  // Reset checkbox state
-            return;
-        }
-
-        // For Android and other devices, show tutorial before requesting permissions
-        if (!isIOS) {
-            showTutorial();
-        }
-
-        const success = await requestNotificationPermission();
-        if (!success) {
-            notificationToggle.checked = false; // Reset checkbox state if permission is denied
-        }
+function alert22() {
+    alert("xo")
+}
+document.addEventListener('DOMContentLoaded', async () => {
+    const adhkarView = document.getElementById('adhkarView');
+    const adhkarArabicText = document.getElementById('adhkarArabicText');
+    if (adhkarView) {
+        adhkarView.addEventListener('touchstart', handleTouchStart, false);
+        adhkarView.addEventListener('touchend', handleTouchEnd, false);
+    }
+    if (adhkarArabicText) {
+        adhkarArabicText.addEventListener('click', handleDhikrClick);
     }
 
-    document.addEventListener('DOMContentLoaded', async () => {
-        const notificationToggle = document.getElementById('notificationToggle');
-        const adhkarView = document.getElementById('adhkarView');
-        const adhkarArabicText = document.getElementById('adhkarArabicText');
+    setupTabs();
+    
+    // Try to load saved prayer times first
+    if (!loadPrayerTimes()) {
+        // If no saved times or they're from a different day, fetch new times
+        await detectCityAndFetchTimes();
+    }
+
+    // Add notification toggle handler
+    const notificationToggle = document.getElementById('notificationToggle');
+    
+
+    // Check initial notification state
+    if (Notification.permission === 'granted') {
+        notificationEnabled = true;
+        notificationToggle.checked = true;
+        await setupPrayerNotifications();
         
-        if (adhkarView) {
-            adhkarView.addEventListener('touchstart', handleTouchStart, false);
-            adhkarView.addEventListener('touchend', handleTouchEnd, false);
-        }
+    } else {
+        notificationEnabled = false;
+        notificationToggle.checked = false;
+        
+    }
+    
 
-        if (adhkarArabicText) {
-            adhkarArabicText.addEventListener('click', handleDhikrClick);
-        }
-
-        setupTabs();
-
-        // Try to load saved prayer times first
-        if (!loadPrayerTimes()) {
-            // If no saved times or they're from a different day, fetch new times
-            await detectCityAndFetchTimes();
-        }
-
-        // Add notification toggle handler
-        if (notificationToggle) {
-            // Check initial notification state
-            if (Notification.permission === 'granted') {
-                notificationEnabled = true;
-                updateNotificationButton(true);
-                await setupPrayerNotifications();
-            } else {
-                notificationEnabled = false;
-                updateNotificationButton(false);
+    notificationToggle.addEventListener('change', async (e) => {
+        if (e.target.checked) {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isInStandaloneMode = window.navigator.standalone === true;
+            console.log('Notification toggle clicked:', {
+                isIOS,
+                isInStandaloneMode,
+                userAgent: navigator.userAgent
+            });
+            
+            // Show tutorial first for iOS users
+            if (isIOS && !isInStandaloneMode) {
+                showTutorial();
+                 // Add a persistent banner
+        const banner = document.createElement('div');
+        banner.className = 'fixed bottom-4 left-4 right-4 bg-blue-500 text-white p-4 rounded-lg shadow-lg flex justify-between items-center';
+        banner.innerHTML = `
+            <span>${currentLang === 'ar' ? 'أضف إلى الشاشة الرئيسية للحصول على أفضل تجربة' : 'Add to Home Screen for the best experience'}</span>
+            <button onclick="showTutorial()" class="bg-white text-blue-500 px-3 py-1 rounded">Learn How</button>
+        `;
+        document.body.appendChild(banner);
+                e.target.checked = false;
+                return;
             }
-
-            // Use click instead of change for iOS compatibility
-            notificationToggle.addEventListener('click', handleNotificationToggle);
+            
+            // For Android and other devices, show tutorial before requesting permissions
+            if (!isIOS) {
+                showTutorial();
+            }
+            
+            const success = await requestNotificationPermission();
+            if (!success) {
+                e.target.checked = false;
+            }
+        } else {
+            notificationEnabled = false;
+            if (nextPrayerTimeout) {
+                clearTimeout(nextPrayerTimeout);
+            }
+            // Unsubscribe from push notifications if they exist
+            const subscription = localStorage.getItem('pushSubscription');
+            if (subscription) {
+                try {
+                    const registration = await navigator.serviceWorker.ready;
+                    const pushSubscription = JSON.parse(subscription);
+                    if (pushSubscription && pushSubscription.unsubscribe) {
+                        await pushSubscription.unsubscribe();
+                    }
+                    localStorage.removeItem('pushSubscription');
+                    console.log('Successfully unsubscribed from push notifications');
+                } catch (error) {
+                    console.error('Error unsubscribing from push notifications:', error);
+                }
+            }
         }
     });
 
-    // Function to request notification permission
-    async function requestNotificationPermission() {
-        alert("k")
+    // Add periodic checks
+    setupPeriodicChecks();
+
+    // Load Quran data
+    await loadQuranData();
+    
+    // Add translation toggle handler
+    document.getElementById('toggleTranslation').addEventListener('click', toggleTranslation);
+    
+    // Add bookmark toggle handler
+    document.getElementById('toggleBookmark').addEventListener('click', toggleBookmark);
+    
+    // Load saved bookmark
+    const savedBookmark = localStorage.getItem('quranBookmark');
+    if (savedBookmark) {
         try {
-            const permission = await Notification.requestPermission();
-            if (permission === 'granted') {
-                notificationEnabled = true;
-                await setupPrayerNotifications(); // Set up notifications if permission is granted
-                return true;
-            }
-            return false;
+            currentBookmark = JSON.parse(savedBookmark);
+            document.getElementById('toggleBookmark').innerHTML = '<i class="fas fa-bookmark"></i>';
         } catch (error) {
-            console.error('Error requesting notification permission:', error);
-            return false;
+            console.error('Error loading bookmark:', error);
+            localStorage.removeItem('quranBookmark');
+            currentBookmark = null;
         }
     }
 
+    // Add iOS-specific handling
+    if (isIOS() && !isIOSStandalone()) {
+        // Add a small delay before showing the modal
+        setTimeout(() => {
+            showIOSInstallPrompt();
+        }, 1000);
+        
+        // Add a persistent banner for iOS users
+        const banner = document.createElement('div');
+        banner.className = 'fixed bottom-4 left-4 right-4 bg-blue-500 text-white p-4 rounded-lg shadow-lg flex justify-between items-center z-50';
+        banner.innerHTML = `
+            <span>${currentLang === 'ar' ? 'أضف إلى الشاشة الرئيسية للحصول على أفضل تجربة' : 'Add to Home Screen for the best experience'}</span>
+            <button onclick="showIOSInstallPrompt()" class="bg-white text-blue-500 px-3 py-1 rounded">
+                ${currentLang === 'ar' ? 'كيفية الإضافة' : 'Learn How'}
+            </button>
+        `;
+        document.body.appendChild(banner);
+    }
+
+    
+});
 
 // Add this function to show toast notifications
 function showToast(message, type = 'info') {
