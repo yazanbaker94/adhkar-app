@@ -252,9 +252,9 @@
 
 /* Add a click effect with a scale and fade-out effect */
 .clicked {
-    transform: scale(1.1);
-    opacity: 0.8;
-    transition: transform 0.2s ease, opacity 0.2s ease;
+    transform: scale(1.03); /* Smaller scale effect */
+    opacity: 0.95; /* Less opacity change */
+    transition: transform 0.15s ease-out, opacity 0.15s ease-out; /* Faster and smoother transition */
 }
 
 /* Tab styling */
@@ -623,6 +623,17 @@
                             <button id="toggleBookmark" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2" title="Toggle Bookmark - تبديل العلامة المرجعية">
                                 <i class="far fa-bookmark"></i>
                             </button>
+                            <div class="flex items-center gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg px-2">
+                                <button onclick="decreaseTextSize()" class="p-1 hover:text-blue-500 transition-colors" title="Decrease Text Size - تصغير الخط">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button onclick="resetTextSize()" class="p-1 hover:text-blue-500 transition-colors" title="Reset Text Size - إعادة تعيين حجم الخط">
+                                    <i class="fas fa-undo"></i>
+                                </button>
+                                <button onclick="increaseTextSize()" class="p-1 hover:text-blue-500 transition-colors" title="Increase Text Size - تكبير الخط">
+                                    <i class="fas fa-plus"></i>
+                            </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1019,7 +1030,7 @@ let readingModeAyahs = [];
       // Update initARCamera to include debug logging
       async function initARCamera() {
     console.log("Initializing AR Camera...");
-
+          
     // Check if we're on a mobile device
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -1035,7 +1046,7 @@ let readingModeAyahs = [];
             } else {
                 throw new Error("orientation_not_supported");
             }
-        }
+          }
 
         // For iOS, request motion permission first
               if (isIOS && typeof DeviceOrientationEvent.requestPermission === 'function') {
@@ -1528,9 +1539,9 @@ function showARUnsupported(errorType) {
           // Update translation select options
           const translationSelect = document.getElementById('translationSelect');
           if (translationSelect) {
-              const currentTranslation = translationSelect.value;
-              translationSelect.innerHTML = '';
-              
+          const currentTranslation = translationSelect.value;
+          translationSelect.innerHTML = '';
+          
               // Add options based on current language
               if (currentLang === 'ar') {
                   translationSelect.innerHTML = `
@@ -2485,7 +2496,7 @@ function showARUnsupported(errorType) {
               // Create the HTML for the current ayah
               const html = `
                   <div class="mb-6">
-                      <div class="text-2xl leading-loose mb-2">
+                      <div class="text-2xl leading-loose mb-2" style="font-size: ${1.5 * currentTextSize}rem;">
                           ${ayah.text}
                           <span class="inline-flex items-center justify-center w-8 h-8 ml-2 text-base font-bold text-gray-500 cursor-pointer hover:text-blue-500 transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-700" 
                                 onclick="bookmarkAyah(${currentSurah}, ${currentAyah})"
@@ -2494,7 +2505,7 @@ function showARUnsupported(errorType) {
                       </span>
                   </div>
                   ${isTranslationVisible ? `
-                      <div class="text-lg text-gray-600 dark:text-gray-400 mb-2">
+                      <div class="text-lg text-gray-600 dark:text-gray-400 mb-2" style="font-size: ${1.125 * currentTextSize}rem;">
                           ${translationAyah.text}
                       </div>
                   ` : ''}
@@ -2724,7 +2735,7 @@ function showARUnsupported(errorType) {
           const verseNumber = currentAyah + index + 1;
           html += `
               <div class="mb-6">
-                  <div class="text-2xl leading-loose mb-2">
+                  <div class="text-2xl leading-loose mb-2" style="font-size: ${1.5 * currentTextSize}rem;">
                       ${ayah.arabic}
                       <span class="inline-flex items-center justify-center w-8 h-8 ml-2 text-base font-bold text-gray-500 cursor-pointer hover:text-blue-500 transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-700" 
                             onclick="bookmarkAyah(${currentSurah}, ${currentAyah + index})"
@@ -2733,7 +2744,7 @@ function showARUnsupported(errorType) {
                       </span>
                   </div>
                   ${isTranslationVisible ? `
-                      <div class="text-lg text-gray-600 dark:text-gray-400 mb-2">
+                      <div class="text-lg text-gray-600 dark:text-gray-400 mb-2" style="font-size: ${1.125 * currentTextSize}rem;">
                           ${ayah.translation}
                       </div>
                   ` : ''}
@@ -2882,7 +2893,7 @@ function showARUnsupported(errorType) {
               // Store the bookmark position before loading data
               const bookmarkSurah = savedBookmark.surah;
               const bookmarkAyah = savedBookmark.ayah;
-              
+
               // Set the current surah and ayah
               currentSurah = bookmarkSurah;
               currentAyah = bookmarkAyah;
@@ -2936,7 +2947,7 @@ function showARUnsupported(errorType) {
               bookmarkInfo.style.webkitBackdropFilter = 'blur(10px)';
               bookmarkInfo.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
               bookmarkInfo.style.direction = currentLang === 'ar' ? 'rtl' : 'ltr';
-              
+             
               // Remove the info box after 3 seconds
               setTimeout(() => {
                   bookmarkInfo.classList.add('animate-fade-out');
@@ -2981,7 +2992,7 @@ function handleNotificationToggleClick(e) {
       e.target.checked = false;
     }
   });
-}
+  }
 
   document.addEventListener('DOMContentLoaded', async () => {
       const adhkarView = document.getElementById('adhkarView');
@@ -3009,7 +3020,7 @@ function handleNotificationToggleClick(e) {
     console.log(notificationToggle.checked)
     if (notificationToggle) {
     notificationToggle.addEventListener('click', handleNotificationToggleClick);
-  }
+                      }
 
 
       // Add periodic checks
@@ -3150,6 +3161,101 @@ function handleNotificationToggleClick(e) {
           });
       }
 
+      // ... rest of your existing code ...
+  });
+
+  // Add these variables at the top with other variables
+  let currentTextSize = 1; // Base size multiplier
+  const TEXT_SIZE_STEP = 0.2; // Size change step
+  const MIN_TEXT_SIZE = 0.8; // Minimum size multiplier
+  const MAX_TEXT_SIZE = 2.0; // Maximum size multiplier
+
+  // Add these functions for text size control
+  function increaseTextSize() {
+      if (currentTextSize < MAX_TEXT_SIZE) {
+          currentTextSize += TEXT_SIZE_STEP;
+          updateTextSize();
+          saveTextSizePreference();
+          // Refresh current display
+          if (currentSurah !== null) {
+              if (isReadingMode) {
+                  displayReadingModeAyahs();
+              } else {
+                  displayAyah();
+              }
+          }
+      }
+  }
+
+  function decreaseTextSize() {
+      if (currentTextSize > MIN_TEXT_SIZE) {
+          currentTextSize -= TEXT_SIZE_STEP;
+          updateTextSize();
+          saveTextSizePreference();
+          // Refresh current display
+          if (currentSurah !== null) {
+              if (isReadingMode) {
+                  displayReadingModeAyahs();
+              } else {
+                  displayAyah();
+              }
+          }
+      }
+  }
+
+  function resetTextSize() {
+      currentTextSize = 1;
+      updateTextSize();
+      saveTextSizePreference();
+      // Refresh current display
+      if (currentSurah !== null) {
+          if (isReadingMode) {
+              displayReadingModeAyahs();
+          } else {
+              displayAyah();
+          }
+      }
+  }
+
+  function updateTextSize() {
+      const arabicText = document.getElementById('arabicText');
+      const translationText = document.getElementById('translationText');
+      
+      if (arabicText) {
+          arabicText.style.fontSize = `${1.5 * currentTextSize}rem`; // Base size is 1.5rem
+      }
+      if (translationText) {
+          translationText.style.fontSize = `${1.125 * currentTextSize}rem`; // Base size is 1.125rem
+      }
+  }
+
+  function saveTextSizePreference() {
+      try {
+          localStorage.setItem('quranTextSize', currentTextSize.toString());
+      } catch (error) {
+          console.error('Error saving text size preference:', error);
+      }
+  }
+
+  function loadTextSizePreference() {
+      try {
+          const savedSize = localStorage.getItem('quranTextSize');
+          if (savedSize) {
+              currentTextSize = parseFloat(savedSize);
+              updateTextSize();
+          }
+      } catch (error) {
+          console.error('Error loading text size preference:', error);
+      }
+  }
+
+  // Add this to your document.addEventListener('DOMContentLoaded', ...) section
+  document.addEventListener('DOMContentLoaded', async () => {
+      // ... existing code ...
+      
+      // Load saved text size preference
+      loadTextSizePreference();
+      
       // ... rest of your existing code ...
   });
       </script>
