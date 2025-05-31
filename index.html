@@ -496,6 +496,21 @@
 
     
     </style>
+    <style>
+        .quran-controls-sticky {
+            position: sticky;
+            top: 0.5rem;
+            z-index: 10;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border-radius: 1rem;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+        .dark .quran-controls-sticky {
+            background: #1f2937;
+        }
+    </style>
 </head>
 
 <body class="bg-gradient-to-b from-gray-100 to-white dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-300">
@@ -606,7 +621,7 @@
         <!-- Quran Tab Content -->
         <div id="quranContent" class="tab-content w-full max-w-4xl p-4 hidden">
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-                <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                <div class="quran-controls-sticky flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                     <h2 class="text-xl font-bold" id="quranTitle">القرآن الكريم</h2>
                     <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
                         <div class="select-container">
@@ -621,6 +636,9 @@
                                 <option value="en.yusufali">English (Yusuf Ali)</option>
                             </select>
                         </div>
+                        <button onclick="toggleReadingMode()" id="btnReadingMode" class="bg-blue-500 text-white px-6 py-3 rounded shadow hover:scale-105 transform transition-all duration-200 font-semibold" title="Toggle Reading Mode - تبديل وضع القراءة" disabled>
+                            <i class="fas fa-book-open"></i>
+                        </button>
                         <div class="flex gap-2">
                             <button id="toggleTranslation" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2" title="Display/Hide Translation - تعطيل/تفعيل الترجمة">
                                 <i class="fas fa-eye"></i>
@@ -656,16 +674,18 @@
                     <div class="text-center text-lg text-gray-600 dark:text-gray-400" id="translationText"></div>
                 </div>
                 <div class="flex flex-col md:flex-row justify-between mt-6 gap-4">
-                    <button onclick="prevAyah()" id="btnPrevAyah" class="bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-gray-300 px-6 py-3 rounded shadow hover:scale-105 transform transition-all duration-200 font-semibold w-full md:w-auto" title="Previous Verse - الآية السابقة" disabled>السابق</button>
-                    <div class="flex gap-2 justify-center">
-                        <button onclick="toggleReadingMode()" id="btnReadingMode" class="bg-blue-500 text-white px-6 py-3 rounded shadow hover:scale-105 transform transition-all duration-200 font-semibold" title="Toggle Reading Mode - تبديل وضع القراءة" disabled>
-                            <i class="fas fa-book-open"></i>
-                        </button>
-                        <button onclick="goToBookmark()" id="btnBookmark" class="bg-green-500 text-white px-6 py-3 rounded shadow hover:scale-105 transform transition-all duration-200 font-semibold" title="Go to Bookmark - الذهاب إلى العلامة المرجعية" disabled>
-                            <i class="fas fa-bookmark"></i>
-                        </button>
-                    </div>
-                    <button onclick="nextAyah()" id="btnNextAyah" class="bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-gray-300 px-6 py-3 rounded shadow hover:scale-105 transform transition-all duration-200 font-semibold w-full md:w-auto" title="Next Verse - الآية التالية" disabled>التالي</button>
+                    <button onclick="prevAyah()" id="btnPrevAyah"
+                        class="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full shadow transition-all duration-200 font-semibold disabled:bg-gray-300 disabled:text-gray-400 focus:ring-2 focus:ring-blue-400"
+                        title="Previous Verse - الآية السابقة" disabled>
+                        <i class="fas fa-arrow-left rotate-180"></i>
+                        <span>السابق</span>
+                    </button>
+                    <button onclick="nextAyah()" id="btnNextAyah"
+                        class="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full shadow transition-all duration-200 font-semibold disabled:bg-gray-300 disabled:text-gray-400 focus:ring-2 focus:ring-blue-400"
+                        title="Next Verse - الآية التالية" disabled>
+                        <span>التالي</span>
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -2011,7 +2031,7 @@ function showARUnsupported(errorType) {
               currentSurah = null;
               currentAyah = 0;
 
-              document.getElementById('btnBookmark').disabled = false;
+            //   document.getElementById('btnBookmark').disabled = false;
 
               let savedBookmark = null;
               console.log("savedBookmark", savedBookmark);
@@ -2539,7 +2559,7 @@ function showARUnsupported(errorType) {
               document.getElementById('btnPrevAyah').disabled = true;
               document.getElementById('btnNextAyah').disabled = true;
               document.getElementById('btnReadingMode').disabled = true;
-              document.getElementById('btnBookmark').disabled = true;
+            //   document.getElementById('btnBookmark').disabled = true;
               return;
           }
 
@@ -2600,7 +2620,7 @@ function showARUnsupported(errorType) {
           document.getElementById('btnPrevAyah').disabled = currentAyah === 0;
           document.getElementById('btnNextAyah').disabled = currentAyah >= surah.ayahs.length - 1;
           document.getElementById('btnReadingMode').disabled = false;
-          document.getElementById('btnBookmark').disabled = false;
+        //   document.getElementById('btnBookmark').disabled = false;
           
           // Update bookmark button
           const bookmarkBtn = document.getElementById('toggleBookmark');
@@ -2655,6 +2675,10 @@ function showARUnsupported(errorType) {
                   firstAyah: quranData[currentSurah].ayahs[0]
               });
               loadReadingModeAyahs();
+              // Scroll to the top of the page when moving to a new surah in reading mode
+              setTimeout(() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+              }, 100);
           }
       } else {
           // Single verse navigation
@@ -2713,6 +2737,10 @@ function showARUnsupported(errorType) {
                   lastAyah: quranData[currentSurah].ayahs[currentAyah]
               });
               loadReadingModeAyahs();
+              // Scroll to the top of the page when moving to a previous surah in reading mode
+              setTimeout(() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+              }, 100);
           }
       } else {
           // Single verse navigation
@@ -2783,7 +2811,8 @@ function showARUnsupported(errorType) {
       displayReadingModeAyahs();
   }
 
-  function displayReadingModeAyahs() {
+  // Change displayReadingModeAyahs to accept a flag
+  function displayReadingModeAyahs(shouldScrollToBookmark = false, scrollToVerseId = null) {
       const arabicText = document.getElementById('arabicText');
       const translationText = document.getElementById('translationText');
       
@@ -2806,7 +2835,7 @@ function showARUnsupported(errorType) {
               tafsirData[currentSurah].ayahs[currentAyah + index] : null;
           
           html += `
-              <div class="mb-6">
+              <div class="mb-6" id="verse-${currentSurah}-${currentAyah + index}">
                   <div class="text-2xl leading-loose mb-2" style="font-size: ${1.5 * currentTextSize}rem;">
                       ${ayah.arabic}
                       <span class="inline-flex items-center justify-center w-8 h-8 ml-2 text-base font-bold text-gray-500 cursor-pointer hover:text-blue-500 transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-700" 
@@ -2842,8 +2871,22 @@ function showARUnsupported(errorType) {
       // Update the reading mode button to show we're displaying the entire surah
       const btn = document.getElementById('btnReadingMode');
       btn.title = `Displaying entire Surah ${surah.name} (${surah.englishName})`;
+
+      // Only scroll to bookmark if flag is set
+      if (shouldScrollToBookmark && currentBookmark && currentBookmark.surah === currentSurah) {
+          const verseElem = document.getElementById(`verse-${currentSurah}-${currentBookmark.ayah}`);
+          if (verseElem) {
+              verseElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+      } else if (scrollToVerseId) {
+          const verseElem = document.getElementById(scrollToVerseId);
+          if (verseElem) {
+              verseElem.scrollIntoView({ behavior: 'auto', block: 'center' });
+          }
+      }
   }
 
+  // In toggleReadingMode, call displayReadingModeAyahs(true) when entering reading mode, otherwise false
   function toggleReadingMode() {
       isReadingMode = !isReadingMode;
       const btn = document.getElementById('btnReadingMode');
@@ -2862,6 +2905,7 @@ function showARUnsupported(errorType) {
           btn.innerHTML = '<i class="fas fa-times"></i>';
           // Don't reset currentAyah to 0, keep the current position
           loadReadingModeAyahs();
+          displayReadingModeAyahs(true); // Only scroll to bookmark when entering reading mode
       } else {
           btn.innerHTML = '<i class="fas fa-book-open"></i>';
           displayAyah();
@@ -2878,9 +2922,10 @@ function showARUnsupported(errorType) {
           toggleBtn.innerHTML = '<i class="fas fa-eye-slash buttonActive"></i>';
       }
       
-      // Refresh the current display
+      // Preserve scroll position in reading mode
       if (isReadingMode) {
-          displayReadingModeAyahs();
+          const centeredId = getCenteredVerseId();
+          displayReadingModeAyahs(false, centeredId);
       } else {
           displayAyah();
       }
@@ -3373,8 +3418,10 @@ function handleNotificationToggleClick(e) {
           toggleBtn.innerHTML = '<i class="fas fa-book-open buttonActive"></i>';
           if (currentSurah !== null) {
               loadTafsirForSurah(currentSurah + 1).then(() => {
+                  // Preserve scroll position in reading mode
                   if (isReadingMode) {
-                      displayReadingModeAyahs();
+                      const centeredId = getCenteredVerseId();
+                      displayReadingModeAyahs(false, centeredId);
                   } else {
                       displayAyah();
                   }
@@ -3382,8 +3429,10 @@ function handleNotificationToggleClick(e) {
           }
       } else {
           toggleBtn.innerHTML = '<i class="fas fa-book"></i>';
+          // Preserve scroll position in reading mode
           if (isReadingMode) {
-              displayReadingModeAyahs();
+              const centeredId = getCenteredVerseId();
+              displayReadingModeAyahs(false, centeredId);
           } else {
               displayAyah();
           }
@@ -3444,6 +3493,24 @@ function handleNotificationToggleClick(e) {
       // Initialize language
       currentLang = localStorage.getItem('language') || 'ar';
   });
+
+  // Utility to get the verse closest to the center of the viewport
+  function getCenteredVerseId() {
+      const verses = document.querySelectorAll('[id^="verse-"]');
+      const viewportCenter = window.scrollY + window.innerHeight / 2;
+      let closestId = null;
+      let minDist = Infinity;
+      verses.forEach(verse => {
+          const rect = verse.getBoundingClientRect();
+          const verseCenter = rect.top + window.scrollY + rect.height / 2;
+          const dist = Math.abs(verseCenter - viewportCenter);
+          if (dist < minDist) {
+              minDist = dist;
+              closestId = verse.id;
+          }
+      });
+      return closestId;
+  }
       </script>
 </body>
 </html>
