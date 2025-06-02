@@ -1957,7 +1957,7 @@ function showARUnsupported(errorType) {
 
               // If no cached data, fetch from API
               if (!quranJson) {
-                  const quranResponse = await fetch('https://api.alquran.cloud/v1/quran/quran-uthmani');
+                  const quranResponse = await fetch('https://api.alquran.cloud/v1/quran/quran-simple');
                   if (!quranResponse.ok) {
                       throw new Error(`Failed to load Quran data: ${quranResponse.status}`);
                   }
@@ -3142,7 +3142,7 @@ function showARUnsupported(errorType) {
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            tafsirLang = 'en';
+            tafsirLang = currentLang;
             const adhkarView = document.getElementById('adhkarView');
             const adhkarArabicText = document.getElementById('adhkarArabicText');
             if (adhkarView) {
