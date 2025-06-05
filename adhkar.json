@@ -2,7 +2,7 @@
     {
       "time": "sabah",
       "arabic": "اللّهُ لا إِلٰهَ إِلاّ هُوَ الْحَيُّ الْقَيُّومُ، لا تَأْخُذُهُ سِنَةٌ وَلا نَوْمٌ، لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الأَرْضِ، مَنْ ذَا الَّذِي يَشْفَعُ عِندَهُ إِلاَّ بِإِذْنِهِ، يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ، وَلا يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِ إِلاَّ بِمَا شَاء، وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالأَرْضَ، وَلا يَؤُودُهُ حِفْظُهُمَا، وَهُوَ الْعَلِيُّ الْعَظِيمُ.",
-      "transliteration": "Allahu la ilaha illa huwa al-Hayyul Qayyum. La ta’khudhuhu sinatun wa la nawm. Lahu ma fissamawati wama fil-ard. Man tha allathee yashfa’u ‘indahu illa bi-idhnihi. Ya’lamu ma bayna aydihim wama khalfahum, wa la yuhituna bishay’in min ‘ilmihi illa bima sha’a. Wasi’a kursiyyuhu assamawati wal-ard, wa la ya’uduhu hifdhuhuma, wa huwa al-‘Aliyyul-‘Azim.",
+      "transliteration": "Allahu la ilaha illa huwa al-Hayyul Qayyum. La ta'khudhuhu sinatun wa la nawm. Lahu ma fissamawati wama fil-ard. Man tha allathee yashfa'u 'indahu illa bi-idhnihi. Ya'lamu ma bayna aydihim wama khalfahum, wa la yuhituna bishay'in min 'ilmihi illa bima sha'a. Wasi'a kursiyyuhu assamawati wal-ard, wa la ya'uduhu hifdhuhuma, wa huwa al-'Aliyyul-'Azim.",
       "translation": "Allah – there is no deity except Him, the Ever-Living, the Sustainer of [all] existence. Neither drowsiness overtakes Him nor sleep. To Him belongs whatever is in the heavens and whatever is on the earth. Who is it that can intercede with Him except by His permission? He knows what is before them and what will be after them, and they encompass not a thing of His knowledge except for what He wills. His Kursi extends over the heavens and the earth, and their preservation tires Him not. And He is the Most High, the Most Great.",
       "repeat": 1
     },
@@ -54,29 +54,29 @@
       {
         "time": "sabah",
         "arabic": "اللّهُـمَّ إِنِّـي أسْـأَلُـكَ العَـفْوَ وَالعـافِـيةَ في الدُّنْـيا وَالآخِـرَة ، اللّهُـمَّ إِنِّـي أسْـأَلُـكَ العَـفْوَ وَالعـافِـيةَ في ديني وَدُنْـيايَ وَأهْـلي وَمالـي ، اللّهُـمَّ اسْتُـرْ عـوْراتي وَآمِـنْ رَوْعاتـي ، اللّهُـمَّ احْفَظْـني مِن بَـينِ يَدَيَّ وَمِن خَلْفـي وَعَن يَمـيني وَعَن شِمـالي ، وَمِن فَوْقـي ، وَأَعـوذُ بِعَظَمَـتِكَ أَن أُغْـتالَ مِن تَحْتـي.",
-        "transliteration": "Allahumma inni as'alukal-'afwa wal-'aafiyah fid-dunya wal-akhirah, Allahumma inni as'alukal-'afwa wal-'aafiyah fi deeni wa dunyaya wa ahli wa mali, Allahummas-tur 'awrati wa aamin raw'ati, Allahummah-fadhni min bayni yadayya wa min khalfi wa 'an yameeni wa 'an shimali, wa min fawqi, wa a'udhu bi'adhamatika an ughtala min tahti.",
-        "translation": "O Allah, I ask You for forgiveness and well-being in this world and in the Hereafter. O Allah, I ask You for forgiveness and well-being in my religion, my worldly affairs, my family and my wealth. O Allah, conceal my faults and grant me safety from my fears. O Allah, protect me from before me and from behind me, from my right and from my left, and from above me, and I seek refuge in Your greatness from being assassinated from beneath me.",
+        "transliteration": "Allahumma inni as'aluka al-'afwa wal-'afiyah fid-dunya wal-akhirah, Allahumma inni as'aluka al-'afwa wal-'afiyata fi deeni wa dunyaya wa ahli wa mali, Allahumma astur 'awrati wa aamin raw'ati, Allahumma ihfazni min bayni yadayya wa min khalfi wa 'an yameeni wa 'an shimali, wa min fawqi, wa a'udhu bi 'azamatika an ughtala min tahti.",
+        "translation": "O Allah, I ask You for pardon and well-being in this life and the next. O Allah, I ask You for pardon and well-being in my religious and worldly affairs, and my family and my wealth. O Allah, conceal my faults and calm my fears. O Allah, protect me from before me and behind me, from my right and my left, and from above me, and I seek refuge in Your greatness from being taken unaware from beneath me.",
         "repeat": 1
       },
       {
         "time": "sabah",
         "arabic": "يَا حَيُّ يَا قيُّومُ بِرَحْمَتِكَ أسْتَغِيثُ أصْلِحْ لِي شَأنِي كُلَّهُ وَلاَ تَكِلْنِي إلَى نَفْسِي طَـرْفَةَ عَيْنٍ.",
-        "transliteration": "Ya Hayyu Ya Qayyum bi rahmatika astagheeth, aslih li sha'ni kullahu wa la takilni ila nafsi tarfata 'ayn.",
+        "transliteration": "Ya Hayyu Ya Qayyum bi rahmatika astaghith, aslih li sha'ni kullahu wa la takilni ila nafsi tarfata 'ayn.",
         "translation": "O Ever-Living, O Sustainer! By Your mercy I seek help! Rectify for me all of my affairs and do not leave me to myself, even for the blink of an eye.",
         "repeat": 3
       },
       {
         "time": "sabah",
-        "arabic": "أَصْبَـحْـنا وَأَصْبَـحْ المُـلكُ للهِ رَبِّ العـالَمـين ، اللّهُـمَّ إِنِّـي أسْـأَلُـكَ خَـيْرَ هـذا الـيَوْم ، فَـتْحَهُ ، وَنَصْـرَهُ ، وَنـورَهُ وَبَـرَكَتَـهُ ، وَهُـداهُ ، وَأَعـوذُ بِـكَ مِـنْ شَـرِّ ما فـيهِ وَشَـرِّ ما بَعْـدَه.",
+        "arabic": "أَصْبَـحْـنا وَأَصْبَـحْ المُـلكُ للهِ رَبِّ العـالَمـين ، اللّهُـمَّ إِنِّـي أسْـأَلُكَ خَـيْرَ هـذا الـيَوْم ، فَـتْحَهُ ، وَنَصْـرَهُ ، وَنـورَهُ وَبَـرَكَتَـهُ ، وَهُـداهُ ، وَأَعـوذُ بِـكَ مِـنْ شَـرِّ ما فـيهِ وَشَـرِّ ما بَعْـدَه.",
         "transliteration": "Asbahna wa asbahal-mulku lillahi rabbil-'alameen, Allahumma inni as'aluka khayra hadhal-yawm, fathahu, wa nasrahu, wa nurahu, wa barakatahu, wa hudah, wa a'udhu bika min sharri ma feehi wa sharri ma ba'dah.",
         "translation": "We have entered a new morning, and so has the entire dominion, all belonging to Allah, the Lord of the worlds. O Allah, I ask You for the good of this day, its victory, its help, its light, its blessings, and its guidance, and I seek refuge in You from the evil that is in it and the evil that follows it.",
         "repeat": 1
       },
       {
         "time": "sabah",
-        "arabic": "اللّهُـمَّ عالِـمَ الغَـيْبِ وَالشّـهادَةِ فاطِـرَ السّماواتِ وَالأرْضِ رَبَّ كـلِّ شَـيءٍ وَمَليـكَه ، أَشْهَـدُ أَنْ لا إِلـهَ إِلاّ أَنْت ، أَعـوذُ بِكَ مِن شَـرِّ نَفْسـي وَمِن شَـرِّ الشَّيْـطانِ وَشِرْكِهِ ، وَأَنْ أَقْتَـرِفَ عَلـى نَفْسـي سوءاً أَوْ أَجُـرَّهُ إِلـى مُسْـلِم.",
-        "transliteration": "Allahumma 'aalimal-ghaybi wash-shahadah, fatiras-samawati wal-ard, rabba kulli shay'in wa maleekah, ash-hadu an la ilaha illa ant, a'udhu bika min sharri nafsi wa min sharrish-shaytani wa shirkihi, wa an aqtarifa 'ala nafsi soo'an aw ajurrahu ila muslim.",
-        "translation": "O Allah, Knower of the unseen and the seen, Creator of the heavens and the earth, Lord of everything and its Sovereign, I bear witness that there is no god but You. I seek refuge in You from the evil of my own soul and from the evil of Satan and his shirk, and from committing evil against myself or bringing it upon a Muslim.",
+        "arabic": "اللّهُـمَّ عالِـمَ الغَـيْبِ وَالشّـهادَةِ فاطِـرَ السّماواتِ وَالأرْضِ رَبَّ كـلِّ شَـيءٍ وَمَليـكَه ، أَشْهَـدُ أَنْ لا إِلـهَ إِلاّ أَنْت ، أَعـوذُ بِكَ مِن شَـرِّ نَفْسـي وَمِن شَـرِّ الشَّيْـطانِ وَشِـرْكِه ، وَأَنْ أَقْتَـرِفَ عَلـى نَفْسـي سوءاً أَوْ أَجُـرَّهُ إِلـى مُسْـلِم.",
+        "transliteration": "Allahumma 'aalimal-ghaybi wash-shahadah, fatiras-samawati wal-ard, rabba kulli shay'in wa maleekah, ash-hadu an la ilaha illa ant, a'udhu bika min sharri nafsi wa min sharri ash-shaytani wa shirkih, wa an aqtarifa 'ala nafsi su'an aw ajurrahu ila muslim.",
+        "translation": "O Allah, Knower of the unseen and the seen, Creator of the heavens and the earth, Lord of everything and its Sovereign, I bear witness that there is no god but You. I seek refuge in You from the evil of my own soul and from the evil of Satan and his shirk, and from committing wrong against my soul or bringing it upon any Muslim.",
         "repeat": 1
       },
       {
@@ -131,15 +131,15 @@
       {
         "time": "sabah",
         "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لا إِلَهَ إِلا أَنْتَ ، عَلَيْكَ تَوَكَّلْتُ ، وَأَنْتَ رَبُّ الْعَرْشِ الْعَظِيمِ , مَا شَاءَ اللَّهُ كَانَ ، وَمَا لَمْ يَشَأْ لَمْ يَكُنْ ، وَلا حَوْلَ وَلا قُوَّةَ إِلا بِاللَّهِ الْعَلِيِّ الْعَظِيمِ , أَعْلَمُ أَنَّ اللَّهَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ ، وَأَنَّ اللَّهَ قَدْ أَحَاطَ بِكُلِّ شَيْءٍ عِلْمًا , اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ شَرِّ نَفْسِي ، وَمِنْ شَرِّ كُلِّ دَابَّةٍ أَنْتَ آخِذٌ بِنَاصِيَتِهَا ، إِنَّ رَبِّي عَلَى صِرَاطٍ مُسْتَقِيمٍ.",
-        "transliteration": "Allahumma anta rabbi la ilaha illa ant, 'alayka tawakkaltu, wa anta rabbul-'arshil-'adheem. Ma sha'a Allahu kana, wa ma lam yasha' lam yakun, wa la hawla wa la quwwata illa billahil-'aliyyil-'adheem. A'lamu annallaha 'ala kulli shay'in qadeer, wa annallaha qad ahata bikulli shay'in 'ilma. Allahumma inni a'udhu bika min sharri nafsi, wa min sharri kulli dabbatin anta akhidhun binasiyatiha, inna rabbi 'ala siratin mustaqeem.",
-        "translation": "O Allah, You are my Lord, there is no god but You. Upon You I rely, and You are the Lord of the Great Throne. Whatever Allah wills comes to pass, and whatever He does not will does not happen. There is no power and no strength except with Allah, the Most High, the Most Great. I know that Allah has power over all things, and that Allah encompasses all things in knowledge. O Allah, I seek refuge in You from the evil of my own soul and from the evil of every creature that You hold by its forelock. Indeed, my Lord is on a straight path.",
+        "transliteration": "Allahumma anta rabbi la ilaha illa Anta, 'alayka tawakkaltu, wa Anta Rabbul-'Arshil-'Adheem. Ma sha'a Allahu kana, wa ma lam yasha' lam yakun, wa la hawla wa la quwwata illa billahil-'Aliyyil-'Adheem. A'lamu annallaha 'ala kulli shay'in qadeer, wa annallaha qad ahata bikulli shay'in 'ilma. Allahumma inni a'oodhu bika min sharri nafsi, wa min sharri kulli dabbatin anta akhidhun binasiyatiha, inna Rabbi 'ala siratin mustaqeem.",
+        "translation": "O Allah, You are my Lord, there is no god but You. Upon You I rely, and You are the Lord of the Great Throne. Whatever Allah wills comes to pass, and whatever He does not will does not happen. There is no might and no power except with Allah, the Most High, the Most Great. I know that Allah has power over all things, and that Allah encompasses all things in knowledge. O Allah, I seek refuge in You from the evil of my own soul and from the evil of every creature that You hold by its forelock. Indeed, my Lord is on a straight path.",
         "repeat": 1
       },
       {
         "time": "sabah",
         "arabic": "لَا إلَه إلّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءِ قَدِيرِ.",
-        "transliteration": "La ilaha illallahu wahdahu la shareeka lah, lahul-mulku walahul-hamdu wahuwa 'ala kulli shay'in qadeer.",
-        "translation": "There is no god but Allah, alone without partner. To Him belongs the dominion, and to Him belongs all praise, and He is able to do all things.",
+        "transliteration": "La ilaha illallahu wahdahu la shareeka lah, lahu al-mulku wa lahu al-hamdu wa huwa 'ala kulli shay'in qadeer.",
+        "translation": "There is no god but Allah alone, without partner. To Him belongs the dominion and to Him belongs all praise, and He is over all things omnipotent.",
         "repeat": 10
       },
       {
@@ -271,7 +271,7 @@
       {
         "time": "masaa",
         "arabic": "اللّهُـمَّ إِنّـي أَعـوذُ بِكَ مِنَ الْكُـفر ، وَالفَـقْر ، وَأَعـوذُ بِكَ مِنْ عَذابِ القَـبْر ، لا إلهَ إلاّ أَنْـتَ.",
-        "transliteration": "Allahumma inni a'udhu bika min al-kufr, wa al-faqr, wa a'udhu bika min 'adhabi al-qabr, la ilaha illa ant.",
+        "transliteration": "Allahumma inni a'udhu bika minal-kufri wal-faqr, wa a'udhu bika min 'adhab il-qabr, la ilaha illa ant.",
         "translation": "O Allah, I seek refuge in You from disbelief and poverty, and I seek refuge in You from the punishment of the grave. There is none worthy of worship except You.",
         "repeat": 3
       },
@@ -285,13 +285,237 @@
       {
         "time": "masaa",
         "arabic": "يَا حَيُّ يَا قيُّومُ بِرَحْمَتِكَ أسْتَغِيثُ أصْلِحْ لِي شَأنِي كُلَّهُ وَلاَ تَكِلْنِي إلَى نَفْسِي طَـرْفَةَ عَيْنٍ.",
-        "transliteration": "Ya Hayyu ya Qayyum bi rahmatika astaghith, aslih li sha'ni kullahu wa la takilni ila nafsi tarfata 'ayn.",
+        "transliteration": "Ya Hayyu Ya Qayyum bi rahmatika astaghith, aslih li sha'ni kullahu wa la takilni ila nafsi tarfata 'ayn.",
         "translation": "O Ever-Living, O Sustainer, in Your mercy I seek relief, rectify for me all of my affairs and do not leave me to myself even for the blink of an eye.",
         "repeat": 3
       },
       {
         "time": "masaa",
-        "arabic": "أَمْسَيْنا وَأَمْسَى الْمُلْكُ للهِ رَبِّ الْعَالَمَيْنِ، اللَّهُمَّ إِنَّي أسْأَلُكَ خَيْرَ هَذَه اللَّيْلَةِ فَتْحَهَا ونَصْرَهَا، ونُوْرَهَا وبَرَكَتهَا، وَهُدَاهَا، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فيهِا وَشَرَّ مَا بَعْدَهَا.",
+        "arabic": "أَصْبَـحْـنا وَأَصْبَـحْ المُـلكُ للهِ رَبِّ الْعـالَمـين ، اللّهُـمَّ إِنِّـي أسْـأَلُكَ خَـيْرَ هـذا الـيَوْم ، فَـتْحَهُ ، وَنَصْـرَهُ ، وَنـورَهُ وَبَـرَكَتَـهُ ، وَهُـداهُ ، وَأَعـوذُ بِـكَ مِـنْ شَـرِّ ما فـيهِ وَشَـرِّ ما بَعْـدَه.",
+        "transliteration": "Asbahna wa asbahal-mulku lillahi rabbil-'alameen, Allahumma inni as'aluka khayra hadhal-yawm, fathahu, wa nasrahu, wa nurahu, wa barakatahu, wa hudah, wa a'udhu bika min sharri ma feehi wa sharri ma ba'dah.",
+        "translation": "We have entered a new morning, and so has the entire dominion, all belonging to Allah, the Lord of the worlds. O Allah, I ask You for the good of this day, its victory, its help, its light, its blessings, and its guidance, and I seek refuge in You from the evil that is in it and the evil that follows it.",
+        "repeat": 1
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللّهُـمَّ عالِـمَ الغَـيْبِ وَالشّـهادَةِ فاطِـرَ السّماواتِ وَالأرْضِ رَبَّ كـلِّ شَـيءٍ وَمَليـكَه ، أَشْهَـدُ أَنْ لا إِلـهَ إِلاّ أَنْت ، أَعـوذُ بِكَ مِن شَـرِّ نَفْسـي وَمِن شَـرِّ الشَّيْـطانِ وَشِـرْكِه ، وَأَنْ أَقْتَـرِفَ عَلـى نَفْسـي سوءاً أَوْ أَجُـرَّهُ إِلـى مُسْـلِم.",
+        "transliteration": "Allahumma 'aalimal-ghaybi wash-shahadah, fatiras-samawati wal-ard, rabba kulli shay'in wa maleekah, ash-hadu an la ilaha illa ant, a'udhu bika min sharri nafsi wa min sharri ash-shaytani wa shirkih, wa an aqtarifa 'ala nafsi su'an aw ajurrahu ila muslim.",
+        "translation": "O Allah, Knower of the unseen and the seen, Creator of the heavens and the earth, Lord of everything and its Sovereign, I bear witness that there is no god but You. I seek refuge in You from the evil of my own soul and from the evil of Satan and his shirk, and from committing wrong against my soul or bringing it upon any Muslim.",
+        "repeat": 1
+      },
+      {
+        "time": "masaa",
+        "arabic": "أَعـوذُ بِكَلِمـاتِ اللّهِ التّـامّـاتِ مِنْ شَـرِّ ما خَلَـق.",
+        "transliteration": "A'udhu bikalimatillahit-tammati min sharri ma khalaq.",
+        "translation": "I seek refuge in the perfect words of Allah from the evil of what He has created.",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللَّهُمَّ صَلِّ وَسَلِّمْ وَبَارِكْ على نَبِيِّنَا مُحمَّد.",
+        "transliteration": "Allahumma salli wa sallim wa barik 'ala nabiyyina Muhammad.",
+        "translation": "O Allah, send Your peace and blessings upon our Prophet Muhammad.",
+        "repeat": 10
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللَّهُمَّ إِنَّا نَعُوذُ بِكَ مِنْ أَنْ نُشْرِكَ بِكَ شَيْئًا نَعْلَمُهُ ، وَنَسْتَغْفِرُكَ لِمَا لَا نَعْلَمُهُ.",
+        "transliteration": "Allahumma inna na'udhu bika min an nushrika bika shay'an na'lamuh, wa nastaghfiruka lima la na'lamuh.",
+        "translation": "O Allah, we seek refuge in You from knowingly associating anything with You, and we ask Your forgiveness for what we do not know.",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ الْهَمِّ وَالْحَزَنِ، وَأَعُوذُ بِكَ مِنْ الْعَجْزِ وَالْكَسَلِ، وَأَعُوذُ بِكَ مِنْ الْجُبْنِ وَالْبُخْلِ، وَأَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ، وَقَهْرِ الرِّجَالِ.",
+        "transliteration": "Allahumma inni a'udhu bika minal-hammi wal-hazani, wa a'udhu bika minal-'ajzi wal-kasali, wa a'udhu bika minal-jubni wal-bukhli, wa a'udhu bika min ghalabatid-dayni wa qahrir-rijal.",
+        "translation": "O Allah, I seek refuge in You from worry and grief, and I seek refuge in You from helplessness and laziness, and I seek refuge in You from cowardice and stinginess, and I seek refuge in You from being overcome by debt and overpowered by men.",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "أسْتَغْفِرُ اللهَ العَظِيمَ الَّذِي لاَ إلَهَ إلاَّ هُوَ، الحَيُّ القَيُّومُ، وَأتُوبُ إلَيهِ.",
+        "transliteration": "Astaghfiru Allah al-'adheem alladhi la ilaha illa huwal-hayyul-qayyoomu wa atoobu ilayh.",
+        "translation": "I seek the forgiveness of Allah the Mighty, Whom there is none worthy of worship except Him, the Living, the Sustaining, and I repent to Him.",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "يَا رَبِّ , لَكَ الْحَمْدُ كَمَا يَنْبَغِي لِجَلَالِ وَجْهِكَ , وَلِعَظِيمِ سُلْطَانِكَ.",
+        "transliteration": "Ya rabbi, lak al-hamdu kama yanbaghi lijalali wajhika wa li'adheemi sultanik.",
+        "translation": "O my Lord, to You belongs praise as befits the glory of Your Face and the greatness of Your might.",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "لَا إلَه إلّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءِ قَدِيرِ.",
+        "transliteration": "La ilaha ill Allahu wahdahu la sharika lah, lahu al-mulku wa lahu al-hamdu wa huwa 'ala kulli shay'in qadeer.",
+        "translation": "There is none worthy of worship except Allah alone, without partner. To Him belongs the dominion and to Him belongs all praise, and He is over all things omnipotent.",
+        "repeat": 10
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لا إِلَهَ إِلا أَنْتَ ، عَلَيْكَ تَوَكَّلْتُ ، وَأَنْتَ رَبُّ الْعَرْشِ الْعَظِيمِ , مَا شَاءَ اللَّهُ كَانَ ، وَمَا لَمْ يَشَأْ لَمْ يَكُنْ ، وَلا حَوْلَ وَلا قُوَّةَ إِلا بِاللَّهِ الْعَلِيِّ الْعَظِيمِ , أَعْلَمُ أَنَّ اللَّهَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ ، وَأَنَّ اللَّهَ قَدْ أَحَاطَ بِكُلِّ شَيْءٍ عِلْمًا , اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ شَرِّ نَفْسِي ، وَمِنْ شَرِّ كُلِّ دَابَّةٍ أَنْتَ آخِذٌ بِنَاصِيَتِهَا ، إِنَّ رَبِّي عَلَى صِرَاطٍ مُسْتَقِيمٍ.",
+        "transliteration": "Allahumma anta rabbi la ilaha illa Anta, 'alayka tawakkaltu, wa Anta Rabbul-'Arshil-'Adheem. Ma sha'a Allahu kana, wa ma lam yasha' lam yakun, wa la hawla wa la quwwata illa billahil-'Aliyyil-'Adheem. A'lamu annallaha 'ala kulli shay'in qadeer, wa annallaha qad ahata bikulli shay'in 'ilma. Allahumma inni a'oodhu bika min sharri nafsi, wa min sharri kulli dabbatin anta akhidhun binasiyatiha, inna Rabbi 'ala siratin mustaqeem.",
+        "translation": "O Allah, You are my Lord, there is no god but You. Upon You I rely, and You are the Lord of the Great Throne. Whatever Allah wills comes to pass, and whatever He does not will does not happen. There is no might and no power except by Allah, the Exalted, the Mighty. I know that Allah has power over all things, and that Allah encompasses all things in knowledge. O Allah, I seek refuge in You from the evil of my own soul and from the evil of every creature that is under Your control. Verily, my Lord is on a straight path.",
+        "repeat": 1
+      },
+      {
+        "time": "sabah",
+        "arabic": "لَا إلَه إلّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءِ قَدِيرِ.",
+        "transliteration": "La ilaha illallahu wahdahu la shareeka lah, lahu al-mulku wa lahu al-hamdu wa huwa 'ala kulli shay'in qadeer.",
+        "translation": "There is no god but Allah alone, without partner. To Him belongs the dominion and to Him belongs all praise, and He is over all things omnipotent.",
+        "repeat": 10
+      },
+      {
+        "time": "sabah",
+        "arabic": "سُبْحـانَ اللهِ وَبِحَمْـدِهِ.",
+        "transliteration": "SubhanAllahi wa bihamdihi.",
+        "translation": "Glory be to Allah and praise be to Him.",
+        "repeat": 100
+      },
+      {
+        "time": "sabah",
+        "arabic": "أسْتَغْفِرُ اللهَ وَأتُوبُ إلَيْهِ.",
+        "transliteration": "Astaghfirullaha wa atoobu ilayh.",
+        "translation": "I seek the forgiveness of Allah and repent to Him.",
+        "repeat": 100
+      },
+      {
+        "time": "masaa",
+        "arabic": "أَعُوذُ بِاللهِ مِنْ الشَّيْطَانِ الرَّجِيمِ\n\nاللّهُ لاَ إِلَـهَ إِلاَّ هُوَ الْحَيُّ الْقَيُّومُ لاَ تَأْخُذُهُ سِنَةٌ وَلاَ نَوْمٌ لَّهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الأَرْضِ مَن ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلاَّ بِإِذْنِهِ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ وَلاَ يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِ إِلاَّ بِمَا شَاء وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالأَرْضَ وَلاَ يَؤُودُهُ حِفْظُهُمَا وَهُوَ الْعَلِيُّ الْعَظِيمُ. [آية الكرسى - البقرة 255]",
+        "transliteration": "A'udhu billahi min ash-shaytan ir-rajim\n\nAllahu la ilaha illa huwa al-Hayy al-Qayyum, la ta'khudhuhu sinatun wa la nawm, lahu ma fi as-samawati wa ma fi al-ard, man dha alladhi yashfa'u 'indahu illa bi idhnih, ya'lamu ma bayna aydeehim wa ma khalfahum, wa la yuhituna bi shay'in min 'ilmihi illa bima sha'a, wasi'a kursiyyuhu as-samawati wa al-ard, wa la ya'uduhu hifdhuhuma, wa huwa al-'Aliyy al-'Adheem. [Ayat al-Kursi - Al-Baqarah 255]",
+        "translation": "I seek refuge in Allah from the accursed Satan.\n\nAllah - there is no deity except Him, the Ever-Living, the Sustainer of [all] existence. Neither drowsiness overtakes Him nor sleep. To Him belongs whatever is in the heavens and whatever is on the earth. Who is it that can intercede with Him except by His permission? He knows what is [presently] before them and what will be after them, and they encompass not a thing of His knowledge except for what He wills. His Kursi extends over the heavens and the earth, and their preservation tires Him not. And He is the Most High, the Most Great. [The Throne Verse - Al-Baqarah 255]",
+        "repeat": 1
+      },
+      {
+        "time": "masaa",
+        "arabic": "أَعُوذُ بِاللهِ مِنْ الشَّيْطَانِ الرَّجِيمِ\n\nآمَنَ الرَّسُولُ بِمَا أُنْزِلَ إِلَيْهِ مِنْ رَبِّهِ وَالْمُؤْمِنُونَ ۚ كُلٌّ آمَنَ بِاللَّهِ وَمَلَائِكَتِهِ وَكُتُبِهِ وَرُسُلِهِ لَا نُفَرِّقُ بَيْنَ أَحَدٍ مِنْ رُسُلِهِ ۚ وَقَالُوا سَمِعْنَا وَأَطَعْنَا ۖ غُفْرَانَكَ رَبَّنَا وَإِلَيْكَ الْمَصِيرُ. لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا لَهَا مَا كَسَبَتْ وَعَلَيْهَا مَا اكْتَسَبَتْ رَبَّنَا لَا تُؤَاخِذْنَا إِنْ نَّسِينَآ أَوْ أَخْطَأْنَا رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَا إِصْرًا كَمَا حَمَلْتَهُ عَلَى الَّذِينَ مِنْ قَبْلِنَا رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِ وَاعْفُ عَنَّا وَاغْفِرْ لَنَا وَارْحَمْنَا أَنْتَ مَوْلَانَا فَانْصُرْنَا عَلَى الْقَوْمِ الْكَافِرِينَ. [البقرة 285 - 286]",
+        "transliteration": "A'udhu billahi min ash-shaytan ir-rajim\n\nAmana ar-rasulu bima unzila ilayhi min rabbihi wal mu'minun, kullun amana billahi wa mala'ikatihi wa kutubihi wa rusulih, la nufarriqu bayna ahadin min rusulih, wa qalu sami'na wa ata'na, ghufranaka rabbana wa ilayka al-masir. La yukallifu Allahu nafsan illa wus'aha, laha ma kasabat wa 'alayha ma aktasabat, rabbana la tu'akhidhna in naseena aw akhta'na, rabbana wa la tahmil 'alayna isran kama hamaltahu 'ala alladhina min qablina, rabbana wa la tuhammilna ma la taqata lana bih, wa'fu 'anna waghfir lana warhamna, anta mawlana fansurna 'ala al-qawm al-kafirin. [Al-Baqarah 285-286]",
+        "translation": "I seek refuge in Allah from the accursed Satan.\n\nThe Messenger has believed in what was revealed to him from his Lord, and [so have] the believers. All of them have believed in Allah and His angels and His books and His messengers, [saying], 'We make no distinction between any of His messengers.' And they say, 'We hear and we obey. [We seek] Your forgiveness, our Lord, and to You is the [final] destination.' Allah does not charge a soul except [with that within] its capacity. It will have [the consequence of] what [good] it has gained, and it will bear [the consequence of] what [evil] it has earned. 'Our Lord, do not impose blame upon us if we have forgotten or erred. Our Lord, and lay not upon us a burden like that which You laid upon those before us. Our Lord, and burden us not with that which we have no ability to bear. And pardon us; and forgive us; and have mercy upon us. You are our protector, so give us victory over the disbelieving people.' [Al-Baqarah 285-286]",
+        "repeat": 1
+      },
+      {
+        "time": "masaa",
+        "arabic": "بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم\nقُلْ هُوَ ٱللَّهُ أَحَدٌ، ٱللَّهُ ٱلصَّمَدُ، لَمْ يَلِدْ وَلَمْ يُولَدْ، وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ.",
+        "transliteration": "Bismillah ir-Rahman ir-Raheem\nQul huwa Allahu ahad, Allahu as-samad, lam yalid wa lam yulad, wa lam yakun lahu kufuwan ahad.",
+        "translation": "In the name of Allah, the Most Gracious, the Most Merciful\nSay, 'He is Allah, [who is] One, Allah, the Eternal Refuge. He neither begets nor is born, Nor is there to Him any equivalent.'",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم\nقُلْ أَعُوذُ بِرَبِّ ٱلْفَلَقِ، مِن شَرِّ مَا خَلَقَ، وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ، وَمِن شَرِّ ٱلنَّفَّٰثَٰتِ فِى ٱلْعُقَدِ، وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ.",
+        "transliteration": "Bismillah ir-Rahman ir-Raheem\nQul a'udhu bi rabbi al-falaq, min sharri ma khalaq, wa min sharri ghasiqin idha waqab, wa min sharri an-naffathati fi al-'uqad, wa min sharri hasidin idha hasad.",
+        "translation": "In the name of Allah, the Most Gracious, the Most Merciful\nSay, 'I seek refuge in the Lord of daybreak, From the evil of that which He created, And from the evil of darkness when it settles, And from the evil of the blowers in knots, And from the evil of an envier when he envies.'",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم\n\nقُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ، مَلِكِ ٱلنَّاسِ، إِلَٰهِ ٱلنَّاسِ، مِن شَرِّ ٱلْوَسْوَاسِ ٱلْخَنَّاسِ، ٱلَّذِى يُوَسْوِسُ فِى صُدُورِ ٱلنَّاسِ، مِنَ ٱلْجِنَّةِ وَٱلنَّاسِ.",
+        "transliteration": "Bismillah ir-Rahman ir-Raheem\n\nQul a'udhu bi rabbi an-nas, maliki an-nas, ilahi an-nas, min sharri al-waswasi al-khannas, alladhi yuwaswisu fi suduri an-nas, min al-jinnati wa an-nas.",
+        "translation": "In the name of Allah, the Most Gracious, the Most Merciful\n\nSay, 'I seek refuge in the Lord of mankind, The Sovereign of mankind, The God of mankind, From the evil of the retreating whisperer - Who whispers [evil] into the breasts of mankind - From among the jinn and mankind.'",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "أَمْسَيْـنا وَأَمْسـى المـلكُ لله وَالحَمدُ لله ، لا إلهَ إلاّ اللّهُ وَحدَهُ لا شَريكَ لهُ، لهُ المُـلكُ ولهُ الحَمْـد، وهُوَ على كلّ شَيءٍ قدير ، رَبِّ أسْـأَلُـكَ خَـيرَ ما في هـذهِ اللَّـيْلَةِ وَخَـيرَ ما بَعْـدَهـا ، وَأَعـوذُ بِكَ مِنْ شَـرِّ ما في هـذهِ اللَّـيْلةِ وَشَرِّ ما بَعْـدَهـا ، رَبِّ أَعـوذُبِكَ مِنَ الْكَسَـلِ وَسـوءِ الْكِـبَر ، رَبِّ أَعـوذُ بِكَ مِنْ عَـذابٍ في النّـارِ وَعَـذابٍ في القَـبْر.",
+        "transliteration": "Amsayna wa amsa al-mulku lillah walhamdu lillah, la ilaha illa Allahu wahdahu la sharika lah, lahu al-mulku wa lahu al-hamdu wa huwa 'ala kulli shay'in qadeer, rabbi as'aluka khayra ma fi hadhihi al-laylati wa khayra ma ba'daha, wa a'udhu bika min sharri ma fi hadhihi al-laylati wa sharri ma ba'daha, rabbi a'udhu bika min al-kasali wa su'i al-kibar, rabbi a'udhu bika min 'adhabin fi an-nari wa 'adhabin fi al-qabr.",
+        "translation": "We have entered evening and the dominion belongs to Allah, and all praise is for Allah. There is none worthy of worship except Allah alone, without partner. To Him belongs the dominion and to Him belongs all praise, and He is over all things omnipotent. My Lord, I ask You for the good of this night and the good of what follows it, and I seek refuge in You from the evil of this night and the evil of what follows it. My Lord, I seek refuge in You from laziness and the evil of old age. My Lord, I seek refuge in You from the punishment of the Fire and the punishment of the grave.",
+        "repeat": 1
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللّهـمَّ أَنْتَ رَبِّـي لا إلهَ إلاّ أَنْتَ ، خَلَقْتَنـي وَأَنا عَبْـدُك ، وَأَنا عَلـى عَهْـدِكَ وَوَعْـدِكَ ما اسْتَـطَعْـت ، أَعـوذُبِكَ مِنْ شَـرِّ ما صَنَـعْت ، أَبـوءُ لَـكَ بِنِعْـمَتِـكَ عَلَـيَّ وَأَبـوءُ بِذَنْـبي فَاغْفـِرْ لي فَإِنَّـهُ لا يَغْـفِرُ الذُّنـوبَ إِلاّ أَنْتَ .",
+        "transliteration": "Allahumma anta rabbi la ilaha illa ant, khalaqtani wa ana 'abduk, wa ana 'ala 'ahdika wa wa'dika ma astata't, a'udhu bika min sharri ma sana't, abu'u laka bi ni'matika 'alayya wa abu'u bi dhanbi, faghfir li fa innahu la yaghfiru adh-dhunuba illa ant.",
+        "translation": "O Allah, You are my Lord, there is none worthy of worship except You. You created me and I am Your servant, and I am upon Your covenant and promise as much as I am able. I seek refuge in You from the evil of what I have done. I acknowledge Your favor upon me and I acknowledge my sin, so forgive me, for none forgives sins except You.",
+        "repeat": 1
+      },
+      {
+        "time": "masaa",
+        "arabic": "رَضيـتُ بِاللهِ رَبَّـاً وَبِالإسْلامِ ديـناً وَبِمُحَـمَّدٍ صلى الله عليه وسلم نَبِيّـاً.",
+        "transliteration": "Radheetu billahi rabban wa bil-islami deenan wa bi-Muhammadin sallallahu 'alayhi wa sallama nabiyya.",
+        "translation": "I am pleased with Allah as my Lord, with Islam as my religion, and with Muhammad (peace be upon him) as my Prophet.",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللّهُـمَّ إِنِّـي أَمسيتُ أُشْـهِدُك ، وَأُشْـهِدُ حَمَلَـةَ عَـرْشِـك ، وَمَلَائِكَتَكَ ، وَجَمـيعَ خَلْـقِك ، أَنَّـكَ أَنْـتَ اللهُ لا إلهَ إلاّ أَنْـتَ وَحْـدَكَ لا شَريكَ لَـك ، وَأَنَّ ُ مُحَمّـداً عَبْـدُكَ وَرَسـولُـك.",
+        "transliteration": "Allahumma inni amsytu ush-hiduk, wa ush-hidu hamalata 'arshik, wa mala'ikatak, wa jami'a khalqik, annaka ant Allahu la ilaha illa ant wahdaka la sharika lak, wa anna Muhammadan 'abduka wa rasuluk.",
+        "translation": "O Allah, I have entered a new evening and I call upon You and upon the bearers of Your Throne, upon Your angels and all creation to bear witness that surely You are Allah, there is none worthy of worship except You, alone, without partner, and that Muhammad is Your servant and Your Messenger.",
+        "repeat": 4
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللّهُـمَّ ما أَمسى بي مِـنْ نِعْـمَةٍ أَو بِأَحَـدٍ مِـنْ خَلْـقِك ، فَمِـنْكَ وَحْـدَكَ لا شريكَ لَـك ، فَلَـكَ الْحَمْـدُ وَلَـكَ الشُّكْـر.",
+        "transliteration": "Allahumma ma amsa bi min ni'matin aw bi ahadin min khalqik, fa minka wahdaka la sharika lak, fa lak al-hamdu wa lak ash-shukr.",
+        "translation": "O Allah, whatever blessing has been received by me or by any of Your creation in this evening, is from You alone, You have no partner. So for You is all praise and unto You all thanks.",
+        "repeat": 1
+      },
+      {
+        "time": "masaa",
+        "arabic": "حَسْبِـيَ اللّهُ لا إلهَ إلاّ هُوَ عَلَـيهِ تَوَكَّـلتُ وَهُوَ رَبُّ العَرْشِ العَظـيم.",
+        "transliteration": "Hasbiya Allahu la ilaha illa huwa, 'alayhi tawakkaltu wa huwa rabbu al-'arsh al-'adheem.",
+        "translation": "Sufficient for me is Allah, there is none worthy of worship except Him. Upon Him I have relied and He is the Lord of the Great Throne.",
+        "repeat": 7
+      },
+      {
+        "time": "masaa",
+        "arabic": "بِسـمِ اللهِ الذي لا يَضُـرُّ مَعَ اسمِـهِ شَيءٌ في الأرْضِ وَلا في السّمـاءِ وَهـوَ السّمـيعُ العَلـيم.",
+        "transliteration": "Bismillah alladhi la yadurru ma' ismihi shay'un fi al-ardi wa la fi as-sama'i wa huwa as-sami'u al-'aleem.\n\nLam yadhurru min Allah shay'.",
+        "translation": "In the name of Allah, with whose name nothing can cause harm on earth nor in the heavens, and He is the All-Hearing, the All-Knowing.\n\nNothing will harm him from Allah.",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللّهُـمَّ بِكَ أَمْسَـينا وَبِكَ أَصْـبَحْنا، وَبِكَ نَحْـيا وَبِكَ نَمُـوتُ وَإِلَـيْكَ الْمَصِيرُ.",
+        "transliteration": "Allahumma bika amsayna wa bika asbahna, wa bika nahya wa bika namutu wa ilayka al-masir.",
+        "translation": "O Allah, by Your leave we have entered evening and by Your leave we have entered morning, by Your leave we live and die, and unto You is our return.",
+        "repeat": 1
+      },
+      {
+        "time": "masaa",
+        "arabic": "أَمْسَيْنَا عَلَى فِطْرَةِ الإسْلاَمِ، وَعَلَى كَلِمَةِ الإِخْلاَصِ، وَعَلَى دِينِ نَبِيِّنَا مُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ، وَعَلَى مِلَّةِ أَبِينَا إبْرَاهِيمَ حَنِيفاً مُسْلِماً وَمَا كَانَ مِنَ المُشْرِكِينَ.",
+        "transliteration": "Amsayna 'ala fitrati al-islam, wa 'ala kalimati al-ikhlas, wa 'ala deeni nabiyyina Muhammadin sallallahu 'alayhi wa sallam, wa 'ala millati abina Ibrahim hanifan musliman wa ma kana min al-mushrikin.",
+        "translation": "We have entered evening upon the natural religion of Islam, and upon the word of sincerity, and upon the religion of our Prophet Muhammad (peace be upon him), and upon the way of our father Abraham, inclining toward truth as a Muslim and not being of those who associate others with Allah.",
+        "repeat": 1
+      },
+      {
+        "time": "masaa",
+        "arabic": "سُبْحـانَ اللهِ وَبِحَمْـدِهِ عَدَدَ خَلْـقِه ، وَرِضـا نَفْسِـه ، وَزِنَـةَ عَـرْشِـه ، وَمِـدادَ كَلِمـاتِـه.",
+        "transliteration": "Subhan Allahi wa bihamdihi, 'adada khalqihi, wa ridha nafsihi, wa zinata 'arshihi, wa midada kalimatihi.",
+        "translation": "Glory is to Allah and praise is to Him, by the multitude of His creation, by His pleasure, by the weight of His Throne, and by the extent of His words.",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللّهُـمَّ عافِـني في بَدَنـي ، اللّهُـمَّ عافِـني في سَمْـعي ، اللّهُـمَّ عافِـني في بَصَـري ، لا إلهَ إلاّ أَنْـتَ.",
+        "transliteration": "Allahumma 'afini fi badani, Allahumma 'afini fi sam'i, Allahumma 'afini fi basari, la ilaha illa ant.",
+        "translation": "O Allah, grant health to my body. O Allah, grant health to my hearing. O Allah, grant health to my eyesight. There is none worthy of worship except You.",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللّهُـمَّ إِنّـي أَعـوذُ بِكَ مِنَ الْكُـفر ، وَالفَـقْر ، وَأَعـوذُ بِكَ مِنْ عَذابِ القَـبْر ، لا إلهَ إلاّ أَنْـتَ.",
+        "transliteration": "Allahumma inni a'udhu bika minal-kufri wal-faqr, wa a'udhu bika min 'adhab il-qabr, la ilaha illa ant.",
+        "translation": "O Allah, I seek refuge in You from disbelief and poverty, and I seek refuge in You from the punishment of the grave. There is none worthy of worship except You.",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللّهُـمَّ إِنِّـي أسْـأَلُـكَ العَـفْوَ وَالعـافِـيةَ في الدُّنْـيا وَالآخِـرَة ، اللّهُـمَّ إِنِّـي أسْـأَلُـكَ العَـفْوَ وَالعـافِـيةَ في ديني وَدُنْـيايَ وَأهْـلي وَمالـي ، اللّهُـمَّ اسْتُـرْ عـوْراتي وَآمِـنْ رَوْعاتـي ، اللّهُـمَّ احْفَظْـني مِن بَـينِ يَدَيَّ وَمِن خَلْفـي وَعَن يَمـيني وَعَن شِمـالي ، وَمِن فَوْقـي ، وَأَعـوذُ بِعَظَمَـتِكَ أَن أُغْـتالَ مِن تَحْتـي.",
+        "transliteration": "Allahumma inni as'aluka al-'afwa wal-'afiyata fi ad-dunya wal-akhirah, Allahumma inni as'aluka al-'afwa wal-'afiyata fi deeni wa dunyaya wa ahli wa mali, Allahumma astur 'awrati wa amin raw'ati, Allahumma ihfazni min bayni yadayya wa min khalfi wa 'an yameeni wa 'an shimali, wa min fawqi, wa a'udhu bi 'azamatika an ughtala min tahti.",
+        "translation": "O Allah, I ask You for pardon and well-being in this life and the next. O Allah, I ask You for pardon and well-being in my religious and worldly affairs, and my family and my wealth. O Allah, conceal my faults and calm my fears. O Allah, protect me from before me and behind me, from my right and my left, and from above me, and I seek refuge in Your greatness from being taken unaware from beneath me.",
+        "repeat": 1
+      },
+      {
+        "time": "masaa",
+        "arabic": "يَا حَيُّ يَا قيُّومُ بِرَحْمَتِكَ أسْتَغِيثُ أصْلِحْ لِي شَأنِي كُلَّهُ وَلاَ تَكِلْنِي إلَى نَفْسِي طَـرْفَةَ عَيْنٍ.",
+        "transliteration": "Ya Hayyu Ya Qayyum bi rahmatika astaghith, aslih li sha'ni kullahu wa la takilni ila nafsi tarfata 'ayn.",
+        "translation": "O Ever-Living, O Sustainer, in Your mercy I seek relief, rectify for me all of my affairs and do not leave me to myself even for the blink of an eye.",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "أَصْبَـحْـنا وَأَصْبَـحْ المُـلكُ للهِ رَبِّ الْعـالَمَيْنِ، اللَّهُمَّ إِنَّي أسْأَلُكَ خَيْرَ هَذَه اللَّيْلَةِ فَتْحَهَا ونَصْرَهَا، ونُوْرَهَا وبَرَكَتهَا، وَهُدَاهَا، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فيهِا وَشَرَّ مَا بَعْدَهَا.",
         "transliteration": "Amsayna wa amsa al-mulku lillahi rabbi al-'alamin, Allahumma inni as'aluka khayra hadhihi al-laylati fathaha wa nasraha, wa nuraha wa barakataha, wa hudaha, wa a'udhu bika min sharri ma fiha wa sharri ma ba'daha.",
         "translation": "We have entered evening and the dominion belongs to Allah, Lord of the worlds. O Allah, I ask You for the good of this night, its opening, its help, its light, its blessings, and its guidance. And I seek refuge in You from the evil within it and from the evil after it.",
         "repeat": 1
@@ -299,64 +523,1198 @@
       {
         "time": "masaa",
         "arabic": "اللّهُـمَّ عالِـمَ الغَـيْبِ وَالشّـهادَةِ فاطِـرَ السّماواتِ وَالأرْضِ رَبَّ كـلِّ شَـيءٍ وَمَليـكَه ، أَشْهَـدُ أَنْ لا إِلـهَ إِلاّ أَنْت ، أَعـوذُ بِكَ مِن شَـرِّ نَفْسـي وَمِن شَـرِّ الشَّيْـطانِ وَشِـرْكِه ، وَأَنْ أَقْتَـرِفَ عَلـى نَفْسـي سوءاً أَوْ أَجُـرَّهُ إِلـى مُسْـلِم.",
-        "transliteration": "Allahumma 'alima al-ghaybi wash-shahadati fatira as-samawati wal-ard, rabba kulli shay'in wa malikah, ashhadu an la ilaha illa ant, a'udhu bika min sharri nafsi wa min sharri ash-shaytani wa shirkih, wa an aqtarifa 'ala nafsi su'an aw ajurrahu ila muslim.",
-        "translation": "O Allah, Knower of the unseen and the evident, Maker of the heavens and the earth, Lord of everything and its Possessor, I bear witness that there is none worthy of worship except You. I seek refuge in You from the evil of my soul and from the evil of Satan and his helpers, and from committing wrong against my soul or bringing it upon any Muslim.",
+        "transliteration": "Allahumma 'aalimal-ghaybi wash-shahadah, fatiras-samawati wal-ard, rabba kulli shay'in wa maleekah, ash-hadu an la ilaha illa ant, a'udhu bika min sharri nafsi wa min sharri ash-shaytani wa shirkih, wa an aqtarifa 'ala nafsi su'an aw ajurrahu ila muslim.",
+        "translation": "O Allah, Knower of the unseen and the evident, Maker of the heavens and the earth, Lord of everything and its Sovereign, I bear witness that there is no god but You. I seek refuge in You from the evil of my own soul and from the evil of Satan and his shirk, and from committing wrong against my soul or bringing it upon any Muslim.",
         "repeat": 1
       },
       {
         "time": "masaa",
         "arabic": "أَعـوذُ بِكَلِمـاتِ اللّهِ التّـامّـاتِ مِنْ شَـرِّ ما خَلَـق.",
-        "transliteration": "A'udhu bi kalimati Allahi at-tammati min sharri ma khalaq.",
+        "transliteration": "A'udhu bikalimatillahit-tammati min sharri ma khalaq.",
         "translation": "I seek refuge in the perfect words of Allah from the evil of what He has created.",
-        "repeat": 1
+        "repeat": 3
       },
       {
         "time": "masaa",
         "arabic": "اللَّهُمَّ صَلِّ وَسَلِّمْ وَبَارِكْ على نَبِيِّنَا مُحمَّد.",
         "transliteration": "Allahumma salli wa sallim wa barik 'ala nabiyyina Muhammad.",
-        "translation": "O Allah, send prayers, peace and blessings upon our Prophet Muhammad.",
+        "translation": "O Allah, send Your peace and blessings upon our Prophet Muhammad.",
         "repeat": 10
       },
       {
         "time": "masaa",
         "arabic": "اللَّهُمَّ إِنَّا نَعُوذُ بِكَ مِنْ أَنْ نُشْرِكَ بِكَ شَيْئًا نَعْلَمُهُ ، وَنَسْتَغْفِرُكَ لِمَا لَا نَعْلَمُهُ.",
         "transliteration": "Allahumma inna na'udhu bika min an nushrika bika shay'an na'lamuh, wa nastaghfiruka lima la na'lamuh.",
-        "translation": "O Allah, we seek refuge in You from knowingly associating partners with You, and we seek Your forgiveness for what we do unknowingly.",
+        "translation": "O Allah, we seek refuge in You from knowingly associating anything with You, and we ask Your forgiveness for what we do not know.",
         "repeat": 3
       },
       {
         "time": "masaa",
         "arabic": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ الْهَمِّ وَالْحَزَنِ، وَأَعُوذُ بِكَ مِنْ الْعَجْزِ وَالْكَسَلِ، وَأَعُوذُ بِكَ مِنْ الْجُبْنِ وَالْبُخْلِ، وَأَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ، وَقَهْرِ الرِّجَالِ.",
-        "transliteration": "Allahumma inni a'udhu bika min al-hammi wal-hazan, wa a'udhu bika min al-'ajzi wal-kasal, wa a'udhu bika min al-jubni wal-bukhl, wa a'udhu bika min ghalabati ad-dayn wa qahri ar-rijal.",
-        "translation": "O Allah, I seek refuge in You from worry and grief, from incapacity and laziness, from cowardice and miserliness, from being heavily in debt and from being overpowered by men.",
+        "transliteration": "Allahumma inni a'udhu bika minal-hammi wal-hazani, wa a'udhu bika minal-'ajzi wal-kasali, wa a'udhu bika minal-jubni wal-bukhli, wa a'udhu bika min ghalabatid-dayni wa qahrir-rijal.",
+        "translation": "O Allah, I seek refuge in You from worry and grief, and I seek refuge in You from helplessness and laziness, and I seek refuge in You from cowardice and stinginess, and I seek refuge in You from being overcome by debt and overpowered by men.",
         "repeat": 3
       },
       {
         "time": "masaa",
         "arabic": "أسْتَغْفِرُ اللهَ العَظِيمَ الَّذِي لاَ إلَهَ إلاَّ هُوَ، الحَيُّ القَيُّومُ، وَأتُوبُ إلَيهِ.",
-        "transliteration": "Astaghfiru Allah al-'adheem alladhi la ilaha illa huwa, al-Hayyu al-Qayyum, wa atubu ilayh.",
+        "transliteration": "Astaghfiru Allah al-'adheem alladhi la ilaha illa huwal-hayyul-qayyoomu wa atoobu ilayh.",
         "translation": "I seek the forgiveness of Allah the Mighty, Whom there is none worthy of worship except Him, the Ever-Living, the Sustainer of existence, and I repent to Him.",
         "repeat": 3
       },
       {
         "time": "masaa",
         "arabic": "يَا رَبِّ , لَكَ الْحَمْدُ كَمَا يَنْبَغِي لِجَلَالِ وَجْهِكَ , وَلِعَظِيمِ سُلْطَانِكَ.",
-        "transliteration": "Ya rabbi, lak al-hamdu kama yanbaghi li jalali wajhika, wa li 'adheemi sultanik.",
-        "translation": "O my Lord, all praise is for You as it should be due to Your Majesty and Your great sovereignty.",
+        "transliteration": "Ya rabbi, lak al-hamdu kama yanbaghi lijalali wajhika wa li'adheemi sultanik.",
+        "translation": "O my Lord, to You belongs praise as befits the glory of Your Face and the greatness of Your might.",
         "repeat": 3
       },
       {
         "time": "masaa",
         "arabic": "لَا إلَه إلّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءِ قَدِيرِ.",
         "transliteration": "La ilaha ill Allahu wahdahu la sharika lah, lahu al-mulku wa lahu al-hamdu wa huwa 'ala kulli shay'in qadeer.",
-        "translation": "There is none worthy of worship except Allah alone, without partner. His is the dominion and His is the praise, and He is over all things omnipotent.",
+        "translation": "There is none worthy of worship except Allah alone, without partner. To Him belongs the dominion and to Him belongs all praise, and He is over all things omnipotent.",
         "repeat": 10
       },
       {
         "time": "masaa",
         "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لا إِلَهَ إِلا أَنْتَ ، عَلَيْكَ تَوَكَّلْتُ ، وَأَنْتَ رَبُّ الْعَرْشِ الْعَظِيمِ , مَا شَاءَ اللَّهُ كَانَ ، وَمَا لَمْ يَشَأْ لَمْ يَكُنْ ، وَلا حَوْلَ وَلا قُوَّةَ إِلا بِاللَّهِ الْعَلِيِّ الْعَظِيمِ , أَعْلَمُ أَنَّ اللَّهَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ ، وَأَنَّ اللَّهَ قَدْ أَحَاطَ بِكُلِّ شَيْءٍ عِلْمًا , اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ شَرِّ نَفْسِي ، وَمِنْ شَرِّ كُلِّ دَابَّةٍ أَنْتَ آخِذٌ بِنَاصِيَتِهَا ، إِنَّ رَبِّي عَلَى صِرَاطٍ مُسْتَقِيمٍ.",
         "transliteration": "Allahumma anta Rabbi la ilaha illa Anta, 'alayka tawakkaltu, wa Anta Rabbul-'Arshil-'Adheem. Ma sha'a Allahu kana, wa ma lam yasha' lam yakun, wa la hawla wa la quwwata illa billahil-'Aliyyil-'Adheem. A'lamu annallaha 'ala kulli shay'in qadeer, wa annallaha qad ahata bikulli shay'in 'ilma. Allahumma inni a'oodhu bika min sharri nafsi, wa min sharri kulli dabbatin anta akhidhun binasiyatiha, inna Rabbi 'ala siratin mustaqeem.",
-        "translation": "O Allah, You are my Lord, there is no god but You. Upon You I rely, and You are the Lord of the Mighty Throne. What Allah wills happens, and what He does not will does not happen. There is no might and no power except by Allah, the Exalted, the Mighty. I know that Allah has power over all things, and that Allah encompasses all things in knowledge. O Allah, I seek refuge in You from the evil of my own soul and from the evil of every creature that is under Your control. Verily, my Lord is on a straight path.",
+        "translation": "O Allah, You are my Lord, there is no god but You. Upon You I rely, and You are the Lord of the Great Throne. Whatever Allah wills comes to pass, and whatever He does not will does not happen. There is no might and no power except by Allah, the Exalted, the Mighty. I know that Allah has power over all things, and that Allah encompasses all things in knowledge. O Allah, I seek refuge in You from the evil of my own soul and from the evil of every creature that is under Your control. Verily, my Lord is on a straight path.",
+        "repeat": 1
+      },
+      {
+        "time": "sabah",
+        "arabic": "لَا إلَه إلّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءِ قَدِيرِ.",
+        "transliteration": "La ilaha illallahu wahdahu la shareeka lah, lahu al-mulku wa lahu al-hamdu wa huwa 'ala kulli shay'in qadeer.",
+        "translation": "There is no god but Allah alone, without partner. To Him belongs the dominion and to Him belongs all praise, and He is over all things omnipotent.",
+        "repeat": 10
+      },
+      {
+        "time": "sabah",
+        "arabic": "سُبْحـانَ اللهِ وَبِحَمْـدِهِ.",
+        "transliteration": "SubhanAllahi wa bihamdihi.",
+        "translation": "Glory be to Allah and praise be to Him.",
+        "repeat": 100
+      },
+      {
+        "time": "sabah",
+        "arabic": "أسْتَغْفِرُ اللهَ وَأتُوبُ إلَيْهِ.",
+        "transliteration": "Astaghfirullaha wa atoobu ilayh.",
+        "translation": "I seek the forgiveness of Allah and repent to Him.",
+        "repeat": 100
+      },
+      {
+        "time": "masaa",
+        "arabic": "أَعُوذُ بِاللهِ مِنْ الشَّيْطَانِ الرَّجِيمِ\n\nاللّهُ لاَ إِلَـهَ إِلاَّ هُوَ الْحَيُّ الْقَيُّومُ لاَ تَأْخُذُهُ سِنَةٌ وَلاَ نَوْمٌ لَّهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الأَرْضِ مَن ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلاَّ بِإِذْنِهِ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ وَلاَ يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِ إِلاَّ بِمَا شَاء وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالأَرْضَ وَلاَ يَؤُودُهُ حِفْظُهُمَا وَهُوَ الْعَلِيُّ الْعَظِيمُ. [آية الكرسى - البقرة 255]",
+        "transliteration": "A'udhu billahi min ash-shaytan ir-rajim\n\nAllahu la ilaha illa huwa al-Hayy al-Qayyum, la ta'khudhuhu sinatun wa la nawm, lahu ma fi as-samawati wa ma fi al-ard, man dha alladhi yashfa'u 'indahu illa bi idhnih, ya'lamu ma bayna aydeehim wa ma khalfahum, wa la yuhituna bi shay'in min 'ilmihi illa bima sha'a, wasi'a kursiyyuhu as-samawati wa al-ard, wa la ya'uduhu hifdhuhuma, wa huwa al-'Aliyy al-'Adheem. [Ayat al-Kursi - Al-Baqarah 255]",
+        "translation": "I seek refuge in Allah from the accursed Satan.\n\nAllah - there is no deity except Him, the Ever-Living, the Sustainer of [all] existence. Neither drowsiness overtakes Him nor sleep. To Him belongs whatever is in the heavens and whatever is on the earth. Who is it that can intercede with Him except by His permission? He knows what is [presently] before them and what will be after them, and they encompass not a thing of His knowledge except for what He wills. His Kursi extends over the heavens and the earth, and their preservation tires Him not. And He is the Most High, the Most Great. [The Throne Verse - Al-Baqarah 255]",
+        "repeat": 1
+      },
+      {
+        "time": "masaa",
+        "arabic": "أَعُوذُ بِاللهِ مِنْ الشَّيْطَانِ الرَّجِيمِ\n\nآمَنَ الرَّسُولُ بِمَا أُنْزِلَ إِلَيْهِ مِنْ رَبِّهِ وَالْمُؤْمِنُونَ ۚ كُلٌّ آمَنَ بِاللَّهِ وَمَلَائِكَتِهِ وَكُتُبِهِ وَرُسُلِهِ لَا نُفَرِّقُ بَيْنَ أَحَدٍ مِنْ رُسُلِهِ ۚ وَقَالُوا سَمِعْنَا وَأَطَعْنَا ۖ غُفْرَانَكَ رَبَّنَا وَإِلَيْكَ الْمَصِيرُ. لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا لَهَا مَا كَسَبَتْ وَعَلَيْهَا مَا اكْتَسَبَتْ رَبَّنَا لَا تُؤَاخِذْنَا إِنْ نَّسِينَآ أَوْ أَخْطَأْنَا رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَا إِصْرًا كَمَا حَمَلْتَهُ عَلَى الَّذِينَ مِنْ قَبْلِنَا رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِ وَاعْفُ عَنَّا وَاغْفِرْ لَنَا وَارْحَمْنَا أَنْتَ مَوْلَانَا فَانْصُرْنَا عَلَى الْقَوْمِ الْكَافِرِينَ. [البقرة 285 - 286]",
+        "transliteration": "A'udhu billahi min ash-shaytan ir-rajim\n\nAmana ar-rasulu bima unzila ilayhi min rabbihi wal mu'minun, kullun amana billahi wa mala'ikatihi wa kutubihi wa rusulih, la nufarriqu bayna ahadin min rusulih, wa qalu sami'na wa ata'na, ghufranaka rabbana wa ilayka al-masir. La yukallifu Allahu nafsan illa wus'aha, laha ma kasabat wa 'alayha ma aktasabat, rabbana la tu'akhidhna in naseena aw akhta'na, rabbana wa la tahmil 'alayna isran kama hamaltahu 'ala alladhina min qablina, rabbana wa la tuhammilna ma la taqata lana bih, wa'fu 'anna waghfir lana warhamna, anta mawlana fansurna 'ala al-qawm al-kafirin. [Al-Baqarah 285-286]",
+        "translation": "I seek refuge in Allah from the accursed Satan.\n\nThe Messenger has believed in what was revealed to him from his Lord, and [so have] the believers. All of them have believed in Allah and His angels and His books and His messengers, [saying], 'We make no distinction between any of His messengers.' And they say, 'We hear and we obey. [We seek] Your forgiveness, our Lord, and to You is the [final] destination.' Allah does not charge a soul except [with that within] its capacity. It will have [the consequence of] what [good] it has gained, and it will bear [the consequence of] what [evil] it has earned. 'Our Lord, do not impose blame upon us if we have forgotten or erred. Our Lord, and lay not upon us a burden like that which You laid upon those before us. Our Lord, and burden us not with that which we have no ability to bear. And pardon us; and forgive us; and have mercy upon us. You are our protector, so give us victory over the disbelieving people.' [Al-Baqarah 285-286]",
+        "repeat": 1
+      },
+      {
+        "time": "masaa",
+        "arabic": "بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم\nقُلْ هُوَ ٱللَّهُ أَحَدٌ، ٱللَّهُ ٱلصَّمَدُ، لَمْ يَلِدْ وَلَمْ يُولَدْ، وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ.",
+        "transliteration": "Bismillah ir-Rahman ir-Raheem\nQul huwa Allahu ahad, Allahu as-samad, lam yalid wa lam yulad, wa lam yakun lahu kufuwan ahad.",
+        "translation": "In the name of Allah, the Most Gracious, the Most Merciful\nSay, 'He is Allah, [who is] One, Allah, the Eternal Refuge. He neither begets nor is born, Nor is there to Him any equivalent.'",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم\nقُلْ أَعُوذُ بِرَبِّ ٱلْفَلَقِ، مِن شَرِّ مَا خَلَقَ، وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ، وَمِن شَرِّ ٱلنَّفَّٰثَٰتِ فِى ٱلْعُقَدِ، وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ.",
+        "transliteration": "Bismillah ir-Rahman ir-Raheem\nQul a'udhu bi rabbi al-falaq, min sharri ma khalaq, wa min sharri ghasiqin idha waqab, wa min sharri an-naffathati fi al-'uqad, wa min sharri hasidin idha hasad.",
+        "translation": "In the name of Allah, the Most Gracious, the Most Merciful\nSay, 'I seek refuge in the Lord of daybreak, From the evil of that which He created, And from the evil of darkness when it settles, And from the evil of the blowers in knots, And from the evil of an envier when he envies.'",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم\n\nقُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ، مَلِكِ ٱلنَّاسِ، إِلَٰهِ ٱلنَّاسِ، مِن شَرِّ ٱلْوَسْوَاسِ ٱلْخَنَّاسِ، ٱلَّذِى يُوَسْوِسُ فِى صُدُورِ ٱلنَّاسِ، مِنَ ٱلْجِنَّةِ وَٱلنَّاسِ.",
+        "transliteration": "Bismillah ir-Rahman ir-Raheem\n\nQul a'udhu bi rabbi an-nas, maliki an-nas, ilahi an-nas, min sharri al-waswasi al-khannas, alladhi yuwaswisu fi suduri an-nas, min al-jinnati wa an-nas.",
+        "translation": "In the name of Allah, the Most Gracious, the Most Merciful\n\nSay, 'I seek refuge in the Lord of mankind, The Sovereign of mankind, The God of mankind, From the evil of the retreating whisperer - Who whispers [evil] into the breasts of mankind - From among the jinn and mankind.'",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "أَمْسَيْـنا وَأَمْسـى المـلكُ لله وَالحَمدُ لله ، لا إلهَ إلاّ اللّهُ وَحدَهُ لا شَريكَ لهُ، لهُ المُـلكُ ولهُ الحَمْـد، وهُوَ على كلّ شَيءٍ قدير ، رَبِّ أسْـأَلُـكَ خَـيرَ ما في هـذهِ اللَّـيْلَةِ وَخَـيرَ ما بَعْـدَهـا ، وَأَعـوذُ بِكَ مِنْ شَـرِّ ما في هـذهِ اللَّـيْلةِ وَشَرِّ ما بَعْـدَهـا ، رَبِّ أَعـوذُبِكَ مِنَ الْكَسَـلِ وَسـوءِ الْكِـبَر ، رَبِّ أَعـوذُ بِكَ مِنْ عَـذابٍ في النّـارِ وَعَـذابٍ في القَـبْر.",
+        "transliteration": "Amsayna wa amsa al-mulku lillah walhamdu lillah, la ilaha illa Allahu wahdahu la sharika lah, lahu al-mulku wa lahu al-hamdu wa huwa 'ala kulli shay'in qadeer, rabbi as'aluka khayra ma fi hadhihi al-laylati wa khayra ma ba'daha, wa a'udhu bika min sharri ma fi hadhihi al-laylati wa sharri ma ba'daha, rabbi a'udhu bika min al-kasali wa su'i al-kibar, rabbi a'udhu bika min 'adhabin fi an-nari wa 'adhabin fi al-qabr.",
+        "translation": "We have entered evening and the dominion belongs to Allah, and all praise is for Allah. There is none worthy of worship except Allah alone, without partner. To Him belongs the dominion and to Him belongs all praise, and He is over all things omnipotent. My Lord, I ask You for the good of this night and the good of what follows it, and I seek refuge in You from the evil of this night and the evil of what follows it. My Lord, I seek refuge in You from laziness and the evil of old age. My Lord, I seek refuge in You from the punishment of the Fire and the punishment of the grave.",
+        "repeat": 1
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللّهـمَّ أَنْتَ رَبِّـي لا إلهَ إلاّ أَنْتَ ، خَلَقْتَنـي وَأَنا عَبْـدُك ، وَأَنا عَلـى عَهْـدِكَ وَوَعْـدِكَ ما اسْتَـطَعْـت ، أَعـوذُبِكَ مِنْ شَـرِّ ما صَنَـعْت ، أَبـوءُ لَـكَ بِنِعْـمَتِـكَ عَلَـيَّ وَأَبـوءُ بِذَنْـبي فَاغْفـِرْ لي فَإِنَّـهُ لا يَغْـفِرُ الذُّنـوبَ إِلاّ أَنْتَ .",
+        "transliteration": "Allahumma anta rabbi la ilaha illa ant, khalaqtani wa ana 'abduk, wa ana 'ala 'ahdika wa wa'dika ma astata't, a'udhu bika min sharri ma sana't, abu'u laka bi ni'matika 'alayya wa abu'u bi dhanbi, faghfir li fa innahu la yaghfiru adh-dhunuba illa ant.",
+        "translation": "O Allah, You are my Lord, there is none worthy of worship except You. You created me and I am Your servant, and I am upon Your covenant and promise as much as I am able. I seek refuge in You from the evil of what I have done. I acknowledge Your favor upon me and I acknowledge my sin, so forgive me, for none forgives sins except You.",
+        "repeat": 1
+      },
+      {
+        "time": "masaa",
+        "arabic": "رَضيـتُ بِاللهِ رَبَّـاً وَبِالإسْلامِ ديـناً وَبِمُحَـمَّدٍ صلى الله عليه وسلم نَبِيّـاً.",
+        "transliteration": "Radheetu billahi rabban wa bil-islami deenan wa bi-Muhammadin sallallahu 'alayhi wa sallama nabiyya.",
+        "translation": "I am pleased with Allah as my Lord, with Islam as my religion, and with Muhammad (peace be upon him) as my Prophet.",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللّهُـمَّ إِنِّـي أَمسيتُ أُشْـهِدُك ، وَأُشْـهِدُ حَمَلَـةَ عَـرْشِـك ، وَمَلَائِكَتَكَ ، وَجَمـيعَ خَلْـقِك ، أَنَّـكَ أَنْـتَ اللهُ لا إلهَ إلاّ أَنْـتَ وَحْـدَكَ لا شَريكَ لَـك ، وَأَنَّ ُ مُحَمّـداً عَبْـدُكَ وَرَسـولُـك.",
+        "transliteration": "Allahumma inni amsytu ush-hiduk, wa ush-hidu hamalata 'arshik, wa mala'ikatak, wa jami'a khalqik, annaka ant Allahu la ilaha illa ant wahdaka la sharika lak, wa anna Muhammadan 'abduka wa rasuluk.",
+        "translation": "O Allah, I have entered a new evening and I call upon You and upon the bearers of Your Throne, upon Your angels and all creation to bear witness that surely You are Allah, there is none worthy of worship except You, alone, without partner, and that Muhammad is Your servant and Your Messenger.",
+        "repeat": 4
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللّهُـمَّ ما أَمسى بي مِـنْ نِعْـمَةٍ أَو بِأَحَـدٍ مِـنْ خَلْـقِك ، فَمِـنْكَ وَحْـدَكَ لا شريكَ لَـك ، فَلَـكَ الْحَمْـدُ وَلَـكَ الشُّكْـر.",
+        "transliteration": "Allahumma ma amsa bi min ni'matin aw bi ahadin min khalqik, fa minka wahdaka la sharika lak, fa lak al-hamdu wa lak ash-shukr.",
+        "translation": "O Allah, whatever blessing has been received by me or by any of Your creation in this evening, is from You alone, You have no partner. So for You is all praise and unto You all thanks.",
+        "repeat": 1
+      },
+      {
+        "time": "masaa",
+        "arabic": "حَسْبِـيَ اللّهُ لا إلهَ إلاّ هُوَ عَلَـيهِ تَوَكَّـلتُ وَهُوَ رَبُّ العَرْشِ العَظـيم.",
+        "transliteration": "Hasbiya Allahu la ilaha illa huwa, 'alayhi tawakkaltu wa huwa rabbu al-'arsh al-'adheem.",
+        "translation": "Sufficient for me is Allah, there is none worthy of worship except Him. Upon Him I have relied and He is the Lord of the Great Throne.",
+        "repeat": 7
+      },
+      {
+        "time": "masaa",
+        "arabic": "بِسـمِ اللهِ الذي لا يَضُـرُّ مَعَ اسمِـهِ شَيءٌ في الأرْضِ وَلا في السّمـاءِ وَهـوَ السّمـيعُ العَلـيم.",
+        "transliteration": "Bismillah alladhi la yadurru ma' ismihi shay'un fi al-ardi wa la fi as-sama'i wa huwa as-sami'u al-'aleem.\n\nLam yadhurru min Allah shay'.",
+        "translation": "In the name of Allah, with whose name nothing can cause harm on earth nor in the heavens, and He is the All-Hearing, the All-Knowing.\n\nNothing will harm him from Allah.",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللّهُـمَّ بِكَ أَمْسَـينا وَبِكَ أَصْـبَحْنا، وَبِكَ نَحْـيا وَبِكَ نَمُـوتُ وَإِلَـيْكَ الْمَصِيرُ.",
+        "transliteration": "Allahumma bika amsayna wa bika asbahna, wa bika nahya wa bika namutu wa ilayka al-masir.",
+        "translation": "O Allah, by Your leave we have entered evening and by Your leave we have entered morning, by Your leave we live and die, and unto You is our return.",
+        "repeat": 1
+      },
+      {
+        "time": "masaa",
+        "arabic": "أَمْسَيْنَا عَلَى فِطْرَةِ الإسْلاَمِ، وَعَلَى كَلِمَةِ الإِخْلاَصِ، وَعَلَى دِينِ نَبِيِّنَا مُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ، وَعَلَى مِلَّةِ أَبِينَا إبْرَاهِيمَ حَنِيفاً مُسْلِماً وَمَا كَانَ مِنَ المُشْرِكِينَ.",
+        "transliteration": "Amsayna 'ala fitrati al-islam, wa 'ala kalimati al-ikhlas, wa 'ala deeni nabiyyina Muhammadin sallallahu 'alayhi wa sallam, wa 'ala millati abina Ibrahim hanifan musliman wa ma kana min al-mushrikin.",
+        "translation": "We have entered evening upon the natural religion of Islam, and upon the word of sincerity, and upon the religion of our Prophet Muhammad (peace be upon him), and upon the way of our father Abraham, inclining toward truth as a Muslim and not being of those who associate others with Allah.",
+        "repeat": 1
+      },
+      {
+        "time": "masaa",
+        "arabic": "سُبْحـانَ اللهِ وَبِحَمْـدِهِ عَدَدَ خَلْـقِه ، وَرِضـا نَفْسِـه ، وَزِنَـةَ عَـرْشِـه ، وَمِـدادَ كَلِمـاتِـه.",
+        "transliteration": "Subhan Allahi wa bihamdihi, 'adada khalqihi, wa ridha nafsihi, wa zinata 'arshihi, wa midada kalimatihi.",
+        "translation": "Glory is to Allah and praise is to Him, by the multitude of His creation, by His pleasure, by the weight of His Throne, and by the extent of His words.",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللّهُـمَّ عافِـني في بَدَنـي ، اللّهُـمَّ عافِـني في سَمْـعي ، اللّهُـمَّ عافِـني في بَصَـري ، لا إلهَ إلاّ أَنْـتَ.",
+        "transliteration": "Allahumma 'afini fi badani, Allahumma 'afini fi sam'i, Allahumma 'afini fi basari, la ilaha illa ant.",
+        "translation": "O Allah, grant health to my body. O Allah, grant health to my hearing. O Allah, grant health to my eyesight. There is none worthy of worship except You.",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللّهُـمَّ إِنّـي أَعـوذُ بِكَ مِنَ الْكُـفر ، وَالفَـقْر ، وَأَعـوذُ بِكَ مِنْ عَذابِ القَـبْر ، لا إلهَ إلاّ أَنْـتَ.",
+        "transliteration": "Allahumma inni a'udhu bika minal-kufri wal-faqr, wa a'udhu bika min 'adhab il-qabr, la ilaha illa ant.",
+        "translation": "O Allah, I seek refuge in You from disbelief and poverty, and I seek refuge in You from the punishment of the grave. There is none worthy of worship except You.",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللّهُـمَّ إِنِّـي أسْـأَلُـكَ العَـفْوَ وَالعـافِـيةَ في الدُّنْـيا وَالآخِـرَة ، اللّهُـمَّ إِنِّـي أسْـأَلُـكَ العَـفْوَ وَالعـافِـيةَ في ديني وَدُنْـيايَ وَأهْـلي وَمالـي ، اللّهُـمَّ اسْتُـرْ عـوْراتي وَآمِـنْ رَوْعاتـي ، اللّهُـمَّ احْفَظْـني مِن بَـينِ يَدَيَّ وَمِن خَلْفـي وَعَن يَمـيني وَعَن شِمـالي ، وَمِن فَوْقـي ، وَأَعـوذُ بِعَظَمَـتِكَ أَن أُغْـتالَ مِن تَحْتـي.",
+        "transliteration": "Allahumma inni as'aluka al-'afwa wal-'afiyata fi ad-dunya wal-akhirah, Allahumma inni as'aluka al-'afwa wal-'afiyata fi deeni wa dunyaya wa ahli wa mali, Allahumma astur 'awrati wa amin raw'ati, Allahumma ihfazni min bayni yadayya wa min khalfi wa 'an yameeni wa 'an shimali, wa min fawqi, wa a'udhu bi 'azamatika an ughtala min tahti.",
+        "translation": "O Allah, I ask You for pardon and well-being in this life and the next. O Allah, I ask You for pardon and well-being in my religious and worldly affairs, and my family and my wealth. O Allah, conceal my faults and calm my fears. O Allah, protect me from before me and behind me, from my right and my left, and from above me, and I seek refuge in Your greatness from being taken unaware from beneath me.",
+        "repeat": 1
+      },
+      {
+        "time": "masaa",
+        "arabic": "يَا حَيُّ يَا قيُّومُ بِرَحْمَتِكَ أسْتَغِيثُ أصْلِحْ لِي شَأنِي كُلَّهُ وَلاَ تَكِلْنِي إلَى نَفْسِي طَـرْفَةَ عَيْنٍ.",
+        "transliteration": "Ya Hayyu Ya Qayyum bi rahmatika astaghith, aslih li sha'ni kullahu wa la takilni ila nafsi tarfata 'ayn.",
+        "translation": "O Ever-Living, O Sustainer, in Your mercy I seek relief, rectify for me all of my affairs and do not leave me to myself even for the blink of an eye.",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "أَصْبَـحْـنا وَأَصْبَـحْ المُـلكُ للهِ رَبِّ الْعـالَمـين ، اللّهُـمَّ إِنِّـي أسْـأَلُكَ خَـيْرَ هـذا الـيَوْم ، فَـتْحَهُ ، وَنَصْـرَهُ ، وَنـورَهُ وَبَـرَكَتَـهُ ، وَهُـداهُ ، وَأَعـوذُ بِـكَ مِـنْ شَـرِّ ما فـيهِ وَشَـرِّ ما بَعْـدَه.",
+        "transliteration": "Asbahna wa asbahal-mulku lillahi rabbil-'alameen, Allahumma inni as'aluka khayra hadhal-yawm, fathahu, wa nasrahu, wa nurahu, wa barakatahu, wa hudah, wa a'udhu bika min sharri ma feehi wa sharri ma ba'dah.",
+        "translation": "We have entered a new morning, and so has the entire dominion, all belonging to Allah, the Lord of the worlds. O Allah, I ask You for the good of this day, its victory, its help, its light, its blessings, and its guidance, and I seek refuge in You from the evil that is in it and the evil that follows it.",
+        "repeat": 1
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللّهُـمَّ عالِـمَ الغَـيْبِ وَالشّـهادَةِ فاطِـرَ السّماواتِ وَالأرْضِ رَبَّ كـلِّ شَـيءٍ وَمَليـكَه ، أَشْهَـدُ أَنْ لا إِلـهَ إِلاّ أَنْت ، أَعـوذُ بِكَ مِن شَـرِّ نَفْسـي وَمِن شَـرِّ الشَّيْـطانِ وَشِـرْكِه ، وَأَنْ أَقْتَـرِفَ عَلـى نَفْسـي سوءاً أَوْ أَجُـرَّهُ إِلـى مُسْـلِم.",
+        "transliteration": "Allahumma 'aalimal-ghaybi wash-shahadah, fatiras-samawati wal-ard, rabba kulli shay'in wa maleekah, ash-hadu an la ilaha illa ant, a'udhu bika min sharri nafsi wa min sharri ash-shaytani wa shirkih, wa an aqtarifa 'ala nafsi su'an aw ajurrahu ila muslim.",
+        "translation": "O Allah, Knower of the unseen and the seen, Creator of the heavens and the earth, Lord of everything and its Sovereign, I bear witness that there is no god but You. I seek refuge in You from the evil of my own soul and from the evil of Satan and his shirk, and from committing wrong against my soul or bringing it upon any Muslim.",
+        "repeat": 1
+      },
+      {
+        "time": "masaa",
+        "arabic": "أَعـوذُ بِكَلِمـاتِ اللّهِ التّـامّـاتِ مِنْ شَـرِّ ما خَلَـق.",
+        "transliteration": "A'udhu bikalimatillahit-tammati min sharri ma khalaq.",
+        "translation": "I seek refuge in the perfect words of Allah from the evil of what He has created.",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللَّهُمَّ صَلِّ وَسَلِّمْ وَبَارِكْ على نَبِيِّنَا مُحمَّد.",
+        "transliteration": "Allahumma salli wa sallim wa barik 'ala nabiyyina Muhammad.",
+        "translation": "O Allah, send Your peace and blessings upon our Prophet Muhammad.",
+        "repeat": 10
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللَّهُمَّ إِنَّا نَعُوذُ بِكَ مِنْ أَنْ نُشْرِكَ بِكَ شَيْئًا نَعْلَمُهُ ، وَنَسْتَغْفِرُكَ لِمَا لَا نَعْلَمُهُ.",
+        "transliteration": "Allahumma inna na'udhu bika min an nushrika bika shay'an na'lamuh, wa nastaghfiruka lima la na'lamuh.",
+        "translation": "O Allah, we seek refuge in You from knowingly associating anything with You, and we ask Your forgiveness for what we do not know.",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ الْهَمِّ وَالْحَزَنِ، وَأَعُوذُ بِكَ مِنْ الْعَجْزِ وَالْكَسَلِ، وَأَعُوذُ بِكَ مِنْ الْجُبْنِ وَالْبُخْلِ، وَأَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ، وَقَهْرِ الرِّجَالِ.",
+        "transliteration": "Allahumma inni a'udhu bika minal-hammi wal-hazani, wa a'udhu bika minal-'ajzi wal-kasali, wa a'udhu bika minal-jubni wal-bukhli, wa a'udhu bika min ghalabatid-dayni wa qahrir-rijal.",
+        "translation": "O Allah, I seek refuge in You from worry and grief, and I seek refuge in You from helplessness and laziness, and I seek refuge in You from cowardice and stinginess, and I seek refuge in You from being overcome by debt and overpowered by men.",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "أسْتَغْفِرُ اللهَ العَظِيمَ الَّذِي لاَ إلَهَ إلاَّ هُوَ، الحَيُّ القَيُّومُ، وَأتُوبُ إلَيهِ.",
+        "transliteration": "Astaghfiru Allah al-'adheem alladhi la ilaha illa huwal-hayyul-qayyoomu wa atoobu ilayh.",
+        "translation": "I seek the forgiveness of Allah the Mighty, Whom there is none worthy of worship except Him, the Living, the Sustaining, and I repent to Him.",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "يَا رَبِّ , لَكَ الْحَمْدُ كَمَا يَنْبَغِي لِجَلَالِ وَجْهِكَ , وَلِعَظِيمِ سُلْطَانِكَ.",
+        "transliteration": "Ya rabbi, lak al-hamdu kama yanbaghi lijalali wajhika wa li'adheemi sultanik.",
+        "translation": "O my Lord, to You belongs praise as befits the glory of Your Face and the greatness of Your might.",
+        "repeat": 3
+      },
+      {
+        "time": "masaa",
+        "arabic": "لَا إلَه إلّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءِ قَدِيرِ.",
+        "transliteration": "La ilaha ill Allahu wahdahu la sharika lah, lahu al-mulku wa lahu al-hamdu wa huwa 'ala kulli shay'in qadeer.",
+        "translation": "There is none worthy of worship except Allah alone, without partner. To Him belongs the dominion and to Him belongs all praise, and He is over all things omnipotent.",
+        "repeat": 10
+      },
+      {
+        "time": "masaa",
+        "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لا إِلَهَ إِلا أَنْتَ ، عَلَيْكَ تَوَكَّلْتُ ، وَأَنْتَ رَبُّ الْعَرْشِ الْعَظِيمِ , مَا شَاءَ اللَّهُ كَانَ ، وَمَا لَمْ يَشَأْ لَمْ يَكُنْ ، وَلا حَوْلَ وَلا قُوَّةَ إِلا بِاللَّهِ الْعَلِيِّ الْعَظِيمِ , أَعْلَمُ أَنَّ اللَّهَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ ، وَأَنَّ اللَّهَ قَدْ أَحَاطَ بِكُلِّ شَيْءٍ عِلْمًا , اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ شَرِّ نَفْسِي ، وَمِنْ شَرِّ كُلِّ دَابَّةٍ أَنْتَ آخِذٌ بِنَاصِيَتِهَا ، إِنَّ رَبِّي عَلَى صِرَاطٍ مُسْتَقِيمٍ.",
+        "transliteration": "Allahumma anta Rabbi la ilaha illa Anta, 'alayka tawakkaltu, wa Anta Rabbul-'Arshil-'Adheem. Ma sha'a Allahu kana, wa ma lam yasha' lam yakun, wa la hawla wa la quwwata illa billahil-'Aliyyil-'Adheem. A'lamu annallaha 'ala kulli shay'in qadeer, wa annallaha qad ahata bikulli shay'in 'ilma. Allahumma inni a'oodhu bika min sharri nafsi, wa min sharri kulli dabbatin anta akhidhun binasiyatiha, inna Rabbi 'ala siratin mustaqeem.",
+        "translation": "O Allah, You are my Lord, there is no god but You. Upon You I rely, and You are the Lord of the Great Throne. Whatever Allah wills comes to pass, and whatever He does not will does not happen. There is no might and no power except by Allah, the Exalted, the Mighty. I know that Allah has power over all things, and that Allah encompasses all things in knowledge. O Allah, I seek refuge in You from the evil of my own soul and from the evil of every creature that is under Your control. Verily, my Lord is on a straight path.",
+        "repeat": 1
+      },
+      {
+        "time": "waking_sleeping",
+        "arabic": "الحمد لله الذي أحيانا بعد ما أماتنا وإليه النشور.",
+        "transliteration": "Alhamdu lillahi allathee ahyana ba'da ma amatana wa ilayhin-nushoor.",
+        "translation": "Praise is to Allah who gave us life after He caused us to die, and to Him is the resurrection.",
+        "repeat": 1
+      },
+      {
+        "time": "waking_sleeping",
+        "arabic": "باسمك اللهم أموت وأحيا.",
+        "transliteration": "Bismika Allahumma amootu wa ahya.",
+        "translation": "In Your name, O Allah, I die and I live.",
+        "repeat": 1
+      },
+      {
+        "time": "home",
+        "arabic": "بسم الله ولجنا، وبسم الله خرجنا، وعلى الله ربنا توكلنا.",
+        "transliteration": "Bismillahi walajna, wa bismillahi kharajna, wa 'ala Allah rabbina tawakkalna.",
+        "translation": "In the name of Allah we enter, and in the name of Allah we leave, and upon Allah our Lord we place our trust.",
+        "repeat": 1
+      },
+      {
+        "time": "home",
+        "arabic": "بسم الله خرجت، توكلت على الله، ولا حول ولا قوة إلا بالله.",
+        "transliteration": "Bismillah kharajtu, tawakkaltu 'ala Allah, wa la hawla wa la quwwata illa billah.",
+        "translation": "In the name of Allah I leave, I place my trust in Allah, and there is no might nor power except with Allah.",
+        "repeat": 1
+      },
+      {
+        "time": "bathroom",
+        "arabic": "بسم الله، اللهم إني أعوذ بك من الخبث والخبائث.",
+        "transliteration": "Bismillah, Allahumma inni a'udhu bika minal-khubthi wal-khaba'ith.",
+        "translation": "In the name of Allah. O Allah, I seek refuge with You from male and female devils.",
+        "repeat": 1
+      },
+      {
+        "time": "eating",
+        "arabic": "بسم الله.",
+        "transliteration": "Bismillah.",
+        "translation": "In the name of Allah.",
+        "repeat": 1
+      },
+      {
+        "time": "masjid",
+        "arabic": "اللهم افتح لي أبواب رحمتك.",
+        "transliteration": "Allahumma iftah li abwaba rahmatik.",
+        "translation": "O Allah, open the gates of Your mercy for me.",
+        "repeat": 1
+      },
+      {
+        "time": "masjid",
+        "arabic": "اللهم إني أسألك من فضلك.",
+        "transliteration": "Allahumma inni as'aluka min fadlik.",
+        "translation": "O Allah, I ask You from Your bounty.",
+        "repeat": 1
+      },
+      {
+        "time": "traveling",
+        "arabic": "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنقَلِبُونَ",
+        "transliteration": "Subhana alladhi sakhkhara lana hadha wama kunna lahu muqrinin wa inna ila rabbina lamunqalibun.",
+        "translation": "Glory is to Him Who has subjected this to us, and we could never have it (by our efforts). And to our Lord, surely, we must return.",
+        "repeat": 1
+      },
+      {
+        "time": "clothes",
+        "arabic": "الْحَمْدُ لِلَّهِ الَّذِي كَسَانِي هَذَا وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ",
+        "transliteration": "Alhamdu lillahi allathee kasani hadha wa razaqanihi min ghayri hawlin minni wa la quwwah.",
+        "translation": "Praise is to Allah Who has clothed me with this and provided it for me, though I was powerless myself and incapable.",
+        "repeat": 1
+      },
+      {
+        "time": "anxiety",
+        "arabic": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَأَعُوذُ بِكَ مِنَ الْعَجْزِ وَالْكَسَلِ، وَأَعُوذُ بِكَ مِنَ الْجُبْنِ وَالْبُخْلِ، وَأَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ، وَقَهْرِ الرِّجَالِ.",
+        "transliteration": "Allahumma inni a'udhu bika minal-hammi wal-hazani, wa a'udhu bika minal-'ajzi wal-kasali, wa a'udhu bika minal-jubni wal-bukhli, wa a'udhu bika min ghalabatid-dayni wa qahrir-rijal.",
+        "translation": "O Allah, I seek refuge in You from anxiety and sorrow, weakness and laziness, miserliness and cowardice, the burden of debts and from being overpowered by men.",
+        "repeat": 1
+      },
+      {
+        "time": "hardship",
+        "arabic": "حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ.",
+        "transliteration": "Hasbunallahu wa ni'mal wakeel.",
+        "translation": "Allah is Sufficient for us, and He is the Best Disposer of affairs.",
+        "repeat": 1
+      },
+      {
+        "time": "istighfar",
+        "arabic": "أَسْتَغْفِرُ اللَّهَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ وَأَتُوبُ إِلَيْهِ.",
+        "transliteration": "Astaghfirullaha alladhi la ilaha illa huwa al-hayyul qayyum wa atubu ilayh.",
+        "translation": "I seek forgiveness from Allah, there is no deity except Him, the Ever-Living, the Sustainer, and I repent to Him.",
+        "repeat": 3
+      },
+      {
+        "time": "patience_gratitude",
+        "arabic": "رَبِّ أَوْزِعْنِي أَنْ أَشْكُرَ نِعْمَتَكَ الَّتِي أَنْعَمْتَ عَلَيَّ وَعَلَى وَالِدَيَّ وَأَنْ أَعْمَلَ صَالِحًا تَرْضَاهُ وَأَدْخِلْنِي بِرَحْمَتِكَ فِي عِبَادِكَ الصَّالِحِينَ.",
+        "transliteration": "Rabbi awzi'ni an ashkura ni'mataka allati an'amta 'alayya wa 'ala walidayya wa an a'mala salihan tardahu wa adkhilni birahmatika fi 'ibadika as-salihin.",
+        "translation": "My Lord, enable me to be grateful for Your favor which You have bestowed upon me and upon my parents and to do righteousness of which You approve. And admit me by Your mercy into [the ranks of] Your righteous servants.",
+        "repeat": 1
+      },
+      {
+        "time": "rabbana",
+        "arabic": "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
+        "transliteration": "Rabbana atina fid-dunya hasanatan wa fil-akhirati hasanatan wa qina 'adhaban-nar.",
+        "translation": "Our Lord, give us in this world [that which is] good and in the Hereafter [that which is] good and protect us from the punishment of the Fire.",
+        "repeat": 1
+      },
+      {
+        "time": "prophetic",
+        "arabic": "اللهم مصرف القلوب صرف قلوبنا على طاعتك.",
+        "transliteration": "Allahumma musarrifal-qulub, sarrif qulubana 'ala ta'atik.",
+        "translation": "O Allah, Controller of the hearts, direct our hearts to Your obedience.",
+        "repeat": 1
+      },
+      {
+        "time": "prophetic",
+        "arabic": "اللهم حبب إلينا الإيمان وزينه في قلوبنا، وكره إلينا الكفر والفسوق والعصيان.",
+        "transliteration": "Allahumma habbib ilaynal-imana wa zayyinhu fi qulubina, wa karrih ilaynal-kufra wal-fusuqa wal-'isyan.",
+        "translation": "O Allah, make faith beloved to us and beautify it in our hearts, and make disbelief, wickedness, and disobedience hateful to us.",
+        "repeat": 1
+      },
+      {
+        "time": "prophetic",
+        "arabic": "اللهم اغفر لي، وارحمني، واهدني، وعافني، وارزقني.",
+        "transliteration": "Allahumma ighfir li, warhamni, wahdini, wa 'afini, warzuqni.",
+        "translation": "O Allah, forgive me, have mercy upon me, guide me, grant me well-being, and provide for me.",
+        "repeat": 1
+      },
+      {
+        "time": "prophets",
+        "arabic": "رب اشرح لي صدري ويسر لي أمري.",
+        "transliteration": "Rabbi ishrah li sadri wa yassir li amri.",
+        "translation": "My Lord, expand for me my breast and ease for me my task.",
+        "repeat": 1
+      },
+      {
+        "time": "prophets",
+        "arabic": "رب لا تذرني فردًا وأنت خير الوارثين.",
+        "transliteration": "Rabbi la tadharni fardan wa anta khayrul-waritheen.",
+        "translation": "My Lord, do not leave me alone [with no heir], while You are the best of inheritors.",
+        "repeat": 1
+      },
+      {
+        "time": "prophets",
+        "arabic": "رب إني مسني الضر وأنت أرحم الراحمين.",
+        "transliteration": "Rabbi inni massaniyad-durru wa anta arhamur-rahimeen.",
+        "translation": "My Lord, indeed adversity has touched me, and You are the Most Merciful of the merciful.",
+        "repeat": 1
+      },
+      {
+        "time": "prophets",
+        "arabic": "رب هب لي حكمًا وألحقني بالصالحين.",
+        "transliteration": "Rabbi hab li hukman wa alhiqni bis-salihin.",
+        "translation": "My Lord, grant me wisdom and join me with the righteous.",
+        "repeat": 1
+      },
+      {
+        "time": "prophets",
+        "arabic": "رب زدني علمًا.",
+        "transliteration": "Rabbi zidni 'ilma.",
+        "translation": "My Lord, increase me in knowledge.",
+        "repeat": 1
+      },
+      {
+        "time": "anxiety",
+        "arabic": "اللهم إني أعوذ بك من الهم والحزن، والعجز والكسل، والبخل والجبن، وضلع الدين، وغلبة الرجال.",
+        "transliteration": "Allahumma inni a'udhu bika minal-hammi wal-hazani, wal-'ajzi wal-kasali, wal-bukhli wal-jubni, wa dala'id-dayni wa ghalabatir-rijal.",
+        "translation": "O Allah, I seek refuge in You from anxiety and grief, from weakness and laziness, from miserliness and cowardice, from the burden of debts and from being overpowered by men.",
+        "repeat": 1
+      },
+      {
+        "time": "anxiety",
+        "arabic": "اللهم إني عبدك، ابن عبدك، ابن أمتك، ناصيتي بيدك، ماضٍ فيّ حكمك، عدلٌ فيّ قضاؤك...",
+        "transliteration": "Allahumma inni 'abduk, ibnu 'abdik, ibnu amatik, nasiyati biyadik, madin fiyya hukmuk, 'adlun fiyya qada'uk...",
+        "translation": "O Allah, I am Your servant, son of Your servant, son of Your maidservant, my forelock is in Your hand, Your command over me is forever executed and Your decree over me is just...",
+        "repeat": 1
+      },
+      {
+        "time": "anxiety",
+        "arabic": "لا إله إلا أنت سبحانك إني كنت من الظالمين.",
+        "transliteration": "La ilaha illa anta subhanaka inni kuntu minaz-zalimeen.",
+        "translation": "There is no deity except You; exalted are You. Indeed, I have been of the wrongdoers.",
+        "repeat": 1
+      },
+      {
+        "time": "anxiety",
+        "arabic": "حسبي الله لا إله إلا هو، عليه توكلت، وهو رب العرش العظيم.",
+        "transliteration": "Hasbiyallahu la ilaha illa huwa, 'alayhi tawakkaltu, wa huwa rabbul-'arshil-'adheem.",
+        "translation": "Sufficient for me is Allah; there is no deity except Him. On Him I have relied, and He is the Lord of the Great Throne.",
+        "repeat": 1
+      },
+      {
+        "time": "anxiety",
+        "arabic": "اللهم اجعل القرآن ربيع قلبي ونور صدري وجلاء حزني وذهاب همي.",
+        "transliteration": "Allahumma ij'al al-Qur'ana rabi'a qalbi wa nura sadri wa jala'a huzni wa dhahaba hammi.",
+        "translation": "O Allah, make the Quran the spring of my heart, the light of my chest, the remover of my sadness, and the reliever of my anxiety.",
+        "repeat": 1
+      },
+      {
+        "time": "hardship",
+        "arabic": "اللهم رحمتك أرجو، فلا تكلني إلى نفسي طرفة عين، وأصلح لي شأني كله.",
+        "transliteration": "Allahumma rahmataka arju, fala takilni ila nafsi tarfata 'ayn, wa aslih li sha'ni kullahu.",
+        "translation": "O Allah, I hope for Your mercy, so do not leave me to myself even for the blink of an eye, and rectify all of my affairs.",
+        "repeat": 1
+      },
+      {
+        "time": "hardship",
+        "arabic": "اللهم إليك أشكو ضعف قوتي، وقلة حيلتي، وهواني على الناس.",
+        "transliteration": "Allahumma ilayka ashku da'fa quwwati, wa qillata hileti, wa hawni 'alan-nas.",
+        "translation": "O Allah, to You I complain of my weakness, my lack of resources, and my humiliation before the people.",
+        "repeat": 1
+      },
+      {
+        "time": "hardship",
+        "arabic": "يا حي يا قيوم برحمتك أستغيث، أصلح لي شأني كله.",
+        "transliteration": "Ya Hayyu ya Qayyum birahmatika astaghith, aslih li sha'ni kullahu.",
+        "translation": "O Ever-Living, O Sustainer, by Your mercy I seek help. Rectify for me all of my affairs.",
+        "repeat": 1
+      },
+      {
+        "time": "hardship",
+        "arabic": "اللهم لا سهل إلا ما جعلته سهلاً، وأنت تجعل الحزن إذا شئت سهلاً.",
+        "transliteration": "Allahumma la sahla illa ma ja'altahu sahlan, wa anta taj'alul-hazna idha shi'ta sahlan.",
+        "translation": "O Allah, nothing is easy except what You make easy, and You make the difficult easy if You wish.",
+        "repeat": 1
+      },
+      {
+        "time": "hardship",
+        "arabic": "اللهم اكشف كربنا، ويسر أمرنا، وارحم ضعفنا.",
+        "transliteration": "Allahumma kshif kurbana, wa yassir amrana, warham da'fana.",
+        "translation": "O Allah, remove our distress, make our affairs easy, and have mercy on our weakness.",
+        "repeat": 1
+      },
+      {
+        "time": "istighfar",
+        "arabic": "أستغفر الله العظيم الذي لا إله إلا هو الحي القيوم وأتوب إليه.",
+        "transliteration": "Astaghfirullahal-'adheem alladhi la ilaha illa huwa al-Hayyul Qayyum wa atubu ilayh.",
+        "translation": "I seek forgiveness from Allah the Mighty, Whom there is none worthy of worship except Him, the Ever-Living, the Sustainer, and I repent to Him.",
+        "repeat": 1
+      },
+      {
+        "time": "istighfar",
+        "arabic": "اللهم اغفر لي ذنبي كله، دقه وجله، وأوله وآخره، وعلانيته وسره.",
+        "transliteration": "Allahumma ighfir li dhanbi kullahu, diqqahu wa jillahu, wa awwalahu wa akhirahu, wa 'alaniyatahu wa sirrahu.",
+        "translation": "O Allah, forgive all my sins, the small and the great, the first and the last, the apparent and the hidden.",
+        "repeat": 1
+      },
+      {
+        "time": "istighfar",
+        "arabic": "رب اغفر لي وتب عليّ إنك أنت التواب الرحيم.",
+        "transliteration": "Rabbi ighfir li wa tub 'alayya innaka antat-Tawwabur-Raheem.",
+        "translation": "My Lord, forgive me and accept my repentance, for You are the Ever-Accepting of repentance, the Most Merciful.",
+        "repeat": 1
+      },
+      {
+        "time": "istighfar",
+        "arabic": "اللهم إني ظلمت نفسي ظلمًا كثيرًا، ولا يغفر الذنوب إلا أنت.",
+        "transliteration": "Allahumma inni dhalamtu nafsi dhulman kathiran, wa la yaghfirudh-dhunuba illa ant.",
+        "translation": "O Allah, I have wronged myself greatly, and none forgives sins except You.",
+        "repeat": 1
+      },
+      {
+        "time": "istighfar",
+        "arabic": "اللهم أنت ربي لا إله إلا أنت، خلقتني وأنا عبدك، وأنا على عهدك ووعدك ما استطعت، أعوذ بك من شر ما صنعت، أبوء لك بنعمتك عليّ وأبوء بذنبي فاغفر لي فإنه لا يغفر الذنوب إلا أنت.",
+        "transliteration": "Allahumma anta Rabbi la ilaha illa ant, khalaqtani wa ana 'abduk, wa ana 'ala 'ahdika wa wa'dika ma astata't, a'udhu bika min sharri ma sana't, abu'u laka bi ni'matika 'alayya wa abu'u bi dhanbi, faghfir li fa innahu la yaghfirudh-dhunuba illa ant.",
+        "translation": "O Allah, You are my Lord, there is none worthy of worship except You. You created me and I am Your servant, and I am upon Your covenant and promise as much as I am able. I seek refuge in You from the evil of what I have done. I acknowledge Your favor upon me and I acknowledge my sin, so forgive me, for none forgives sins except You.",
+        "repeat": 1
+      },
+      {
+        "time": "patience_gratitude",
+        "arabic": "ربنا أفرغ علينا صبرًا وتوفنا مسلمين.",
+        "transliteration": "Rabbana afrigh 'alayna sabran wa tawaffana muslimin.",
+        "translation": "Our Lord, pour upon us patience and let us die as Muslims.",
+        "repeat": 1
+      },
+      {
+        "time": "patience_gratitude",
+        "arabic": "اللهم اجعلني من الشاكرين لنعمتك، الراضين بقضائك.",
+        "transliteration": "Allahumma ij'alni min ash-shakireena lini'matik, ar-radheena biqada'ik.",
+        "translation": "O Allah, make me among those who are grateful for Your blessings and content with Your decree.",
+        "repeat": 1
+      },
+      {
+        "time": "patience_gratitude",
+        "arabic": "اللهم لك الحمد حتى ترضى، ولك الحمد إذا رضيت، ولك الحمد بعد الرضا.",
+        "transliteration": "Allahumma lakal-hamdu hatta tardha, wa lakal-hamdu idha radhita, wa lakal-hamdu ba'dar-rida.",
+        "translation": "O Allah, to You belongs all praise until You are pleased, and to You belongs all praise when You are pleased, and to You belongs all praise after You are pleased.",
+        "repeat": 1
+      },
+      {
+        "time": "patience_gratitude",
+        "arabic": "اللهم اجعلني من عبادك الصابرين.",
+        "transliteration": "Allahumma ij'alni min 'ibadikas-sabireen.",
+        "translation": "O Allah, make me among Your patient servants.",
+        "repeat": 1
+      },
+      {
+        "time": "patience_gratitude",
+        "arabic": "اللهم اجعلني حامدًا شاكرًا راضيًا بقضائك في كل حين.",
+        "transliteration": "Allahumma ij'alni hamidan shakiran radhiyan biqada'ik fi kulli hin.",
+        "translation": "O Allah, make me one who praises You, thanks You, and is content with Your decree at all times.",
+        "repeat": 1
+      },
+      {
+        "time": "rabbana",
+        "arabic": "ربنا لا تؤاخذنا إن نسينا أو أخطأنا.",
+        "transliteration": "Rabbana la tu'akhidhna in naseena aw akhta'na.",
+        "translation": "Our Lord, do not impose blame upon us if we have forgotten or erred.",
+        "repeat": 1
+      },
+      {
+        "time": "rabbana",
+        "arabic": "ربنا ظلمنا أنفسنا وإن لم تغفر لنا وترحمنا لنكونن من الخاسرين.",
+        "transliteration": "Rabbana dhalamna anfusana wa illam taghfir lana watarhamna lanakunanna minal-khasireen.",
+        "translation": "Our Lord, we have wronged ourselves, and if You do not forgive us and have mercy upon us, we will surely be among the losers.",
+        "repeat": 1
+      },
+      {
+        "time": "rabbana",
+        "arabic": "ربنا هب لنا من أزواجنا وذرياتنا قرة أعين.",
+        "transliteration": "Rabbana hab lana min azwajina wa dhurriyatina qurrata a'yun.",
+        "translation": "Our Lord, grant us from among our wives and offspring comfort to our eyes.",
+        "repeat": 1
+      },
+      {
+        "time": "rabbana",
+        "arabic": "ربنا لا تزغ قلوبنا بعد إذ هديتنا وهب لنا من لدنك رحمة.",
+        "transliteration": "Rabbana la tuzigh qulubana ba'da idh hadaytana wa hab lana min ladunka rahmah.",
+        "translation": "Our Lord, do not let our hearts deviate after You have guided us and grant us from Yourself mercy.",
+        "repeat": 1
+      },
+      {
+        "time": "prophetic",
+        "arabic": "اللهم مصرف القلوب صرف قلوبنا على طاعتك.",
+        "transliteration": "Allahumma musarrifal-qulub, sarrif qulubana 'ala ta'atik.",
+        "translation": "O Allah, Controller of the hearts, direct our hearts to Your obedience.",
+        "repeat": 1
+      },
+      {
+        "time": "prophetic",
+        "arabic": "اللهم حبب إلينا الإيمان وزينه في قلوبنا، وكره إلينا الكفر والفسوق والعصيان.",
+        "transliteration": "Allahumma habbib ilaynal-imana wa zayyinhu fi qulubina, wa karrih ilaynal-kufra wal-fusuqa wal-'isyan.",
+        "translation": "O Allah, make faith beloved to us and beautify it in our hearts, and make disbelief, wickedness, and disobedience hateful to us.",
+        "repeat": 1
+      },
+      {
+        "time": "prophetic",
+        "arabic": "اللهم اغفر لي، وارحمني، واهدني، وعافني، وارزقني.",
+        "transliteration": "Allahumma ighfir li, warhamni, wahdini, wa 'afini, warzuqni.",
+        "translation": "O Allah, forgive me, have mercy upon me, guide me, grant me well-being, and provide for me.",
+        "repeat": 1
+      },
+      {
+        "time": "prophets",
+        "arabic": "رب اشرح لي صدري ويسر لي أمري.",
+        "transliteration": "Rabbi ishrah li sadri wa yassir li amri.",
+        "translation": "My Lord, expand for me my breast and ease for me my task.",
+        "repeat": 1
+      },
+      {
+        "time": "prophets",
+        "arabic": "رب لا تذرني فردًا وأنت خير الوارثين.",
+        "transliteration": "Rabbi la tadharni fardan wa anta khayrul-waritheen.",
+        "translation": "My Lord, do not leave me alone [with no heir], while You are the best of inheritors.",
+        "repeat": 1
+      },
+      {
+        "time": "prophets",
+        "arabic": "رب إني مسني الضر وأنت أرحم الراحمين.",
+        "transliteration": "Rabbi inni massaniyad-durru wa anta arhamur-rahimeen.",
+        "translation": "My Lord, indeed adversity has touched me, and You are the Most Merciful of the merciful.",
+        "repeat": 1
+      },
+      {
+        "time": "prophets",
+        "arabic": "رب هب لي حكمًا وألحقني بالصالحين.",
+        "transliteration": "Rabbi hab li hukman wa alhiqni bis-salihin.",
+        "translation": "My Lord, grant me wisdom and join me with the righteous.",
+        "repeat": 1
+      },
+      {
+        "time": "prophets",
+        "arabic": "رب زدني علمًا.",
+        "transliteration": "Rabbi zidni 'ilma.",
+        "translation": "My Lord, increase me in knowledge.",
+        "repeat": 1
+      },
+      {
+        "time": "rain",
+        "arabic": "اللهم صيبًا نافعًا.",
+        "transliteration": "Allahumma sayyiban nafi'an.",
+        "translation": "O Allah, (bring) beneficial rain clouds.",
+        "repeat": 1
+      },
+      {
+        "time": "rain",
+        "arabic": "اللهم اجعله سقيا رحمة، لا سقيا عذاب، ولا هدم، ولا غرق.",
+        "transliteration": "Allahumma ij'alhu siqyan rahmatin, la siqyan 'adhabin, wa la hadman, wa la gharqan.",
+        "translation": "O Allah, make it a mercy, not a punishment, not destruction, not drowning.",
+        "repeat": 1
+      },
+      {
+        "time": "rain",
+        "arabic": "اللهم اسق عبادك وبهائمك، وانشر رحمتك، وأحيِ بلدك الميت.",
+        "transliteration": "Allahumma isqi 'ibadak wa baha'imak, wanshur rahmatak, wa ahyi baladak al-mayit.",
+        "translation": "O Allah, give water to Your servants and Your animals, spread Your mercy, and revive Your dead land.",
+        "repeat": 1
+      },
+      {
+        "time": "rain",
+        "arabic": "اللهم حوالينا ولا علينا، اللهم على الآكام والظراب، وبطون الأودية، ومنابت الشجر.",
+        "transliteration": "Allahumma hawalayna wa la 'alayna, Allahumma 'alal-akam wadh-dhirab, wa butunil-awdiyah, wa manabit ash-shajar.",
+        "translation": "O Allah, (let it rain) around us and not upon us. O Allah, (let it rain) on the hills, mountains, valleys, and places where trees grow.",
+        "repeat": 1
+      },
+      {
+        "time": "rain",
+        "arabic": "سبحان الذي يسبح الرعد بحمده والملائكة من خيفته.",
+        "transliteration": "Subhana alladhi yusabbihu ar-ra'du bihamdihi wal-mala'ikatu min khifatih.",
+        "translation": "Glory be to Him Whom the thunder glorifies with His praise and the angels out of fear of Him.",
+        "repeat": 1
+      },
+      {
+        "time": "patient",
+        "arabic": "اللهم رب الناس أذهب البأس، اشف أنت الشافي، لا شفاء إلا شفاؤك.",
+        "transliteration": "Allahumma rabban-nas, adhhibil-ba's, ishfi antash-shafi, la shifa'a illa shifa'uk.",
+        "translation": "O Allah, Lord of mankind, remove the harm, heal, for You are the Healer. There is no healing except Your healing.",
+        "repeat": 1
+      },
+      {
+        "time": "patient",
+        "arabic": "أسأل الله العظيم رب العرش العظيم أن يشفيك.",
+        "transliteration": "As'alullahal-'adheem rabbal-'arshil-'adheem an yashfiyak.",
+        "translation": "I ask Allah the Mighty, Lord of the Mighty Throne, to heal you.",
+        "repeat": 7
+      },
+      {
+        "time": "patient",
+        "arabic": "اللهم اشفه شفاءً لا يغادر سقمًا.",
+        "transliteration": "Allahumma ishfi shifa'an la yughadiru saqaman.",
+        "translation": "O Allah, heal him with a healing that leaves no illness.",
+        "repeat": 1
+      },
+      {
+        "time": "patient",
+        "arabic": "اللهم إنا نسألك من كل اسم هو لك أن تشفي مرضانا ومرضى المسلمين.",
+        "transliteration": "Allahumma inna nas'aluka min kulli ismin huwa lak an tashfi mardana wa marda al-muslimeen.",
+        "translation": "O Allah, we ask You by every name that belongs to You to heal our sick and the sick among the Muslims.",
+        "repeat": 1
+      },
+      {
+        "time": "patient",
+        "arabic": "اللهم اجعل مرضه كفارة له وسببًا في رفع درجته.",
+        "transliteration": "Allahumma ij'al maradhahu kaffaratan lahu wa sababan fi raf'i darajatih.",
+        "translation": "O Allah, make his illness an expiation for him and a means of raising his rank.",
+        "repeat": 1
+      },
+      {
+        "time": "deceased",
+        "arabic": "اللهم اغفر له وارحمه، وعافه واعف عنه.",
+        "transliteration": "Allahumma ighfir lahu warhamhu, wa 'afihi wa'fu 'anhu.",
+        "translation": "O Allah, forgive him, have mercy on him, grant him well-being, and pardon him.",
+        "repeat": 1
+      },
+      {
+        "time": "deceased",
+        "arabic": "اللهم اجعل قبره روضة من رياض الجنة.",
+        "transliteration": "Allahumma ij'al qabrahu rawdatan min riyadil-jannah.",
+        "translation": "O Allah, make his grave a garden from the gardens of Paradise.",
+        "repeat": 1
+      },
+      {
+        "time": "deceased",
+        "arabic": "اللهم ثبّته عند السؤال.",
+        "transliteration": "Allahumma thabbit-hu 'indas-su'al.",
+        "translation": "O Allah, make him firm when questioned.",
+        "repeat": 1
+      },
+      {
+        "time": "deceased",
+        "arabic": "اللهم اجعل مقامه في عليين، مع النبيين والصديقين.",
+        "transliteration": "Allahumma ij'al maqamahu fi 'illiyyin, ma'an-nabiyyeen was-siddiqeen.",
+        "translation": "O Allah, place him in 'Illiyyin, with the prophets and the truthful.",
+        "repeat": 1
+      },
+      {
+        "time": "deceased",
+        "arabic": "اللهم وسّع مدخله، واغسله بالماء والثلج والبرد.",
+        "transliteration": "Allahumma wassi' madkhalahu, wagsilhu bil-ma'i wath-thalji wal-barad.",
+        "translation": "O Allah, widen his entrance, and wash him with water, snow, and hail.",
+        "repeat": 1
+      },
+      {
+        "time": "marriage_children_rizq",
+        "arabic": "اللهم ارزقني زوجًا/زوجةً صالحًا/صالحة يكون عونًا لي على طاعتك.",
+        "transliteration": "Allahumma arzuqni zawjan/zawjatan salihan/salihatan yakunu 'awnan li 'ala ta'atik.",
+        "translation": "O Allah, grant me a righteous spouse who will help me in obeying You.",
+        "repeat": 1
+      },
+      {
+        "time": "marriage_children_rizq",
+        "arabic": "اللهم إن كان رزقي في السماء فأنزله، وإن كان في الأرض فأخرجه.",
+        "transliteration": "Allahumma in kana rizqi fis-sama'i fa anzilhu, wa in kana fil-ardi fa akhrijhu.",
+        "translation": "O Allah, if my provision is in the sky, bring it down, and if it is in the earth, bring it out.",
+        "repeat": 1
+      },
+      {
+        "time": "marriage_children_rizq",
+        "arabic": "اللهم اكفني بحلالك عن حرامك، وأغنني بفضلك عمن سواك.",
+        "transliteration": "Allahumma kfini bihalalika 'an haramik, wa aghnini bifadlika 'amman siwak.",
+        "translation": "O Allah, suffice me with what You have made lawful against what You have made unlawful, and make me independent of all others by Your bounty.",
+        "repeat": 1
+      },
+      {
+        "time": "marriage_children_rizq",
+        "arabic": "اللهم افتح لي أبواب رزقك الحلال وبارك لي فيه.",
+        "transliteration": "Allahumma iftah li abwaba rizqikal-halali wa barik li fih.",
+        "translation": "O Allah, open for me the gates of Your lawful provision and bless me in it.",
+        "repeat": 1
+      },
+      {
+        "time": "marriage_children_rizq",
+        "arabic": "اللهم ارزقني الذرية الصالحة والرزق الواسع المبارك.",
+        "transliteration": "Allahumma arzuqni dhurriyatan salihah war-rizqal-wasi'al-mubarak.",
+        "translation": "O Allah, grant me righteous offspring and blessed, abundant provision.",
+        "repeat": 1
+      },
+      {
+        "time": "protection",
+        "arabic": "بسم الله الذي لا يضر مع اسمه شيء في الأرض ولا في السماء وهو السميع العليم.",
+        "transliteration": "Bismillah alladhi la yadurru ma' ismihi shay'un fil-ardi wa la fis-sama'i wa huwa as-sami'ul-'aleem.",
+        "translation": "In the name of Allah, with whose name nothing can cause harm on earth nor in the heavens, and He is the All-Hearing, the All-Knowing.",
+        "repeat": 1
+      },
+      {
+        "time": "protection",
+        "arabic": "اللهم إني أعوذ بك من شر ما خلقت.",
+        "transliteration": "Allahumma inni a'udhu bika min sharri ma khalaqt.",
+        "translation": "O Allah, I seek refuge in You from the evil of what You have created.",
+        "repeat": 1
+      },
+      {
+        "time": "protection",
+        "arabic": "أعوذ بكلمات الله التامات من شر ما خلق.",
+        "transliteration": "A'udhu bikalimatillahit-tammati min sharri ma khalaq.",
+        "translation": "I seek refuge in the perfect words of Allah from the evil of what He has created.",
+        "repeat": 1
+      },
+      {
+        "time": "protection",
+        "arabic": "اللهم احفظني من بين يدي ومن خلفي، وعن يميني وعن شمالي، ومن فوقي، وأعوذ بعظمتك أن أُغتال من تحتي.",
+        "transliteration": "Allahumma ihfazni min bayni yadayya wa min khalfi, wa 'an yameeni wa 'an shimali, wa min fawqi, wa a'udhu bi'azamatika an ughtala min tahti.",
+        "translation": "O Allah, protect me from before me and behind me, from my right and my left, and from above me, and I seek refuge in Your greatness from being taken unaware from beneath me.",
+        "repeat": 1
+      },
+      {
+        "time": "protection",
+        "arabic": "اللهم اجعلني في حرزك وأمانك وجوارك.",
+        "transliteration": "Allahumma ij'alni fi hirzik wa amanik wa jiwarik.",
+        "translation": "O Allah, place me in Your protection, security, and nearness.",
+        "repeat": 1
+      },
+      {
+        "time": "salah",
+        "arabic": "اللهم اجعلني مقيم الصلاة ومن ذريتي.",
+        "transliteration": "Allahumma ij'alni muqimas-salah wa min dhurriyati.",
+        "translation": "O Allah, make me one who establishes prayer and from my offspring.",
+        "repeat": 1
+      },
+      {
+        "time": "salah",
+        "arabic": "اللهم أعني على ذكرك وشكرك وحسن عبادتك.",
+        "transliteration": "Allahumma a'inni 'ala dhikrika wa shukrika wa husni 'ibadatik.",
+        "translation": "O Allah, help me to remember You, thank You, and worship You in the best way.",
+        "repeat": 1
+      },
+      {
+        "time": "salah",
+        "arabic": "اللهم طهر قلبي من النفاق وعملي من الرياء ولساني من الكذب.",
+        "transliteration": "Allahumma tahhir qalbi minan-nifaqi wa 'amali minar-riya'i wa lisani minal-kadhib.",
+        "translation": "O Allah, purify my heart from hypocrisy, my deeds from showing off, and my tongue from lying.",
+        "repeat": 1
+      },
+      {
+        "time": "salah",
+        "arabic": "اللهم اجعل صلاتي قرة عين لي.",
+        "transliteration": "Allahumma ij'al salati qurrata 'aynin li.",
+        "translation": "O Allah, make my prayer a delight to my eyes.",
+        "repeat": 1
+      },
+      {
+        "time": "salah",
+        "arabic": "اللهم تقبل صلاتنا واغفر لنا ذنوبنا.",
+        "transliteration": "Allahumma taqabbal salatana waghfir lana dhunubana.",
+        "translation": "O Allah, accept our prayers and forgive our sins.",
+        "repeat": 1
+      },
+      {
+        "time": "sujood_tashahhud",
+        "arabic": "سبحان ربي الأعلى.",
+        "transliteration": "Subhana Rabbiyal-A'la.",
+        "translation": "Glory be to my Lord, the Most High.",
+        "repeat": 1
+      },
+      {
+        "time": "sujood_tashahhud",
+        "arabic": "اللهم اغفر لي ذنبي كله، دقه وجله، وأوله وآخره.",
+        "transliteration": "Allahumma ighfir li dhanbi kullahu, diqqahu wa jillahu, wa awwalahu wa akhirahu.",
+        "translation": "O Allah, forgive all my sins, the small and the great, the first and the last.",
+        "repeat": 1
+      },
+      {
+        "time": "sujood_tashahhud",
+        "arabic": "اللهم لك سجدت وبك آمنت ولك أسلمت.",
+        "transliteration": "Allahumma laka sajadtu wa bika amantu wa laka aslamt.",
+        "translation": "O Allah, to You I have prostrated, in You I have believed, and to You I have submitted.",
+        "repeat": 1
+      },
+      {
+        "time": "sujood_tashahhud",
+        "arabic": "رب اغفر لي، رب اغفر لي.",
+        "transliteration": "Rabbi ighfir li, Rabbi ighfir li.",
+        "translation": "My Lord, forgive me, my Lord, forgive me.",
+        "repeat": 1
+      },
+      {
+        "time": "sujood_tashahhud",
+        "arabic": "التحيات لله، والصلوات، والطيبات، السلام عليك أيها النبي...",
+        "transliteration": "At-tahiyyatu lillah, was-salawatu, wat-tayyibat, as-salamu 'alayka ayyuhan-nabiyyu...",
+        "translation": "All compliments, prayers, and pure words are due to Allah. Peace be upon you, O Prophet...",
+        "repeat": 1
+      },
+      {
+        "time": "qunoot",
+        "arabic": "اللهم اهدني فيمن هديت، وعافني فيمن عافيت.",
+        "transliteration": "Allahumma ihdini fiman hadayt, wa 'afini fiman 'afayt.",
+        "translation": "O Allah, guide me among those You have guided, and grant me well-being among those You have granted well-being.",
+        "repeat": 1
+      },
+      {
+        "time": "qunoot",
+        "arabic": "اللهم إنا نستعينك ونستغفرك ونؤمن بك ونتوكل عليك.",
+        "transliteration": "Allahumma inna nasta'inuk wa nastaghfiruk wa nu'minu bika wa natawakkalu 'alayk.",
+        "translation": "O Allah, we seek Your help, ask Your forgiveness, believe in You, and rely on You.",
+        "repeat": 1
+      },
+      {
+        "time": "qunoot",
+        "arabic": "اللهم إياك نعبد ولك نصلي ونسجد، وإليك نسعى ونحفد.",
+        "transliteration": "Allahumma iyyaka na'budu wa laka nusalli wa nasjud, wa ilayka nas'a wa nahfid.",
+        "translation": "O Allah, You alone we worship, to You we pray and prostrate, and to You we strive and hasten.",
+        "repeat": 1
+      },
+      {
+        "time": "qunoot",
+        "arabic": "اللهم لا مانع لما أعطيت، ولا معطي لما منعت، ولا ينفع ذا الجد منك الجد.",
+        "transliteration": "Allahumma la mani'a lima a'tayt, wa la mu'tiya lima mana't, wa la yanfa'u dhal-jaddi minkal-jadd.",
+        "translation": "O Allah, none can prevent what You give, none can give what You prevent, and the might of the mighty cannot benefit them against You.",
+        "repeat": 1
+      },
+      {
+        "time": "qunoot",
+        "arabic": "اللهم إنك عفو تحب العفو فاعفُ عني.",
+        "transliteration": "Allahumma innaka 'afuwwun tuhibbul-'afwa fa'fu 'anni.",
+        "translation": "O Allah, You are Most Forgiving, and You love forgiveness, so forgive me.",
+        "repeat": 1
+      },
+      {
+        "time": "tahajjud",
+        "arabic": "اللهم لك الحمد، أنت نور السماوات والأرض ومن فيهن.",
+        "transliteration": "Allahumma lakal-hamdu, anta nurus-samawati wal-ardi wa man fihin.",
+        "translation": "O Allah, to You belongs all praise. You are the Light of the heavens and the earth and all that is in them.",
+        "repeat": 1
+      },
+      {
+        "time": "tahajjud",
+        "arabic": "اللهم اجعلني من المخبتين لك، اللهم اجعلني من المتوكلين عليك.",
+        "transliteration": "Allahumma ij'alni minal-mukhbitina lak, Allahumma ij'alni minal-mutawakkilina 'alayk.",
+        "translation": "O Allah, make me among those who are humble before You, O Allah, make me among those who rely on You.",
+        "repeat": 1
+      },
+      {
+        "time": "tahajjud",
+        "arabic": "اللهم ارزقني قيام الليل بخشوع ورضا.",
+        "transliteration": "Allahumma arzuqni qiyamal-layli bi khushu'in wa rida.",
+        "translation": "O Allah, grant me standing in prayer at night with humility and contentment.",
+        "repeat": 1
+      },
+      {
+        "time": "tahajjud",
+        "arabic": "اللهم اجعل في قلبي نورًا وفي سمعي نورًا وفي بصري نورًا.",
+        "transliteration": "Allahumma ij'al fi qalbi nura wa fi sam'i nura wa fi basari nura.",
+        "translation": "O Allah, place light in my heart, light in my hearing, and light in my sight.",
+        "repeat": 1
+      },
+      {
+        "time": "tahajjud",
+        "arabic": "اللهم اجعلني من الذين يبيتون لربهم سُجدًا وقيامًا.",
+        "transliteration": "Allahumma ij'alni min alladhina yabituna lirabbihim sujjadan wa qiyaman.",
+        "translation": "O Allah, make me among those who spend the night prostrating and standing before their Lord.",
+        "repeat": 1
+      },
+      {
+        "time": "istikhara",
+        "arabic": "اللهم إني أستخيرك بعلمك، وأستقدرك بقدرتك، وأسالك من فضلك العظيم...",
+        "transliteration": "Allahumma inni astakhiruka bi'ilmik, wa astaqdiruka bi qudratik, wa as'aluka min fadlikal-'adheem...",
+        "translation": "O Allah, I seek Your guidance by virtue of Your knowledge, and I seek ability by virtue of Your power, and I ask You of Your great bounty...",
+        "repeat": 1
+      },
+      {
+        "time": "istikhara",
+        "arabic": "اللهم إن كنت تعلم أن هذا الأمر خير لي في ديني ومعاشي وعاقبة أمري...",
+        "transliteration": "Allahumma in kunta ta'lamu anna hadhal-amra khayrun li fi deeni wa ma'ashi wa 'aqibati amri...",
+        "translation": "O Allah, if You know that this matter is good for me in my religion, my livelihood, and the outcome of my affairs...",
+        "repeat": 1
+      },
+      {
+        "time": "istikhara",
+        "arabic": "اللهم إن كنت تعلم أن هذا الأمر شر لي فاصرفه عني واصرفني عنه...",
+        "transliteration": "Allahumma in kunta ta'lamu anna hadhal-amra sharrun li fasrifhu 'anni wasrifni 'anhu...",
+        "translation": "O Allah, if You know that this matter is bad for me, then turn it away from me and turn me away from it...",
+        "repeat": 1
+      },
+      {
+        "time": "istikhara",
+        "arabic": "اللهم اقدر لي الخير حيث كان ثم رضني به.",
+        "transliteration": "Allahumma uqdur li al-khayra haythu kana thumma raddini bih.",
+        "translation": "O Allah, decree for me what is good wherever it may be and make me pleased with it.",
+        "repeat": 1
+      },
+      {
+        "time": "istikhara",
+        "arabic": "اللهم اجعل لي فيه الخير والبركة واليسر.",
+        "transliteration": "Allahumma ij'al li fih al-khayra wal-barakata wal-yusra.",
+        "translation": "O Allah, make for me in it goodness, blessing, and ease.",
+        "repeat": 1
+      },
+      {
+        "time": "ramadan",
+        "arabic": "اللهم بلغنا رمضان لا فاقدين ولا مفقودين.",
+        "transliteration": "Allahumma ballighna ramadana la faqidin wa la mafqudin.",
+        "translation": "O Allah, let us reach Ramadan without being deficient or lost.",
+        "repeat": 1
+      },
+      {
+        "time": "ramadan",
+        "arabic": "اللهم أعنا على صيامه وقيامه على الوجه الذي يرضيك عنا.",
+        "transliteration": "Allahumma a'inna 'ala siyamihi wa qiyamihi 'alal-wajhil-ladhi yardahu 'anna.",
+        "translation": "O Allah, help us to fast and stand in prayer in a way that pleases You.",
+        "repeat": 1
+      },
+      {
+        "time": "ramadan",
+        "arabic": "اللهم اجعلنا فيه من عتقائك من النار.",
+        "transliteration": "Allahumma ij'alna fih min 'utaqa'ik minan-nar.",
+        "translation": "O Allah, make us among those whom You free from the Fire.",
+        "repeat": 1
+      },
+      {
+        "time": "ramadan",
+        "arabic": "اللهم تقبل صيامنا وقيامنا وصالح أعمالنا.",
+        "transliteration": "Allahumma taqabbal siyamana wa qiyamana wa saliha a'malina.",
+        "translation": "O Allah, accept our fasting, our standing in prayer, and our righteous deeds.",
+        "repeat": 1
+      },
+      {
+        "time": "ramadan",
+        "arabic": "اللهم اجعل رمضان فاتحة خير لنا في الدنيا والآخرة.",
+        "transliteration": "Allahumma ij'al ramadana fatihata khayrin lana fid-dunya wal-akhirah.",
+        "translation": "O Allah, make Ramadan an opening of good for us in this world and the Hereafter.",
+        "repeat": 1
+      },
+      {
+        "time": "hajj",
+        "arabic": "اللهم اجعل حجي مبرورًا وذنبي مغفورًا وسعيي مشكورًا.",
+        "transliteration": "Allahumma ij'al hajji mabruran wa dhanbi maghfuran wa sa'yi mashkuran.",
+        "translation": "O Allah, make my Hajj accepted, my sins forgiven, and my efforts rewarded.",
+        "repeat": 1
+      },
+      {
+        "time": "hajj",
+        "arabic": "اللهم تقبل منا الحج والعمرة واجعله خالصًا لوجهك.",
+        "transliteration": "Allahumma taqabbal minna al-hajja wal-'umrata waj'alhu khalisan li wajhik.",
+        "translation": "O Allah, accept from us our Hajj and Umrah and make them purely for Your sake.",
+        "repeat": 1
+      },
+      {
+        "time": "hajj",
+        "arabic": "اللهم ارزقني زيارة بيتك الحرام في عافية وأمان.",
+        "transliteration": "Allahumma arzuqni ziyarata baytik al-haram fi 'afiyatin wa aman.",
+        "translation": "O Allah, grant me the visit to Your Sacred House in well-being and security.",
+        "repeat": 1
+      },
+      {
+        "time": "hajj",
+        "arabic": "اللهم اجعلني من ضيوفك المقبولين.",
+        "transliteration": "Allahumma ij'alni min duyufikal-maqbulin.",
+        "translation": "O Allah, make me among Your accepted guests.",
+        "repeat": 1
+      },
+      {
+        "time": "hajj",
+        "arabic": "اللهم اغسلني من الذنوب والخطايا كما يُغسل الثوب الأبيض من الدنس.",
+        "transliteration": "Allahumma ighsilni minadh-dhunubi wal-khataaya kama yughsalu ath-thawbul-abyadhu minad-danas.",
+        "translation": "O Allah, wash me of my sins and mistakes as a white garment is washed of filth.",
+        "repeat": 1
+      },
+      {
+        "time": "laylat_al_qadr",
+        "arabic": "اللهم إنك عفو تحب العفو فاعفُ عني.",
+        "transliteration": "Allahumma innaka 'afuwwun tuhibbul-'afwa fa'fu 'anni.",
+        "translation": "O Allah, You are Most Forgiving, and You love forgiveness, so forgive me.",
+        "repeat": 1
+      },
+      {
+        "time": "laylat_al_qadr",
+        "arabic": "اللهم بلغنا ليلة القدر وأعنا على قيامها.",
+        "transliteration": "Allahumma ballighna laylatal-qadri wa a'inna 'ala qiyamiha.",
+        "translation": "O Allah, let us reach the Night of Decree and help us to stand in prayer during it.",
+        "repeat": 1
+      },
+      {
+        "time": "laylat_al_qadr",
+        "arabic": "اللهم اجعلنا فيها من المقبولين المرحومين.",
+        "transliteration": "Allahumma ij'alna fiha minal-maqbulin al-marhumeen.",
+        "translation": "O Allah, make us among those who are accepted and shown mercy in it.",
+        "repeat": 1
+      },
+      {
+        "time": "laylat_al_qadr",
+        "arabic": "اللهم افتح لنا فيها أبواب رحمتك ورضوانك.",
+        "transliteration": "Allahumma iftah lana fiha abwaba rahmatik wa ridwanik.",
+        "translation": "O Allah, open for us in it the gates of Your mercy and pleasure.",
+        "repeat": 1
+      },
+      {
+        "time": "laylat_al_qadr",
+        "arabic": "اللهم اجعلنا من عتقائك في هذه الليلة المباركة.",
+        "transliteration": "Allahumma ij'alna min 'utaqa'ik fi hadhihil-laylatil-mubarakah.",
+        "translation": "O Allah, make us among those whom You free in this blessed night.",
+        "repeat": 1
+      },
+      {
+        "time": "eid",
+        "arabic": "تقبل الله منا ومنكم صالح الأعمال.",
+        "transliteration": "Taqabbal Allahu minna wa minkum salihal a'mal.",
+        "translation": "May Allah accept from us and you the righteous deeds.",
+        "repeat": 1
+      },
+      {
+        "time": "eid",
+        "arabic": "اللهم اجعل عيدنا فرحًا بطاعتك ورضاك.",
+        "transliteration": "Allahumma ij'al 'idana farhan bi ta'atika wa ridak.",
+        "translation": "O Allah, make our Eid a joy through obedience to You and Your pleasure.",
+        "repeat": 1
+      },
+      {
+        "time": "eid",
+        "arabic": "اللهم اجعلنا من العائدين الفائزين.",
+        "transliteration": "Allahumma ij'alna minal 'aidin wal fa'izin.",
+        "translation": "O Allah, make us among those who return (to You) as successful ones.",
+        "repeat": 1
+      },
+      {
+        "time": "eid",
+        "arabic": "اللهم أدم علينا الفرح والسرور ونعمة الإسلام.",
+        "transliteration": "Allahumma adim 'alayna al-farha was-suroor wa ni'matal Islam.",
+        "translation": "O Allah, perpetuate for us joy, happiness, and the blessing of Islam.",
+        "repeat": 1
+      },
+      {
+        "time": "eid",
+        "arabic": "اللهم اجعل هذا العيد عيد خير وبركة وسلام على أمتنا.",
+        "transliteration": "Allahumma ij'al hadhal 'id 'idan khayrin wa barakatin wa salamin 'ala ummatina.",
+        "translation": "O Allah, make this Eid an Eid of goodness, blessings, and peace for our nation.",
+        "repeat": 1
+      },
+      {
+        "time": "natural_events",
+        "arabic": "سبحان الذي يسبح الرعد بحمده والملائكة من خيفته.",
+        "transliteration": "Subhanalladhi yusabbihur ra'du bihamdihi wal mala'ikatu min khifatihi.",
+        "translation": "Glory be to Him Whom the thunder glorifies with His praise, and the angels out of fear of Him.",
+        "repeat": 1
+      },
+      {
+        "time": "natural_events",
+        "arabic": "اللهم لا تقتلنا بغضبك، ولا تهلكنا بعذابك، وعافنا قبل ذلك.",
+        "transliteration": "Allahumma la taqtulna bi ghadabika, wa la tuhlikna bi 'adhabika, wa 'afina qabla dhalik.",
+        "translation": "O Allah, do not kill us with Your wrath, do not destroy us with Your punishment, and grant us well-being before that.",
+        "repeat": 1
+      },
+      {
+        "time": "natural_events",
+        "arabic": "اللهم حوالينا ولا علينا، اللهم على الآكام والظراب وبطون الأودية ومنابت الشجر.",
+        "transliteration": "Allahumma hawalayna wa la 'alayna, Allahumma 'alal akam wadh-dhirab wa butunil awdiyah wa manabitish shajar.",
+        "translation": "O Allah, (send rain) around us and not upon us. O Allah, (send rain) upon the hills, small mountains, valley bottoms, and places where trees grow.",
+        "repeat": 1
+      },
+      {
+        "time": "natural_events",
+        "arabic": "اللهم اجعلها أمطار خير وبركة، لا هدم فيها ولا غرق.",
+        "transliteration": "Allahumma ij'alha amtaran khayrin wa barakatin, la hadma fiha wa la gharq.",
+        "translation": "O Allah, make it rains of goodness and blessing, with no destruction or flooding.",
+        "repeat": 1
+      },
+      {
+        "time": "natural_events",
+        "arabic": "اللهم إنا نعوذ بك من الزلازل والمحن، ومن الفتن ما ظهر منها وما بطن.",
+        "transliteration": "Allahumma inna na'udhu bika minaz zalazil wal mihan, wa minat fitani ma zahara minha wa ma batan.",
+        "translation": "O Allah, we seek refuge in You from earthquakes, calamities, and from trials both apparent and hidden.",
         "repeat": 1
       }
   ]

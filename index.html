@@ -37,14 +37,65 @@
 
     <style>
         .buttonActive {
-    color: #f39c12; /* Example color (golden/yellow) */
-    transform: scale(1.2); /* Slightly enlarge the element */
-    transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
-}
+            color: #f39c12; /* Example color (golden/yellow) */
+            transform: scale(1.2); /* Slightly enlarge the element */
+            transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
+        }
         /* Dark mode transitions */
         * {
             transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
+
+        /* --- CONSOLIDATED ANIMATIONS START --- */
+        @keyframes fadeInSimple {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes quranHookFadeInFromTop {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-10px); /* Include translateX for centering */
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0); /* Include translateX for centering */
+    }
+}
+
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes fadeInFromBottom { /* For toast notifications */
+            from { opacity: 0; transform: translate(-50%, -20px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+
+        @keyframes fadeOutToBottom { /* For toast notifications */
+            from { opacity: 1; transform: translate(-50%, 0); }
+            to { opacity: 0; transform: translate(-50%, -20px); }
+        }
+
+        @keyframes fadeInFromTop { /* For general UI elements */
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Animation Utility Classes */
+        .animate-toast-in {
+            animation: fadeInFromBottom 0.3s ease-out forwards;
+        }
+
+        .animate-toast-out {
+            animation: fadeOutToBottom 0.3s ease-out forwards;
+        }
+
+        .animate-general-fade-in {
+            animation: fadeInFromTop 0.5s ease-out forwards;
+        }
+        /* --- CONSOLIDATED ANIMATIONS END --- */
 
         /* Dark mode specific styles */
         .dark .toast {
@@ -101,7 +152,7 @@
         }
 
         /* Dark mode for hover states */
-        .dark .hover\:bg-gray-100:hover {
+        .dark .hover\\:bg-gray-100:hover {
             background-color: #374151;
         }
 
@@ -110,337 +161,111 @@
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
         }
 
-        /* Fallback Compass Styles */
-#compass {
-    position: relative;
-    width: 16rem;
-    height: 16rem;
-    animation: fadeIn 0.5s ease-in;
-}
+        /* --- COMPONENT STYLES --- */
+        
+        /* Qibla / AR Styles */
+        #compass {
+            position: relative;
+            width: 16rem;
+            height: 16rem;
+            animation: fadeInSimple 0.5s ease-in; /* USE CONSOLIDATED */
+        }
 
-#qiblaNeedle {
-    transition: transform 0.2s ease-out;
-    transform-origin: bottom center;
-}
+        #qiblaNeedle {
+            transition: transform 0.2s ease-out;
+            transform-origin: bottom center;
+        }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
+        #kaabaIndicator {
+            position: absolute;
+            width: 48px;
+            height: 48px;
+            top: 0;
+            left: 0;
+            will-change: transform, opacity;
+            z-index: 100;
+            pointer-events: none;
+            filter: drop-shadow(0 0 12px rgba(255, 200, 50, 0.7));
+            transition: transform 0.2s ease-out, opacity 0.3s ease; /* Used 0.3s from a later definition */
+        }
 
-/* Improve AR Indicator */
-#kaabaIndicator {
-    transition: transform 0.2s ease-out, opacity 0.5s;
-}
+        #arUnsupported {
+            animation: slideIn 0.3s ease-out; /* USE CONSOLIDATED */
+        }
 
-/* Calibration Prompt */
-#arUnsupported {
-    animation: slideIn 0.3s ease-out;
-}
+        #arCamera {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
 
-@keyframes slideIn {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
+        #arCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+        }
 
-/* AR View Styles */
-#arCamera {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transform: scaleX(-1); /* Mirror camera feed for back camera */
-}
+        #qiblaDegree {
+            backdrop-filter: blur(10px);
+            font-family: monospace;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
 
-#arCanvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 10;
-}
+        #flipCameraBtn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+            transition: all 0.2s ease;
+        }
 
-#kaabaIndicator {
-    position: absolute;
-    width: 48px;
-    height: 48px;
-    top: 0;
-    left: 0;
-    will-change: transform, opacity;
-    z-index: 100;
-    pointer-events: none;
-    filter: drop-shadow(0 0 12px rgba(255, 200, 50, 0.7));
-    transition: transform 0.2s ease-out, opacity 0.3s ease;
-}
-
-#qiblaDegree {
-    backdrop-filter: blur(10px);
-    font-family: monospace;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
-
-/* Fix for iOS Safari */
-@supports (-webkit-touch-callout: none) {
-    #kaabaIndicator {
-        transform: translateZ(0); /* Force hardware acceleration */
-    }
-}
-
-/* Fallback Compass Styles */
-#compass {
-    position: relative;
-    width: 16rem;
-    height: 16rem;
-    animation: fadeIn 0.5s ease-in;
-}
-
-#qiblaNeedle {
-    transition: transform 0.2s ease-out;
-    transform-origin: bottom center;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* Calibration Prompt */
-#arUnsupported {
-    animation: slideIn 0.3s ease-out;
-}
-
-@keyframes slideIn {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-/* Flip camera button hover effect */
-#flipCameraBtn:hover {
-    background-color: rgba(255, 255, 255, 0.3);
-    transform: scale(1.1);
-    transition: all 0.2s ease;
-}
-
-/* Fade-in and fade-out transitions */
-.fade-enter {
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.4s ease;
-}
-.fade-enter-active {
-    opacity: 1;
-    transform: translateY(0);
-}
-.fade-leave {
-    opacity: 1;
-    transform: translateY(0);
-    transition: all 0.4s ease;
-}
-.fade-leave-active {
-    opacity: 0;
-    transform: translateY(10px);
-}
-
-/* Prevent text selection during swipe */
-.no-select {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-/* Add a click effect with a scale and fade-out effect */
-.clicked {
-    transform: scale(1.03); /* Smaller scale effect */
-    opacity: 0.95; /* Less opacity change */
-    transition: transform 0.15s ease-out, opacity 0.15s ease-out; /* Faster and smoother transition */
-}
-
-/* Tab styling */
-.tab {
-    padding: 10px 20px;
-    cursor: pointer;
-    border-bottom: 3px solid transparent;
-    transition: all 0.3s ease;
-}
-.tab.active {
-    border-bottom-color: #3B82F6;
-    font-weight: bold;
-}
-.tab-content {
-    display: none;
-}
-.tab-content.active {
-    display: block;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translate(-50%, -20px); }
-    to { opacity: 1; transform: translate(-50%, 0); }
-}
-
-@keyframes fadeOut {
-    from { opacity: 1; transform: translate(-50%, 0); }
-    to { opacity: 0; transform: translate(-50%, -20px); }
-}
-
-.animate-fade-in {
-    animation: fadeIn 0.3s ease-out forwards;
-}
-
-.animate-fade-out {
-    animation: fadeOut 0.3s ease-out forwards;
-}
-
-        /* Mobile Layout Fixes */
-        @media (max-width: 768px) {
-            /* Fix header and navigation */
-            header {
-                padding: 1rem;
-                font-size: 1.5rem;
-            }
-
-            /* Fix tab navigation */
-            .tab {
-                padding: 0.5rem;
-                font-size: 0.9rem;
-                white-space: nowrap;
-            }
-
-            /* Fix Quran content layout */
-            #quranContent .flex.justify-between {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            #quranContent .flex.gap-2 {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            /* Fix select dropdowns for iOS */
-            select {
-                -webkit-appearance: none;
-                -moz-appearance: none;
-                appearance: none;
-                background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-                background-repeat: no-repeat;
-                background-position: right 0.5rem center;
-                background-size: 1.5em 1.5em;
-                padding-right: 2.5rem;
-            }
-
-            /* Fix buttons layout */
-            .flex.justify-between.mt-6 {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .flex.justify-between.mt-6 > * {
-                width: 100%;
-            }
-
-            /* Fix navigation buttons */
-            #btnPrevAyah, #btnNextAyah {
-                width: 100%;
-                margin: 0.5rem 0;
-            }
-
-            /* Fix reading mode buttons */
-            .flex.gap-2 {
-                justify-content: center;
-                width: 100%;
-            }
-
-            /* Fix translation toggle */
-            #toggleTranslation, #toggleBookmark {
-                padding: 0.5rem;
-            }
-
-            /* Fix surah select container */
-            #surahSelect, #translationSelect {
-                width: 100%;
-                margin-bottom: 0.5rem;
+        @supports (-webkit-touch-callout: none) { /* iOS Specific AR fix */
+            #kaabaIndicator {
+                transform: translateZ(0);
             }
         }
 
-        /* iOS-specific fixes */
-        @supports (-webkit-touch-callout: none) {
-            select {
-                -webkit-appearance: none;
-                appearance: none;
-                background-color: #fff;
-                border-radius: 0.5rem;
-                padding: 0.5rem 2.5rem 0.5rem 0.5rem;
-                font-size: 1rem;
-                width: 100%;
-                border: 1px solid #e5e7eb;
-                background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-                background-repeat: no-repeat;
-                background-position: right 0.5rem center;
-                background-size: 1.5em 1.5em;
-            }
-
-            select:focus {
-                outline: none;
-                border-color: #3B82F6;
-                box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-            }
-
-            select option {
-                padding: 0.5rem;
-                font-size: 1rem;
-                background-color: #fff;
-            }
-
-            /* Fix for iOS select dropdown */
-            select::-ms-expand {
-                display: none;
-            }
-
-            /* Ensure the select is clickable */
-            select:active,
-            select:focus {
-                -webkit-tap-highlight-color: transparent;
-            }
-
-            /* Fix for iOS select text alignment */
-            select option {
-                text-align: right;
-                direction: rtl;
-            }
+        /* General UI Element Styles */
+        .no-select {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
-        /* Android-specific fixes */
-        @supports not (-webkit-touch-callout: none) {
-            select {
-                background-color: #fff;
-                border-radius: 0.5rem;
-                padding: 0.5rem;
-                font-size: 1rem;
-            }
+        .clicked {
+            transform: scale(1.03);
+            opacity: 0.95;
+            transition: transform 0.15s ease-out, opacity 0.15s ease-out;
+        }
+
+        /* Tab Navigation */
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .tab.active {
+            border-bottom-color: #3B82F6;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
         }
         
-      
-        
-      
-        
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .animate-fade-in {
-            animation: fadeIn 0.5s ease-out forwards;
-        }
-
+        /* Toast Notifications */
         .toast {
             position: fixed;
             bottom: 20px;
@@ -455,7 +280,7 @@
             gap: 8px;
             z-index: 1000;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.3s ease; /* This handles the show/hide opacity */
             backdrop-filter: blur(8px);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
@@ -468,47 +293,272 @@
             font-size: 1.2em;
         }
 
-        .toast.success {
-            background: rgba(34, 197, 94, 0.9);
+        /* Mobile Layout Fixes */
+        @media (max-width: 768px) {
+            /* Fix header and navigation */
+            header {
+                padding: 1rem;
+                font-size: 1.5rem;
+            }
+
+            /* Fix tab navigation */
+            .tab { /* This was duplicated, keeping one */
+                padding: 0.5rem;
+                font-size: 0.9rem;
+                white-space: nowrap;
+            }
+
+            /* Fix Quran content layout */
+            /* Selectors like #quranContent .flex.justify-between might need review if #quranContent is used multiple times in HTML */
+            /* Assuming #quranContent refers to the main Quran tab content area */
+            div#quranContent.tab-content .flex.justify-between { /* Made selector more specific */
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            div#quranContent.tab-content .flex.gap-2 { /* Made selector more specific */
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            /* Fix select dropdowns for iOS */
+            select { /* General select styling, might be overridden by more specific rules below */
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+                background-repeat: no-repeat;
+                background-position: right 0.5rem center;
+                background-size: 1.5em 1.5em;
+                padding-right: 2.5rem; /* Ensure this is not overridden by iOS specific below if not intended */
+            }
+
+            /* Fix buttons layout */
+            /* This selector seems quite generic, ensure it targets the correct element */
+            /* For instance, if it's for Quran nav buttons: */
+            div#quranContent.tab-content .flex.justify-between.mt-6 { 
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            div#quranContent.tab-content .flex.justify-between.mt-6 > * {
+                width: 100%;
+            }
+
+            /* Fix navigation buttons */
+            #btnPrevAyah, #btnNextAyah {
+                width: 100%;
+                margin: 0.5rem 0;
+            }
+
+            /* Fix reading mode buttons */
+            /* This selector is also generic, assumed to be within Quran controls */
+            .quran-controls-sticky .flex.gap-2 {
+                justify-content: center;
+                width: 100%;
+            }
+
+            /* Fix translation toggle */
+            #toggleTranslation, #toggleBookmark { /* This might be #toggleTafsir as well? */
+                padding: 0.5rem;
+            }
+
+            /* Fix surah select container */
+            #surahSelect, #translationSelect {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
         }
 
-        .toast.info {
-            background: rgba(59, 130, 246, 0.9);
+        /* iOS-specific fixes */
+        @supports (-webkit-touch-callout: none) {
+            select { /* This will override the general select styling on iOS */
+                -webkit-appearance: none;
+                appearance: none;
+                background-color: #fff; /* Specific for iOS light mode */
+                border-radius: 0.5rem;
+                padding: 0.5rem 2.5rem 0.5rem 0.5rem; /* iOS specific padding */
+                font-size: 1rem;
+                width: 100%;
+                border: 1px solid #e5e7eb;
+                background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+                background-repeat: no-repeat;
+                background-position: right 0.5rem center; /* RTL might need left */
+                background-size: 1.5em 1.5em;
+            }
+
+            select:focus {
+                outline: none;
+                border-color: #3B82F6;
+                box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+            }
+
+            select option { /* iOS option styling */
+                padding: 0.5rem;
+                font-size: 1rem;
+                background-color: #fff; /* Specific for iOS light mode */
+            }
+
+            /* Fix for iOS select dropdown */
+            select::-ms-expand {
+                display: none;
+            }
+
+            /* Ensure the select is clickable */
+            select:active,
+            select:focus {
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            /* Fix for iOS select text alignment */
+            select option { /* This is duplicated, ensure it's intended */
+                text-align: right;
+                direction: rtl;
+            }
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translate(-50%, -20px); }
-            to { opacity: 1; transform: translate(-50%, 0); }
+        /* Android-specific fixes */
+        /* Styles for 'select' on Android if needed, currently basic */
+        @supports not (-webkit-touch-callout: none) { /* This targets non-iOS, effectively Android for this context */
+            select {
+                background-color: #fff; /* Default light mode for Android */
+                border-radius: 0.5rem;
+                padding: 0.5rem;
+                font-size: 1rem;
+            }
         }
-
-        @keyframes fadeOut {
-            from { opacity: 1; transform: translate(-50%, 0); }
-            to { opacity: 0; transform: translate(-50%, -20px); }
-        }
-
-        .animate-fade-in {
-            animation: fadeIn 0.3s ease-out forwards;
-        }
-
-        .animate-fade-out {
-            animation: fadeOut 0.3s ease-out forwards;
-        }
-
-    
-    </style>
-    <style>
+        
+        /* Quran Sticky Controls */
         .quran-controls-sticky {
             position: sticky;
             top: 0.5rem;
             z-index: 10;
-            background: #fff;
+            background: #fff; /* Default light mode */
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
             border-radius: 1rem;
             padding-top: 0.5rem;
             padding-bottom: 0.5rem;
+            transition: transform 0.3s cubic-bezier(.4,2,.6,1), opacity 0.3s;
         }
         .dark .quran-controls-sticky {
-            background: #1f2937;
+            background: #1f2937; /* Dark mode */
+        }
+        .quran-controls-hidden {
+          transform: translateY(-120%);
+          opacity: 0;
+          pointer-events: none;
+        }
+   
+        #quranHook {
+          transition: background 0.2s, color 0.2s, box-shadow 0.2s, opacity 0.2s, visibility 0.2s;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+          font-size: 1.2rem;
+          align-items: center;
+          justify-content: center;
+          min-width: 48px;
+          min-height: 24px;
+          width: 56px;
+          cursor: pointer;
+          opacity: 0;
+          pointer-events: none;
+          visibility: hidden;
+          will-change: transform;
+        }
+      #quranHook.quran-hook-visible {
+    opacity: 1 !important; /* Keep for now */
+    pointer-events: auto !important;
+    visibility: visible !important;
+    animation: quranHookFadeInFromTop 0.3s forwards backwards; /* Added backwards */
+}
+        #quranHook:hover {
+          background: #2563eb;
+          color: #fff;
+        }
+
+        /* Prayer Time Highlighting */
+        .next-prayer-highlight { /* Base for light mode */
+            background-color: #e0f2fe !important; 
+            border-left: 4px solid #0ea5e9 !important; /* Added !important for consistency */
+            font-weight: 600 !important; /* Added !important for consistency */
+            color: #0ea5e9 !important; /* Ensuring text color contrasts, added !important */
+        }
+
+        .dark .next-prayer-highlight { /* For dark mode */
+            background-color: #80c8f7  !important; 
+            border-left-color: #0ea5e9 !important; /* Added !important */
+            color: #f0f9ff !important; 
+        }
+
+        
+
+        /* Reset ALL pseudo-elements from any previous attempts on ANY li inside #prayerContent */
+        #prayerContent ul li::before,
+        #prayerContent ul li::after {
+            content: none !important;
+            display: none !important; 
+        }
+
+        /* Final Highlight Style for Prayer Item LI */
+        #prayerContent ul li.next-prayer-highlight {
+            background: #134E4A  !important; /* Light blue highlight for light mode, was #38bdf8 which is dark's */
+            /* For light mode, let's use the intended light blue from .next-prayer-highlight */
+            /* background-color: #e0f2fe !important; /* Overriding with light mode color */
+            /* The above line will be overridden by the 'background' shorthand. Need to be careful. */
+            /* Let's ensure the light mode color is correctly applied if not in dark mode. */
+            /* This will be handled by the .next-prayer-highlight rule */
+
+            color: #5EEAD4 !important; /* Default text color for highlighted, might need dark mode adjustment if bg is too light */
+            border: none !important;             
+            box-shadow: none !important;          
+        }
+        
+        /* Correction for light mode highlight if the above uses dark blue always */
+        html:not(.dark) #prayerContent ul li.next-prayer-highlight {
+             background: #e0f2fe !important; /* Explicit light blue for light mode */
+             color: #0ea5e9 !important; /* Text color for light mode highlight */
+        }
+
+
+        /* Child spans within highlighted prayer item */
+        #prayerContent ul li.next-prayer-highlight span {
+            background: transparent !important;
+             /* Text color will inherit from parent LI or can be set specifically */
+             /* color: white !important; /* If parent LI has light bg, white text might not be good */
+        }
+        html:not(.dark) #prayerContent ul li.next-prayer-highlight span {
+            color: #0ea5e9 !important; /* Match text color for light mode highlight */
+        }
+         .dark #prayerContent ul li.next-prayer-highlight span {
+            color: #f0f9ff !important; /* Match text color for dark mode highlight */
+        }
+
+
+        /* Ensure pseudo-elements are GONE on highlighted item */
+        #prayerContent ul li.next-prayer-highlight::before,
+        #prayerContent ul li.next-prayer-highlight::after {
+            display: none !important;
+            content: "" !important;
+            background: transparent !important;
+        }
+
+        /* General Fade transitions (often used with JS toggles) */
+        .fade-enter {
+            opacity: 0;
+            transform: translateY(10px); /* This is different from fadeInFromTop */
+            transition: all 0.4s ease;
+        }
+        .fade-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .fade-leave {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.4s ease;
+        }
+        .fade-leave-active {
+            opacity: 0;
+            transform: translateY(10px);
         }
     </style>
 </head>
@@ -621,9 +671,12 @@
         <!-- Quran Tab Content -->
         <div id="quranContent" class="tab-content w-full max-w-4xl p-4 hidden">
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                <div id="quranHook" class="fixed top-0 left-1/2 transform -translate-x-1/2 z-50 bg-blue-500 text-white rounded-b-full px-4 py-1 shadow-lg cursor-pointer flex items-center justify-center" style="min-width:48px;min-height:24px;" title="Show Quran Controls">
+                  <i class="fas fa-chevron-down"></i>
+                </div>
                 <div class="quran-controls-sticky flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                     <h2 class="text-xl font-bold" id="quranTitle">القرآن الكريم</h2>
-                    <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
+                    <div class="flex flex-col md:flex-row md:justify-center flex-wrap gap-2 w-full md:w-auto">
                         <div class="select-container">
                             <select id="surahSelect" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 w-full md:w-auto" title="Select Surah - اختر السورة">
                                 <option value="">اختر السورة</option>
@@ -634,6 +687,12 @@
                                 <option value="en.sahih">English (Sahih International)</option>
                                 <option value="en.pickthall">English (Pickthall)</option>
                                 <option value="en.yusufali">English (Yusuf Ali)</option>
+                            </select>
+                        </div>
+                        <div class="select-container">
+                            <select id="tafsirLangSelect" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 w-full md:w-auto" title="Select Tafsir Language">
+                                <option value="ar">Arabic Tafsir</option>
+                                <option value="en">English Tafsir</option>
                             </select>
                         </div>
                         
@@ -722,9 +781,122 @@
         </div>
         <div id="adhkarContent" class="tab-content active w-full">
             <!-- Main Buttons for Morning/Evening Adhkar -->
-            <div id="home" class="space-y-4 text-center">
-                <button onclick="loadAdhkar('sabah')" id="btnMorning" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-full shadow transition-transform hover:scale-105" title="Morning Adhkar - أذكار الصباح">أذكار الصباح</button>
-                <button onclick="loadAdhkar('masaa')" id="btnEvening" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-full shadow transition-transform hover:scale-105" title="Evening Adhkar - أذكار المساء">أذكار المساء</button>
+            <div id="home" class="w-full flex flex-col items-center justify-center mt-8">
+              <div class="flex flex-row gap-4 justify-center mb-8">
+                <button onclick="loadAdhkar('sabah')" id="btnMorning" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-full shadow flex items-center justify-center gap-2" title="Morning Adhkar - أذكار الصباح">
+                  <i class="fas fa-sun"></i> <span id="labelMorning"></span>
+                </button>
+                <button onclick="loadAdhkar('masaa')" id="btnEvening" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-full shadow flex items-center justify-center gap-2" title="Evening Adhkar - أذكار المساء">
+                  <i class="fas fa-moon"></i> <span id="labelEvening"></span>
+                </button>
+                <button id="adhkarMenuBtn" class="bg-gradient-to-br from-teal-400 to-blue-500 text-white rounded-full shadow-xl p-4 hover:from-teal-500 hover:to-blue-600 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-900 focus:ring-blue-400 transition-all duration-200 ease-in-out text-2xl flex items-center justify-center" title="عرض أقسام الأذكار اليومية">
+                  <i class="fas fa-bars"></i>
+                </button>
+              </div>
+              <!-- Modal for Adhkar Sections -->
+              <div id="adhkarMenuModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 max-w-lg w-full relative animate-general-fade-in border border-gray-200 dark:border-gray-700" style="max-height:90vh; overflow-y:auto;">
+                  <button id="closeAdhkarMenu" class="absolute top-3 left-3 text-gray-400 hover:text-red-500 text-2xl focus:outline-none" title="إغلاق القائمة">
+                    <i class="fas fa-times"></i>
+                  </button>
+                  <!-- Daily Routine -->
+                  <div>
+                    <h3 class="text-lg font-bold mb-4 flex items-center justify-center gap-2">
+                      <i class="fas fa-calendar-day text-blue-400"></i>
+                      الأذكار اليومية
+                    </h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 justify-center">
+                      <button onclick="closeAdhkarMenuAndLoad('waking_sleeping')" id="btnWakingSleeping" class="bg-blue-100 hover:bg-blue-200 text-blue-900 py-2 px-4 rounded-full shadow-sm border border-blue-200 flex items-center justify-center gap-2 transition-all" title="Waking up & Sleeping Duas">
+                        <i class="fas fa-bed"></i> <span id="labelWakingSleeping"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('home')" id="btnHome" class="bg-purple-100 hover:bg-purple-200 text-purple-900 py-2 px-4 rounded-full shadow-sm border border-purple-200 flex items-center justify-center gap-2 transition-all" title="Entering & Leaving Home Duas">
+                        <i class="fas fa-home"></i> <span id="labelHome"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('bathroom')" id="btnBathroom" class="bg-pink-100 hover:bg-pink-200 text-pink-900 py-2 px-4 rounded-full shadow-sm border border-pink-200 flex items-center justify-center gap-2 transition-all" title="Entering & Exiting the Bathroom Duas">
+                        <i class="fas fa-toilet"></i> <span id="labelBathroom"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('eating')" id="btnEating" class="bg-green-100 hover:bg-green-200 text-green-900 py-2 px-4 rounded-full shadow-sm border border-green-200 flex items-center justify-center gap-2 transition-all" title="Before & After Eating Duas">
+                        <i class="fas fa-utensils"></i> <span id="labelEating"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('masjid')" id="btnMasjid" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-900 py-2 px-4 rounded-full shadow-sm border border-indigo-200 flex items-center justify-center gap-2 transition-all" title="Entering & Exiting the Masjid Duas">
+                        <i class="fas fa-mosque"></i> <span id="labelMasjid"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('traveling')" id="btnTraveling" class="bg-teal-100 hover:bg-teal-200 text-teal-900 py-2 px-4 rounded-full shadow-sm border border-teal-200 flex items-center justify-center gap-2 transition-all" title="Traveling Duas">
+                        <i class="fas fa-car"></i> <span id="labelTraveling"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('clothes')" id="btnClothes" class="bg-gray-100 hover:bg-gray-200 text-gray-900 py-2 px-4 rounded-full shadow-sm border border-gray-200 flex items-center justify-center gap-2 transition-all" title="Wearing Clothes Duas">
+                        <i class="fas fa-tshirt"></i> <span id="labelClothes"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('anxiety')" id="btnAnxiety" class="bg-blue-50 hover:bg-blue-100 text-blue-800 py-2 px-4 rounded-full shadow-sm border border-blue-100 flex items-center justify-center gap-2 transition-all" title="Duʿāʾs for Anxiety, Depression & Sadness">
+                        <i class="fas fa-heart-crack"></i> <span id="labelAnxiety"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('hardship')" id="btnHardship" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-800 py-2 px-4 rounded-full shadow-sm border border-indigo-100 flex items-center justify-center gap-2 transition-all" title="Duʿāʾs in Times of Hardship">
+                        <i class="fas fa-mountain"></i> <span id="labelHardship"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('istighfar')" id="btnIstighfar" class="bg-green-50 hover:bg-green-100 text-green-800 py-2 px-4 rounded-full shadow-sm border border-green-100 flex items-center justify-center gap-2 transition-all" title="Seeking Forgiveness (Istighfar)">
+                        <i class="fas fa-leaf"></i> <span id="labelIstighfar"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('patience_gratitude')" id="btnPatienceGratitude" class="bg-yellow-50 hover:bg-yellow-100 text-yellow-800 py-2 px-4 rounded-full shadow-sm border border-yellow-100 flex items-center justify-center gap-2 transition-all" title="Duʿāʾs for Patience & Gratitude">
+                        <i class="fas fa-hands-praying"></i> <span id="labelPatienceGratitude"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('rabbana')" id="btnRabbana" class="bg-purple-50 hover:bg-purple-100 text-purple-800 py-2 px-4 rounded-full shadow-sm border border-purple-100 flex items-center justify-center gap-2 transition-all" title="Rabbana Duʿāʾs (from the Qur'an)">
+                        <i class="fas fa-book-quran"></i> <span id="labelRabbana"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('prophetic')" id="btnProphetic" class="bg-pink-50 hover:bg-pink-100 text-pink-800 py-2 px-4 rounded-full shadow-sm border border-pink-100 flex items-center justify-center gap-2 transition-all" title="Prophetic Duʿāʾs from Hadith">
+                        <i class="fas fa-feather-alt"></i> <span id="labelProphetic"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('prophets')" id="btnProphets" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-800 py-2 px-4 rounded-full shadow-sm border border-indigo-100 flex items-center justify-center gap-2 transition-all" title="Duʿāʾs of the Prophets">
+                        <i class="fas fa-user-friends"></i> <span id="labelProphets"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('rain')" id="btnRain" class="bg-blue-50 hover:bg-blue-100 text-blue-800 py-2 px-4 rounded-full shadow-sm border border-blue-100 flex items-center justify-center gap-2 transition-all" title="Duʿāʾs for Rain / Drought">
+                        <i class="fas fa-cloud-rain"></i> <span id="labelRain"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('patient')" id="btnSick" class="bg-red-50 hover:bg-red-100 text-red-800 py-2 px-4 rounded-full shadow-sm border border-red-100 flex items-center justify-center gap-2 transition-all" title="Duʿāʾs for the Sick">
+                        <i class="fas fa-notes-medical"></i> <span id="labelPatient"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('deceased')" id="btnDeceased" class="bg-gray-50 hover:bg-gray-100 text-gray-800 py-2 px-4 rounded-full shadow-sm border border-gray-100 flex items-center justify-center gap-2 transition-all" title="Duʿāʾs for the Deceased">
+                        <i class="fas fa-dove"></i> <span id="labelDeceased"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('marriage_children_rizq')" id="btnMarriageChildrenRizq" class="bg-green-50 hover:bg-green-100 text-green-800 py-2 px-4 rounded-full shadow-sm border border-green-100 flex items-center justify-center gap-2 transition-all" title="Duʿāʾs for Marriage, Children, Rizq">
+                        <i class="fas fa-baby"></i> <span id="labelMarriageChildrenRizq"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('protection')" id="btnProtection" class="bg-yellow-50 hover:bg-yellow-100 text-yellow-800 py-2 px-4 rounded-full shadow-sm border border-yellow-100 flex items-center justify-center gap-2 transition-all" title="Duʿāʾs for Protection (Evil Eye, Jinn, Calamity)">
+                        <i class="fas fa-shield-alt"></i> <span id="labelProtection"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('salah')" id="btnSalah" class="bg-blue-50 hover:bg-blue-100 text-blue-800 py-2 px-4 rounded-full shadow-sm border border-blue-100 flex items-center justify-center gap-2 transition-all" title="Duʿāʾ before and after Salah">
+                        <i class="fas fa-pray"></i> <span id="labelSalah"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('sujood_tashahhud')" id="btnSujoodTashahhud" class="bg-orange-50 hover:bg-orange-100 text-orange-800 py-2 px-4 rounded-full shadow-sm border border-orange-100 flex items-center justify-center gap-2 transition-all" title="Duʿāʾs during Sujood & Tashahhud">
+                        <i class="fas fa-hands"></i> <span id="labelSujoodTashahhud"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('qunoot')" id="btnQunoot" class="bg-teal-50 hover:bg-teal-100 text-teal-800 py-2 px-4 rounded-full shadow-sm border border-teal-100 flex items-center justify-center gap-2 transition-all" title="Duʿās for Qunoot (Witr prayer)">
+                        <i class="fas fa-moon-stars"></i> <span id="labelQunoot"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('tahajjud')" id="btnTahajjud" class="bg-purple-50 hover:bg-purple-100 text-purple-800 py-2 px-4 rounded-full shadow-sm border border-purple-100 flex items-center justify-center gap-2 transition-all" title="Duʿāʾs for Tahajjud">
+                        <i class="fas fa-star-and-crescent"></i> <span id="labelTahajjud"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('istikhara')" id="btnIstikhara" class="bg-pink-50 hover:bg-pink-100 text-pink-800 py-2 px-4 rounded-full shadow-sm border border-pink-100 flex items-center justify-center gap-2 transition-all" title="Duʿāʾs for Istikhārah (Seeking Guidance)">
+                        <i class="fas fa-compass"></i> <span id="labelIstikhara"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('ramadan')" id="btnRamadan" class="bg-green-50 hover:bg-green-100 text-green-800 py-2 px-4 rounded-full shadow-sm border border-green-100 flex items-center justify-center gap-2 transition-all" title="Ramadan Duʿāʾs">
+                        <i class="fas fa-calendar-alt"></i> <span id="labelRamadan"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('hajj')" id="btnHajj" class="bg-yellow-50 hover:bg-yellow-100 text-yellow-800 py-2 px-4 rounded-full shadow-sm border border-yellow-100 flex items-center justify-center gap-2 transition-all" title="Dhul Hijjah & Hajj-related Duʿāʾs">
+                        <i class="fas fa-kaaba"></i> <span id="labelHajj"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('laylat_al_qadr')" id="btnLaylatAlQadr" class="bg-blue-50 hover:bg-blue-100 text-blue-800 py-2 px-4 rounded-full shadow-sm border border-blue-100 flex items-center justify-center gap-2 transition-all" title="Laylat al-Qadr Duʿāʾs">
+                        <i class="fas fa-lightbulb"></i> <span id="labelLaylatAlQadr"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('eid')" id="btnEid" class="bg-pink-50 hover:bg-pink-100 text-pink-800 py-2 px-4 rounded-full shadow-sm border border-pink-100 flex items-center justify-center gap-2 transition-all" title="Eid Duʿāʾs">
+                        <i class="fas fa-gift"></i> <span id="labelEid"></span>
+                      </button>
+                      <button onclick="closeAdhkarMenuAndLoad('natural_events')" id="btnNaturalEvents" class="bg-gray-50 hover:bg-gray-100 text-gray-800 py-2 px-4 rounded-full shadow-sm border border-gray-100 flex items-center justify-center gap-2 transition-all" title="Rain, Eclipse, Earthquake, etc.">
+                        <i class="fas fa-bolt"></i> <span id="labelNaturalEvents"></span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Adhkar View Section -->
@@ -742,7 +914,7 @@
                     <span id="repeatLabel">تكرار</span>: <span id="repeatValue"></span>
                 </span>
                 <p class="italic" id="transliterationText"></p>
-                <p class="text-sm" id="translationText"></p>
+                <p class="text-sm" id="translationTextDikr"></p>
 
                 <!-- Navigation Buttons -->
                 <div class="flex justify-between mt-4">
@@ -925,6 +1097,39 @@ let currentAudioAyah = null;
                   "en.pickthall": "الإنجليزية (بيكثال)",
                   "en.yusufali": "الإنجليزية (يوسف علي)"
               },
+              azkarTypes: {
+                sabah: "أذكار الصباح",
+                masaa: "أذكار المساء",
+                waking_sleeping: "أدعية الاستيقاظ والنوم",
+                home: "أدعية دخول وخروج المنزل",
+                bathroom: "أدعية دخول وخروج الحمام",
+                eating: "أدعية قبل وبعد الأكل",
+                masjid: "أدعية دخول وخروج المسجد",
+                traveling: "أدعية السفر",
+                clothes: "أدعية لبس الثياب",
+                anxiety: "أدعية القلق والحزن",
+                hardship: "أدعية الشدة",
+                istighfar: "أدعية الاستغفار",
+                patience_gratitude: "أدعية الصبر والشكر",
+                rabbana: "أدعية ربنا",
+                prophetic: "أدعية نبوية",
+                prophets: "أدعية الأنبياء",
+                rain: "أدعية المطر",
+                patient: "أدعية المريض",
+                deceased: "أدعية المتوفى",
+                marriage_children_rizq: "أدعية الزواج والرزق",
+                protection: "أدعية الحماية",
+                salah: "أدعية الصلاة",
+                sujood_tashahhud: "أدعية السجود والتشهد",
+                qunoot: "أدعية القنوت",
+                tahajjud: "أدعية التهجد",
+                istikhara: "دعاء الاستخارة",
+                ramadan: "أدعية رمضان",
+                hajj: "أدعية الحج",
+                laylat_al_qadr: "أدعية ليلة القدر",
+                eid: "أدعية العيد",
+                natural_events: "أدعية الظواهر الطبيعية"
+              },
               sunrise: "الشروق"
           },
           en: {
@@ -996,6 +1201,39 @@ let currentAudioAyah = null;
                   "en.sahih": "English (Sahih International)",
                   "en.pickthall": "English (Pickthall)",
                   "en.yusufali": "English (Yusuf Ali)"
+              },
+              azkarTypes: {
+                sabah: "Morning Azkar",
+                masaa: "Evening Azkar",
+                waking_sleeping: "Waking & Sleeping Duas",
+                home: "Entering & Leaving Home Duas",
+                bathroom: "Entering & Exiting Bathroom Duas",
+                eating: "Before & After Eating Duas",
+                masjid: "Entering & Exiting Masjid Duas",
+                traveling: "Traveling Duas",
+                clothes: "Wearing Clothes Duas",
+                anxiety: "Duas for Anxiety & Sadness",
+                hardship: "Duas in Times of Hardship",
+                istighfar: "Seeking Forgiveness (Istighfar)",
+                patience_gratitude: "Duas for Patience & Gratitude",
+                rabbana: "Rabbana Duas (from the Qur'an)",
+                prophetic: "Prophetic Duas from Hadith",
+                prophets: "Duas of the Prophets",
+                rain: "Duas for Rain / Drought",
+                patient: "Duas for the Sick",
+                deceased: "Duas for the Deceased",
+                marriage_children_rizq: "Duas for Marriage, Children, Rizq",
+                protection: "Duas for Protection (Evil Eye, Jinn, Calamity)",
+                salah: "Duas before and after Salah",
+                sujood_tashahhud: "Duas during Sujood & Tashahhud",
+                qunoot: "Duas for Qunoot (Witr prayer)",
+                tahajjud: "Duas for Tahajjud",
+                istikhara: "Dua for Istikhara (Seeking Guidance)",
+                ramadan: "Ramadan Duas",
+                hajj: "Dhul Hijjah & Hajj-related Duas",
+                laylat_al_qadr: "Laylat al-Qadr Duas",
+                eid: "Eid Duas",
+                natural_events: "Duas for Natural Events (Rain, Eclipse, Earthquake, etc.)"
               },
               sunrise: "Sunrise"
           }
@@ -1502,6 +1740,7 @@ function showARUnsupported(errorType) {
 
       function switchLanguage() {
           currentLang = currentLang === 'ar' ? 'en' : 'ar';
+          tafsirLang = currentLang;
           document.documentElement.lang = currentLang;
           document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
           updateUI();
@@ -1534,8 +1773,6 @@ function showARUnsupported(errorType) {
           const lang = languages[currentLang];
           const elements = {
               'pageTitle': lang.title,
-              'btnMorning': lang.morning,
-              'btnEvening': lang.evening,
               'btnPrev': lang.previous,
               'btnNext': lang.next,
               'btnBack': lang.back,
@@ -1668,9 +1905,10 @@ function showARUnsupported(errorType) {
       function displayDhikr() {
           if (!filteredAdhkar.length) return;
           const dhikr = filteredAdhkar[current];
+          console.log("dhikr", dhikr)
           document.getElementById('adhkarArabicText').innerText = dhikr.arabic;
           document.getElementById('transliterationText').innerText = dhikr.transliteration;
-          document.getElementById('translationText').innerText = dhikr.translation;
+          document.getElementById('translationTextDikr').innerText = dhikr.translation;
           document.getElementById('dhikrCounter').innerText = languages[currentLang].counter(current + 1, filteredAdhkar.length);
           document.getElementById('repeatValue').innerText = dhikr.remainingRepeats;
       }
@@ -1720,34 +1958,29 @@ function showARUnsupported(errorType) {
 
       // Add these storage helper functions at the top with other variables
       function savePrayerTimes(timings, location, city) {
-          const data = {
+          const dataToSave = {
               timings: timings,
               location: location,
               city: city,
-              lastUpdated: new Date().toISOString()
+              lastUpdated: new Date().toISOString() // Store as ISO string for easier parsing
           };
-
-          // Save to localStorage
           try {
-              localStorage.setItem('prayerTimes', JSON.stringify(data));
+              localStorage.setItem('prayerTimes', JSON.stringify(dataToSave));
           } catch (error) {
-              console.error('Error saving to localStorage:', error);
-          }
-
-          // For iOS, also save to sessionStorage as backup
-          if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+              // Fallback to sessionStorage for iOS private browsing or if localStorage is full
               try {
-                  sessionStorage.setItem('prayerTimes', JSON.stringify(data));
-              } catch (error) {
-                  console.error('Error saving to sessionStorage:', error);
+                  sessionStorage.setItem('prayerTimes', JSON.stringify(dataToSave));
+              } catch (sessionError) {
+                  console.error('Error saving prayer times to localStorage and sessionStorage:', error, sessionError);
               }
           }
+          // Call highlighting function after saving times
+          setupPrayerHighlighting();
       }
 
       function loadPrayerTimes() {
           let savedData = null;
-
-          // Try localStorage first
+          // ... (existing code to load from localStorage or sessionStorage)
           try {
               const localStorageData = localStorage.getItem('prayerTimes');
               if (localStorageData) {
@@ -1757,7 +1990,6 @@ function showARUnsupported(errorType) {
               console.error('Error reading from localStorage:', error);
           }
 
-          // If no data in localStorage and on iOS, try sessionStorage
           if (!savedData && /iPad|iPhone|iPod/.test(navigator.userAgent)) {
               try {
                   const sessionStorageData = sessionStorage.getItem('prayerTimes');
@@ -1772,13 +2004,10 @@ function showARUnsupported(errorType) {
           if (savedData) {
               const lastUpdated = new Date(savedData.lastUpdated);
               const now = new Date();
-              
-              // Check if the saved data is from today
               if (lastUpdated.toDateString() === now.toDateString()) {
                   prayerNotifications = savedData.timings;
                   currentCity = savedData.city;
-                  
-                  // Update UI with saved times
+                  // ... (existing UI updates for prayer times)
                   document.getElementById("azan-location").innerText = languages[currentLang].locationText(savedData.city, savedData.location);
                   document.querySelector("#azan-fajr span:last-child").innerText = savedData.timings.Fajr;
                   document.querySelector("#azan-sunrise span:last-child").innerText = savedData.timings.Sunrise;
@@ -1790,6 +2019,8 @@ function showARUnsupported(errorType) {
                   if (notificationEnabled) {
                       setupPrayerNotifications();
                   }
+                  // Call highlighting function if times are loaded from storage
+                  setupPrayerHighlighting();
                   return true;
               }
           }
@@ -1858,6 +2089,8 @@ function showARUnsupported(errorType) {
                           console.log('Setting up notifications after prayer times update');
                           setupPrayerNotifications();
                       }
+                      // Call highlighting function if times are loaded from storage
+                      setupPrayerHighlighting();
                       return;
                   }
               } catch (error) {
@@ -3143,6 +3376,8 @@ function showARUnsupported(errorType) {
 
         document.addEventListener('DOMContentLoaded', async () => {
             tafsirLang = currentLang;
+            console.log("tafsirLang", tafsirLang)
+
             const adhkarView = document.getElementById('adhkarView');
             const adhkarArabicText = document.getElementById('adhkarArabicText');
             if (adhkarView) {
@@ -3553,6 +3788,7 @@ function showARUnsupported(errorType) {
                 currentAudioSurah = null;
                 currentAudioAyah = null;
                 updatePlayButtons();
+                
             };
         }
 
@@ -3569,19 +3805,222 @@ function showARUnsupported(errorType) {
             });
         }
 
-        // Add event listener for tafsir language select
-        document.getElementById('tafsirLangSelect').addEventListener('change', function() {
-          tafsirLang = this.value;
-          if (isTafsirVisible && currentSurah !== null) {
-            loadTafsirForSurah(currentSurah + 1).then(() => {
-              if (isReadingMode) {
-                displayReadingModeAyahs();
-              } else {
-                displayAyah();
-              }
+        let prayerHighlightInterval = null;
+
+        function updateNextPrayerHighlight() {
+            console.log("--- updateNextPrayerHighlight --- Triggered at", new Date().toLocaleTimeString());
+            if (!prayerNotifications || Object.keys(prayerNotifications).length === 0) {
+                console.log("Prayer times not available for highlighting or empty.");
+                return;
+            }
+            // console.log("Current prayerNotifications:", JSON.parse(JSON.stringify(prayerNotifications)));
+
+            const now = new Date();
+            // console.log("Device current time for highlight check:", now.toLocaleTimeString());
+            const prayerOrder = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+            let nextPrayerName = null;
+
+            // Remove existing highlights and restore default backgrounds
+            prayerOrder.forEach(prayer => {
+                const prayerEl = document.getElementById(`azan-${prayer.toLowerCase()}`);
+                if (prayerEl) {
+                    prayerEl.classList.remove('next-prayer-highlight');
+                    // Ensure default Tailwind backgrounds are present when not highlighted
+                    prayerEl.classList.add('bg-gray-100', 'dark:bg-gray-700');
+                }
             });
-          }
+
+            for (const prayerName of prayerOrder) {
+                const prayerTimeStr = prayerNotifications[prayerName];
+                if (!prayerTimeStr) continue;
+
+                const [hours, minutes] = prayerTimeStr.split(':').map(Number);
+                const prayerDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+
+                if (prayerDate > now) {
+                    nextPrayerName = prayerName;
+                    break;
+                }
+            }
+
+            if (!nextPrayerName) {
+                nextPrayerName = 'Fajr';
+            }
+
+            if (nextPrayerName) {
+                const nextPrayerEl = document.getElementById(`azan-${nextPrayerName.toLowerCase()}`);
+                if (nextPrayerEl) {
+                    // Remove default Tailwind backgrounds before applying highlight
+                    nextPrayerEl.classList.remove('bg-gray-100', 'dark:bg-gray-700');
+                    nextPrayerEl.classList.add('next-prayer-highlight');
+                }
+            }
+        }
+
+        function setupPrayerHighlighting() {
+            if (prayerHighlightInterval) {
+                clearInterval(prayerHighlightInterval);
+            }
+            updateNextPrayerHighlight(); // Initial call
+            prayerHighlightInterval = setInterval(updateNextPrayerHighlight, 60000); // Update every minute
+        }
+
+        // Add modal open/close logic and helper for button click
+        function closeAdhkarMenuAndLoad(section) {
+          document.getElementById('adhkarMenuModal').classList.add('hidden');
+          loadAdhkar(section);
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+          const menuBtn = document.getElementById('adhkarMenuBtn');
+          const modal = document.getElementById('adhkarMenuModal');
+          const closeBtn = document.getElementById('closeAdhkarMenu');
+          // Open modal
+          menuBtn.addEventListener('click', function() {
+            modal.classList.remove('hidden');
+          });
+          // Close modal by X
+          closeBtn.addEventListener('click', function() {
+            modal.classList.add('hidden');
+          });
+          // Close modal by clicking outside
+          modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+              modal.classList.add('hidden');
+            }
+          });
         });
+
+ 
+      </script>
+      <script>
+(function() {
+  const quranControls = document.querySelector('.quran-controls-sticky');
+  const quranHook = document.getElementById('quranHook');
+  let lastScrollY = window.scrollY;
+  let controlsHidden = false;
+  let ticking = false;
+  function onScroll() {
+    if (!quranControls || !quranHook) return;
+    if (window.scrollY > 120 && !controlsHidden) {
+      quranControls.classList.add('quran-controls-hidden');
+      quranHook.classList.add('quran-hook-visible');
+      controlsHidden = true;
+    } else if (window.scrollY <= 120 && controlsHidden) {
+      quranControls.classList.remove('quran-controls-hidden');
+      quranHook.classList.remove('quran-hook-visible');
+      controlsHidden = false;
+    }
+    ticking = false;
+  }
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      window.requestAnimationFrame(onScroll);
+      ticking = true;
+    }
+  });
+  if (quranHook) {
+    quranHook.addEventListener('click', function() {
+      if (quranControls) {
+        quranControls.classList.remove('quran-controls-hidden');
+        quranHook.classList.remove('quran-hook-visible');
+        controlsHidden = false;
+        // Removed: window.scrollTo({top: 0, behavior: 'smooth'});
+      }
+    });
+  }
+})();
+      </script>
+      <script>
+document.addEventListener('DOMContentLoaded', function() {
+  var quranHook = document.getElementById('quranHook');
+  if (quranHook) {
+    // Force layout calculation to prevent jump
+    void quranHook.offsetWidth;
+  }
+});
+      </script>
+
+<script>
+function updateAzkarTypeLabels() {
+  const types = [
+    ['Morning', 'sabah'],
+    ['Evening', 'masaa'],
+    ['WakingSleeping', 'waking_sleeping'],
+    ['Home', 'home'],
+    ['Bathroom', 'bathroom'],
+    ['Eating', 'eating'],
+    ['Masjid', 'masjid'],
+    ['Traveling', 'traveling'],
+    ['Clothes', 'clothes'],
+    ['Anxiety', 'anxiety'],
+    ['Hardship', 'hardship'],
+    ['Istighfar', 'istighfar'],
+    ['PatienceGratitude', 'patience_gratitude'],
+    ['Rabbana', 'rabbana'],
+    ['Prophetic', 'prophetic'],
+    ['Prophets', 'prophets'],
+    ['Rain', 'rain'],
+    ['Patient', 'patient'],
+    ['Deceased', 'deceased'],
+    ['MarriageChildrenRizq', 'marriage_children_rizq'],
+    ['Protection', 'protection'],
+    ['Salah', 'salah'],
+    ['SujoodTashahhud', 'sujood_tashahhud'],
+    ['Qunoot', 'qunoot'],
+    ['Tahajjud', 'tahajjud'],
+    ['Istikhara', 'istikhara'],
+    ['Ramadan', 'ramadan'],
+    ['Hajj', 'hajj'],
+    ['LaylatAlQadr', 'laylat_al_qadr'],
+    ['Eid', 'eid'],
+    ['NaturalEvents', 'natural_events']
+  ];
+  types.forEach(([labelIdPrefix, typeKey]) => {
+    const el = document.getElementById('label' + labelIdPrefix);
+    if (el) {
+      // Set text content first
+      if (languages[currentLang].azkarTypes[typeKey]) {
+        el.textContent = languages[currentLang].azkarTypes[typeKey];
+      }
+      
+      // Clear any previous dynamic font size classes
+      el.classList.remove('text-xs', 'text-sm'); 
+
+      if (currentLang === 'en') {
+        el.classList.add('text-xs'); // Smaller font for English labels
+      } else { // Arabic
+        el.classList.add('text-sm'); // Slightly larger font for Arabic labels
+      }
+    }
+  });
+}
+document.addEventListener('DOMContentLoaded', updateAzkarTypeLabels);
+// Patch switchLanguage to also update azkar labels
+const origSwitchLanguage = window.switchLanguage;
+window.switchLanguage = function() {
+  origSwitchLanguage();
+  updateAzkarTypeLabels();
+};
+      </script>
+      <script>
+(function() {
+  const tafsirLangSelect = document.getElementById('tafsirLangSelect');
+  if (tafsirLangSelect) {
+    tafsirLangSelect.value = currentLang;
+    tafsirLang = tafsirLangSelect.value;
+    tafsirLangSelect.addEventListener('change', function() {
+      tafsirLang = this.value;
+      // Reload tafsir for current ayah or reading mode
+      if (document.getElementById('quranContent').classList.contains('active')) {
+        if (isReadingMode) {
+          displayReadingModeAyahs();
+        } else {
+          displayAyah();
+        }
+      }
+    });
+  }
+})();
       </script>
 </body>
 </html>
