@@ -449,31 +449,7 @@
           pointer-events: none;
         }
    
-        #quranHook {
-          transition: background 0.2s, color 0.2s, box-shadow 0.2s, opacity 0.2s, visibility 0.2s;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-          font-size: 1.2rem;
-          align-items: center;
-          justify-content: center;
-          min-width: 48px;
-          min-height: 24px;
-          width: 56px;
-          cursor: pointer;
-          opacity: 0;
-          pointer-events: none;
-          visibility: hidden;
-          will-change: transform;
-        }
-      #quranHook.quran-hook-visible {
-    opacity: 1 !important; /* Keep for now */
-    pointer-events: auto !important;
-    visibility: visible !important;
-    animation: quranHookFadeInFromTop 0.3s forwards backwards; /* Added backwards */
-}
-        #quranHook:hover {
-          background: #2563eb;
-          color: #fff;
-        }
+
 
         /* Prayer Time Highlighting */
         .next-prayer-highlight { /* Base for light mode */
@@ -560,7 +536,99 @@
             opacity: 0;
             transform: translateY(10px);
         }
-    </style>
+        @font-face {
+            font-family: 'KFGQPC Uthmanic Script HAFS';
+            src: url('https://cdn.jsdelivr.net/gh/quran/quran.com-frontend@master/static/fonts/KFGQPC-Uthmanic-Script-HAFS.woff2') format('woff2'),
+                 url('https://cdn.jsdelivr.net/gh/quran/quran.com-frontend@master/static/fonts/KFGQPC-Uthmanic-Script-HAFS.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+    font-family: 'KFGQPC Uthman Taha Naskh';
+    src: url('fonts/UtmanTahaNaskh.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'KFGQPC Uthmanic Script HAFS';
+    src: url('fonts/KFGQPC-Uthmanic-Script-HAFS.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+        .quran-uthmani-font {
+    font-family: 'KFGQPC Uthman Taha Naskh', 'KFGQPC Uthmanic Script HAFS', 'Amiri Quran', serif;
+    font-size: 2rem;
+    line-height: 2.5rem;
+    letter-spacing: 0.01em;
+}
+        .ayah {
+            display: inline;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        .ayah:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+        .dark .ayah:hover {
+            background-color: rgba(96, 165, 250, 0.2);
+        }
+        .ayah-playing {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+        .dark .ayah-playing {
+            background-color: rgba(96, 165, 250, 0.3);
+            color: #60a5fa;
+        }
+            .verse-marker {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            cursor: pointer;
+            margin: 0 0.25rem;
+            vertical-align: middle;
+            transition: box-shadow 0.25s, filter 0.25s;
+        }
+        .verse-marker:hover, .verse-marker:focus {
+            z-index: 2;
+        }
+        .verse-marker:hover .verse-icon, .verse-marker:focus .verse-icon {
+            filter: drop-shadow(0 0 8px #3b82f6aa) brightness(1.2);
+            transition: filter 0.2s;
+        }
+        .dark .verse-marker:hover .verse-icon, .dark .verse-marker:focus .verse-icon {
+            filter: drop-shadow(0 0 10px #60a5fa) brightness(1.3);
+        }
+        .verse-icon {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('icons/seperator.svg');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .verse-number {
+            position: relative;
+            z-index: 1;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #2d3748; /* gray-800 */
+        }
+        .dark .verse-number {
+            color: #f7fafc; /* gray-100 */
+        }
+</style>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap" rel="stylesheet">
 </head>
 
 <body class="bg-gradient-to-b from-gray-100 to-white dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-300">
@@ -576,8 +644,8 @@
         </button>
     </header>
 
-    <!-- Add this script right after the header -->
-    <script>
+        <!-- Add this script right after the header -->
+        <script>
         // Dark mode functionality
         function initDarkMode() {
             const darkModeToggle = document.getElementById('darkModeToggle');
@@ -671,9 +739,7 @@
         <!-- Quran Tab Content -->
         <div id="quranContent" class="tab-content w-full max-w-4xl p-4 hidden">
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-                <div id="quranHook" class="fixed top-0 left-1/2 transform -translate-x-1/2 z-50 bg-blue-500 text-white rounded-b-full px-4 py-1 shadow-lg cursor-pointer flex items-center justify-center" style="min-width:48px;min-height:24px;" title="Show Quran Controls">
-                  <i class="fas fa-chevron-down"></i>
-                </div>
+
                 <div class="quran-controls-sticky flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                     <h2 class="text-xl font-bold" id="quranTitle">القرآن الكريم</h2>
                     <div class="flex flex-col md:flex-row md:justify-center flex-wrap gap-2 w-full md:w-auto">
@@ -724,7 +790,7 @@
                     </div>
                 </div>
                 <div id="quranContent" class="space-y-6">
-                    <div class="text-center text-2xl leading-loose" id="arabicText">
+                    <div class="text-center text-2xl leading-loose quran-uthmani-font" id="arabicText">
                         <div class="text-gray-500 dark:text-gray-400 py-8" id="quranPlaceholder">
                             <i class="fas fa-book-quran text-4xl mb-4"></i>
                             <p class="text-xl">اختر سورة للبدء</p>
@@ -981,6 +1047,11 @@
     </footer>
 
     <script>
+      function toArabicNumerals(num) {
+        const arabicNumerals = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+        return String(num).split('').map(digit => arabicNumerals[digit]).join('');
+      }
+
       const adhkar = [];
       let current = 0;
       let filteredAdhkar = [];
@@ -2826,7 +2897,19 @@ function showARUnsupported(errorType) {
           const translation = translationData[currentSurah];
           if (!surah || !translation) throw new Error('Invalid surah data');
           if (!surah.ayahs || !translation.ayahs) throw new Error('Invalid ayahs data');
-          if (!surah.ayahs[currentAyah] || !translation.ayahs[currentAyah]) throw new Error(`Invalid ayah data for index ${currentAyah}`);
+          if (
+  currentAyah === null ||
+  currentAyah === undefined ||
+  isNaN(currentAyah) ||
+  !surah.ayahs[currentAyah] ||
+  !translation.ayahs[currentAyah]
+) {
+  showToast('Invalid ayah index. Showing the first ayah.', 'error');
+  currentAyah = 0;
+  // Try again with first ayah
+  displayAyah();
+  return;
+}
           const ayah = surah.ayahs[currentAyah];
           const translationAyah = translation.ayahs[currentAyah];
           const bookmarkText = languages[currentLang].bookmarkVerse;
@@ -2837,18 +2920,23 @@ function showARUnsupported(errorType) {
               <span id="tafsir-loading">${currentLang === 'ar' ? 'جاري التحميل...' : 'Loading...'}</span>
             </div>`;
           }
+          
+          // Process the ayah text
+          let ayahText = (currentAyah === 0 && currentSurah !== 8 && ayah.text.replace(/\s/g, '').startsWith('بِسْمِاللَّهِالرَّحْمَٰنِالرَّحِيمِ')) 
+            ? ayah.text.replace(/^بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\s*/,'').replace(/^بِسْمِاللَّهِالرَّحْمَٰنِالرَّحِيمِ\s*/,'') 
+            : ayah.text;
+          
           const html = `
             <div class="mb-6">
               <div class="text-2xl leading-loose mb-2" style="font-size: ${1.5 * currentTextSize}rem;">
-                ${ayah.text}
-                <span class="inline-flex items-center justify-center w-8 h-8 ml-2 text-base font-bold text-gray-500 cursor-pointer hover:text-blue-500 transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-700" 
+                <span class="ayah" data-surah="${currentSurah}" data-ayah="${currentAyah}" onclick="playAyahAudio(${currentSurah}, ${currentAyah})">
+                  ${ayahText}
+                </span>
+                <span class="verse-marker" 
                   onclick="bookmarkAyah(${currentSurah}, ${currentAyah})"
                   title="${bookmarkText}">
-                  <i class="fas fa-moon mr-1 text-xs"></i>${ayah.numberInSurah}
+                  <span class="verse-icon"></span><span class="verse-number">${toArabicNumerals(ayah.numberInSurah)}</span>
                 </span>
-                <button onclick="playAyahAudio(${currentSurah}, ${currentAyah})" class="ayah-play-btn ml-2 text-blue-500 hover:text-blue-700 focus:outline-none" title="Play/Pause Ayah Audio" data-surah="${currentSurah}" data-ayah="${currentAyah}">
-                  <i class="fas fa-play-circle"></i>
-                </button>
               </div>
               ${isTranslationVisible ? `
                 <div class="text-lg text-gray-600 dark:text-gray-400 mb-2" style="font-size: ${1.125 * currentTextSize}rem;">
@@ -2856,7 +2944,7 @@ function showARUnsupported(errorType) {
                 </div>
               ` : ''}
               ${isTafsirVisible ? tafsirHtml : ''}
-              <hr class="verse-separator" />
+              
             </div>
           `;
           arabicTextElement.innerHTML = html;
@@ -2870,7 +2958,17 @@ function showARUnsupported(errorType) {
           } else {
             bookmarkBtn.innerHTML = '<i class="far fa-bookmark"></i>';
           }
-          updatePlayButtons();
+          
+          // Add event listeners for the ayah elements
+          document.querySelectorAll('.ayah').forEach(ayahElem => {
+            ayahElem.addEventListener('click', function() {
+              const surah = this.getAttribute('data-surah');
+              const ayah = this.getAttribute('data-ayah');
+              playAyahAudio(parseInt(surah), parseInt(ayah));
+            });
+          });
+          
+          updateAyahHighlights();
           // Fetch tafsir if needed
           if (isTafsirVisible) {
             const tafsir = await getTafsirForAyah(currentSurah, currentAyah);
@@ -3064,38 +3162,50 @@ function showARUnsupported(errorType) {
         const translationText = document.getElementById('translationText');
         const bookmarkText = languages[currentLang].bookmarkVerse;
         let html = '';
-        for (let index = 0; index < readingModeAyahs.length; index++) {
+        // Insert Bismillah at the top (not as a verse) for all surahs except At-Tawbah (9)
+        let bismillahHtml = '';
+        // Surah 0 is Al-Fatiha, Surah 8 is Al-Anfal, Surah 9 is At-Tawbah (no Bismillah)
+        const bismillahText = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
+        if (currentSurah !== 8) {
+          bismillahHtml = `<div class="text-center my-4 text-xl md:text-2xl quran-uthmani-font text-gray-700 dark:text-gray-200 select-none" style="font-family: 'Amiri Quran', serif; letter-spacing: 0.03em;">${bismillahText}</div>`;
+        }
+        let ayahLine = `<div class="text-2xl leading-loose text-justify" style="font-size: ${1.5 * currentTextSize}rem;">`;
+        // Remove Bismillah from ayah flow if present (usually first ayah, except Fatiha)
+        let startIdx = 0;
+        if (readingModeAyahs.length > 0 && readingModeAyahs[0].arabic.replace(/\s/g, '') === bismillahText.replace(/\s/g, '') && currentSurah !== 0) {
+          startIdx = 1;
+        }
+        for (let index = startIdx; index < readingModeAyahs.length; index++) {
           const ayah = readingModeAyahs[index];
-          const verseNumber = currentAyah + index + 1;
-          let tafsirHtml = '';
-          if (isTafsirVisible) {
-            tafsirHtml = `<div class="text-base text-gray-500 dark:text-gray-400 mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg" style="font-size: ${1 * currentTextSize}rem;">
-              <div class="font-semibold mb-2">${currentLang === 'ar' ? 'التفسير' : 'Tafsir'}:</div>
+          let ayahText = ayah.arabic;
+          if (index === startIdx && currentSurah !== 8 && ayahText.replace(/\s/g, '').startsWith('بِسْمِاللَّهِالرَّحْمَٰنِالرَّحِيمِ')) {
+            ayahText = ayahText.replace(/^بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\s*/,'').replace(/^بِسْمِاللَّهِالرَّحْمَٰنِالرَّحِيمِ\s*/,'');
+          }
+          const verseNumber = currentAyah + index + 1 - startIdx;
+          const ayahIndex = currentAyah + index;
+          ayahLine += ` <span class="ayah" data-surah="${currentSurah}" data-ayah="${ayahIndex}">${ayahText}</span> <span class="verse-marker" id="verse-${currentSurah}-${ayahIndex}" onclick="bookmarkAyah(${currentSurah}, ${ayahIndex})" title="${bookmarkText}"><span class="verse-icon"></span><span class="verse-number">${toArabicNumerals(verseNumber)}</span></span>`;
+        }
+        ayahLine += '</div>';
+        html = bismillahHtml + ayahLine;
+
+        if (isTranslationVisible) {
+          html += `<div class="mt-6 text-lg text-gray-600 dark:text-gray-400" style="font-size: ${1.125 * currentTextSize}rem;">`;
+          for (let index = 0; index < readingModeAyahs.length; index++) {
+            const ayah = readingModeAyahs[index];
+            html += ` (${index + 1}) ${ayah.translation}`;
+          }
+          html += '</div>';
+        }
+
+        if (isTafsirVisible) {
+          html += '<div class="mt-6 space-y-4">';
+          for (let index = 0; index < readingModeAyahs.length; index++) {
+            html += `<div class="text-base text-gray-500 dark:text-gray-400 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg" style="font-size: ${1 * currentTextSize}rem;">
+              <div class="font-semibold mb-2">${currentLang === 'ar' ? 'التفسير' : 'Tafsir'} - ${languages[currentLang].verse} ${index + 1}</div>
               <span id="tafsir-loading-${index}">${currentLang === 'ar' ? 'جاري التحميل...' : 'Loading...'}</span>
             </div>`;
           }
-          html += `
-            <div class="mb-6" id="verse-${currentSurah}-${currentAyah + index}">
-              <div class="text-2xl leading-loose mb-2" style="font-size: ${1.5 * currentTextSize}rem;">
-                ${ayah.arabic}
-                <span class="inline-flex items-center justify-center w-8 h-8 ml-2 text-base font-bold text-gray-500 cursor-pointer hover:text-blue-500 transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-700" 
-                  onclick="bookmarkAyah(${currentSurah}, ${currentAyah + index})"
-                  title="${bookmarkText}">
-                  <i class="fas fa-moon mr-1 text-xs"></i>${verseNumber}
-                </span>
-                <button onclick="playAyahAudio(${currentSurah}, ${currentAyah + index})" class="ayah-play-btn ml-2 text-blue-500 hover:text-blue-700 focus:outline-none" title="Play/Pause Ayah Audio" data-surah="${currentSurah}" data-ayah="${currentAyah + index}">
-                  <i class="fas fa-play-circle"></i>
-                </button>
-              </div>
-              ${isTranslationVisible ? `
-                <div class="text-lg text-gray-600 dark:text-gray-400 mb-2" style="font-size: ${1.125 * currentTextSize}rem;">
-                  ${ayah.translation}
-                </div>
-              ` : ''}
-              ${isTafsirVisible ? tafsirHtml : ''}
-              <hr class="verse-separator" />
-            </div>
-          `;
+          html += '</div>';
         }
         arabicText.innerHTML = html;
         translationText.innerHTML = '';
@@ -3104,7 +3214,17 @@ function showARUnsupported(errorType) {
         document.getElementById('btnNextAyah').disabled = currentSurah >= quranData.length - 1;
         const btn = document.getElementById('btnReadingMode');
         btn.title = `Displaying entire Surah ${surah.name} (${surah.englishName})`;
-        updatePlayButtons();
+        
+        // Add event listeners for the ayah elements
+        document.querySelectorAll('.ayah').forEach(ayahElem => {
+          ayahElem.addEventListener('click', function() {
+            const surah = this.getAttribute('data-surah');
+            const ayah = this.getAttribute('data-ayah');
+            playAyahAudio(parseInt(surah), parseInt(ayah));
+          });
+        });
+        
+        updateAyahHighlights();
         // Fetch tafsir for all ayahs if needed
         if (isTafsirVisible) {
           for (let index = 0; index < readingModeAyahs.length; index++) {
@@ -3133,15 +3253,7 @@ function showARUnsupported(errorType) {
           isReadingMode = !isReadingMode;
           const btn = document.getElementById('btnReadingMode');
           
-          // Debug log for toggling reading mode
-          console.log('Toggling reading mode:', {
-              isReadingMode,
-              currentSurah,
-              currentAyah,
-              totalAyahs: quranData[currentSurah].ayahs.length,
-              firstAyah: quranData[currentSurah].ayahs[0],
-              secondAyah: quranData[currentSurah].ayahs[1]
-          });
+
           
           if (isReadingMode) {
               btn.innerHTML = '<i class="fas fa-times"></i>';
@@ -3761,17 +3873,25 @@ function showARUnsupported(errorType) {
             return closestId;
         }
 
-        // Update playAyahAudio to toggle play/pause
+        // Update playAyahAudio to toggle play/pause and handle interruptions with debounce
         function playAyahAudio(surah, ayah) {
+            // Prevent multiple rapid clicks with a debounce flag
+            if (window.isPlayingAudio) {
+                return;
+            }
+            window.isPlayingAudio = true;
+
             // If the same ayah is playing, pause it
             if (window.currentAyahAudio && currentAudioSurah === surah && currentAudioAyah === ayah && !window.currentAyahAudio.paused) {
                 window.currentAyahAudio.pause();
-                updatePlayButtons();
+                updateAyahHighlights();
+                window.isPlayingAudio = false;
                 return;
             }
-            // Pause any currently playing audio
+            // Pause and reset any currently playing audio
             if (window.currentAyahAudio) {
                 window.currentAyahAudio.pause();
+                window.currentAyahAudio = null;
             }
             // Pad numbers to 3 digits
             const surahStr = (Number(surah) + 1).toString().padStart(3, '0');
@@ -3782,25 +3902,49 @@ function showARUnsupported(errorType) {
             window.currentAyahAudio = audio;
             currentAudioSurah = surah;
             currentAudioAyah = ayah;
-            audio.play();
-            updatePlayButtons();
+            // Use a promise to handle play to avoid AbortError
+            audio.play().then(() => {
+                updateAyahHighlights();
+                window.isPlayingAudio = false;
+            }).catch(error => {
+                console.error("Audio play error:", error);
+                showToast(currentLang === 'ar' ? 'حدث خطأ أثناء تشغيل الصوت' : 'Error playing audio', 'error');
+                currentAudioSurah = null;
+                currentAudioAyah = null;
+                window.currentAyahAudio = null;
+                updateAyahHighlights();
+                window.isPlayingAudio = false;
+            });
+            updateAyahHighlights();
             audio.onended = () => {
                 currentAudioSurah = null;
                 currentAudioAyah = null;
-                updatePlayButtons();
-                
+                window.currentAyahAudio = null;
+                updateAyahHighlights();
+                window.isPlayingAudio = false;
             };
         }
 
-        // Update play button icons based on current playing state
-        function updatePlayButtons() {
-            document.querySelectorAll('.ayah-play-btn').forEach(btn => {
-                const surah = btn.getAttribute('data-surah');
-                const ayah = btn.getAttribute('data-ayah');
+        // Function to attach event listeners to ayah elements
+        window.attachAyahListeners = function() {
+            document.querySelectorAll('.ayah').forEach(ayahElem => {
+                ayahElem.addEventListener('click', function() {
+                    const surah = this.getAttribute('data-surah');
+                    const ayah = this.getAttribute('data-ayah');
+                    playAyahAudio(parseInt(surah), parseInt(ayah));
+                });
+            });
+        };
+
+        // Update ayah highlighting based on current playing state
+        function updateAyahHighlights() {
+            document.querySelectorAll('.ayah').forEach(span => {
+                const surah = span.getAttribute('data-surah');
+                const ayah = span.getAttribute('data-ayah');
                 if (Number(surah) === Number(currentAudioSurah) && Number(ayah) === Number(currentAudioAyah) && window.currentAyahAudio && !window.currentAyahAudio.paused) {
-                    btn.innerHTML = '<i class="fas fa-pause-circle"></i>';
+                    span.classList.add('ayah-playing');
                 } else {
-                    btn.innerHTML = '<i class="fas fa-play-circle"></i>';
+                    span.classList.remove('ayah-playing');
                 }
             });
         }
