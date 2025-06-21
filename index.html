@@ -3415,16 +3415,16 @@ function showARUnsupported(errorType) {
       let tafsirCache = {};
       let currentTafsirSource = '2'; // Default tafsir source (Jalalayn ID)
 
-      // Tafsir source mapping - mixing both APIs for comprehensive coverage
+      // Tafsir source mapping - using AlQuran.cloud API for reliable HTTPS support
       const tafsirSources = {
-        // Arabic tafsir from quran-tafseer.com API
-        '1': { id: 1, name: 'التفسير الميسر', language: 'ar', api: 'quran-tafseer' },
-        '2': { id: 2, name: 'تفسير الجلالين', language: 'ar', api: 'quran-tafseer' },
-        '3': { id: 3, name: 'تفسير السعدي', language: 'ar', api: 'quran-tafseer' },
-        '4': { id: 4, name: 'تفسير البغوي', language: 'ar', api: 'quran-tafseer' },
-        '5': { id: 5, name: 'تفسير القرطبي', language: 'ar', api: 'quran-tafseer' },
-        '6': { id: 6, name: 'تفسير ابن كثير', language: 'ar', api: 'quran-tafseer' },
-        '7': { id: 7, name: 'تفسير الطبري', language: 'ar', api: 'quran-tafseer' },
+        // Arabic tafsir from AlQuran.cloud API
+        '1': { edition: 'ar.muyassar', name: 'التفسير الميسر', language: 'ar', api: 'alquran' },
+        '2': { edition: 'ar.jalalayn', name: 'تفسير الجلالين', language: 'ar', api: 'alquran' },
+        '3': { edition: 'ar.saddi', name: 'تفسير السعدي', language: 'ar', api: 'alquran' },
+        '4': { edition: 'ar.baghawi', name: 'تفسير البغوي', language: 'ar', api: 'alquran' },
+        '5': { edition: 'ar.qurtubi', name: 'تفسير القرطبي', language: 'ar', api: 'alquran' },
+        '6': { edition: 'ar.kathir', name: 'تفسير ابن كثير', language: 'ar', api: 'alquran' },
+        '7': { edition: 'ar.tabari', name: 'تفسير الطبري', language: 'ar', api: 'alquran' },
         
         // English tafsir from spa5k tafsir_api
         'en-jalalayn': { slug: 'en-al-jalalayn', name: 'Tafsir al-Jalalayn (English)', language: 'en', api: 'spa5k' },
@@ -3446,14 +3446,20 @@ function showARUnsupported(errorType) {
          try {
            let url, response, data;
            
-           if (tafsirConfig.api === 'quran-tafseer') {
-             // Use quran-tafseer.com API for Arabic tafsir
-             url = `https://api.quran-tafseer.com/tafseer/${tafsirConfig.id}/${surah + 1}/${ayah + 1}`;
+           if (tafsirConfig.api === 'alquran') {
+             // Use AlQuran.cloud API for Arabic tafsir
+             url = `https://api.alquran.cloud/v1/ayah/${surah + 1}:${ayah + 1}/${tafsirConfig.edition}`;
              response = await fetch(url);
              if (response.ok) {
-               data = await response.json();
-          tafsirCache[cacheKey] = data;
-          return data;
+               const apiData = await response.json();
+               // Transform the response to match our expected format
+               if (apiData.data && apiData.data.text) {
+                 data = { text: apiData.data.text.replace(/<[^>]*>/g, '') }; // Remove HTML tags
+               } else {
+                 data = { text: currentLang === 'ar' ? 'لا يوجد تفسير متاح' : 'Tafsir not available' };
+               }
+               tafsirCache[cacheKey] = data;
+               return data;
              } else {
                throw new Error(`HTTP ${response.status}`);
              }
