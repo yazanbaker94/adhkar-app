@@ -14,6 +14,9 @@
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
     <link rel="shortcut icon" href="favicon.ico">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <!-- Reliable Quran fonts from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran:wght@400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400&display=swap" rel="stylesheet">
     <title>أذكار وأوقات الصلاة</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -123,12 +126,12 @@
         }
 
        /* Dark mode for buttons */
-       .dark button:not(.bg-blue-500):not(.bg-green-500):not(#langToggle):not(#btnBack):not(.ayah-play-btn) { /* Added :not(#langToggle) */
+               .dark button:not(.bg-blue-500):not(.bg-green-500):not(#langToggle):not(#btnBack):not(.ayah-play-btn):not(#closeTafsirModal):not(#darkModeToggle):not(#closeTranslationModal):not(#closeSurahMenu):not(#selectedSurahText) { /* Added :not(#langToggle) */
             background-color: #374151;
             color: #f3f4f6;
         }
 
-        .dark button:hover:not(.bg-blue-500):not(.bg-green-500):not(#langToggle):not(#btnBack):not(.ayah-play-btn) {
+        .dark button:hover:not(.bg-blue-500):not(.bg-green-500):not(#langToggle):not(#btnBack):not(.ayah-play-btn):not(#ayahMenuPlay):not(#ayahMenuTranslation):not(#ayahMenuTafsir):not(#ayahMenuBookmark):not(#closeTafsirModal):not(#darkModeToggle):not(#closeTranslationModal):not(#closeSurahMenu):not(#selectedSurahText){
             background-color: #4b5563;
         }
 
@@ -308,15 +311,15 @@
                 white-space: nowrap;
             }
 
-            /* Fix Quran content layout */
+            /* Fix Quran content layout - but NOT the sticky controls */
             /* Selectors like #quranContent .flex.justify-between might need review if #quranContent is used multiple times in HTML */
             /* Assuming #quranContent refers to the main Quran tab content area */
-            div#quranContent.tab-content .flex.justify-between { /* Made selector more specific */
+            div#quranContent.tab-content .flex.justify-between:not(.quran-controls-sticky) { /* Made selector more specific and exclude sticky controls */
                 flex-direction: column;
                 gap: 1rem;
             }
 
-            div#quranContent.tab-content .flex.gap-2 { /* Made selector more specific */
+            div#quranContent.tab-content .flex.gap-2:not(.quran-controls-sticky *) { /* Made selector more specific and exclude sticky controls children */
                 flex-wrap: wrap;
                 justify-content: center;
             }
@@ -351,9 +354,9 @@
                 margin: 0.5rem 0;
             }
 
-            /* Fix reading mode buttons */
+            /* Fix reading mode buttons - but preserve our horizontal layout */
             /* This selector is also generic, assumed to be within Quran controls */
-            .quran-controls-sticky .flex.gap-2 {
+            .quran-controls-sticky .flex.gap-2:not(.flex.items-center.gap-1) {
                 justify-content: center;
                 width: 100%;
             }
@@ -367,6 +370,44 @@
             #surahSelect, #translationSelect {
                 width: 100%;
                 margin-bottom: 0.5rem;
+            }
+
+            /* Mobile responsive for horizontal header */
+            .quran-controls-sticky {
+                margin: -1rem -1rem 1rem -1rem;
+                padding: 0.5rem 0.75rem;
+                gap: 0.5rem;
+                flex-wrap: nowrap !important;
+                flex-direction: row !important;
+                justify-content: space-between !important;
+            }
+            
+            .quran-controls-sticky > div {
+                flex-shrink: 0;
+            }
+            
+            /* Force horizontal layout on mobile */
+            .quran-controls-sticky.flex.items-center.justify-between {
+                flex-direction: row !important;
+                flex-wrap: nowrap !important;
+            }
+            
+            .quran-controls-sticky #selectedSurahText {
+                max-width: 80px;
+                font-size: 0.75rem;
+            }
+            
+            .quran-controls-sticky button {
+                padding: 0.4rem !important;
+                font-size: 0.7rem;
+            }
+
+            .quran-controls-sticky .flex.items-center.gap-1 {
+                gap: 0.125rem;
+            }
+
+            .quran-controls-sticky .flex.items-center.gap-1 button {
+                padding: 0.4rem 0.5rem !important;
             }
         }
 
@@ -431,17 +472,18 @@
         /* Quran Sticky Controls */
         .quran-controls-sticky {
             position: sticky;
-            top: 0.5rem;
-            z-index: 10;
+            top: 0;
+            z-index: 20;
             background: #fff; /* Default light mode */
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            border-radius: 1rem;
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 0.5rem;
+            margin: -1.5rem -1.5rem 1rem -1.5rem;
             transition: transform 0.3s cubic-bezier(.4,2,.6,1), opacity 0.3s;
+            border-bottom: 1px solid #e5e7eb;
         }
         .dark .quran-controls-sticky {
             background: #1f2937; /* Dark mode */
+            border-bottom-color: #374151;
         }
         .quran-controls-hidden {
           transform: translateY(-120%);
@@ -536,6 +578,42 @@
             opacity: 0;
             transform: translateY(10px);
         }
+
+        /* Enhanced verse styling for better desktop reading */
+        .ayah {
+            transition: background-color 0.2s ease;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+        }
+        
+        .ayah:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+        
+        .dark .ayah:hover {
+            background-color: rgba(59, 130, 246, 0.2);
+        }
+
+        /* Better spacing for desktop reading */
+        @media (min-width: 768px) {
+            .text-2xl.leading-loose {
+                line-height: 2.4 !important;
+            }
+        }
+
+        /* Improved container for better reading flow */
+        .quran-reading-container {
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        @media (min-width: 768px) {
+            .quran-reading-container {
+                padding: 3rem 2rem;
+            }
+        }
         @font-face {
             font-family: 'KFGQPC Uthmanic Script HAFS';
             src: url('https://cdn.jsdelivr.net/gh/quran/quran.com-frontend@master/static/fonts/KFGQPC-Uthmanic-Script-HAFS.woff2') format('woff2'),
@@ -549,19 +627,44 @@
     font-weight: normal;
     font-style: normal;
 }
-@font-face {
-    font-family: 'KFGQPC Uthmanic Script HAFS';
-    src: url('fonts/KFGQPC-Uthmanic-Script-HAFS.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
-}
+
 
         .quran-uthmani-font {
-    font-family: 'KFGQPC Uthman Taha Naskh', 'KFGQPC Uthmanic Script HAFS', 'Amiri Quran', serif;
+    font-family: 'Quran.com Font', Arial, sans-serif;
     font-size: 2rem;
     line-height: 2.5rem;
     letter-spacing: 0.01em;
-}
+    font-weight: bold;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Font Family Options */
+        .font-quran-original {
+            font-family: 'UthmanicHafs1Ver18', 'Quran.com Font', Arial, sans-serif;
+        }
+        
+        .font-utman-taha {
+            font-family: 'KFGQPC Uthman Taha Naskh', 'UtmanTahaNaskh', Arial, sans-serif;
+        }
+        
+        .font-al-mushaf {
+            font-family: 'AlMushafQuran', Arial, sans-serif;
+        }
+        
+        .font-system-arabic {
+            font-family: Arial, Tahoma, 'Segoe UI', sans-serif;
+        }
+
+        /* Settings Menu Overlay */
+        .settings-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 40;
+        }
+
+
         .ayah {
             display: inline;
             cursor: pointer;
@@ -623,9 +726,123 @@
             font-size: 0.8rem;
             font-weight: bold;
             color: #2d3748; /* gray-800 */
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+        }
+        
+        /* Ensure page numbers and UI elements don't inherit Quran font */
+        .page-header, .page-header *, .text-blue-700, .text-blue-300 {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+        }
+        
+        /* Quran.com exact font - UthmanicHafs1 Ver18 */
+        @font-face {
+            font-family: 'Quran.com Font';
+            src: url('fonts/UthmanicHafs1Ver18.ttf?v=3') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        
+        @font-face {
+            font-family: 'Quran.com Font';
+            src: url('fonts/UthmanicHafs1Ver18.ttf?v=3') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+            font-display: swap;
+        }
+        
+        /* Local font fallback */
+        @font-face {
+            font-family: 'Uthmani Local';
+            src: url('fonts/UtmanTahaNaskh.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
         }
         .dark .verse-number {
             color: #f7fafc; /* gray-100 */
+        }
+
+        /* Ayah Context Menu Popover */
+        #ayahMenuPopover {
+            display: none;
+            position: absolute;
+            z-index: 10000;
+            min-width: 180px;
+            max-width: 260px;
+            background-color: #fff;
+            border: 0.1px solid #ccc;
+            border-radius: 0.375rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            transition: opacity 0.3s ease;
+            word-break: break-word;
+            white-space: normal;
+        }
+
+        #ayahMenuPopover button {
+            display: block;
+            width: 100%;
+            padding: 5px 0;
+            color: #333;
+            border: none;
+            background: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-align: inherit;
+            white-space: normal;
+        }
+
+        #ayahMenuPopover button:hover {
+            background-color: #f0f0f0;
+        }
+
+        #ayahMenuPopover i {
+            margin-right: 10px;
+        }
+
+        /* Ayah Context Menu Popover */
+        #ayahMenuPopover {
+            display: none;
+            position: absolute;
+            z-index: 10000;
+            background-color: #fff;
+            border: 0.1px solid #ccc;
+            border-radius: 0.375rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 8px;
+            transition: opacity 0.3s ease;
+        }
+
+        #ayahMenuPopover button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            color: #333;
+            border: none;
+            background: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border-radius: 4px;
+        }
+
+        #ayahMenuPopover button:hover {
+            background-color: #f0f0f0;
+        }
+
+        .dark #ayahMenuPopover {
+            background-color: #374151;
+            border-color: #4b5563;
+        }
+
+        .dark #ayahMenuPopover button {
+            color: #f3f4f6;
+        }
+
+        .dark #ayahMenuPopover button:hover {
+            background-color: #4b5563;
         }
 </style>
     <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap" rel="stylesheet">
@@ -643,6 +860,16 @@
             <i class="fas fa-sun hidden dark:block"></i>
         </button>
     </header>
+
+    <!-- Ayah Context Menu Popover -->
+    <div id="ayahMenuPopover" style="display:none; position:absolute; z-index:10000;" class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-2 animate-general-fade-in">
+      <div class="flex gap-1">
+        <button id="ayahMenuPlay" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors" title="Play Ayah"><i class="fas fa-play"></i></button>
+        <button id="ayahMenuTranslation" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors" title="Show Translation"><i class="fas fa-language"></i></button>
+        <button id="ayahMenuTafsir" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors" title="Show Tafsir"><i class="fas fa-book-open"></i></button>
+        <button id="ayahMenuBookmark" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors" title="Bookmark"><i class="far fa-bookmark"></i></button>
+      </div>
+    </div>
 
         <!-- Add this script right after the header -->
         <script>
@@ -740,55 +967,145 @@
         <div id="quranContent" class="tab-content w-full max-w-4xl p-4 hidden">
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
 
-                <div class="quran-controls-sticky flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                    <h2 class="text-xl font-bold" id="quranTitle">القرآن الكريم</h2>
-                    <div class="flex flex-col md:flex-row md:justify-center flex-wrap gap-2 w-full md:w-auto">
-                        <div class="select-container">
-                            <select id="surahSelect" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 w-full md:w-auto" title="Select Surah - اختر السورة">
-                                <option value="">اختر السورة</option>
-                            </select>
+                <div class="quran-controls-sticky flex items-center justify-between px-4 py-2 mb-6 gap-2 flex-nowrap min-w-0">
+                    <!-- Left Section: Controls -->
+                    <div class="flex items-center gap-1 flex-shrink-0">
+                        <!-- Settings Button -->
+                        <button onclick="toggleQuranSettings()" class="bg-gray-100 dark:bg-gray-700 rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm flex-shrink-0" id="settingsBtn" title="Quran Settings - إعدادات القرآن">
+                            <i class="fas fa-cog w-3 h-3"></i>
+                        </button>
+                        
+                        <!-- Reading Mode Button -->
+                        <button onclick="toggleReadingMode()" id="btnReadingMode" class="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600 transition-colors text-sm flex-shrink-0" title="Toggle Reading Mode - تبديل وضع القراءة" disabled>
+                            <i class="fas fa-book-open w-3 h-3"></i>
+                        </button>
                         </div>
-                        <div class="select-container">
-                            <select id="translationSelect" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 w-full md:w-auto" title="Select Translation - اختر الترجمة">
-                                <option value="en.sahih">English (Sahih International)</option>
-                                <option value="en.pickthall">English (Pickthall)</option>
-                                <option value="en.yusufali">English (Yusuf Ali)</option>
-                            </select>
+
+                    <!-- Right Section: Surah Selector -->
+                    <div class="flex items-center flex-shrink min-w-0">
+                        <button id="surahMenuBtn" class="hover:bg-gray-100 rounded-md px-3 py-2 flex items-center gap-2 text-sm min-w-0 max-w-full transition-colors" title="Select Surah - اختر السورة">
+                            <span id="selectedSurahText" class="truncate flex-shrink min-w-0">اختر السورة</span>
+                            <i class="fas fa-chevron-down text-xs flex-shrink-0"></i>
+                        </button>
                         </div>
-                        <div class="select-container">
-                            <select id="tafsirLangSelect" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 w-full md:w-auto" title="Select Tafsir Language">
-                                <option value="ar">Arabic Tafsir</option>
-                                <option value="en">English Tafsir</option>
-                            </select>
                         </div>
                         
-                        <button onclick="toggleReadingMode()" id="btnReadingMode" class="bg-blue-500 text-white px-6 py-3 rounded shadow hover:scale-105 transform transition-all duration-200 font-semibold" title="Toggle Reading Mode - تبديل وضع القراءة" disabled>
-                            <i class="fas fa-book-open"></i>
+                <!-- Quran Settings Side Menu -->
+                <div id="quranSettingsMenu" class="fixed inset-y-0 right-0 w-80 bg-white dark:bg-gray-800 shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out z-50 hidden">
+                    <div class="flex flex-col h-full">
+                        <!-- Header -->
+                        <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+                            <h3 class="text-lg font-semibold" id="settingsTitle">إعدادات القرآن</h3>
+                            <button onclick="toggleQuranSettings()" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors">
+                                <i class="fas fa-times"></i>
                         </button>
-                        <div class="flex gap-2">
-                            <button id="toggleTranslation" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2" title="Display/Hide Translation - تعطيل/تفعيل الترجمة">
-                                <i class="fas fa-eye"></i>
+                        </div>
+
+                        <!-- Settings Content -->
+                        <div class="flex-1 p-4 space-y-6 overflow-y-auto">
+                            <!-- Font Size Settings -->
+                            <div>
+                                <h4 class="text-md font-medium mb-3 flex items-center gap-2">
+                                    <i class="fas fa-text-height text-blue-500"></i>
+                                    <span id="fontSizeTitle">حجم الخط</span>
+                                </h4>
+                                <div class="space-y-3">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm" id="currentSizeLabel">حجم الخط الحالي</span>
+                                        <span id="currentFontSize" class="text-sm font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">2rem</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="decreaseTextSize()" class="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-2 rounded-md transition-colors" id="decreaseBtn" title="تصغير الخط">
+                                            <i class="fas fa-minus text-sm"></i>
                             </button>
-                            <button id="toggleTafsir" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2" title="Display/Hide Tafsir - تعطيل/تفعيل التفسير">
-                                <i class="fas fa-book-open"></i>
+                                        <div class="flex-1 mx-2">
+                                            <input type="range" id="fontSizeSlider" min="1" max="4" step="0.1" value="2" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                                        </div>
+                                        <button onclick="increaseTextSize()" class="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-2 rounded-md transition-colors" id="increaseBtn" title="تكبير الخط">
+                                            <i class="fas fa-plus text-sm"></i>
                             </button>
-                            <button id="toggleBookmark" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2" title="Toggle Bookmark - تبديل العلامة المرجعية">
-                                <i class="far fa-bookmark"></i>
+                                    </div>
+                                    <button onclick="resetTextSize()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md transition-colors text-sm" id="resetSizeBtn">
+                                        <i class="fas fa-undo mr-2"></i>
+                                        <span id="resetSizeText">إعادة تعيين الحجم</span>
                             </button>
-                            <div class="flex items-center gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg px-2">
-                                <button onclick="decreaseTextSize()" class="p-1 hover:text-blue-500 transition-colors" title="Decrease Text Size - تصغير الخط">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <button onclick="resetTextSize()" class="p-1 hover:text-blue-500 transition-colors" title="Reset Text Size - إعادة تعيين حجم الخط">
-                                    <i class="fas fa-undo"></i>
-                                </button>
-                                <button onclick="increaseTextSize()" class="p-1 hover:text-blue-500 transition-colors" title="Increase Text Size - تكبير الخط">
-                                    <i class="fas fa-plus"></i>
-                            </button>
+                            </div>
+                        </div>
+
+                            <!-- Font Family Settings -->
+                            <div>
+                                <h4 class="text-md font-medium mb-3 flex items-center gap-2">
+                                    <i class="fas fa-font text-green-500"></i>
+                                    <span id="fontFamilyTitle">نوع الخط</span>
+                                </h4>
+                                <div class="space-y-2">
+                                    <label class="flex items-center p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                                        <input type="radio" name="fontFamily" value="quran-font" class="mr-3" checked>
+                                        <div class="flex-1">
+                                            <div class="font-medium" id="font1Name">خط القرآن الأصلي</div>
+                                            <div class="text-sm text-gray-500">UthmanicHafs1Ver18</div>
+                    </div>
+                                    </label>
+                                    <label class="flex items-center p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                                        <input type="radio" name="fontFamily" value="utman-taha" class="mr-3">
+                                        <div class="flex-1">
+                                            <div class="font-medium" id="font2Name">خط عثمان طه</div>
+                                            <div class="text-sm text-gray-500">UtmanTahaNaskh</div>
+                </div>
+                                    </label>
+                                    <label class="flex items-center p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                                        <input type="radio" name="fontFamily" value="al-mushaf" class="mr-3">
+                                        <div class="flex-1">
+                                            <div class="font-medium" id="font3Name">خط المصحف</div>
+                                            <div class="text-sm text-gray-500">AlMushafQuran</div>
+                                        </div>
+                                    </label>
+                                    <label class="flex items-center p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                                        <input type="radio" name="fontFamily" value="system-arabic" class="mr-3">
+                                        <div class="flex-1">
+                                            <div class="font-medium" id="font4Name">خط النظام العربي</div>
+                                            <div class="text-sm text-gray-500" id="font4Desc">Arial, Tahoma</div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+
+
+                            <!-- Audio Settings -->
+                            <div>
+                                <h4 class="text-md font-medium mb-3 flex items-center gap-2">
+                                    <i class="fas fa-volume-up text-red-500"></i>
+                                    <span id="audioTitle">إعدادات الصوت</span>
+                                </h4>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2" id="reciterLabel">القارئ</label>
+                                        <select id="reciterSelect" class="w-full p-2 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800">
+                                            <option value="ar.alafasy">مشاري العفاسي</option>
+                                            <option value="ar.husary">محمود خليل الحصري</option>
+                                            <option value="ar.minshawi">محمد صديق المنشاوي</option>
+                                            <option value="ar.sudais">عبد الرحمن السديس</option>
+                                            <option value="ar.shuraim">سعود الشريم</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2" id="playbackSpeedLabel">سرعة التشغيل</label>
+                                        <select id="playbackSpeedSelect" class="w-full p-2 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800">
+                                            <option value="0.5" id="speed1">بطيء (0.5x)</option>
+                                            <option value="0.75" id="speed2">أبطأ (0.75x)</option>
+                                            <option value="1" selected id="speed3">عادي (1x)</option>
+                                            <option value="1.25" id="speed4">أسرع (1.25x)</option>
+                                            <option value="1.5" id="speed5">سريع (1.5x)</option>
+                                        </select>
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <div id="quranContent" class="space-y-6">
                     <div class="text-center text-2xl leading-loose quran-uthmani-font" id="arabicText">
                         <div class="text-gray-500 dark:text-gray-400 py-8" id="quranPlaceholder">
@@ -1048,7 +1365,7 @@
 
     <script>
       function toArabicNumerals(num) {
-        const arabicNumerals = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+        const arabicNumerals = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
         return String(num).split('').map(digit => arabicNumerals[digit]).join('');
       }
 
@@ -1082,6 +1399,23 @@ let currentSurah = null;
 let currentAyah = 0;
 let quranData = null;
 let translationData = null;
+let currentTranslationKey = 'en.sahih'; // Default translation
+
+// English Surah names mapping
+const surahNamesEnglish = [
+  "Al-Fatihah", "Al-Baqarah", "Aal-E-Imran", "An-Nisa", "Al-Maidah", "Al-An'am", "Al-A'raf", "Al-Anfal", "At-Tawbah", "Yunus",
+  "Hud", "Yusuf", "Ar-Ra'd", "Ibrahim", "Al-Hijr", "An-Nahl", "Al-Isra", "Al-Kahf", "Maryam", "Taha",
+  "Al-Anbiya", "Al-Hajj", "Al-Mu'minun", "An-Nur", "Al-Furqan", "Ash-Shu'ara", "An-Naml", "Al-Qasas", "Al-Ankabut", "Ar-Rum",
+  "Luqman", "As-Sajdah", "Al-Ahzab", "Saba", "Fatir", "Ya-Sin", "As-Saffat", "Sad", "Az-Zumar", "Ghafir",
+  "Fussilat", "Ash-Shuraa", "Az-Zukhruf", "Ad-Dukhan", "Al-Jathiyah", "Al-Ahqaf", "Muhammad", "Al-Fath", "Al-Hujurat", "Qaf",
+  "Adh-Dhariyat", "At-Tur", "An-Najm", "Al-Qamar", "Ar-Rahman", "Al-Waqi'ah", "Al-Hadid", "Al-Mujadila", "Al-Hashr", "Al-Mumtahanah",
+  "As-Saff", "Al-Jumu'ah", "Al-Munafiqun", "At-Taghabun", "At-Talaq", "At-Tahrim", "Al-Mulk", "Al-Qalam", "Al-Haqqah", "Al-Ma'arij",
+  "Nuh", "Al-Jinn", "Al-Muzzammil", "Al-Muddaththir", "Al-Qiyamah", "Al-Insan", "Al-Mursalat", "An-Naba", "An-Nazi'at", "Abasa",
+  "At-Takwir", "Al-Infitar", "Al-Mutaffifin", "Al-Inshiqaq", "Al-Buruj", "At-Tariq", "Al-A'la", "Al-Ghashiyah", "Al-Fajr", "Al-Balad",
+  "Ash-Shams", "Al-Layl", "Ad-Duhaa", "Ash-Sharh", "At-Tin", "Al-Alaq", "Al-Qadr", "Al-Bayyinah", "Az-Zalzalah", "Al-Adiyat",
+  "Al-Qari'ah", "At-Takathur", "Al-Asr", "Al-Humazah", "Al-Fil", "Quraysh", "Al-Ma'un", "Al-Kawthar", "Al-Kafirun", "An-Nasr",
+  "Al-Masad", "Al-Ikhlas", "Al-Falaq", "An-Nas"
+];
 
 // Add these new variables at the top with other variables
 let isReadingMode = false;
@@ -1164,9 +1498,84 @@ let currentAudioAyah = null;
               notificationLabel: "إشعارات أوقات الصلاة",
               bookmarkVerse: "اضغط لتعيين علامة مرجعية",
               translationNames: {
+                  // English
                   "en.sahih": "الإنجليزية (صحاح)",
                   "en.pickthall": "الإنجليزية (بيكثال)",
-                  "en.yusufali": "الإنجليزية (يوسف علي)"
+                  "en.yusufali": "الإنجليزية (يوسف علي)",
+                  "en.hilali": "الإنجليزية (هلالي-خان)",
+                  "en.arberry": "الإنجليزية (آربري)",
+                  "en.asad": "الإنجليزية (محمد أسد)",
+                  "en.daryabadi": "الإنجليزية (داريابادي)",
+                  "en.shakir": "الإنجليزية (شاكر)",
+                  // French
+                  "fr.hamidullah": "الفرنسية (حميد الله)",
+                  "fr.leclerc": "الفرنسية (لوكليرك)",
+                  // German
+                  "de.bubenheim": "الألمانية (بوبنهايم)",
+                  "de.khoury": "الألمانية (خوري)",
+                  // Spanish
+                  "es.cortes": "الإسبانية (كورتيس)",
+                  "es.garcia": "الإسبانية (غارسيا)",
+                  // Italian
+                  "it.piccardo": "الإيطالية (بيكاردو)",
+                  // Portuguese
+                  "pt.elhayek": "البرتغالية (الحايك)",
+                  // Russian
+                  "ru.kuliev": "الروسية (كولييف)",
+                  "ru.osmanov": "الروسية (عثمانوف)",
+                  // Turkish
+                  "tr.diyanet": "التركية (ديانت)",
+                  "tr.bulac": "التركية (بولاش)",
+                  // Urdu
+                  "ur.junagarhi": "الأردية (جونا غاري)",
+                  "ur.kanzuliman": "الأردية (كنز الإيمان)",
+                  // Indonesian
+                  "id.indonesian": "الإندونيسية (وزارة الدين)",
+                  // Malay
+                  "ms.basmeih": "الماليزية (بسميح)",
+                  // Dutch
+                  "nl.keyzer": "الهولندية (كيزر)",
+                  // Bengali
+                  "bn.bengali": "البنغالية (محيالدين خان)",
+                  // Chinese
+                  "zh.jian": "الصينية المبسطة (جيان)",
+                  // Japanese
+                  "ja.japanese": "اليابانية (ريوتشي موري)",
+                  // Korean
+                  "ko.korean": "الكورية (حامد تشوي)",
+                  // Hindi
+                  "hi.hindi": "الهندية (فاروق خان)",
+                  // Tamil
+                  "ta.tamil": "التاميلية (جان تراست)",
+                  // Persian/Farsi
+                  "fa.ansarian": "الفارسية (أنصاريان)",
+                  "fa.makarem": "الفارسية (مكارم شيرازي)",
+                  // Azerbaijani
+                  "az.mammadaliyev": "الأذربيجانية (ممد علييف)",
+                  // Albanian
+                  "sq.ahmeti": "الألبانية (أحمتي)",
+                  // Bosnian
+                  "bs.korkut": "البوسنية (كوركوت)",
+                  // Czech
+                  "cs.hrbek": "التشيكية (هربك)",
+                  // Norwegian
+                  "no.berg": "النرويجية (برغ)",
+                  // Swedish
+                  "sv.bernstrom": "السويدية (برنستروم)",
+                  // Thai
+                  "th.thai": "التايلاندية (الملك فهد)",
+                  // Kurdish
+                  "ku.asan": "الكردية (آسان)",
+                  // Hausa
+                  "ha.gumi": "الهوسا (أبو بكر غومي)",
+                  // Swahili
+                  "sw.barwani": "السواحيلية (بارواني)",
+                  // Somali
+                  "so.abduh": "الصومالية (عبده)",
+                  // Amharic
+                  "am.sadiq": "الأمهرية (صادق)",
+                  // Yoruba
+                  "yo.mikail": "اليوروبا (ميكائيل)"
               },
               azkarTypes: {
                 sabah: "أذكار الصباح",
@@ -1269,9 +1678,84 @@ let currentAudioAyah = null;
               notificationLabel: "Prayer Time Notifications",
               bookmarkVerse: "Click to bookmark this verse",
               translationNames: {
+                  // English
                   "en.sahih": "English (Sahih International)",
                   "en.pickthall": "English (Pickthall)",
-                  "en.yusufali": "English (Yusuf Ali)"
+                  "en.yusufali": "English (Yusuf Ali)",
+                  "en.hilali": "English (Hilali-Khan)",
+                  "en.arberry": "English (Arberry)",
+                  "en.asad": "English (Muhammad Asad)",
+                  "en.daryabadi": "English (Daryabadi)",
+                  "en.shakir": "English (Shakir)",
+                  // French
+                  "fr.hamidullah": "Français (Hamidullah)",
+                  "fr.leclerc": "Français (Leclerc)",
+                  // German
+                  "de.bubenheim": "Deutsch (Bubenheim)",
+                  "de.khoury": "Deutsch (Khoury)",
+                  // Spanish
+                  "es.cortes": "Español (Cortés)",
+                  "es.garcia": "Español (García)",
+                  // Italian
+                  "it.piccardo": "Italiano (Piccardo)",
+                  // Portuguese
+                  "pt.elhayek": "Português (El Hayek)",
+                  // Russian
+                  "ru.kuliev": "Русский (Кулиев)",
+                  "ru.osmanov": "Русский (Османов)",
+                  // Turkish
+                  "tr.diyanet": "Türkçe (Diyanet)",
+                  "tr.bulac": "Türkçe (Bulaç)",
+                  // Urdu
+                  "ur.junagarhi": "اردو (جونا گاری)",
+                  "ur.kanzuliman": "اردو (کنز الایمان)",
+                  // Indonesian
+                  "id.indonesian": "Bahasa Indonesia (Kementerian Agama)",
+                  // Malay
+                  "ms.basmeih": "Bahasa Melayu (Basmeih)",
+                  // Dutch
+                  "nl.keyzer": "Nederlands (Keyzer)",
+                  // Bengali
+                  "bn.bengali": "বাংলা (মুহিউদ্দীন খান)",
+                  // Chinese
+                  "zh.jian": "中文简体 (马坚译)",
+                  // Japanese
+                  "ja.japanese": "日本語 (森亮一)",
+                  // Korean
+                  "ko.korean": "한국어 (최하메드)",
+                  // Hindi
+                  "hi.hindi": "हिन्दी (फारूक खान)",
+                  // Tamil
+                  "ta.tamil": "தமிழ் (ஜான் டிரஸ்ட்)",
+                  // Persian/Farsi
+                  "fa.ansarian": "فارسی (انصاریان)",
+                  "fa.makarem": "فارسی (مکارم شیرازی)",
+                  // Azerbaijani
+                  "az.mammadaliyev": "Azərbaycan (Məmmədəliyev)",
+                  // Albanian
+                  "sq.ahmeti": "Shqip (Ahmeti)",
+                  // Bosnian
+                  "bs.korkut": "Bosanski (Korkut)",
+                  // Czech
+                  "cs.hrbek": "Čeština (Hrbek)",
+                  // Norwegian
+                  "no.berg": "Norsk (Berg)",
+                  // Swedish
+                  "sv.bernstrom": "Svenska (Bernström)",
+                  // Thai
+                  "th.thai": "ไทย (สำนักงานพระราชวัง)",
+                  // Kurdish
+                  "ku.asan": "کوردی (ئاسان)",
+                  // Hausa
+                  "ha.gumi": "Hausa (Abubakar Gumi)",
+                  // Swahili
+                  "sw.barwani": "Kiswahili (Barwani)",
+                  // Somali
+                  "so.abduh": "Soomaali (Abduh)",
+                  // Amharic
+                  "am.sadiq": "አማርኛ (ሳዲቅ)",
+                  // Yoruba
+                  "yo.mikail": "Yorùbá (Mikail)"
               },
               azkarTypes: {
                 sabah: "Morning Azkar",
@@ -1815,8 +2299,12 @@ function showARUnsupported(errorType) {
           document.documentElement.lang = currentLang;
           document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
           updateUI();
+          updateSettingsLanguage();
           displayDhikr();
           updatePrayerTimesUI();
+          
+          // Update Surah dropdown with appropriate language names
+          updateSurahDropdown();
           
           // Update Quran display if we're in the Quran tab
           if (document.getElementById('quranContent').classList.contains('active')) {
@@ -1875,11 +2363,8 @@ function showARUnsupported(errorType) {
               btnRefresh.innerHTML = `<i class="fas fa-sync-alt mr-2"></i> ${lang.refresh}`;
           }
 
-          // Special case for surahSelect first child
-          const surahSelect = document.getElementById('surahSelect');
-          if (surahSelect && surahSelect.firstElementChild) {
-              surahSelect.firstElementChild.textContent = lang.selectSurah;
-          }
+          // Update surah menu button text
+          updateSurahDropdown();
           
           // Update translation select options
           const translationSelect = document.getElementById('translationSelect');
@@ -1887,20 +2372,89 @@ function showARUnsupported(errorType) {
           const currentTranslation = translationSelect.value;
           translationSelect.innerHTML = '';
           
-              // Add options based on current language
-              if (currentLang === 'ar') {
-                  translationSelect.innerHTML = `
-                      <option value="en.sahih">${lang.translationNames["en.sahih"]}</option>
-                      <option value="en.pickthall">${lang.translationNames["en.pickthall"]}</option>
-                      <option value="en.yusufali">${lang.translationNames["en.yusufali"]}</option>
-                  `;
-              } else {
-                  translationSelect.innerHTML = `
-                      <option value="en.sahih">${lang.translationNames["en.sahih"]}</option>
-                      <option value="en.pickthall">${lang.translationNames["en.pickthall"]}</option>
-                      <option value="en.yusufali">${lang.translationNames["en.yusufali"]}</option>
-                  `;
-              }
+              // Add options based on current language - organized by language groups
+              const translationOptions = [
+                  // English Translations
+                  { value: "en.sahih", group: currentLang === 'ar' ? "الإنجليزية" : "English" },
+                  { value: "en.pickthall", group: currentLang === 'ar' ? "الإنجليزية" : "English" },
+                  { value: "en.yusufali", group: currentLang === 'ar' ? "الإنجليزية" : "English" },
+                  { value: "en.hilali", group: currentLang === 'ar' ? "الإنجليزية" : "English" },
+                  { value: "en.arberry", group: currentLang === 'ar' ? "الإنجليزية" : "English" },
+                  { value: "en.asad", group: currentLang === 'ar' ? "الإنجليزية" : "English" },
+                  { value: "en.daryabadi", group: currentLang === 'ar' ? "الإنجليزية" : "English" },
+                  { value: "en.shakir", group: currentLang === 'ar' ? "الإنجليزية" : "English" },
+                  
+                  // European Languages
+                  { value: "fr.hamidullah", group: currentLang === 'ar' ? "الأوروبية" : "European" },
+                  { value: "fr.leclerc", group: currentLang === 'ar' ? "الأوروبية" : "European" },
+                  { value: "de.bubenheim", group: currentLang === 'ar' ? "الأوروبية" : "European" },
+                  { value: "de.khoury", group: currentLang === 'ar' ? "الأوروبية" : "European" },
+                  { value: "es.cortes", group: currentLang === 'ar' ? "الأوروبية" : "European" },
+                  { value: "es.garcia", group: currentLang === 'ar' ? "الأوروبية" : "European" },
+                  { value: "it.piccardo", group: currentLang === 'ar' ? "الأوروبية" : "European" },
+                  { value: "pt.elhayek", group: currentLang === 'ar' ? "الأوروبية" : "European" },
+                  { value: "ru.kuliev", group: currentLang === 'ar' ? "الأوروبية" : "European" },
+                  { value: "ru.osmanov", group: currentLang === 'ar' ? "الأوروبية" : "European" },
+                  { value: "nl.keyzer", group: currentLang === 'ar' ? "الأوروبية" : "European" },
+                  { value: "bs.korkut", group: currentLang === 'ar' ? "الأوروبية" : "European" },
+                  { value: "cs.hrbek", group: currentLang === 'ar' ? "الأوروبية" : "European" },
+                  { value: "no.berg", group: currentLang === 'ar' ? "الأوروبية" : "European" },
+                  { value: "sv.bernstrom", group: currentLang === 'ar' ? "الأوروبية" : "European" },
+                  { value: "sq.ahmeti", group: currentLang === 'ar' ? "الأوروبية" : "European" },
+                  
+                  // Middle Eastern & Central Asian
+                  { value: "tr.diyanet", group: currentLang === 'ar' ? "الشرق الأوسط وآسيا الوسطى" : "Middle East & Central Asia" },
+                  { value: "tr.bulac", group: currentLang === 'ar' ? "الشرق الأوسط وآسيا الوسطى" : "Middle East & Central Asia" },
+                  { value: "ur.junagarhi", group: currentLang === 'ar' ? "الشرق الأوسط وآسيا الوسطى" : "Middle East & Central Asia" },
+                  { value: "ur.kanzuliman", group: currentLang === 'ar' ? "الشرق الأوسط وآسيا الوسطى" : "Middle East & Central Asia" },
+                  { value: "fa.ansarian", group: currentLang === 'ar' ? "الشرق الأوسط وآسيا الوسطى" : "Middle East & Central Asia" },
+                  { value: "fa.makarem", group: currentLang === 'ar' ? "الشرق الأوسط وآسيا الوسطى" : "Middle East & Central Asia" },
+                  { value: "az.mammadaliyev", group: currentLang === 'ar' ? "الشرق الأوسط وآسيا الوسطى" : "Middle East & Central Asia" },
+                  { value: "ku.asan", group: currentLang === 'ar' ? "الشرق الأوسط وآسيا الوسطى" : "Middle East & Central Asia" },
+                  
+                  // South & Southeast Asian
+                  { value: "id.indonesian", group: currentLang === 'ar' ? "جنوب وجنوب شرق آسيا" : "South & Southeast Asia" },
+                  { value: "ms.basmeih", group: currentLang === 'ar' ? "جنوب وجنوب شرق آسيا" : "South & Southeast Asia" },
+                  { value: "bn.bengali", group: currentLang === 'ar' ? "جنوب وجنوب شرق آسيا" : "South & Southeast Asia" },
+                  { value: "hi.hindi", group: currentLang === 'ar' ? "جنوب وجنوب شرق آسيا" : "South & Southeast Asia" },
+                  { value: "ta.tamil", group: currentLang === 'ar' ? "جنوب وجنوب شرق آسيا" : "South & Southeast Asia" },
+                  { value: "th.thai", group: currentLang === 'ar' ? "جنوب وجنوب شرق آسيا" : "South & Southeast Asia" },
+                  
+                  // East Asian
+                  { value: "zh.jian", group: currentLang === 'ar' ? "شرق آسيا" : "East Asia" },
+                  { value: "ja.japanese", group: currentLang === 'ar' ? "شرق آسيا" : "East Asia" },
+                  { value: "ko.korean", group: currentLang === 'ar' ? "شرق آسيا" : "East Asia" },
+                  
+                  // African
+                  { value: "ha.gumi", group: currentLang === 'ar' ? "الأفريقية" : "African" },
+                  { value: "sw.barwani", group: currentLang === 'ar' ? "الأفريقية" : "African" },
+                  { value: "so.abduh", group: currentLang === 'ar' ? "الأفريقية" : "African" },
+                  { value: "am.sadiq", group: currentLang === 'ar' ? "الأفريقية" : "African" },
+                  { value: "yo.mikail", group: currentLang === 'ar' ? "الأفريقية" : "African" }
+              ];
+              
+              // Group translations by region
+              const groupedTranslations = {};
+              translationOptions.forEach(option => {
+                  if (!groupedTranslations[option.group]) {
+                      groupedTranslations[option.group] = [];
+                  }
+                  groupedTranslations[option.group].push(option.value);
+              });
+              
+              // Build the dropdown HTML with optgroups
+              let optionsHTML = '';
+              Object.keys(groupedTranslations).forEach(groupName => {
+                  optionsHTML += `<optgroup label="${groupName}">`;
+                  groupedTranslations[groupName].forEach(translationKey => {
+                      if (lang.translationNames[translationKey]) {
+                          optionsHTML += `<option value="${translationKey}">${lang.translationNames[translationKey]}</option>`;
+                      }
+                  });
+                  optionsHTML += `</optgroup>`;
+              });
+              
+              translationSelect.innerHTML = optionsHTML;
 
               // Restore the previously selected translation if it exists
               if (currentTranslation) {
@@ -1931,6 +2485,38 @@ function showARUnsupported(errorType) {
           } catch (error) {
               console.error('Error loading translation:', error);
               showToast(currentLang === 'ar' ? 'حدث خطأ في تحميل الترجمة' : 'Error loading translation', 'error');
+          }
+      }
+
+      function updateSurahDropdown() {
+          // Update surah menu button text
+          const selectedSurahText = document.getElementById('selectedSurahText');
+          if (selectedSurahText) {
+              if (currentSurah !== null && quranData && quranData[currentSurah]) {
+                  const surah = quranData[currentSurah];
+                  const surahName = currentLang === 'ar' ? surah.name : surahNamesEnglish[currentSurah];
+                  selectedSurahText.textContent = `${surah.number}. ${surahName}`;
+              } else {
+                  selectedSurahText.textContent = languages[currentLang].selectSurah;
+              }
+          }
+          
+          // Update surah menu data and repopulate if menu is open
+          if (quranData) {
+              surahsData = quranData.map((surah, index) => ({
+                  index: index,
+                  number: surah.number,
+                  name: surah.name,
+                  englishName: surahNamesEnglish[index] || surah.englishName,
+                  revelationType: surah.revelationType,
+                  numberOfAyahs: surah.numberOfAyahs
+              }));
+              
+              // If menu is open, repopulate it
+              const surahList = document.getElementById('surahList');
+              if (surahList && surahList.children.length > 0) {
+                  populateSurahList(surahsData);
+              }
           }
       }
 
@@ -2296,40 +2882,8 @@ function showARUnsupported(errorType) {
 
               quranData = quranJson.data.surahs;
 
-              const select = document.getElementById('surahSelect');
-              if (!select) {
-                  throw new Error('Surah select element not found');
-              }
-
-              select.innerHTML = '<option value="">' + languages[currentLang].selectSurah + '</option>';
-
-              quranData.forEach((surah, index) => {
-                  const option = document.createElement('option');
-                  option.value = index;
-                  option.textContent = `${surah.number}. ${surah.name}`;
-                  select.appendChild(option);
-              });
-
-              const newSelect = select.cloneNode(true);
-              select.parentNode.replaceChild(newSelect, select);
-
-              newSelect.addEventListener('change', (e) => {
-                  if (e.target.value !== '') {
-                      currentSurah = parseInt(e.target.value);
-                      currentAyah = 0;
-                      isReadingMode = false;
-                      document.getElementById('btnReadingMode').innerHTML = '<i class="fas fa-book-open"></i>';
-                      // Enable tafsir and translation buttons
-                      document.getElementById('toggleTafsir').disabled = false;
-                      document.getElementById('toggleTranslation').disabled = false;
-                      displayAyah();
-                  } else {
-                      resetQuranContent();
-                      // Disable tafsir and translation buttons
-                      document.getElementById('toggleTafsir').disabled = true;
-                      document.getElementById('toggleTranslation').disabled = true;
-                  }
-              });
+              // Initialize surah menu data
+              initializeSurahMenu();
 
               if (!translationJson.data || !translationJson.data.surahs) {
                   throw new Error('Invalid translation data format');
@@ -2348,7 +2902,7 @@ function showARUnsupported(errorType) {
                   const localStorageBookmark = localStorage.getItem('quranBookmark');
                   if (localStorageBookmark) {
                       savedBookmark = JSON.parse(localStorageBookmark);
-                      document.getElementById('toggleBookmark').innerHTML = '<i class="fas fa-bookmark buttonActive"></i>';
+                     
                     
                   }
               } catch (error) {
@@ -2368,19 +2922,16 @@ function showARUnsupported(errorType) {
 
               if (savedBookmark) {
                   currentBookmark = savedBookmark;
-                  document.getElementById('toggleBookmark').innerHTML = '<i class="fas fa-bookmark buttonActive"></i>';
+                
               } else {
-                  document.getElementById('toggleBookmark').innerHTML = '<i class="fas fa-bookmark"></i>';
+                 
               }
 
               resetQuranContent();
 
               // Set initial tafsir state and icon
               isTafsirVisible = false;
-              const toggleBtn = document.getElementById('toggleTafsir');
-              if (toggleBtn) {
-                  toggleBtn.innerHTML = '<i class="fas fa-book"></i>';
-              }
+         
 
           } catch (error) {
               console.error('Error loading Quran data:', error);
@@ -2391,7 +2942,12 @@ function showARUnsupported(errorType) {
       function resetQuranContent() {
           currentSurah = null;
           currentAyah = 0;
-          document.getElementById('surahSelect').value = '';
+          
+          // Update surah menu button text
+          const selectedSurahText = document.getElementById('selectedSurahText');
+          if (selectedSurahText) {
+              selectedSurahText.textContent = languages[currentLang].selectSurah;
+          }
           
           let savedBookmark = null;
           
@@ -2418,7 +2974,7 @@ function showARUnsupported(errorType) {
           if (savedBookmark) {
               try {
                   currentBookmark = savedBookmark;
-                  document.getElementById('toggleBookmark').innerHTML = '<i class="fas fa-bookmark buttonActive"></i>';
+                  
               } catch (error) {
                   try {
                       localStorage.removeItem('quranBookmark');
@@ -2435,29 +2991,34 @@ function showARUnsupported(errorType) {
                   <i class="fas fa-book-quran text-4xl mb-4"></i>
                   <p class="text-xl">${currentLang === 'ar' ? 'اختر سورة للبدء' : 'Select a Surah to begin'}</p>
                   ${savedBookmark && quranData ? `
-                      <div class="mt-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 max-w-md mx-auto">
-                          <div class="flex items-center justify-between mb-4">
-                              <div class="flex items-center">
-                                  <i class="fas fa-bookmark text-blue-500 text-2xl mr-3"></i>
-                                  <div class="text-right">
-                                      <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                          ${currentLang === 'ar' ? 'متابعة القراءة' : 'Continue Reading'}
-                                      </h3>
-                                      <p class="text-sm text-gray-600 dark:text-gray-400">
-                                          ${quranData[savedBookmark.surah].name} (${quranData[savedBookmark.surah].englishName})
-                                      </p>
-                                      <p class="text-sm text-gray-600 dark:text-gray-400">
-                                          ${currentLang === 'ar' ? 'الآية' : 'Verse'} ${savedBookmark.ayah + 1}
-                                      </p>
-                                  </div>
+                      <div class="mt-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-6 max-w-sm mx-auto">
+                          <div class="text-center mb-6">
+                              <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-50 dark:bg-blue-900/30 rounded-full mb-4">
+                                  <i class="fas fa-bookmark text-blue-500 text-2xl"></i>
                               </div>
-                              <button onclick="goToBookmark()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
-                                  <i class="fas fa-play"></i>
-                                  <span>${currentLang === 'ar' ? 'متابعة' : 'Continue'}</span>
-                              </button>
+                              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                                  ${currentLang === 'ar' ? 'متابعة القراءة' : 'Continue Reading'}
+                              </h3>
+                              <div class="space-y-1">
+                                  <p class="text-base font-medium text-gray-800 dark:text-gray-200">
+                                      ${quranData[savedBookmark.surah].name}
+                                  </p>
+                                  <p class="text-sm text-gray-500 dark:text-gray-400">
+                                      ${quranData[savedBookmark.surah].englishName}
+                                  </p>
+                                  <p class="text-sm text-blue-600 dark:text-blue-400 font-medium">
+                                      ${currentLang === 'ar' ? 'الآية' : 'Verse'} ${savedBookmark.ayah + 1}
+                                  </p>
+                              </div>
                           </div>
-                          <div class="text-sm text-gray-500 dark:text-gray-400">
-                              ${currentLang === 'ar' ? 'آخر قراءة' : 'Last read'} ${new Date(savedBookmark.timestamp).toLocaleDateString()}
+                          <button onclick="goToBookmark()" class="w-full bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white py-3 px-6 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-3 shadow-sm hover:shadow-md">
+                              <i class="fas fa-play text-lg"></i>
+                              <span class="text-lg">${currentLang === 'ar' ? 'متابعة' : 'Continue'}</span>
+                          </button>
+                          <div class="text-center mt-4">
+                              <p class="text-xs text-gray-400 dark:text-gray-500">
+                                  ${currentLang === 'ar' ? 'آخر قراءة' : 'Last read'} ${new Date(savedBookmark.timestamp).toLocaleDateString()}
+                              </p>
                           </div>
                       </div>
                   ` : ''}
@@ -2852,23 +3413,81 @@ function showARUnsupported(errorType) {
 
       // Add tafsir cache object at the top
       let tafsirCache = {};
+      let currentTafsirSource = '2'; // Default tafsir source (Jalalayn ID)
 
-      // Update getTafsirForAyah to fetch per-ayah tafsir
-      async function getTafsirForAyah(surah, ayah) {
-        if (!tafsirLang) tafsirLang = 'en';
-        const langCode = tafsirLang === 'ar' ? 'ar-tafsir-muyassar' : 'en-al-jalalayn';
-        const cacheKey = `${langCode}-${surah + 1}-${ayah + 1}`;
+      // Tafsir source mapping - mixing both APIs for comprehensive coverage
+      const tafsirSources = {
+        // Arabic tafsir from quran-tafseer.com API
+        '1': { id: 1, name: 'التفسير الميسر', language: 'ar', api: 'quran-tafseer' },
+        '2': { id: 2, name: 'تفسير الجلالين', language: 'ar', api: 'quran-tafseer' },
+        '3': { id: 3, name: 'تفسير السعدي', language: 'ar', api: 'quran-tafseer' },
+        '4': { id: 4, name: 'تفسير البغوي', language: 'ar', api: 'quran-tafseer' },
+        '5': { id: 5, name: 'تفسير القرطبي', language: 'ar', api: 'quran-tafseer' },
+        '6': { id: 6, name: 'تفسير ابن كثير', language: 'ar', api: 'quran-tafseer' },
+        '7': { id: 7, name: 'تفسير الطبري', language: 'ar', api: 'quran-tafseer' },
+        
+        // English tafsir from spa5k tafsir_api
+        'en-jalalayn': { slug: 'en-al-jalalayn', name: 'Tafsir al-Jalalayn (English)', language: 'en', api: 'spa5k' },
+        'en-kathir': { slug: 'en-tafisr-ibn-kathir', name: 'Tafsir Ibn Kathir (English)', language: 'en', api: 'spa5k' },
+        'en-maarif': { slug: 'en-tafsir-maarif-ul-quran', name: 'Ma\'ariful Quran (English)', language: 'en', api: 'spa5k' },
+        'en-tazkirul': { slug: 'en-tazkirul-quran', name: 'Tazkirul Quran (English)', language: 'en', api: 'spa5k' }
+      };
+
+             // Update getTafsirForAyah to fetch per-ayah tafsir using multiple APIs
+       async function getTafsirForAyah(surah, ayah, tafsirSource = null) {
+         const source = tafsirSource || currentTafsirSource;
+         const tafsirConfig = tafsirSources[source] || tafsirSources['2']; // Default to Jalalayn
+         const cacheKey = `tafsir-${source}-${surah + 1}-${ayah + 1}`;
+         
         if (tafsirCache[cacheKey]) {
           return tafsirCache[cacheKey];
         }
-        try {
-          const url = `https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir/${langCode}/${surah + 1}/${ayah + 1}.json`;
-          const response = await fetch(url);
-          if (!response.ok) throw new Error('Tafsir not available');
-          const data = await response.json();
+         
+         try {
+           let url, response, data;
+           
+           if (tafsirConfig.api === 'quran-tafseer') {
+             // Use quran-tafseer.com API for Arabic tafsir
+             url = `http://api.quran-tafseer.com/tafseer/${tafsirConfig.id}/${surah + 1}/${ayah + 1}`;
+             response = await fetch(url);
+             if (response.ok) {
+               data = await response.json();
           tafsirCache[cacheKey] = data;
           return data;
+             } else {
+               throw new Error(`HTTP ${response.status}`);
+             }
+           } else if (tafsirConfig.api === 'spa5k') {
+             // Use spa5k tafsir_api for English tafsir with multiple CDN fallbacks
+             const cdnUrls = [
+               `https://raw.githubusercontent.com/spa5k/tafsir_api/main/tafsir/${tafsirConfig.slug}/${surah + 1}/${ayah + 1}.json`,
+               `https://cdn.statically.io/gh/spa5k/tafsir_api/main/tafsir/${tafsirConfig.slug}/${surah + 1}/${ayah + 1}.json`,
+               `https://rawcdn.githack.com/spa5k/tafsir_api/main/tafsir/${tafsirConfig.slug}/${surah + 1}/${ayah + 1}.json`
+             ];
+             
+             for (const cdnUrl of cdnUrls) {
+               try {
+                 response = await fetch(cdnUrl);
+                 if (response.ok) {
+                   data = await response.json();
+                   tafsirCache[cacheKey] = data;
+                   return data;
+                 }
+               } catch (cdnError) {
+                 console.log(`Failed to fetch from ${cdnUrl}:`, cdnError);
+                 continue;
+               }
+             }
+             throw new Error('All CDN sources failed');
+           }
         } catch (error) {
+           console.log(`Failed to fetch tafsir from API:`, error);
+           
+           // Fallback to default tafsir if not already using it
+           if (source !== '2') {
+             return getTafsirForAyah(surah, ayah, '2');
+           }
+           
           tafsirCache[cacheKey] = { text: currentLang === 'ar' ? 'لا يوجد تفسير متاح' : 'Tafsir not available' };
           return tafsirCache[cacheKey];
         }
@@ -2878,6 +3497,10 @@ function showARUnsupported(errorType) {
       async function displayAyah() {
         const arabicTextElement = document.getElementById('arabicText');
         const translationTextElement = document.getElementById('translationText');
+        const surah = quranData && currentSurah !== null ? quranData[currentSurah] : null;
+        if (surah && surah.ayahs && surah.ayahs[0]) {
+          console.log('First ayah from quranData:', surah.ayahs[0].text);
+        }
         if (currentSurah === null || !quranData || !translationData) {
           arabicTextElement.innerHTML = `
             <div class="text-gray-500 dark:text-gray-400 py-8">
@@ -2893,7 +3516,6 @@ function showARUnsupported(errorType) {
           return;
         }
         try {
-          const surah = quranData[currentSurah];
           const translation = translationData[currentSurah];
           if (!surah || !translation) throw new Error('Invalid surah data');
           if (!surah.ayahs || !translation.ayahs) throw new Error('Invalid ayahs data');
@@ -2910,8 +3532,34 @@ function showARUnsupported(errorType) {
   displayAyah();
   return;
 }
-          const ayah = surah.ayahs[currentAyah];
-          const translationAyah = translation.ayahs[currentAyah];
+          const bismillahText = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
+          let bismillahHtml = '';
+          let ayahText = surah.ayahs[currentAyah].text;
+          let translationAyah = translation.ayahs[currentAyah];
+          let ayahNumber = surah.ayahs[currentAyah].numberInSurah;
+          let displayedAyahIndex = currentAyah;
+          // For all surahs except At-Tawbah, show Bismillah at the top and remove from ayah text if present
+          if (currentAyah === 0 && currentSurah !== 8) {
+            ayahText = ayahText.replace('بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ', '');
+
+            
+            bismillahHtml = `<div class="text-center my-6 text-xl md:text-3xl quran-uthmani-font text-gray-700 dark:text-gray-200 select-none max-w-full md:max-w-2xl mx-auto" dir="rtl" style="font-family: 'Quran.com Font', Arial, sans-serif; letter-spacing: 0.05em; margin-bottom: 2rem;">${bismillahText}</div>`;
+            // If ayahText is empty after removing Bismillah (e.g., Al-Fatiha where first ayah is only Bismillah), 
+            // skip to the actual first content ayah and increment currentAyah accordingly
+            if (!ayahText.trim() && surah.ayahs.length > 1) {
+              currentAyah = 1; // Actually move to the next ayah
+              ayahText = surah.ayahs[1].text;
+              ayahText = ayahText.replace('بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ', '');
+
+              translationAyah = translation.ayahs[1];
+              ayahNumber = surah.ayahs[1].numberInSurah;
+              displayedAyahIndex = 1;
+            }
+          }
+          // Log the ayah text as it will be displayed (after Bismillah removal)
+          if (currentAyah === 0 && currentSurah !== 8) {
+            console.log('First ayah as displayed (after Bismillah removal):', ayahText);
+          }
           const bookmarkText = languages[currentLang].bookmarkVerse;
           let tafsirHtml = '';
           if (isTafsirVisible) {
@@ -2920,26 +3568,21 @@ function showARUnsupported(errorType) {
               <span id="tafsir-loading">${currentLang === 'ar' ? 'جاري التحميل...' : 'Loading...'}</span>
             </div>`;
           }
-          
-          // Process the ayah text
-          let ayahText = (currentAyah === 0 && currentSurah !== 8 && ayah.text.replace(/\s/g, '').startsWith('بِسْمِاللَّهِالرَّحْمَٰنِالرَّحِيمِ')) 
-            ? ayah.text.replace(/^بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\s*/,'').replace(/^بِسْمِاللَّهِالرَّحْمَٰنِالرَّحِيمِ\s*/,'') 
-            : ayah.text;
-          
           const html = `
             <div class="mb-6">
-              <div class="text-2xl leading-loose mb-2" style="font-size: ${1.5 * currentTextSize}rem;">
-                <span class="ayah" data-surah="${currentSurah}" data-ayah="${currentAyah}" onclick="playAyahAudio(${currentSurah}, ${currentAyah})">
+              ${bismillahHtml}
+              <div class="text-2xl leading-loose mb-2 text-justify md:text-center w-full md:max-w-2xl mx-auto px-4 md:px-8 text-right" dir="rtl" style="font-size: ${1.5 * currentTextSize}rem; line-height: 2.2; word-spacing: 0.1em; letter-spacing: 0.02em;">
+                <span class="ayah" data-surah="${currentSurah}" data-ayah="${displayedAyahIndex}">
                   ${ayahText}
                 </span>
                 <span class="verse-marker" 
-                  onclick="bookmarkAyah(${currentSurah}, ${currentAyah})"
+                  onclick="bookmarkAyah(${currentSurah}, ${displayedAyahIndex})"
                   title="${bookmarkText}">
-                  <span class="verse-icon"></span><span class="verse-number">${toArabicNumerals(ayah.numberInSurah)}</span>
+                  <span class="verse-icon"></span><span class="verse-number">${toArabicNumerals(ayahNumber)}</span>
                 </span>
               </div>
-              ${isTranslationVisible ? `
-                <div class="text-lg text-gray-600 dark:text-gray-400 mb-2" style="font-size: ${1.125 * currentTextSize}rem;">
+              ${isTranslationVisible && translationAyah ? `
+                <div class="text-lg text-gray-600 dark:text-gray-400 mb-2 text-left" dir="ltr" style="font-size: ${1.125 * currentTextSize}rem;">
                   ${translationAyah.text}
                 </div>
               ` : ''}
@@ -2952,26 +3595,13 @@ function showARUnsupported(errorType) {
           document.getElementById('btnPrevAyah').disabled = currentAyah === 0;
           document.getElementById('btnNextAyah').disabled = currentAyah >= surah.ayahs.length - 1;
           document.getElementById('btnReadingMode').disabled = false;
-          const bookmarkBtn = document.getElementById('toggleBookmark');
-          if (currentBookmark && currentBookmark.surah === currentSurah && currentBookmark.ayah === currentAyah) {
-            bookmarkBtn.innerHTML = '<i class="fas fa-bookmark buttonActive"></i>';
-          } else {
-            bookmarkBtn.innerHTML = '<i class="far fa-bookmark"></i>';
-          }
           
           // Add event listeners for the ayah elements
-          document.querySelectorAll('.ayah').forEach(ayahElem => {
-            ayahElem.addEventListener('click', function() {
-              const surah = this.getAttribute('data-surah');
-              const ayah = this.getAttribute('data-ayah');
-              playAyahAudio(parseInt(surah), parseInt(ayah));
-            });
-          });
           
           updateAyahHighlights();
           // Fetch tafsir if needed
           if (isTafsirVisible) {
-            const tafsir = await getTafsirForAyah(currentSurah, currentAyah);
+            const tafsir = await getTafsirForAyah(currentSurah, displayedAyahIndex);
             const tafsirElem = document.getElementById('tafsir-loading');
             if (tafsirElem) tafsirElem.innerText = tafsir.text || (currentLang === 'ar' ? 'لا يوجد تفسير متاح' : 'Tafsir not available');
           }
@@ -3013,7 +3643,8 @@ function showARUnsupported(errorType) {
               if (currentSurah < quranData.length - 1) {
                   currentSurah++;
                   currentAyah = 0;
-                  document.getElementById('surahSelect').value = currentSurah;
+                  // Update surah menu button text
+                  updateSurahDropdown();
                   console.log('Moving to next surah:', {
                       from: currentSurah - 1,
                       to: currentSurah,
@@ -3039,7 +3670,8 @@ function showARUnsupported(errorType) {
                   // Move to next surah
                   currentSurah++;
                   currentAyah = 0;
-                  document.getElementById('surahSelect').value = currentSurah;
+                  // Update surah menu button text
+                  updateSurahDropdown();
                   console.log('Moving to next surah:', {
                       from: currentSurah - 1,
                       to: currentSurah,
@@ -3075,7 +3707,8 @@ function showARUnsupported(errorType) {
               if (currentSurah > 0) {
                   currentSurah--;
                   currentAyah = 0;
-                  document.getElementById('surahSelect').value = currentSurah;
+                  // Update surah menu button text
+                  updateSurahDropdown();
                   console.log('Moving to previous surah:', {
                       from: currentSurah + 1,
                       to: currentSurah,
@@ -3101,7 +3734,8 @@ function showARUnsupported(errorType) {
                   // Move to previous surah
                   currentSurah--;
                   currentAyah = quranData[currentSurah].ayahs.length - 1;
-                  document.getElementById('surahSelect').value = currentSurah;
+                  // Update surah menu button text
+                  updateSurahDropdown();
                   console.log('Moving to previous surah:', {
                       from: currentSurah + 1,
                       to: currentSurah,
@@ -3139,7 +3773,8 @@ function showARUnsupported(errorType) {
                   readingModeAyahs.push({
                       arabic: surah.ayahs[i].text,
                       translation: translation.ayahs[i].text,
-                      number: i + 1
+                      number: i + 1,
+                      page: surah.ayahs[i].page // Include page number from original data
                   });
               }
           }
@@ -3156,45 +3791,95 @@ function showARUnsupported(errorType) {
           displayReadingModeAyahs();
       }
 
-      // Update displayReadingModeAyahs to fetch tafsir per ayah
-      async function displayReadingModeAyahs(shouldScrollToBookmark = false, scrollToVerseId = null) {
+      // Update displayReadingModeAyahs to fetch tafsir per ayah and group by pages
+      async function displayReadingModeAyahsByPages(shouldScrollToBookmark = false, scrollToVerseId = null) {
         const arabicText = document.getElementById('arabicText');
         const translationText = document.getElementById('translationText');
         const bookmarkText = languages[currentLang].bookmarkVerse;
         let html = '';
-        // Insert Bismillah at the top (not as a verse) for all surahs except At-Tawbah (9)
-        let bismillahHtml = '';
-        // Surah 0 is Al-Fatiha, Surah 8 is Al-Anfal, Surah 9 is At-Tawbah (no Bismillah)
-        const bismillahText = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
-        if (currentSurah !== 8) {
-          bismillahHtml = `<div class="text-center my-4 text-xl md:text-2xl quran-uthmani-font text-gray-700 dark:text-gray-200 select-none" style="font-family: 'Amiri Quran', serif; letter-spacing: 0.03em;">${bismillahText}</div>`;
-        }
-        let ayahLine = `<div class="text-2xl leading-loose text-justify" style="font-size: ${1.5 * currentTextSize}rem;">`;
-        // Remove Bismillah from ayah flow if present (usually first ayah, except Fatiha)
+        
+        // Group verses by page number
+        const pageGroups = {};
         let startIdx = 0;
-        if (readingModeAyahs.length > 0 && readingModeAyahs[0].arabic.replace(/\s/g, '') === bismillahText.replace(/\s/g, '') && currentSurah !== 0) {
+        const bismillahText = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
+        
+        // Skip Bismillah-only verses
+        if (readingModeAyahs.length > 0 && readingModeAyahs[0].arabic.replace(/\s/g, '') === bismillahText.replace(/\s/g, '')) {
           startIdx = 1;
         }
+        
+        // Group verses by their page numbers
         for (let index = startIdx; index < readingModeAyahs.length; index++) {
           const ayah = readingModeAyahs[index];
-          let ayahText = ayah.arabic;
-          if (index === startIdx && currentSurah !== 8 && ayahText.replace(/\s/g, '').startsWith('بِسْمِاللَّهِالرَّحْمَٰنِالرَّحِيمِ')) {
-            ayahText = ayahText.replace(/^بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\s*/,'').replace(/^بِسْمِاللَّهِالرَّحْمَٰنِالرَّحِيمِ\s*/,'');
+          const pageNum = ayah.page || 1; // fallback to page 1 if no page info
+          
+          if (!pageGroups[pageNum]) {
+            pageGroups[pageNum] = [];
           }
-          const verseNumber = currentAyah + index + 1 - startIdx;
-          const ayahIndex = currentAyah + index;
-          ayahLine += ` <span class="ayah" data-surah="${currentSurah}" data-ayah="${ayahIndex}">${ayahText}</span> <span class="verse-marker" id="verse-${currentSurah}-${ayahIndex}" onclick="bookmarkAyah(${currentSurah}, ${ayahIndex})" title="${bookmarkText}"><span class="verse-icon"></span><span class="verse-number">${toArabicNumerals(verseNumber)}</span></span>`;
+          pageGroups[pageNum].push({
+            ayah: ayah,
+            originalIndex: index,
+            ayahIndex: currentAyah + index
+          });
         }
-        ayahLine += '</div>';
-        html = bismillahHtml + ayahLine;
-
-        if (isTranslationVisible) {
-          html += `<div class="mt-6 text-lg text-gray-600 dark:text-gray-400" style="font-size: ${1.125 * currentTextSize}rem;">`;
-          for (let index = 0; index < readingModeAyahs.length; index++) {
-            const ayah = readingModeAyahs[index];
-            html += ` (${index + 1}) ${ayah.translation}`;
+        
+        // Insert Bismillah at the top for all surahs except At-Tawbah (9)
+        let bismillahHtml = '';
+        if (currentSurah !== 8) {
+          bismillahHtml = `<div class="text-center my-6 text-xl md:text-3xl quran-uthmani-font text-gray-700 dark:text-gray-200 select-none max-w-full md:max-w-2xl mx-auto" dir="rtl" style="font-family: 'Quran.com Font', Arial, sans-serif; letter-spacing: 0.05em; margin-bottom: 2rem;">${bismillahText}</div>`;
+        }
+        
+        html += bismillahHtml;
+        
+        // Sort pages numerically and render each page group
+        const sortedPages = Object.keys(pageGroups).sort((a, b) => parseInt(a) - parseInt(b));
+        
+        for (let i = 0; i < sortedPages.length; i++) {
+          const pageNum = sortedPages[i];
+          const pageVersesData = pageGroups[pageNum];
+          
+          // Page header with number
+          html += `<div class="page-section mb-8">
+            <div class="page-header text-center mb-6">
+              <div class="inline-flex items-center justify-center">
+                <span class="text-xs font-normal text-gray-500 dark:text-gray-400 px-3 py-1 rounded-md bg-gray-50 dark:bg-gray-800/50">${currentLang === 'ar' ? 'صفحة' : 'Page'} ${currentLang === 'ar' ? toArabicNumerals(pageNum) : pageNum}</span>
+              </div>
+            </div>`;
+          
+          // Verses for this page
+          let pageAyahLine = `<div class="text-2xl leading-loose text-justify md:text-center w-full md:max-w-2xl mx-auto px-4 md:px-8 mb-6 text-right" dir="rtl" style="font-size: ${1.5 * currentTextSize}rem; line-height: 2.2; word-spacing: 0.1em; letter-spacing: 0.02em;">`;
+          
+          for (let j = 0; j < pageVersesData.length; j++) {
+            const verseData = pageVersesData[j];
+            let ayahText = verseData.ayah.arabic;
+            
+            // Remove Bismillah from first verse if needed
+            if (verseData.originalIndex === startIdx && currentSurah !== 8) {
+              ayahText = ayahText.replace('بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ', '');
           }
+            
+            const verseNumber = currentAyah + verseData.originalIndex + 1 - startIdx;
+            pageAyahLine += ` <span class="ayah" data-surah="${currentSurah}" data-ayah="${verseData.ayahIndex}">${ayahText}</span> <span class="verse-marker" id="verse-${currentSurah}-${verseData.ayahIndex}" onclick="bookmarkAyah(${currentSurah}, ${verseData.ayahIndex})" title="${bookmarkText}"><span class="verse-icon"></span><span class="verse-number">${toArabicNumerals(verseNumber)}</span></span>`;
+        }
+          
+          pageAyahLine += '</div>';
+          html += pageAyahLine;
+
+          // Close page section
           html += '</div>';
+          
+          // Add separator between pages (except for the last page)
+          if (i < sortedPages.length - 1) {
+            html += `<div class="page-separator my-8">
+              <div class="flex items-center justify-center">
+                <div class="h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent w-full max-w-md"></div>
+                <div class="mx-4">
+                  <div class="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full"></div>
+                </div>
+                <div class="h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent w-full max-w-md"></div>
+              </div>
+            </div>`;
+          }
         }
 
         if (isTafsirVisible) {
@@ -3214,16 +3899,7 @@ function showARUnsupported(errorType) {
         document.getElementById('btnNextAyah').disabled = currentSurah >= quranData.length - 1;
         const btn = document.getElementById('btnReadingMode');
         btn.title = `Displaying entire Surah ${surah.name} (${surah.englishName})`;
-        
-        // Add event listeners for the ayah elements
-        document.querySelectorAll('.ayah').forEach(ayahElem => {
-          ayahElem.addEventListener('click', function() {
-            const surah = this.getAttribute('data-surah');
-            const ayah = this.getAttribute('data-ayah');
-            playAyahAudio(parseInt(surah), parseInt(ayah));
-          });
-        });
-        
+        // Event listeners for ayah elements are handled by the popover script
         updateAyahHighlights();
         // Fetch tafsir for all ayahs if needed
         if (isTafsirVisible) {
@@ -3259,28 +3935,9 @@ function showARUnsupported(errorType) {
               btn.innerHTML = '<i class="fas fa-times"></i>';
               // Don't reset currentAyah to 0, keep the current position
               loadReadingModeAyahs();
-              displayReadingModeAyahs(true); // Only scroll to bookmark when entering reading mode
+              displayReadingModeAyahsByPages(true); // Only scroll to bookmark when entering reading mode
           } else {
               btn.innerHTML = '<i class="fas fa-book-open"></i>';
-              displayAyah();
-          }
-      }
-
-      function toggleTranslation() {
-          isTranslationVisible = !isTranslationVisible;
-          const toggleBtn = document.getElementById('toggleTranslation');
-          
-          if (isTranslationVisible) {
-              toggleBtn.innerHTML = '<i class="fas fa-eye"></i>';
-          } else {
-              toggleBtn.innerHTML = '<i class="fas fa-eye-slash buttonActive"></i>';
-          }
-          
-          // Preserve scroll position in reading mode
-          if (isReadingMode) {
-              const centeredId = getCenteredVerseId();
-              displayReadingModeAyahs(false, centeredId);
-          } else {
               displayAyah();
           }
       }
@@ -3315,7 +3972,7 @@ function showARUnsupported(errorType) {
               } catch (error) {
                   console.error('Error removing bookmark:', error);
               }
-              document.getElementById('toggleBookmark').innerHTML = '<i class="far fa-bookmark buttonActive"></i>';
+             
               showToast(currentLang === 'ar' ? 'تم إزالة العلامة المرجعية' : 'Bookmark removed', 'info');
           } else {
               // Set bookmark
@@ -3335,13 +3992,14 @@ function showARUnsupported(errorType) {
                       console.error('Error saving bookmark to sessionStorage:', sessionError);
                   }
               }
-              document.getElementById('toggleBookmark').innerHTML = '<i class="fas fa-bookmark buttonActive"></i>';
+             
               showToast(currentLang === 'ar' ? 'تم إضافة العلامة المرجعية' : 'Bookmark added', 'success');
           }
           
           // Update display
           if (isReadingMode) {
               loadReadingModeAyahs();
+              displayReadingModeAyahsByPages(); // Update to use page-based function
           } else {
               displayAyah();
           }
@@ -3361,8 +4019,6 @@ function showARUnsupported(errorType) {
               const localStorageBookmark = localStorage.getItem('quranBookmark');
               if (localStorageBookmark) {
                   savedBookmark = JSON.parse(localStorageBookmark);
-                  document.getElementById('toggleTafsir').disabled = false;
-          document.getElementById('toggleTranslation').disabled = false;
               }
           } catch (error) {
               console.error('Error reading from localStorage:', error);
@@ -3390,9 +4046,8 @@ function showARUnsupported(errorType) {
                   currentSurah = bookmarkSurah;
                   currentAyah = bookmarkAyah;
                   
-                  // Update surah select dropdown
-                  const surahSelect = document.getElementById('surahSelect');
-                  surahSelect.value = currentSurah;
+                  // Update surah menu button text
+                  updateSurahDropdown();
                   
                   // Ensure the surah data is loaded
                   if (!quranData || !translationData) {
@@ -3404,56 +4059,25 @@ function showARUnsupported(errorType) {
                           // After data is loaded, update the display
                           if (isReadingMode) {
                               loadReadingModeAyahs();
+                              displayReadingModeAyahsByPages(true); // Scroll to bookmark
                           } else {
                               displayAyah();
                           }
-                          // Update bookmark button
-                          document.getElementById('toggleBookmark').innerHTML = '<i class="fas fa-bookmark"></i>';
-                          // Enable navigation buttons
-                          document.getElementById('btnPrevAyah').disabled = false;
-                          document.getElementById('btnNextAyah').disabled = false;
-                          document.getElementById('btnReadingMode').disabled = false;
                       });
                   } else {
-                      // If data is already loaded, update the display
+                      // Data is already loaded, just update the display
                       if (isReadingMode) {
                           loadReadingModeAyahs();
+                          displayReadingModeAyahsByPages(true); // Scroll to bookmark
                       } else {
                           displayAyah();
                       }
-                      // Update bookmark button
-                      document.getElementById('toggleBookmark').innerHTML = '<i class="fas fa-bookmark buttonActive"></i>';
-                      // Enable navigation buttons
-                      document.getElementById('btnPrevAyah').disabled = false;
-                      document.getElementById('btnNextAyah').disabled = false;
-                      document.getElementById('btnReadingMode').disabled = false;
                   }
-
-                  // Show bookmark info box
-                  const bookmarkInfo = document.createElement('div');
-                  bookmarkInfo.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg z-50 text-center animate-fade-in';
-                  bookmarkInfo.style.maxWidth = '90%';
-                  bookmarkInfo.style.width = 'auto';
-                  bookmarkInfo.style.minWidth = '300px';
-                  bookmarkInfo.style.backdropFilter = 'blur(10px)';
-                  bookmarkInfo.style.webkitBackdropFilter = 'blur(10px)';
-                  bookmarkInfo.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
-                  bookmarkInfo.style.direction = currentLang === 'ar' ? 'rtl' : 'ltr';
-                 
-                  // Remove the info box after 3 seconds
-                  setTimeout(() => {
-                      bookmarkInfo.classList.add('animate-fade-out');
-                      setTimeout(() => {
-                          bookmarkInfo.remove();
-                      }, 300);
-                  }, 3000);
-
               } catch (error) {
-                  console.error('Error loading bookmark:', error);
-                  showToast(currentLang === 'ar' ? 'حدث خطأ في تحميل العلامة المرجعية' : 'Error loading bookmark', 'error');
+                  console.error('Error going to bookmark:', error);
               }
           } else {
-              showToast(currentLang === 'ar' ? 'لا توجد علامة مرجعية محفوظة' : 'No saved bookmark', 'info');
+              showToast(currentLang === 'ar' ? 'لا توجد علامة مرجعية محفوظة' : 'No bookmark saved', 'info');
           }
       }
 
@@ -3524,18 +4148,22 @@ function showARUnsupported(errorType) {
             // Load Quran data
             await loadQuranData();
             
+            // Initialize font settings
+            initializeFontSettings();
+            
+            // Update settings language
+            updateSettingsLanguage();
+            
             // Add translation toggle handler
-            document.getElementById('toggleTranslation').addEventListener('click', toggleTranslation);
             
             // Add bookmark toggle handler
-            document.getElementById('toggleBookmark').addEventListener('click', toggleBookmark);
             
             // Load saved bookmark
             const savedBookmark = localStorage.getItem('quranBookmark');
             if (savedBookmark) {
                 try {
                     currentBookmark = JSON.parse(savedBookmark);
-                    document.getElementById('toggleBookmark').innerHTML = '<i class="fas fa-bookmark"></i>';
+                   
                 } catch (error) {
                     console.error('Error loading bookmark:', error);
                     localStorage.removeItem('quranBookmark');
@@ -3649,12 +4277,7 @@ function showARUnsupported(errorType) {
             // ... existing code ...
 
             // Add translation select handler
-            const translationSelect = document.getElementById('translationSelect');
-            if (translationSelect) {
-                translationSelect.addEventListener('change', function() {
-                    handleTranslationChange(this.value);
-                });
-            }
+            // Translation selector will be handled in modal initialization
 
             // ... rest of your existing code ...
         });
@@ -3671,6 +4294,8 @@ function showARUnsupported(errorType) {
                 currentTextSize += TEXT_SIZE_STEP;
                 updateTextSize();
                 saveTextSizePreference();
+                updateFontSizeDisplay();
+                updateSliderValue();
                 // Refresh current display
                 if (currentSurah !== null) {
                     if (isReadingMode) {
@@ -3687,6 +4312,8 @@ function showARUnsupported(errorType) {
                 currentTextSize -= TEXT_SIZE_STEP;
                 updateTextSize();
                 saveTextSizePreference();
+                updateFontSizeDisplay();
+                updateSliderValue();
                 // Refresh current display
                 if (currentSurah !== null) {
                     if (isReadingMode) {
@@ -3698,10 +4325,19 @@ function showARUnsupported(errorType) {
             }
         }
 
+        function updateSliderValue() {
+            const slider = document.getElementById('fontSizeSlider');
+            if (slider) {
+                slider.value = currentTextSize;
+            }
+        }
+
         function resetTextSize() {
             currentTextSize = 1;
             updateTextSize();
             saveTextSizePreference();
+            updateFontSizeDisplay();
+            updateSliderValue();
             // Refresh current display
             if (currentSurah !== null) {
                 if (isReadingMode) {
@@ -3710,6 +4346,290 @@ function showARUnsupported(errorType) {
                     displayAyah();
                 }
             }
+        }
+
+        // Quran Settings Menu Functions
+        function toggleQuranSettings() {
+            const menu = document.getElementById('quranSettingsMenu');
+            const isHidden = menu.classList.contains('hidden');
+            
+            if (isHidden) {
+                // Show menu
+                menu.classList.remove('hidden');
+                setTimeout(() => {
+                    menu.classList.remove('translate-x-full');
+                }, 10);
+                
+                // Add overlay
+                const overlay = document.createElement('div');
+                overlay.className = 'settings-overlay';
+                overlay.onclick = toggleQuranSettings;
+                document.body.appendChild(overlay);
+                
+                // Update displays
+                updateFontSizeDisplay();
+                updateFontSizeSlider();
+                updateSettingsLanguage();
+            } else {
+                // Hide menu
+                menu.classList.add('translate-x-full');
+                setTimeout(() => {
+                    menu.classList.add('hidden');
+                }, 300);
+                
+                // Remove overlay
+                const overlay = document.querySelector('.settings-overlay');
+                if (overlay) overlay.remove();
+            }
+        }
+
+        function updateFontSizeDisplay() {
+            const display = document.getElementById('currentFontSize');
+            if (display) {
+                display.textContent = (1.5 * currentTextSize).toFixed(1) + 'rem';
+            }
+        }
+
+        function updateFontSizeSlider() {
+            const slider = document.getElementById('fontSizeSlider');
+            if (slider) {
+                slider.value = currentTextSize;
+                slider.oninput = function() {
+                    currentTextSize = parseFloat(this.value);
+                    updateTextSize();
+                    updateFontSizeDisplay();
+                    saveTextSizePreference();
+                    // Refresh current display
+                    if (currentSurah !== null) {
+                        if (isReadingMode) {
+                            displayReadingModeAyahs();
+                        } else {
+                            displayAyah();
+                        }
+                    }
+                };
+            }
+        }
+
+        function changeFontFamily(fontClass) {
+            const arabicText = document.getElementById('arabicText');
+            if (arabicText) {
+                // Remove all font classes
+                arabicText.classList.remove('font-quran-original', 'font-utman-taha', 'font-al-mushaf', 'font-system-arabic');
+                // Add selected font class
+                arabicText.classList.add(fontClass);
+                
+                // Save preference
+                localStorage.setItem('quranFontFamily', fontClass);
+            }
+        }
+
+        // Initialize font family radio buttons
+        function initializeFontSettings() {
+            const fontRadios = document.querySelectorAll('input[name="fontFamily"]');
+            const savedFont = localStorage.getItem('quranFontFamily') || 'font-quran-original';
+            
+            fontRadios.forEach(radio => {
+                let expectedValue;
+                switch(savedFont) {
+                    case 'font-utman-taha':
+                        expectedValue = 'utman-taha';
+                        break;
+                    case 'font-al-mushaf':
+                        expectedValue = 'al-mushaf';
+                        break;
+                    case 'font-system-arabic':
+                        expectedValue = 'system-arabic';
+                        break;
+                    default:
+                        expectedValue = 'quran-font';
+                }
+                
+                if (radio.value === expectedValue) {
+                    radio.checked = true;
+                }
+                
+                radio.addEventListener('change', function() {
+                    if (this.checked) {
+                        let fontClass;
+                        switch(this.value) {
+                            case 'quran-font':
+                                fontClass = 'font-quran-original';
+                                break;
+                            case 'utman-taha':
+                                fontClass = 'font-utman-taha';
+                                break;
+                            case 'al-mushaf':
+                                fontClass = 'font-al-mushaf';
+                                break;
+                            case 'system-arabic':
+                                fontClass = 'font-system-arabic';
+                                break;
+                            default:
+                                fontClass = 'font-quran-original';
+                        }
+                        changeFontFamily(fontClass);
+                    }
+                });
+            });
+            
+            // Apply saved font
+            changeFontFamily(savedFont);
+            
+            // Initialize other settings
+            initializeAudioSettings();
+        }
+
+
+
+        // Audio Settings Functions
+        let currentReciter = 'ar.alafasy';
+        let currentPlaybackSpeed = 1;
+
+
+        function initializeAudioSettings() {
+            // Initialize reciter
+            const savedReciter = localStorage.getItem('quranReciter') || 'ar.alafasy';
+            currentReciter = savedReciter;
+            const reciterSelect = document.getElementById('reciterSelect');
+            if (reciterSelect) {
+                reciterSelect.value = savedReciter;
+                reciterSelect.addEventListener('change', function() {
+                    currentReciter = this.value;
+                    localStorage.setItem('quranReciter', this.value);
+                    
+                    // Show feedback about reciter change
+                    const reciterNames = {
+                        'ar.alafasy': currentLang === 'ar' ? 'مشاري العفاسي' : 'Mishary Al-Afasy',
+                        'ar.husary': currentLang === 'ar' ? 'محمود خليل الحصري' : 'Mahmoud Khalil Al-Husary',
+                        'ar.minshawi': currentLang === 'ar' ? 'محمد صديق المنشاوي' : 'Mohamed Siddiq Al-Minshawi',
+                        'ar.sudais': currentLang === 'ar' ? 'عبد الرحمن السديس' : 'Abdul Rahman As-Sudais',
+                        'ar.shuraim': currentLang === 'ar' ? 'سعود الشريم' : 'Saud Ash-Shuraim'
+                    };
+                    
+                    const message = currentLang === 'ar' ? 
+                        `تم اختيار القارئ: ${reciterNames[this.value]}` : 
+                        `Reciter selected: ${reciterNames[this.value]}`;
+                    
+                    showToast(message, 'success');
+                });
+            }
+
+            // Initialize playback speed
+            const savedSpeed = localStorage.getItem('quranPlaybackSpeed') || '1';
+            currentPlaybackSpeed = parseFloat(savedSpeed);
+            const speedSelect = document.getElementById('playbackSpeedSelect');
+            if (speedSelect) {
+                speedSelect.value = savedSpeed;
+                speedSelect.addEventListener('change', function() {
+                    currentPlaybackSpeed = parseFloat(this.value);
+                    localStorage.setItem('quranPlaybackSpeed', this.value);
+                    
+                    // Show feedback about speed change
+                    const message = currentLang === 'ar' ? 
+                        `تم تغيير سرعة التشغيل إلى: ${this.value}x` : 
+                        `Playback speed changed to: ${this.value}x`;
+                    
+                    showToast(message, 'success');
+                });
+            }
+
+
+        }
+
+        // Update settings menu language
+        function updateSettingsLanguage() {
+            const settingsTexts = {
+                ar: {
+                    title: 'إعدادات القرآن',
+                    fontSizeTitle: 'حجم الخط',
+                    currentSizeLabel: 'حجم الخط الحالي',
+                    resetSizeText: 'إعادة تعيين الحجم',
+                    fontFamilyTitle: 'نوع الخط',
+                    font1Name: 'خط القرآن الأصلي',
+                    font2Name: 'خط عثمان طه',
+                    font3Name: 'خط المصحف',
+                    font4Name: 'خط النظام العربي',
+                    font4Desc: 'Arial, Tahoma',
+                    audioTitle: 'إعدادات الصوت',
+                    reciterLabel: 'القارئ',
+                    playbackSpeedLabel: 'سرعة التشغيل',
+
+                    speed1: 'بطيء (0.5x)',
+                    speed2: 'أبطأ (0.75x)',
+                    speed3: 'عادي (1x)',
+                    speed4: 'أسرع (1.25x)',
+                    speed5: 'سريع (1.5x)',
+                    settingsBtn: 'إعدادات القرآن',
+                    decreaseBtn: 'تصغير الخط',
+                    increaseBtn: 'تكبير الخط'
+                },
+                en: {
+                    title: 'Quran Settings',
+                    fontSizeTitle: 'Font Size',
+                    currentSizeLabel: 'Current Font Size',
+                    resetSizeText: 'Reset Size',
+                    fontFamilyTitle: 'Font Family',
+                    font1Name: 'Original Quran Font',
+                    font2Name: 'Utman Taha Font',
+                    font3Name: 'Al Mushaf Font',
+                    font4Name: 'System Arabic Font',
+                    font4Desc: 'Arial, Tahoma',
+                    audioTitle: 'Audio Settings',
+                    reciterLabel: 'Reciter',
+                    playbackSpeedLabel: 'Playback Speed',
+
+                    speed1: 'Slow (0.5x)',
+                    speed2: 'Slower (0.75x)',
+                    speed3: 'Normal (1x)',
+                    speed4: 'Faster (1.25x)',
+                    speed5: 'Fast (1.5x)',
+                    settingsBtn: 'Quran Settings',
+                    decreaseBtn: 'Decrease Font Size',
+                    increaseBtn: 'Increase Font Size'
+                }
+            };
+
+            const texts = settingsTexts[currentLang] || settingsTexts.ar;
+
+            // Update all text elements
+            const elements = [
+                { id: 'settingsTitle', text: texts.title },
+                { id: 'fontSizeTitle', text: texts.fontSizeTitle },
+                { id: 'currentSizeLabel', text: texts.currentSizeLabel },
+                { id: 'resetSizeText', text: texts.resetSizeText },
+                { id: 'fontFamilyTitle', text: texts.fontFamilyTitle },
+                { id: 'font1Name', text: texts.font1Name },
+                { id: 'font2Name', text: texts.font2Name },
+                { id: 'font3Name', text: texts.font3Name },
+                { id: 'font4Name', text: texts.font4Name },
+                { id: 'font4Desc', text: texts.font4Desc },
+                { id: 'audioTitle', text: texts.audioTitle },
+                { id: 'reciterLabel', text: texts.reciterLabel },
+                { id: 'playbackSpeedLabel', text: texts.playbackSpeedLabel },
+
+                { id: 'speed1', text: texts.speed1 },
+                { id: 'speed2', text: texts.speed2 },
+                { id: 'speed3', text: texts.speed3 },
+                { id: 'speed4', text: texts.speed4 },
+                { id: 'speed5', text: texts.speed5 }
+            ];
+
+            elements.forEach(({ id, text }) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.textContent = text;
+                }
+            });
+
+            // Update button titles
+            const settingsBtn = document.getElementById('settingsBtn');
+            const decreaseBtn = document.getElementById('decreaseBtn');
+            const increaseBtn = document.getElementById('increaseBtn');
+
+            if (settingsBtn) settingsBtn.title = texts.settingsBtn;
+            if (decreaseBtn) decreaseBtn.title = texts.decreaseBtn;
+            if (increaseBtn) increaseBtn.title = texts.increaseBtn;
         }
 
         function updateTextSize() {
@@ -3769,10 +4689,8 @@ function showARUnsupported(errorType) {
         // Add toggle Tafsir function
         function toggleTafsir() {
             isTafsirVisible = !isTafsirVisible;
-            const toggleBtn = document.getElementById('toggleTafsir');
             
             if (isTafsirVisible) {
-                toggleBtn.innerHTML = '<i class="fas fa-book-open buttonActive"></i>';
                 if (currentSurah !== null) {
                     loadTafsirForSurah(currentSurah + 1).then(() => {
                         // Preserve scroll position in reading mode
@@ -3801,7 +4719,6 @@ function showARUnsupported(errorType) {
             // ... existing code ...
             
             // Add Tafsir toggle handler
-            document.getElementById('toggleTafsir').addEventListener('click', toggleTafsir);
             
             // Load Tafsir data
             await loadTafsirData();
@@ -3827,29 +4744,177 @@ function showARUnsupported(errorType) {
             }
         }
 
-        // Update the surah select change handler to load Tafsir for the selected surah
-        document.getElementById('surahSelect').addEventListener('change', async (e) => {
-            if (e.target.value !== '') {
-                currentSurah = parseInt(e.target.value);
+        // Surah Side Menu Functionality
+        let surahsData = []; // Store surah data for search
+        
+        function initializeSurahMenu() {
+            if (!quranData) return;
+            
+            surahsData = quranData.map((surah, index) => ({
+                index: index,
+                number: surah.number,
+                name: surah.name,
+                englishName: surahNamesEnglish[index] || surah.englishName,
+                revelationType: surah.revelationType,
+                numberOfAyahs: surah.numberOfAyahs
+            }));
+            
+            populateSurahList(surahsData);
+        }
+        
+        function populateSurahList(surahs) {
+            const surahList = document.getElementById('surahList');
+            surahList.innerHTML = '';
+            
+            surahs.forEach(surah => {
+                const surahItem = document.createElement('div');
+                surahItem.className = 'surah-item p-3 mb-2 bg-white dark:bg-black rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer transition-all duration-200 border border-gray-200 dark:border-gray-800';
+                surahItem.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-black dark:bg-white text-white dark:text-black rounded-full flex items-center justify-center text-sm font-bold">
+                                    ${currentLang === 'ar' ? toArabicNumerals(surah.number) : surah.number}
+                                </div>
+                                <div class="flex-1">
+                                    <div class="font-semibold text-black dark:text-white text-lg">
+                                        ${currentLang === 'ar' ? surah.name : surah.englishName}
+                                    </div>
+                                    <div class="text-sm text-gray-600 dark:text-gray-400">
+                                        ${currentLang === 'ar' ? surah.englishName : surah.name} • ${currentLang === 'ar' ? toArabicNumerals(surah.numberOfAyahs) : surah.numberOfAyahs} ${currentLang === 'ar' ? 'آية' : 'verses'}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-xs px-2 py-1 rounded-full border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300">
+                            ${currentLang === 'ar' ? (surah.revelationType === 'Meccan' ? 'مكية' : 'مدنية') : surah.revelationType}
+                        </div>
+                    </div>
+                `;
+                
+                surahItem.addEventListener('click', () => selectSurah(surah.index));
+                surahList.appendChild(surahItem);
+            });
+        }
+        
+        function selectSurah(surahIndex) {
+            currentSurah = surahIndex;
                 currentAyah = 0;
                 isReadingMode = false;
                 document.getElementById('btnReadingMode').innerHTML = '<i class="fas fa-book-open"></i>';
+            
+            // Update button text
+            const surah = quranData[surahIndex];
+            const surahName = currentLang === 'ar' ? surah.name : surahNamesEnglish[surahIndex];
+            document.getElementById('selectedSurahText').textContent = `${surah.number}. ${surahName}`;
+            
+            // Close side menu
+            closeSurahMenu();
                 
                 // Load Tafsir for the selected surah
                 if (isTafsirVisible) {
-                    await loadTafsirForSurah(currentSurah + 1); // +1 because surah numbers start from 1
+                loadTafsirForSurah(currentSurah + 1); // +1 because surah numbers start from 1
                 }
                 
                 displayAyah();
-            } else {
-                resetQuranContent();
+        }
+        
+        function openSurahMenu() {
+            const sideMenu = document.getElementById('surahSideMenu');
+            const overlay = document.getElementById('surahMenuOverlay');
+            
+            sideMenu.classList.remove('-translate-x-full');
+            overlay.classList.remove('hidden');
+            
+            // Initialize menu if not done yet
+            if (surahsData.length === 0) {
+                initializeSurahMenu();
             }
+            
+            // Focus search input
+            setTimeout(() => {
+                document.getElementById('surahSearchInput').focus();
+            }, 300);
+        }
+        
+        function closeSurahMenu() {
+            const sideMenu = document.getElementById('surahSideMenu');
+            const overlay = document.getElementById('surahMenuOverlay');
+            
+            sideMenu.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+            
+            // Clear search
+            document.getElementById('surahSearchInput').value = '';
+            if (surahsData.length > 0) {
+                populateSurahList(surahsData);
+            }
+        }
+        
+        // Function to remove Arabic diacritics and normalize Alef variants for better search
+        function normalizeArabicText(text) {
+            return text
+                // Remove diacritics
+                .replace(/[\u064B-\u0652\u0670\u0640]/g, '')
+                // Normalize Alef variants: أ إ آ ا -> ا
+                .replace(/[أإآ]/g, 'ا');
+        }
+        
+        function searchSurahs(query) {
+            if (!query.trim()) {
+                populateSurahList(surahsData);
+                return;
+            }
+            
+            const searchTerm = query.toLowerCase();
+            const searchTermNormalized = normalizeArabicText(searchTerm);
+            
+            const filteredSurahs = surahsData.filter(surah => {
+                // Normalize surah names for comparison
+                const arabicNameNormalized = normalizeArabicText(surah.name.toLowerCase());
+                const englishNameLower = surah.englishName.toLowerCase();
+                
+                return (
+                    // Search in Arabic name (original and normalized)
+                    surah.name.toLowerCase().includes(searchTerm) ||
+                    arabicNameNormalized.includes(searchTerm) ||
+                    arabicNameNormalized.includes(searchTermNormalized) ||
+                    // Search in English name
+                    englishNameLower.includes(searchTerm) ||
+                    // Search by number
+                    surah.number.toString().includes(searchTerm)
+                );
+            });
+            
+            populateSurahList(filteredSurahs);
+        }
+        
+        // Event Listeners for Surah Menu
+        document.addEventListener('DOMContentLoaded', function() {
+            // Surah menu button
+            document.getElementById('surahMenuBtn').addEventListener('click', openSurahMenu);
+            
+            // Close menu button
+            document.getElementById('closeSurahMenu').addEventListener('click', closeSurahMenu);
+            
+            // Overlay click to close
+            document.getElementById('surahMenuOverlay').addEventListener('click', closeSurahMenu);
+            
+            // Search functionality
+            document.getElementById('surahSearchInput').addEventListener('input', function(e) {
+                searchSurahs(e.target.value);
+            });
+            
+            // Escape key to close menu
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeSurahMenu();
+                }
+            });
         });
 
         document.addEventListener('DOMContentLoaded', () => {
             // Disable tafsir and translation buttons initially
-            document.getElementById('toggleTafsir').disabled = true;
-            document.getElementById('toggleTranslation').disabled = true;
             
             // Initialize language
             currentLang = localStorage.getItem('language') || 'ar';
@@ -3881,9 +4946,10 @@ function showARUnsupported(errorType) {
             }
             window.isPlayingAudio = true;
 
-            // If the same ayah is playing, pause it
+            // If the same ayah is playing, pause it (do not restart)
             if (window.currentAyahAudio && currentAudioSurah === surah && currentAudioAyah === ayah && !window.currentAyahAudio.paused) {
                 window.currentAyahAudio.pause();
+                console.log('Ayah audio stopped:', { surah, ayah });
                 updateAyahHighlights();
                 window.isPlayingAudio = false;
                 return;
@@ -3896,15 +4962,34 @@ function showARUnsupported(errorType) {
             // Pad numbers to 3 digits
             const surahStr = (Number(surah) + 1).toString().padStart(3, '0');
             const ayahStr = (Number(ayah) + 1).toString().padStart(3, '0');
-            const reciter = 'Alafasy_64kbps';
+            
+            // Get selected reciter from settings
+            const reciterMapping = {
+                'ar.alafasy': 'Alafasy_64kbps',
+                'ar.husary': 'Husary_64kbps',
+                'ar.minshawi': 'Minshawy_Murattal_128kbps',
+                'ar.sudais': 'Abdurrahmaan_As-Sudais_64kbps',
+                'ar.shuraim': 'Saood_ash-Shuraym_64kbps'
+            };
+            
+            const selectedReciter = currentReciter || 'ar.alafasy';
+            const reciter = reciterMapping[selectedReciter] || 'Alafasy_64kbps';
             const url = `https://everyayah.com/data/${reciter}/${surahStr}${ayahStr}.mp3`;
             const audio = new Audio(url);
+            
+            // Apply playback speed from settings
+            audio.playbackRate = currentPlaybackSpeed || 1;
+            
             window.currentAyahAudio = audio;
             currentAudioSurah = surah;
             currentAudioAyah = ayah;
             // Use a promise to handle play to avoid AbortError
             audio.play().then(() => {
+                console.log('Ayah audio playing:', { surah, ayah, reciter: selectedReciter, speed: currentPlaybackSpeed });
                 updateAyahHighlights();
+                
+
+                
                 window.isPlayingAudio = false;
             }).catch(error => {
                 console.error("Audio play error:", error);
@@ -3922,6 +5007,7 @@ function showARUnsupported(errorType) {
                 window.currentAyahAudio = null;
                 updateAyahHighlights();
                 window.isPlayingAudio = false;
+                console.log('Ayah audio stopped (ended):', { surah, ayah });
             };
         }
 
@@ -4148,23 +5234,393 @@ window.switchLanguage = function() {
       </script>
       <script>
 (function() {
-  const tafsirLangSelect = document.getElementById('tafsirLangSelect');
-  if (tafsirLangSelect) {
-    tafsirLangSelect.value = currentLang;
-    tafsirLang = tafsirLangSelect.value;
-    tafsirLangSelect.addEventListener('change', function() {
-      tafsirLang = this.value;
-      // Reload tafsir for current ayah or reading mode
-      if (document.getElementById('quranContent').classList.contains('active')) {
-        if (isReadingMode) {
-          displayReadingModeAyahs();
-        } else {
-          displayAyah();
+    // Initialize tafsir selector when modal is shown
+  document.addEventListener('DOMContentLoaded', function() {
+    const tafsirModal = document.getElementById('tafsirModal');
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+          const tafsirSelect = document.getElementById('tafsirSelect');
+          if (tafsirModal.style.display === 'flex' && tafsirSelect) {
+            tafsirSelect.value = currentTafsirSource;
+            // Remove existing listeners to avoid duplicates
+            tafsirSelect.onchange = function() {
+              currentTafsirSource = this.value;
+              // Reload tafsir content in modal
+              document.getElementById('tafsirModalContent').textContent = currentLang === 'ar' ? 'جاري التحميل...' : 'Loading...';
+              loadTafsirContent();
+            };
+          }
         }
-      }
+      });
     });
-  }
+    observer.observe(tafsirModal, { attributes: true });
+  });
 })();
       </script>
+
+<script>
+(function() {
+  let popover = document.getElementById('ayahMenuPopover');
+  let lastAyahElem = null;
+  let popoverAyah = null;
+  let popoverSurah = null;
+
+  // Helper to close the popover
+  function closePopover() {
+    popover.style.display = 'none';
+    lastAyahElem = null;
+    popoverAyah = null;
+    popoverSurah = null;
+  }
+
+  // Attach popover to ayah click
+  document.addEventListener('click', function(e) {
+    // If click is on an ayah
+    if (e.target.classList.contains('ayah')) {
+      e.preventDefault();
+      e.stopPropagation();
+      lastAyahElem = e.target;
+      popoverAyah = parseInt(e.target.getAttribute('data-ayah'));
+      popoverSurah = parseInt(e.target.getAttribute('data-surah'));
+      // Position popover above the ayah
+      const rect = e.target.getBoundingClientRect();
+      const scrollY = window.scrollY || window.pageYOffset;
+      const scrollX = window.scrollX || window.pageXOffset;
+      popover.style.top = (rect.top + scrollY - popover.offsetHeight - 8) + 'px';
+      popover.style.left = (rect.left + scrollX + rect.width/2 - popover.offsetWidth/2) + 'px';
+      popover.style.display = 'block';
+      // Set direction and alignment based on language
+      if (currentLang === 'en') {
+        popover.style.direction = 'ltr';
+        popover.style.textAlign = 'left';
+        } else {
+        popover.style.direction = 'rtl';
+        popover.style.textAlign = 'right';
+      }
+      // Update menu text/icons based on current state
+      const langIsAr = currentLang === 'ar';
+      // Update tooltips based on current state and language
+      document.getElementById('ayahMenuTranslation').title = isTranslationVisible ? (langIsAr ? 'إخفاء الترجمة' : 'Hide Translation') : (langIsAr ? 'إظهار الترجمة' : 'Show Translation');
+      document.getElementById('ayahMenuTafsir').title = isTafsirVisible ? (langIsAr ? 'إخفاء التفسير' : 'Hide Tafsir') : (langIsAr ? 'إظهار التفسير' : 'Show Tafsir');
+      // Bookmark icon and tooltip
+      const isBookmarked = currentBookmark && currentBookmark.surah === popoverSurah && currentBookmark.ayah === popoverAyah;
+      document.getElementById('ayahMenuBookmark').querySelector('i').className = isBookmarked ? 'fas fa-bookmark text-yellow-500' : 'far fa-bookmark';
+      document.getElementById('ayahMenuBookmark').title = isBookmarked ? (langIsAr ? 'إزالة العلامة' : 'Remove Bookmark') : (langIsAr ? 'إشارة مرجعية' : 'Bookmark');
+      // Play/Stop icon and tooltip
+      const isPlaying = window.currentAyahAudio && currentAudioSurah === popoverSurah && currentAudioAyah === popoverAyah && !window.currentAyahAudio.paused;
+      const playBtn = document.getElementById('ayahMenuPlay');
+      playBtn.querySelector('i').className = isPlaying ? 'fas fa-stop' : 'fas fa-play';
+      playBtn.title = isPlaying ? (langIsAr ? 'ايقاف الاية' : 'Stop Ayah') : (langIsAr ? 'تشغيل الآية' : 'Play Ayah');
+    } else if (!popover.contains(e.target)) {
+      closePopover();
+      }
+    });
+  // Hide popover on scroll
+  window.addEventListener('scroll', closePopover);
+  // Menu actions
+  document.getElementById('ayahMenuPlay').onclick = function() {
+    if (popoverSurah !== null && popoverAyah !== null) playAyahAudio(popoverSurah, popoverAyah);
+    closePopover();
+  };
+  document.getElementById('ayahMenuTranslation').onclick = function() {
+    if (popoverSurah !== null && popoverAyah !== null) {
+      showTranslationModal(popoverSurah, popoverAyah);
+    }
+    closePopover();
+  };
+  document.getElementById('ayahMenuTafsir').onclick = function() {
+    if (popoverSurah !== null && popoverAyah !== null) {
+      showTafsirModal(popoverSurah, popoverAyah);
+    }
+    closePopover();
+  };
+  document.getElementById('ayahMenuBookmark').onclick = function() {
+    if (popoverSurah !== null && popoverAyah !== null) bookmarkAyah(popoverSurah, popoverAyah);
+    closePopover();
+  };
+})();
+
+// Add tafsir modal functions
+let currentTafsirSurah = null;
+let currentTafsirAyah = null;
+
+function showTafsirModal(surah, ayah) {
+  const modal = document.getElementById('tafsirModal');
+  const surahData = quranData[surah];
+  const translationAyahs = translationData[surah];
+  const ayahData = surahData.ayahs[ayah];
+  const translationAyah = translationAyahs.ayahs[ayah];
+  
+  // Store current ayah for language change
+  currentTafsirSurah = surah;
+  currentTafsirAyah = ayah;
+  
+  // Set modal content
+  document.getElementById('tafsirModalTitle').textContent = currentLang === 'ar' ? 'التفسير' : 'Tafsir';
+  document.getElementById('tafsirModalAyah').textContent = ayahData.text;
+  document.getElementById('tafsirModalTranslation').textContent = translationAyah ? translationAyah.text : '';
+  document.getElementById('tafsirModalContent').textContent = currentLang === 'ar' ? 'جاري التحميل...' : 'Loading...';
+  
+  // Show modal
+  modal.style.display = 'flex';
+  
+  // Load tafsir
+  loadTafsirContent();
+}
+
+function loadTafsirContent() {
+  if (currentTafsirSurah !== null && currentTafsirAyah !== null) {
+    getTafsirForAyah(currentTafsirSurah, currentTafsirAyah).then(tafsir => {
+      document.getElementById('tafsirModalContent').textContent = tafsir.text || (currentLang === 'ar' ? 'لا يوجد تفسير متاح' : 'Tafsir not available');
+    });
+  }
+}
+
+function closeTafsirModal() {
+  document.getElementById('tafsirModal').style.display = 'none';
+  currentTafsirSurah = null;
+  currentTafsirAyah = null;
+}
+
+// Close modal handlers
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('closeTafsirModal').onclick = closeTafsirModal;
+  document.getElementById('tafsirModal').onclick = function(e) {
+    if (e.target === this) closeTafsirModal();
+  };
+});
+
+// Add translation modal functions
+let currentTranslationSurah = null;
+let currentTranslationAyah = null;
+
+function showTranslationModal(surah, ayah) {
+  const modal = document.getElementById('translationModal');
+  const surahData = quranData[surah];
+  const ayahData = surahData.ayahs[ayah];
+  
+  // Store current ayah for translation change
+  currentTranslationSurah = surah;
+  currentTranslationAyah = ayah;
+  
+  // Set modal content
+  document.getElementById('translationModalTitle').textContent = currentLang === 'ar' ? 'الترجمة' : 'Translation';
+  document.getElementById('translationModalAyah').textContent = ayahData.text;
+  document.getElementById('translationModalContent').textContent = currentLang === 'ar' ? 'جاري التحميل...' : 'Loading...';
+  
+  // Show modal
+  modal.style.display = 'flex';
+  
+  // Load translation
+  loadTranslationContent();
+}
+
+function loadTranslationContent() {
+  if (currentTranslationSurah !== null && currentTranslationAyah !== null) {
+    const translationAyahs = translationData[currentTranslationSurah];
+    const translationAyah = translationAyahs.ayahs[currentTranslationAyah];
+    document.getElementById('translationModalContent').textContent = translationAyah ? translationAyah.text : (currentLang === 'ar' ? 'لا توجد ترجمة متاحة' : 'No translation available');
+  }
+}
+
+function closeTranslationModal() {
+  document.getElementById('translationModal').style.display = 'none';
+  currentTranslationSurah = null;
+  currentTranslationAyah = null;
+}
+
+// Close modal handlers for translation modal
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('closeTranslationModal').onclick = closeTranslationModal;
+  document.getElementById('translationModal').onclick = function(e) {
+    if (e.target === this) closeTranslationModal();
+  };
+});
+
+// Initialize translation modal dropdown
+(function() {
+  // Initialize translation language selector when modal is shown
+  document.addEventListener('DOMContentLoaded', function() {
+    const translationModal = document.getElementById('translationModal');
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+          const translationSelect = document.getElementById('translationSelect');
+          if (translationModal.style.display === 'flex' && translationSelect) {
+            translationSelect.value = currentTranslationKey;
+            // Remove existing listeners to avoid duplicates
+            translationSelect.onchange = function() {
+              currentTranslationKey = this.value;
+              // Reload translation data and content in modal
+              handleTranslationChange(this.value).then(() => {
+                document.getElementById('translationModalContent').textContent = currentLang === 'ar' ? 'جاري التحميل...' : 'Loading...';
+                loadTranslationContent();
+              });
+            };
+          }
+        }
+      });
+    });
+    observer.observe(translationModal, { attributes: true });
+  });
+})();
+
+// Create an alias for backward compatibility
+async function displayReadingModeAyahs(shouldScrollToBookmark = false, scrollToVerseId = null) {
+  return displayReadingModeAyahsByPages(shouldScrollToBookmark, scrollToVerseId);
+}
+      </script>
+
+<!-- Tafsir Popup Modal -->
+<div id="tafsirModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:20000;" class="flex items-center justify-center p-4">
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+    <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+      <div class="flex items-center gap-3">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white" id="tafsirModalTitle">التفسير</h3>
+        <select id="tafsirSelect" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 text-sm" title="Select Tafsir - اختر التفسير">
+          <optgroup label="Arabic Tafsir - التفسير العربي">
+            <option value="1">التفسير الميسر</option>
+            <option value="2">تفسير الجلالين</option>
+            <option value="3">تفسير السعدي</option>
+            <option value="4">تفسير البغوي</option>
+            <option value="5">تفسير القرطبي</option>
+            <option value="6">تفسير ابن كثير</option>
+            <option value="7">تفسير الطبري</option>
+          </optgroup>
+          <optgroup label="English Tafsir">
+            <option value="en-jalalayn">Tafsir al-Jalalayn (English)</option>
+            <option value="en-kathir">Tafsir Ibn Kathir (English)</option>
+            <option value="en-maarif">Ma'ariful Quran (English)</option>
+            <option value="en-tazkirul">Tazkirul Quran (English)</option>
+          </optgroup>
+        </select>
+      </div>
+      <button id="closeTafsirModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl">&times;</button>
+    </div>
+    <div class="p-4">
+      <div class="mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+        <div class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2" id="tafsirModalAyah">الآية</div>
+        <div class="text-lg text-gray-600 dark:text-gray-400" id="tafsirModalTranslation">Translation</div>
+      </div>
+      <div class="text-base text-gray-700 dark:text-gray-300 leading-relaxed" id="tafsirModalContent">جاري التحميل...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Translation Popup Modal -->
+<div id="translationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:20000;" class="flex items-center justify-center p-4">
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+    <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+      <div class="flex items-center gap-3">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white" id="translationModalTitle">الترجمة</h3>
+        <select id="translationSelect" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 text-sm" title="Select Translation - اختر الترجمة">
+          <optgroup label="English">
+            <option value="en.sahih">English (Sahih International)</option>
+            <option value="en.pickthall">English (Pickthall)</option>
+            <option value="en.yusufali">English (Yusuf Ali)</option>
+            <option value="en.hilali">English (Hilali-Khan)</option>
+            <option value="en.arberry">English (Arberry)</option>
+            <option value="en.asad">English (Muhammad Asad)</option>
+            <option value="en.daryabadi">English (Daryabadi)</option>
+            <option value="en.shakir">English (Shakir)</option>
+          </optgroup>
+          <optgroup label="European">
+            <option value="fr.hamidullah">Français (Hamidullah)</option>
+            <option value="fr.leclerc">Français (Leclerc)</option>
+            <option value="de.bubenheim">Deutsch (Bubenheim)</option>
+            <option value="de.khoury">Deutsch (Khoury)</option>
+            <option value="es.cortes">Español (Cortés)</option>
+            <option value="es.garcia">Español (García)</option>
+            <option value="it.piccardo">Italiano (Piccardo)</option>
+            <option value="pt.elhayek">Português (El Hayek)</option>
+            <option value="ru.kuliev">Русский (Кулиев)</option>
+            <option value="ru.osmanov">Русский (Османов)</option>
+            <option value="nl.keyzer">Nederlands (Keyzer)</option>
+            <option value="bs.korkut">Bosanski (Korkut)</option>
+            <option value="cs.hrbek">Čeština (Hrbek)</option>
+            <option value="no.berg">Norsk (Berg)</option>
+            <option value="sv.bernstrom">Svenska (Bernström)</option>
+            <option value="sq.ahmeti">Shqip (Ahmeti)</option>
+          </optgroup>
+          <optgroup label="Middle East & Central Asia">
+            <option value="tr.diyanet">Türkçe (Diyanet)</option>
+            <option value="tr.bulac">Türkçe (Bulaç)</option>
+            <option value="ur.junagarhi">اردو (جونا گاری)</option>
+            <option value="ur.kanzuliman">اردو (کنز الایمان)</option>
+            <option value="fa.ansarian">فارسی (انصاریان)</option>
+            <option value="fa.makarem">فارسی (مکارم شیرازی)</option>
+            <option value="az.mammadaliyev">Azərbaycan (Məmmədəliyev)</option>
+            <option value="ku.asan">کوردی (ئاسان)</option>
+          </optgroup>
+          <optgroup label="South & Southeast Asia">
+            <option value="id.indonesian">Bahasa Indonesia (Kementerian Agama)</option>
+            <option value="ms.basmeih">Bahasa Melayu (Basmeih)</option>
+            <option value="bn.bengali">বাংলা (মুহিউদ্দীন খান)</option>
+            <option value="hi.hindi">हिन्दी (फारूक खान)</option>
+            <option value="ta.tamil">தமிழ் (ஜான் டிரஸ்ட்)</option>
+            <option value="th.thai">ไทย (สำนักงานพระราชวัง)</option>
+          </optgroup>
+          <optgroup label="East Asia">
+            <option value="zh.jian">中文简体 (马坚译)</option>
+            <option value="ja.japanese">日本語 (森亮一)</option>
+            <option value="ko.korean">한국어 (최하메드)</option>
+          </optgroup>
+          <optgroup label="African">
+            <option value="ha.gumi">Hausa (Abubakar Gumi)</option>
+            <option value="sw.barwani">Kiswahili (Barwani)</option>
+            <option value="so.abduh">Soomaali (Abduh)</option>
+            <option value="am.sadiq">አማርኛ (ሳዲቅ)</option>
+            <option value="yo.mikail">Yorùbá (Mikail)</option>
+          </optgroup>
+        </select>
+      </div>
+      <button id="closeTranslationModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl">&times;</button>
+    </div>
+    <div class="p-4">
+      <div class="mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+        <div class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2" id="translationModalAyah">الآية</div>
+      </div>
+      <div class="text-base text-gray-700 dark:text-gray-300 leading-relaxed" id="translationModalContent">Translation</div>
+    </div>
+  </div>
+</div>
+
+<!-- Surah Selection Side Menu -->
+<div id="surahSideMenu" class="fixed inset-y-0 left-0 w-80 bg-white dark:bg-black shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out z-30 overflow-hidden border-r border-gray-200 dark:border-gray-800">
+  <div class="flex flex-col h-full">
+    <!-- Header -->
+    <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-black">
+      <h3 class="text-lg font-semibold text-black dark:text-white">اختر السورة</h3>
+      <button id="closeSurahMenu" class="text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-400 text-xl p-1">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <!-- Search Box -->
+    <div class="p-4 border-b border-gray-200 dark:border-gray-800">
+      <div class="relative">
+        <input 
+          type="text" 
+          id="surahSearchInput" 
+          placeholder="ابحث عن السورة... Search surah..."
+          class="w-full px-4 py-2 pl-10 pr-4 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white text-sm text-black dark:text-white"
+        >
+        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400"></i>
+      </div>
+    </div>
+    
+    <!-- Surah List -->
+    <div class="flex-1 overflow-y-auto">
+      <div id="surahList" class="p-2">
+        <!-- Surah items will be populated here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay for side menu -->
+<div id="surahMenuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden"></div>
+
 </body>
 </html>
