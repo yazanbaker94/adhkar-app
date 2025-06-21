@@ -3448,7 +3448,7 @@ function showARUnsupported(errorType) {
            
            if (tafsirConfig.api === 'quran-tafseer') {
              // Use quran-tafseer.com API for Arabic tafsir
-             url = `http://api.quran-tafseer.com/tafseer/${tafsirConfig.id}/${surah + 1}/${ayah + 1}`;
+             url = `https://api.quran-tafseer.com/tafseer/${tafsirConfig.id}/${surah + 1}/${ayah + 1}`;
              response = await fetch(url);
              if (response.ok) {
                data = await response.json();
