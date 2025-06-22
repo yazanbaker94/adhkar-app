@@ -324,16 +324,56 @@
                 justify-content: center;
             }
 
-            /* Fix select dropdowns for iOS */
-            select { /* General select styling, might be overridden by more specific rules below */
-                -webkit-appearance: none;
-                -moz-appearance: none;
-                appearance: none;
-                background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-                background-repeat: no-repeat;
+            /* Fix select dropdowns - completely reset and rebuild */
+            select { 
+                /* Remove ALL native styling */
+                -webkit-appearance: none !important;
+                -moz-appearance: none !important;
+                appearance: none !important;
+                
+                /* Add our custom styling */
+                background-color: #fff !important;
+                border: 1px solid #e5e7eb !important;
+                border-radius: 0.5rem;
+                padding: 0.5rem 0.5rem 0.5rem 2.5rem;
+                font-size: 1rem;
+                width: 100%;
+                text-align: right;
+                direction: rtl;
+                color: #000 !important;
+                
+                /* Add our custom arrow */
+                background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+                background-repeat: no-repeat !important;
+                background-position: left 0.5rem center !important;
+                background-size: 1.5em 1.5em !important;
+            }
+            
+            /* Remove native dropdown arrows completely */
+            select {
+                -webkit-appearance: none !important;
+                -moz-appearance: none !important;
+                appearance: none !important;
+            }
+            
+            select::-ms-expand {
+                display: none !important;
+            }
+            
+            /* Additional browser-specific arrow removal */
+            select::-webkit-inner-spin-button,
+            select::-webkit-outer-spin-button {
+                -webkit-appearance: none !important;
+                margin: 0 !important;
+            }
+            
+            /* English dropdowns should use LTR */
+            select[data-lang="en"], select.ltr {
                 background-position: right 0.5rem center;
-                background-size: 1.5em 1.5em;
-                padding-right: 2.5rem; /* Ensure this is not overridden by iOS specific below if not intended */
+                padding-left: 0.5rem;
+                padding-right: 2.5rem;
+                text-align: left;
+                direction: ltr;
             }
 
             /* Fix buttons layout */
@@ -409,18 +449,18 @@
             /* Right section - surah selector */
             .quran-controls-sticky > div:last-child {
                 flex: 1 1 auto;
-                min-width: 100px;
-                max-width: 50%;
+                min-width: 120px;
+                max-width: 60%;
             }
             
             .quran-controls-sticky #selectedSurahText {
-                max-width: 100px;
-                min-width: 50px;
+                max-width: 140px;
+                min-width: 80px;
                 font-size: 0.7rem;
             }
             
             .quran-controls-sticky #surahMenuBtn {
-                min-width: 70px;
+                min-width: 100px;
                 padding: 0.3rem 0.5rem !important;
             }
             
@@ -436,23 +476,64 @@
             .quran-controls-sticky .flex.items-center.gap-1 button {
                 padding: 0.3rem 0.4rem !important;
             }
+            
+            /* Fix Quran settings sidebar on mobile */
+            #quranSettingsMenu {
+                width: 100vw !important;
+                right: 0 !important;
+                left: auto !important;
+            }
+            
+            #quranSettingsMenu .flex.items-center.justify-between {
+                flex-direction: row !important;
+                flex-wrap: nowrap !important;
+                align-items: center !important;
+                padding: 1rem !important;
+                gap: 1rem !important;
+            }
+            
+            #quranSettingsMenu h3 {
+                font-size: 0.9rem !important;
+                flex: 1 1 auto !important;
+                min-width: 0 !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                white-space: nowrap !important;
+                margin: 0 !important;
+            }
+            
+            #quranSettingsMenu .flex.items-center.justify-between button {
+                flex: 0 0 auto !important;
+                min-width: 44px !important;
+                min-height: 44px !important;
+                padding: 0.5rem !important;
+                margin: 0 !important;
+            }
         }
 
         /* iOS-specific fixes */
         @supports (-webkit-touch-callout: none) {
             select { /* This will override the general select styling on iOS */
-                -webkit-appearance: none;
-                appearance: none;
-                background-color: #fff; /* Specific for iOS light mode */
+                -webkit-appearance: none !important;
+                appearance: none !important;
+                background-color: #fff !important;
+                border: 1px solid #e5e7eb !important;
                 border-radius: 0.5rem;
-                padding: 0.5rem 2.5rem 0.5rem 0.5rem; /* iOS specific padding */
+                padding: 0.5rem 0.5rem 0.5rem 2.5rem; /* RTL: left padding for arrow */
                 font-size: 1rem;
                 width: 100%;
-                border: 1px solid #e5e7eb;
-                background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-                background-repeat: no-repeat;
-                background-position: right 0.5rem center; /* RTL might need left */
-                background-size: 1.5em 1.5em;
+                text-align: right;
+                direction: rtl;
+                color: #000 !important;
+                /* Background image is inherited from general rule */
+            }
+            
+            /* English dropdowns on iOS */
+            select[data-lang="en"], select.ltr {
+                padding: 0.5rem 2.5rem 0.5rem 0.5rem !important; /* LTR: right padding for arrow */
+                background-position: right 0.5rem center !important; /* LTR: arrow on right */
+                text-align: left;
+                direction: ltr;
             }
 
             select:focus {
@@ -467,9 +548,22 @@
                 background-color: #fff; /* Specific for iOS light mode */
             }
 
-            /* Fix for iOS select dropdown */
+            /* Fix for iOS select dropdown - remove all native arrows */
             select::-ms-expand {
                 display: none;
+            }
+            
+            /* Force remove all native select styling */
+            select {
+                -webkit-appearance: none !important;
+                -moz-appearance: none !important;
+                appearance: none !important;
+            }
+            
+            select::-webkit-inner-spin-button,
+            select::-webkit-outer-spin-button {
+                -webkit-appearance: none !important;
+                margin: 0 !important;
             }
 
             /* Ensure the select is clickable */
@@ -489,10 +583,26 @@
         /* Styles for 'select' on Android if needed, currently basic */
         @supports not (-webkit-touch-callout: none) { /* This targets non-iOS, effectively Android for this context */
             select {
-                background-color: #fff; /* Default light mode for Android */
+                -webkit-appearance: none !important;
+                -moz-appearance: none !important;
+                appearance: none !important;
+                background-color: #fff !important;
+                border: 1px solid #e5e7eb !important;
                 border-radius: 0.5rem;
-                padding: 0.5rem;
+                padding: 0.5rem 0.5rem 0.5rem 2.5rem; /* RTL: left padding for arrow */
                 font-size: 1rem;
+                text-align: right;
+                direction: rtl;
+                color: #000 !important;
+                /* Background image is inherited from general rule */
+            }
+            
+            /* English dropdowns on Android */
+            select[data-lang="en"], select.ltr {
+                padding: 0.5rem 2.5rem 0.5rem 0.5rem !important; /* LTR: right padding for arrow */
+                background-position: right 0.5rem center !important; /* LTR: arrow on right */
+                text-align: left;
+                direction: ltr;
             }
         }
         
@@ -1027,9 +1137,9 @@
                 <div id="quranSettingsMenu" class="fixed inset-y-0 right-0 w-80 bg-white dark:bg-gray-800 shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out z-50 hidden">
                     <div class="flex flex-col h-full">
                         <!-- Header -->
-                        <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-                            <h3 class="text-lg font-semibold" id="settingsTitle">إعدادات القرآن</h3>
-                            <button onclick="toggleQuranSettings()" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors">
+                        <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700" style="min-height: 60px;">
+                            <h3 class="text-lg font-semibold flex-1 min-w-0 pr-4" id="settingsTitle" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">إعدادات القرآن</h3>
+                            <button onclick="toggleQuranSettings()" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors flex-shrink-0" style="min-width: 44px; min-height: 44px;">
                                 <i class="fas fa-times"></i>
                         </button>
                         </div>
