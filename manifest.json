@@ -1,7 +1,7 @@
 {
-    "name": "أذكار وأوقات الصلاة",
-    "short_name": "أذكار",
-    "description": "تطبيق الأذكار وأوقات الصلاة",
+    "name": "Sakinah - Islamic App",
+    "short_name": "Sakinah",
+    "description": "Islamic Azkar, Prayer Times, Quran & Qibla App",
     "start_url": "/adhkar-app/",
     "display": "standalone",
     "background_color": "#ffffff",
