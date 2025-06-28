@@ -1368,13 +1368,13 @@
                         <img src="icon1.png" alt="Sakinah" class="h-8 w-8 sm:h-10 sm:w-10 rounded-lg shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-105 border-2 border-transparent group-hover:border-blue-200 dark:group-hover:border-blue-400">
                     </button>
                     
-                    <!-- Hijri Date Display -->
+                    <!-- Date Display -->
                     <div class="flex flex-col text-xs text-gray-500 dark:text-gray-400">
                         <div class="flex items-center">
                             <i class="fas fa-calendar-alt mr-1 text-blue-500 text-[10px] sm:text-xs"></i>
-                            <span id="hijriDate" class="text-[10px] sm:text-xs">Loading...</span>
+                            <span id="gregorianDate" class="text-[10px] sm:text-xs">Loading...</span>
                         </div>
-                        <div class="text-[8px] sm:text-[10px] text-gray-400 dark:text-gray-500" id="gregorianDate"></div>
+                        <div class="text-[8px] sm:text-[10px] text-gray-400 dark:text-gray-500" id="hijriDate"></div>
                     </div>
                 </div>
 
@@ -1469,15 +1469,38 @@
         // Call initDarkMode when the document is loaded
         document.addEventListener('DOMContentLoaded', initDarkMode);
         
-        // Hijri Date Functions
+        // Date Functions
         function updateHijriDate() {
             const today = new Date();
-            const gregorianDate = today.toLocaleDateString(currentLang === 'ar' ? 'ar-SA' : 'en-US', {
-                weekday: 'short',
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            });
+            
+            // Force Gregorian calendar for both languages
+            let gregorianDate;
+            if (currentLang === 'ar') {
+                // For Arabic, use Gregorian calendar explicitly
+                const options = {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    calendar: 'gregory'
+                };
+                try {
+                    gregorianDate = today.toLocaleDateString('ar-SA-u-ca-gregory', options);
+                } catch (e) {
+                    // Fallback: use English format if Arabic Gregorian fails
+                    gregorianDate = today.toLocaleDateString('en-US', options);
+                }
+            } else {
+                gregorianDate = today.toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+            }
+            
+            // Set Gregorian date as main date immediately
+            document.getElementById('gregorianDate').textContent = gregorianDate;
             
             // Simple Hijri conversion (approximate)
             const hijriMonths = [
@@ -1495,7 +1518,7 @@
                 { ar: 'ذو الحجة', en: 'Dhu al-Hijjah' }
             ];
             
-            // Fetch from Islamic calendar API
+            // Fetch from Islamic calendar API for Hijri date (as secondary)
             fetch(`https://api.aladhan.com/v1/gToH/${today.getDate()}-${today.getMonth() + 1}-${today.getFullYear()}`)
                 .then(response => response.json())
                 .then(data => {
@@ -1507,13 +1530,11 @@
                             : `${hijri.day} ${monthName.en} ${hijri.year} AH`;
                         
                         document.getElementById('hijriDate').textContent = hijriText;
-                        document.getElementById('gregorianDate').textContent = gregorianDate;
                     }
                 })
                 .catch(() => {
                     // Fallback if API fails
                     document.getElementById('hijriDate').textContent = currentLang === 'ar' ? 'التاريخ الهجري' : 'Islamic Date';
-                    document.getElementById('gregorianDate').textContent = gregorianDate;
                 });
         }
     </script>
@@ -2128,18 +2149,19 @@
                     </div>
                 </div>
                 
-                <div class="flex flex-col sm:flex-row gap-2 mb-4">
-                    <div id="swipeHint" class="flex items-center justify-center bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-2 rounded-lg text-sm">
-                        <i class="fas fa-arrows-alt-h mr-2"></i> <span id="swipeHintText">اسحب لليسار أو اليمين للتنقل</span>
-                    </div>
-                    <div id="clickHint" class="flex items-center justify-center bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 px-3 py-2 rounded-lg text-sm">
-                        <i class="fas fa-hand-pointer mr-2 cursor-pointer"></i> <span id="clickHintText">اضغظ للعد</span>
-                    </div>
-                </div>
-                
                 <!-- Dhikr Content Card -->
                 <div class="bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-900/20 dark:to-purple-900/20 backdrop-blur-sm rounded-2xl p-6 border border-blue-200/30 dark:border-blue-700/30 mb-4">
-                    <p class="text-2xl leading-loose text-gray-800 dark:text-gray-200 mb-3 font-arabic arabic-text" id="adhkarArabicText" dir="rtl"></p>
+                    <!-- Compact Hints inside content -->
+                    <div class="flex flex-wrap gap-2 justify-center mb-4">
+                        <div id="swipeHint" class="flex items-center bg-blue-100/60 dark:bg-blue-800/40 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-full text-xs">
+                            <i class="fas fa-arrows-alt-h mr-1 text-xs"></i> <span id="swipeHintText">اسحب للتنقل</span>
+                        </div>
+                        <div id="clickHint" class="flex items-center bg-green-100/60 dark:bg-green-800/40 text-green-600 dark:text-green-400 px-2 py-1 rounded-full text-xs">
+                            <i class="fas fa-hand-pointer mr-1 cursor-pointer text-xs"></i> <span id="clickHintText">اضغط للعد</span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-2xl leading-loose text-gray-800 dark:text-gray-200 mb-3 font-quran-original arabic-text" id="adhkarArabicText" dir="rtl"></p>
                     <span id="repeatCount" class="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 rounded-full text-sm font-medium mb-3">
                         <span id="repeatLabel">تكرار</span>: <span id="repeatValue"></span>
                     </span>
@@ -2787,8 +2809,8 @@ let scrollTimeout = null;
               langSwitch: "English",
               counter: (i, total) => `الذكر ${i} من ${total}`,
               repeatLabel: "تكرار",
-              swipeHint: "اسحب لليسار أو اليمين للتنقل",
-              clickHint: "اضغط للعد",
+                      swipeHint: "اسحب للتنقل",
+        clickHint: "اضغط للعد",
               prayerTitle: "أوقات الصلاة",
               fajr: "الفجر",
               dhuhr: "الظهر",
@@ -2997,8 +3019,8 @@ let scrollTimeout = null;
               langSwitch: "العربية",
               counter: (i, total) => `Zikr ${i} of ${total}`,
               repeatLabel: "Repeat",
-              swipeHint: "Swipe left or right to navigate",
-              clickHint: "Click to Count",
+                      swipeHint: "Swipe to navigate",
+        clickHint: "Click to Count",
               prayerTitle: "Prayer Times",
               fajr: "Fajr",
               dhuhr: "Dhuhr",
@@ -3808,10 +3830,6 @@ function showARUnsupported(errorType) {
           const counterNumber = document.getElementById('dhikrCountNumber');
           const progressRing = document.getElementById('dhikrProgressRing');
           const dhikrCard = arabicText.closest('.bg-gradient-to-br');
-          
-          // Add click animation to text
-          arabicText.classList.add('clicked');
-          setTimeout(() => arabicText.classList.remove('clicked'), 300);
 
           if (filteredAdhkar[current].remainingRepeats > 0) {
               filteredAdhkar[current].remainingRepeats--;
@@ -3821,15 +3839,11 @@ function showARUnsupported(errorType) {
               const currentCount = totalRepeats - filteredAdhkar[current].remainingRepeats;
               const progress = (currentCount / totalRepeats) * 100;
               
-              // Animate counter with number flip
-              animateCounterUpdate(counterNumber, currentCount);
+              // Update counter number directly without animation
+              counterNumber.textContent = currentCount;
               
               // Update progress ring
               updateProgressRing(progressRing, progress);
-              
-              // Add pulse animation to the card
-              dhikrCard.classList.add('counter-pulse');
-              setTimeout(() => dhikrCard.classList.remove('counter-pulse'), 600);
               
               // Check if completed
               if (filteredAdhkar[current].remainingRepeats === 0) {
@@ -3842,26 +3856,7 @@ function showARUnsupported(errorType) {
           }
       }
 
-      function animateCounterUpdate(counterElement, newValue) {
-          // Add flip animation
-          counterElement.classList.add('number-flip');
-          
-          // Add count animation with color change
-          counterElement.classList.add('animate-count');
-          if (document.documentElement.classList.contains('dark')) {
-              counterElement.classList.add('dark');
-          }
-          
-          // Update number during flip
-          setTimeout(() => {
-              counterElement.textContent = newValue;
-          }, 200);
-          
-          // Remove animations
-          setTimeout(() => {
-              counterElement.classList.remove('number-flip', 'animate-count', 'dark');
-          }, 400);
-      }
+
 
       function updateProgressRing(ringElement, progress) {
           const circumference = 2 * Math.PI * 40; // radius = 40
@@ -3882,8 +3877,7 @@ function showARUnsupported(errorType) {
           const dhikrCard = document.querySelector('#adhkarView .bg-gradient-to-br');
           const counterNumber = document.getElementById('dhikrCountNumber');
           
-          // Add celebration animation
-          dhikrCard.classList.add('dhikr-complete');
+          // Change counter color to green without animation
           counterNumber.style.color = '#10b981'; // Green color
           
           // Create confetti effect
@@ -3893,11 +3887,6 @@ function showARUnsupported(errorType) {
           if ('vibrate' in navigator) {
               navigator.vibrate([200, 100, 200]);
           }
-          
-          // Remove celebration class
-          setTimeout(() => {
-              dhikrCard.classList.remove('dhikr-complete');
-          }, 800);
       }
 
       function createConfettiEffect() {
@@ -4454,6 +4443,33 @@ function showARUnsupported(errorType) {
               } else if (progress >= 75) {
                   progressRing.classList.remove('text-blue-500', 'dark:text-blue-400');
                   progressRing.classList.add('text-yellow-500', 'dark:text-yellow-400');
+              }
+          }
+          
+          // Auto-scroll to ensure dhikr content is fully visible on mobile
+          setTimeout(() => {
+              scrollDhikrIntoView();
+          }, 100);
+      }
+      
+      function scrollDhikrIntoView() {
+          // Only apply auto-scroll on mobile devices
+          if (window.innerWidth <= 768) {
+              const dhikrCard = document.querySelector('#adhkarView .bg-gradient-to-br');
+              if (dhikrCard) {
+                  // Calculate if the dhikr card extends beyond the viewport
+                  const cardRect = dhikrCard.getBoundingClientRect();
+                  const viewportHeight = window.innerHeight;
+                  
+                  // Check if the card is not fully visible
+                  if (cardRect.bottom > viewportHeight || cardRect.top < 0) {
+                      // Scroll to show the entire dhikr card with some padding
+                      dhikrCard.scrollIntoView({
+                          behavior: 'smooth',
+                          block: 'center',
+                          inline: 'nearest'
+                      });
+                  }
               }
           }
       }
