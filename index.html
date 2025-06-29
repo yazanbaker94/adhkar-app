@@ -44,9 +44,9 @@
             transform: scale(1.2); /* Slightly enlarge the element */
             transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
         }
-        /* Dark mode transitions */
+        /* Dark mode transitions - optimized */
         * {
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+            transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
         }
 
         /* --- CONSOLIDATED ANIMATIONS START --- */
@@ -86,17 +86,17 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Animation Utility Classes */
+        /* Animation Utility Classes - optimized */
         .animate-toast-in {
-            animation: fadeInFromBottom 0.3s ease-out forwards;
+            animation: fadeInFromBottom 0.15s ease-out forwards;
         }
 
         .animate-toast-out {
-            animation: fadeOutToBottom 0.3s ease-out forwards;
+            animation: fadeOutToBottom 0.15s ease-out forwards;
         }
 
         .animate-general-fade-in {
-            animation: fadeInFromTop 0.5s ease-out forwards;
+            animation: fadeInFromTop 0.2s ease-out forwards;
         }
         /* --- CONSOLIDATED ANIMATIONS END --- */
 
@@ -174,7 +174,7 @@
             background-color: rgba(0, 0, 0, 0.1);
             z-index: 9999;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.15s ease;
         }
 
         .reading-progress-container.visible {
@@ -184,7 +184,7 @@
         .reading-progress-bar {
             height: 100%;
             background: linear-gradient(90deg, #3B82F6, #10B981);
-            transition: width 0.3s ease;
+            transition: width 0.15s ease;
             width: 0%;
             border-radius: 0 2px 2px 0;
         }
@@ -214,7 +214,7 @@
             border-radius: 20px;
             font-size: 12px;
             font-weight: 500;
-            transition: all 0.2s ease;
+            transition: transform 0.1s ease;
             min-width: 70px;
             touch-action: manipulation;
         }
@@ -267,11 +267,11 @@
             position: relative;
             width: 16rem;
             height: 16rem;
-            animation: fadeInSimple 0.5s ease-in; /* USE CONSOLIDATED */
+            animation: fadeInSimple 0.2s ease-in; /* USE CONSOLIDATED */
         }
 
         #qiblaNeedle {
-            transition: transform 0.2s ease-out;
+            transition: transform 0.1s ease-out;
             transform-origin: bottom center;
         }
 
@@ -299,7 +299,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transform: scaleX(-1);
+            /* Removed transform: scaleX(-1) to fix inverted camera */
         }
 
         #arCanvas {
@@ -328,6 +328,29 @@
             #kaabaIndicator {
                 transform: translateZ(0);
             }
+        }
+        
+        /* Enhanced Qibla AR Styles */
+        #directionArrow {
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        
+        #compassRose {
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+        }
+        
+        #kaabaIndicator {
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        }
+        
+        #alignmentRings .animate-pulse {
+            animation: pulse-ring 2s infinite;
+        }
+        
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1.2); opacity: 0; }
         }
 
         /* General UI Element Styles */
@@ -468,6 +491,33 @@
         /* Progress ring animation */
         .progress-ring {
             transition: stroke-dashoffset 0.3s ease-in-out;
+        }
+        
+        .progress-ring-complete {
+            animation: ring-pulse-complete 1.5s ease-out;
+        }
+        
+        @keyframes ring-pulse-complete {
+            0% { 
+                stroke-width: 8;
+                filter: drop-shadow(0 0 0 rgba(16, 185, 129, 0.8));
+            }
+            25% { 
+                stroke-width: 12;
+                filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.9));
+            }
+            50% { 
+                stroke-width: 10;
+                filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.7));
+            }
+            75% { 
+                stroke-width: 12;
+                filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.8));
+            }
+            100% { 
+                stroke-width: 8;
+                filter: drop-shadow(0 0 0 rgba(16, 185, 129, 0.5));
+            }
         }
         
         /* Confetti animation */
@@ -1296,7 +1346,7 @@
             border-color: #4b5563;
         }
 
-                .dark #ayahMenuPopover button {
+        .dark #ayahMenuPopover button {
             color: #f3f4f6;
         }
 
@@ -1351,27 +1401,27 @@
         #btnReadingMode {
             position: relative;
         }
-    </style>
+</style>
     <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap" rel="stylesheet">
 </head>
 
-<body class="bg-gradient-to-b from-gray-100 to-white dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-300">
+<body class="bg-gradient-to-b from-gray-100 to-white dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-150">
     <!-- Remove debug panel -->
     
     <!-- Header Section -->
-    <header class="bg-gradient-to-r from-white via-gray-50 to-white dark:from-gray-800 dark:via-gray-850 dark:to-gray-800 shadow-lg backdrop-blur-sm border-b border-gray-100 dark:border-gray-700">
+    <header class="bg-gradient-to-r from-white via-gray-50 to-white dark:from-gray-800 dark:via-gray-850 dark:to-gray-800 shadow-lg border-b border-gray-100 dark:border-gray-700">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between py-3 sm:py-4">
                 <!-- Brand Section -->
                 <div class="flex items-center gap-3">
-                    <button onclick="goToHomeScreen()" class="group focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg transition-all duration-300" title="العودة للرئيسية - Go to Home">
-                        <img src="icon1.png" alt="Sakinah" class="h-8 w-8 sm:h-10 sm:w-10 rounded-lg shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-105 border-2 border-transparent group-hover:border-blue-200 dark:group-hover:border-blue-400">
+                    <button onclick="goToHomeScreen()" class="group focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg transition-transform duration-150" title="العودة للرئيسية - Go to Home">
+                        <img src="icon1.png" alt="Sakinah" class="h-8 w-8 sm:h-10 sm:w-10 rounded-lg shadow-md group-hover:shadow-lg transition-transform duration-150 group-hover:scale-105 border-2 border-transparent group-hover:border-blue-200 dark:group-hover:border-blue-400">
                     </button>
                     
                     <!-- Date Display -->
                     <div class="flex flex-col text-xs text-gray-500 dark:text-gray-400">
-                        <div class="flex items-center">
-                            <i class="fas fa-calendar-alt mr-1 text-blue-500 text-[10px] sm:text-xs"></i>
+                        <div class="flex items-center gap-1">
+                            <i class="fas fa-calendar-alt text-blue-500 text-[10px] sm:text-xs flex-shrink-0"></i>
                             <span id="gregorianDate" class="text-[10px] sm:text-xs">Loading...</span>
                         </div>
                         <div class="text-[8px] sm:text-[10px] text-gray-400 dark:text-gray-500" id="hijriDate"></div>
@@ -1382,19 +1432,19 @@
                 <div class="flex items-center space-x-2 rtl:space-x-reverse">
                     <!-- Language Toggle -->
                     <button onclick="switchLanguage()" id="langToggle" 
-                        class="group relative p-2 sm:p-2.5 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 bg-white/50 dark:bg-gray-700/50 hover:bg-blue-50 dark:hover:bg-blue-900/30 backdrop-blur-sm rounded-xl border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-500 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm hover:shadow-md transform hover:scale-105" 
+                        class="group relative p-2 sm:p-2.5 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 bg-white/70 dark:bg-gray-700/70 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-500 transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm hover:shadow-md transform hover:scale-105" 
                         title="Switch Language - تبديل اللغة">
-                        <i class="fas fa-globe text-sm sm:mr-1.5 rtl:sm:mr-0 rtl:sm:ml-1.5 group-hover:rotate-12 transition-transform duration-300"></i>
+                        <i class="fas fa-globe text-sm sm:mr-1.5 rtl:sm:mr-0 rtl:sm:ml-1.5 group-hover:rotate-12 transition-transform duration-150"></i>
                         <span class="hidden sm:inline">English</span>
                         <span class="sm:hidden">EN</span>
                     </button>
 
                     <!-- Dark Mode Toggle -->
                     <button id="darkModeToggle" 
-                        class="group relative p-2 sm:p-2.5 text-gray-600 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 bg-white/50 dark:bg-gray-700/50 hover:bg-amber-50 dark:hover:bg-amber-900/30 backdrop-blur-sm rounded-xl border border-gray-200 dark:border-gray-600 hover:border-amber-300 dark:hover:border-amber-500 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 shadow-sm hover:shadow-md transform hover:scale-105" 
+                        class="group relative p-2 sm:p-2.5 text-gray-600 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 bg-white/70 dark:bg-gray-700/70 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-amber-300 dark:hover:border-amber-500 transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 shadow-sm hover:shadow-md transform hover:scale-105" 
                         title="Toggle Dark Mode - تبديل الوضع الليلي">
-                        <i class="fas fa-moon dark:hidden text-sm group-hover:rotate-12 transition-transform duration-300"></i>
-                        <i class="fas fa-sun hidden dark:block text-sm group-hover:rotate-180 transition-transform duration-300"></i>
+                        <i class="fas fa-moon dark:hidden text-sm group-hover:rotate-12 transition-transform duration-150"></i>
+                        <i class="fas fa-sun hidden dark:block text-sm group-hover:rotate-180 transition-transform duration-150"></i>
                     </button>
                 </div>
             </div>
@@ -1452,6 +1502,9 @@
                     moonIcon.classList.remove('hidden');
                     sunIcon.classList.add('hidden');
                 }
+                
+                // Remove focus from button to clear yellow effect
+                darkModeToggle.blur();
             });
             
             // Listen for system theme changes
@@ -1540,8 +1593,8 @@
     </script>
 
     <!-- Tutorial Modal -->
-    <div id="tutorialModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden">
-        <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-lg bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/20 dark:border-gray-700/50 text-right">
+    <div id="tutorialModal" class="fixed inset-0 bg-black/60 z-50 hidden">
+        <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-lg bg-white/95 dark:bg-gray-800/95 rounded-2xl p-8 shadow-2xl border border-white/20 dark:border-gray-700/50 text-right">
   
             <div class="text-center mb-6">
                 <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
@@ -1618,7 +1671,7 @@
                         </div>
                         
                 <!-- Quran Settings Side Menu -->
-                <div id="quranSettingsMenu" class="fixed inset-y-0 right-0 w-80 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl shadow-2xl border-l border-white/30 dark:border-gray-600/50 transform translate-x-full transition-transform duration-300 ease-in-out z-50 hidden" style="background-image: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 40% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%);">
+                <div id="quranSettingsMenu" class="fixed inset-y-0 right-0 w-80 bg-white/95 dark:bg-gray-900/95 shadow-2xl border-l border-white/30 dark:border-gray-600/50 transform translate-x-full transition-transform duration-200 ease-in-out z-50 hidden" style="background-image: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 40% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%);">
                     <div class="flex flex-col h-full">
                         <!-- Header -->
                         <div class="flex items-center justify-between p-4 border-b border-white/20 dark:border-gray-600/30 bg-gradient-to-r from-transparent via-white/10 to-transparent" style="min-height: 60px;">
@@ -1850,17 +1903,137 @@
             <div class="relative w-full h-[70vh] bg-black rounded-xl overflow-hidden">
                 <video id="arCamera" autoplay playsinline class="w-full h-full object-cover"></video>
                 <canvas id="arCanvas" class="absolute top-0 left-0 w-full h-full pointer-events-none"></canvas>
-                <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-4">
-                    <button id="flipCameraBtn" class="bg-white/20 text-white p-3 rounded-full" title="Flip Camera - تبديل الكاميرا">
-                        <i class="fas fa-camera-rotate"></i>
-                    </button>
-                    <div id="qiblaDegree" class="bg-white/20 text-white px-4 py-2 rounded-full">
-                        <i class="fas fa-compass mr-2"></i>
-                        <span id="degreeValue">0°</span>
+                
+                <!-- Enhanced Qibla Direction Indicators -->
+                <!-- Center crosshair for alignment -->
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div class="relative">
+                        <!-- Main crosshair -->
+                        <div class="w-8 h-8 border-2 border-white rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                            <div class="w-2 h-2 bg-white rounded-full"></div>
+                        </div>
+                        <!-- Alignment rings -->
+                        <div id="alignmentRings" class="absolute inset-0 opacity-0 transition-opacity duration-300">
+                            <div class="absolute -inset-4 border-2 border-green-400 rounded-full animate-pulse"></div>
+                            <div class="absolute -inset-8 border border-green-400/50 rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
+                        </div>
                     </div>
                 </div>
-                <div id="kaabaIndicator" class="absolute w-12 h-12">
-                    <img src="https://cdn-icons-png.flaticon.com/512/7222/7222554.png" alt="Kaaba" class="w-full h-full">
+                
+                <!-- Compass rose background -->
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div id="compassRose" class="w-64 h-64 opacity-20 transition-opacity duration-500">
+                        <svg viewBox="0 0 200 200" class="w-full h-full">
+                            <!-- Main directions -->
+                            <g stroke="white" stroke-width="2" fill="none">
+                                <!-- North -->
+                                <line x1="100" y1="10" x2="100" y2="30" />
+                                <text x="100" y="8" text-anchor="middle" fill="white" font-size="12" font-weight="bold">N</text>
+                                <!-- East -->
+                                <line x1="190" y1="100" x2="170" y2="100" />
+                                <text x="195" y="105" text-anchor="middle" fill="white" font-size="12" font-weight="bold">E</text>
+                                <!-- South -->
+                                <line x1="100" y1="190" x2="100" y2="170" />
+                                <text x="100" y="198" text-anchor="middle" fill="white" font-size="12" font-weight="bold">S</text>
+                                <!-- West -->
+                                <line x1="10" y1="100" x2="30" y2="100" />
+                                <text x="5" y="105" text-anchor="middle" fill="white" font-size="12" font-weight="bold">W</text>
+                                
+                                <!-- Degree markings -->
+                                <circle cx="100" cy="100" r="80" stroke="white" stroke-width="1" opacity="0.3"/>
+                                <!-- Additional degree lines every 30 degrees -->
+                                <g opacity="0.5">
+                                    <line x1="100" y1="20" x2="100" y2="25" transform="rotate(30 100 100)"/>
+                                    <line x1="100" y1="20" x2="100" y2="25" transform="rotate(60 100 100)"/>
+                                    <line x1="100" y1="20" x2="100" y2="25" transform="rotate(120 100 100)"/>
+                                    <line x1="100" y1="20" x2="100" y2="25" transform="rotate(150 100 100)"/>
+                                    <line x1="100" y1="20" x2="100" y2="25" transform="rotate(210 100 100)"/>
+                                    <line x1="100" y1="20" x2="100" y2="25" transform="rotate(240 100 100)"/>
+                                    <line x1="100" y1="20" x2="100" y2="25" transform="rotate(300 100 100)"/>
+                                    <line x1="100" y1="20" x2="100" y2="25" transform="rotate(330 100 100)"/>
+                                </g>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Qibla Direction Arrow -->
+                <div id="qiblaArrow" class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div class="relative w-32 h-32">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-1 h-16 bg-gradient-to-t from-green-400 to-green-600 rounded-full shadow-lg transform origin-bottom transition-transform duration-200" id="directionArrow">
+                                <!-- Arrow tip -->
+                                <div class="absolute -top-2 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-2 border-r-2 border-b-4 border-transparent border-b-green-500"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Enhanced Kaaba Indicator -->
+                <div id="kaabaIndicator" class="absolute w-16 h-16 transition-all duration-300">
+                    <div class="relative w-full h-full">
+                        <!-- Glow effect when close to Qibla -->
+                        <div id="kaabaGlow" class="absolute inset-0 bg-green-400 rounded-full opacity-0 blur-lg transition-opacity duration-300"></div>
+                        <!-- Main Kaaba icon -->
+                        <div class="relative bg-black/70 backdrop-blur-sm border-2 border-white/30 rounded-lg p-2 shadow-lg">
+                            <i class="fas fa-kaaba text-white text-2xl block text-center"></i>
+                        </div>
+                        <!-- Distance indicator -->
+                        <div id="distanceIndicator" class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-black/70 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                            <span id="qiblaDistance">Calculating...</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Top Status Bar -->
+                <div class="absolute top-4 left-4 right-4 flex justify-between items-start">
+                    <!-- Location info -->
+                    <div class="bg-black/50 backdrop-blur-sm text-white px-3 py-2 rounded-lg text-sm">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-location-dot text-blue-400"></i>
+                            <span id="locationInfo">Getting location...</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Camera flip button -->
+                    <button id="flipCameraBtn" class="bg-black/50 backdrop-blur-sm text-white p-3 rounded-lg hover:bg-black/70 transition-colors" title="Flip Camera - تبديل الكاميرا">
+                        <i class="fas fa-camera-rotate"></i>
+                    </button>
+                </div>
+                
+                <!-- Bottom Status Panel -->
+                <div class="absolute bottom-4 left-4 right-4">
+                    <div class="bg-black/70 backdrop-blur-md text-white rounded-xl p-4 space-y-3">
+                        <!-- Main degree display -->
+                        <div class="flex items-center justify-center">
+                            <div id="qiblaDegree" class="bg-white/20 text-white px-6 py-3 rounded-full text-lg font-bold">
+                                <i class="fas fa-compass mr-2 text-green-400"></i>
+                                <span id="degreeValue">0°</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Status indicators row -->
+                        <div class="flex items-center justify-between text-sm">
+                            <!-- Compass accuracy -->
+                            <div id="compassAccuracy" class="flex items-center gap-2">
+                                <span id="accuracyIndicator"></span>
+                            </div>
+                            
+                            <!-- Alignment status -->
+                            <div id="alignmentStatus" class="flex items-center gap-2">
+                                <div class="w-2 h-2 bg-red-400 rounded-full" id="alignmentDot"></div>
+                                <span id="alignmentText">Finding Qibla...</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Help button -->
+                        <div class="text-center">
+                            <button onclick="showARUnsupported('compass_inaccurate')" class="text-xs text-blue-300 hover:text-blue-100 underline transition-colors">
+                                <i class="fas fa-question-circle mr-1"></i>
+                                <span id="troubleshootText"></span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div id="arUnsupported" class="hidden bg-white dark:bg-gray-800 p-6 rounded-lg text-center mt-4">
@@ -1970,8 +2143,8 @@
                 </div>
               </div>
               <!-- Modal for Adhkar Sections -->
-              <div id="adhkarMenuModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-start sm:items-center justify-center z-50 hidden pt-4 sm:pt-0">
-                <div class="bg-gradient-to-br from-white via-gray-50 to-white dark:from-gray-800 dark:via-gray-850 dark:to-gray-800 rounded-3xl shadow-2xl p-8 max-w-2xl w-full relative animate-general-fade-in border border-gray-200/50 dark:border-gray-600/50 backdrop-blur-sm my-4 sm:my-0" style="max-height:90vh; overflow-y:auto;">
+              <div id="adhkarMenuModal" class="fixed inset-0 bg-black/60 flex items-start sm:items-center justify-center z-50 hidden pt-4 sm:pt-0">
+                <div class="bg-gradient-to-br from-white via-gray-50 to-white dark:from-gray-800 dark:via-gray-850 dark:to-gray-800 rounded-3xl shadow-2xl p-8 max-w-2xl w-full relative animate-general-fade-in border border-gray-200/50 dark:border-gray-600/50 my-4 sm:my-0" style="max-height:90vh; overflow-y:auto;">
                   <button id="closeAdhkarMenu" class="absolute top-4 left-4 w-10 h-10 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2" title="إغلاق القائمة">
                     <i class="fas fa-times text-sm"></i>
                   </button>
@@ -2114,7 +2287,7 @@
             </div>
 
             <!-- Adhkar View Section -->
-            <div id="adhkarView" class="hidden max-w-xl p-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 space-y-6 text-center no-select mx-auto islamic-pattern">
+            <div id="adhkarView" class="hidden max-w-xl p-6 bg-white/90 dark:bg-gray-800/90 rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 space-y-6 text-center no-select mx-auto islamic-pattern">
                 <!-- Header with Back Button and Counter -->
                 <div class="flex justify-between items-center mb-4">
                     <button onclick="goHome()" class="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-700" title="Back - العودة">
@@ -2140,7 +2313,7 @@
                             <!-- Counter Number -->
                             <div class="absolute inset-0 flex items-center justify-center">
                                 <span class="text-lg font-bold text-blue-600 dark:text-blue-400 dhikr-counter" id="dhikrCountNumber">0</span>
-                            </div>
+                </div>
                         </div>
                         <!-- Counter Title -->
                         <div class="text-right">
@@ -2163,8 +2336,8 @@
                     
                     <p class="text-2xl leading-loose text-gray-800 dark:text-gray-200 mb-3 font-quran-original arabic-text" id="adhkarArabicText" dir="rtl"></p>
                     <span id="repeatCount" class="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 rounded-full text-sm font-medium mb-3">
-                        <span id="repeatLabel">تكرار</span>: <span id="repeatValue"></span>
-                    </span>
+                    <span id="repeatLabel">تكرار</span>: <span id="repeatValue"></span>
+                </span>
                     
                     <!-- Toggle Buttons -->
                     <div class="flex gap-2 mb-3">
@@ -2199,33 +2372,36 @@
 
         <!-- Tasbih Tab Content -->
         <div id="tasbihContent" class="tab-content w-full max-w-lg p-3">
-            <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-4 text-center islamic-pattern">
+            <div class="bg-white/90 dark:bg-gray-800/90 rounded-2xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-4 text-center islamic-pattern">
                 <!-- Compact Header Section -->
-                <div class="text-center mb-4">
-                    <div class="w-12 h-12 mx-auto mb-2 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
-                        <i class="fas fa-hand-holding-heart text-lg text-white"></i>
+                <div class="text-center mb-3">
+                    <div class="w-10 h-10 mx-auto mb-2 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+                        <i class="fas fa-hand-holding-heart text-sm text-white"></i>
                     </div>
-                    <h2 class="text-xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent mb-1" id="tasbihTitle">التسبيح الرقمي</h2>
+                    <div class="flex items-center justify-center gap-2 mb-1">
+                        <i class="fas fa-prayer-beads text-purple-600 dark:text-purple-400 text-lg"></i>
+                        <h2 class="text-lg font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent" id="tasbihTitle">التسبيح الرقمي</h2>
+                    </div>
                     <p class="text-gray-600 dark:text-gray-400 text-xs">Digital Tasbih Counter</p>
                 </div>
                 
                 <!-- Compact Counter and Dhikr Row -->
                 <div class="flex gap-3 mb-4">
                     <!-- Counter Display Card -->
-                    <div class="flex-1 bg-gradient-to-br from-white/70 to-gray-50/70 dark:from-gray-700/70 dark:to-gray-800/70 backdrop-blur-sm rounded-xl p-3 border border-purple-200/50 dark:border-purple-700/50 shadow-lg">
+                    <div class="flex-1 bg-gradient-to-br from-white/80 to-gray-50/80 dark:from-gray-700/80 dark:to-gray-800/80 rounded-xl p-3 border border-purple-200/50 dark:border-purple-700/50 shadow-lg">
                         <div class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent mb-1" id="tasbihCount">0</div>
                         <div class="text-xs font-medium text-gray-600 dark:text-gray-400" id="tasbihTarget">Target: 33</div>
                     </div>
                     
                     <!-- Current Dhikr Card -->
-                    <div class="flex-1 bg-gradient-to-r from-indigo-50/70 to-purple-50/70 dark:from-indigo-900/30 dark:to-purple-900/30 backdrop-blur-sm rounded-xl p-3 border border-indigo-200/50 dark:border-indigo-700/50">
+                    <div class="flex-1 bg-gradient-to-r from-indigo-50/80 to-purple-50/80 dark:from-indigo-900/40 dark:to-purple-900/40 rounded-xl p-3 border border-indigo-200/50 dark:border-indigo-700/50">
                         <p class="text-base font-bold text-gray-800 dark:text-gray-200 mb-1" id="currentDhikr">سبحان الله</p>
                         <p class="text-xs text-gray-600 dark:text-gray-400" id="currentDhikrTranslation">Glory be to Allah</p>
                     </div>
                 </div>
                 
                 <!-- Count Button -->
-                <button onclick="incrementTasbih()" class="w-24 h-24 bg-gradient-to-br from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-full text-xl font-bold shadow-2xl hover:shadow-purple-500/25 transform hover:scale-105 active:scale-95 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-purple-300/50 mb-4 select-none touch-manipulation relative overflow-hidden" style="touch-action: manipulation;">
+                <button onclick="incrementTasbih()" class="w-24 h-24 bg-gradient-to-br from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-full text-xl font-bold shadow-2xl hover:shadow-purple-500/25 transform hover:scale-105 active:scale-95 transition-transform duration-100 focus:outline-none focus:ring-4 focus:ring-purple-300/50 mb-4 select-none touch-manipulation relative overflow-hidden" style="touch-action: manipulation;">
                     <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-full"></div>
                     <i class="fas fa-plus relative z-10"></i>
                 </button>
@@ -2266,7 +2442,7 @@
 
         <!-- Prayer Times Tab Content -->
         <div id="prayerContent" class="tab-content w-full max-w-lg p-3">
-            <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-4 islamic-pattern">
+            <div class="bg-white/90 dark:bg-gray-800/90 rounded-2xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-4 islamic-pattern">
                 <!-- Compact Header Section -->
                 <div class="text-center mb-4">
                     <div class="w-12 h-12 mx-auto mb-2 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center shadow-lg">
@@ -2285,10 +2461,10 @@
                             </div>
                             <span class="text-sm font-medium text-gray-700 dark:text-gray-300" id="notificationLabel">إشعارات أوقات الصلاة</span>
                         </div>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="notificationToggle" class="sr-only peer">
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="notificationToggle" class="sr-only peer">
                             <div class="w-10 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300/50 dark:peer-focus:ring-blue-800/50 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-indigo-600 shadow-inner"></div>
-                        </label>
+                    </label>
                     </div>
                 </div>
 
@@ -2394,6 +2570,7 @@ let facingMode = "environment";
 let currentHeading = 0;
       let qiblaAngle = 0;
       let animationFrameId = null;
+      let userLocation = null;
 let smoothedHeading = null;
 
 // Variables for swipe detection
@@ -2810,7 +2987,7 @@ let scrollTimeout = null;
               counter: (i, total) => `الذكر ${i} من ${total}`,
               repeatLabel: "تكرار",
                       swipeHint: "اسحب للتنقل",
-        clickHint: "اضغط للعد",
+              clickHint: "اضغط للعد",
               prayerTitle: "أوقات الصلاة",
               fajr: "الفجر",
               dhuhr: "الظهر",
@@ -2834,6 +3011,7 @@ let scrollTimeout = null;
               calibrationMessage: "حرك الجهاز على شكل رقم 8 لمعايرة البوصلة",
               calibrationDone: "تم",
               alignedMessage: "موجه نحو القبلة",
+        troubleshootText: "القبلة غير دقيقة؟",
               tiltMessage: "أمل جهازك بشكل مسطح",
               notificationPermissionDenied: "يرجى السماح بالإشعارات لتلقي تنبيهات أوقات الصلاة",
               prayerTimeNotification: "حان وقت الصلاة",
@@ -3020,7 +3198,7 @@ let scrollTimeout = null;
               counter: (i, total) => `Zikr ${i} of ${total}`,
               repeatLabel: "Repeat",
                       swipeHint: "Swipe to navigate",
-        clickHint: "Click to Count",
+              clickHint: "Click to Count",
               prayerTitle: "Prayer Times",
               fajr: "Fajr",
               dhuhr: "Dhuhr",
@@ -3044,6 +3222,7 @@ let scrollTimeout = null;
               calibrationMessage: "Move your device in a figure-8 pattern to calibrate the compass",
               calibrationDone: "Done",
               alignedMessage: "Aligned with Qibla",
+        troubleshootText: "Qibla not accurate?",
               tiltMessage: "Hold device flat",
               notificationPermissionDenied: "Please allow notifications to receive prayer time alerts",
               prayerTimeNotification: "Prayer Time",
@@ -3408,9 +3587,18 @@ let scrollTimeout = null;
         });
 
         console.log("Location received:", position.coords);
-        // Calculate Qibla direction
-              qiblaAngle = calculateQiblaAngle(position.coords.latitude, position.coords.longitude);
-        console.log("Qibla angle calculated:", qiblaAngle);
+                    // Store user location
+            userLocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+            
+            // Calculate Qibla direction
+            qiblaAngle = calculateQiblaAngle(position.coords.latitude, position.coords.longitude);
+            console.log("Qibla angle calculated:", qiblaAngle);
+            
+            // Update location display
+            updateLocationDisplay(position.coords.latitude, position.coords.longitude);
 
         // Start AR rendering
               arActive = true;
@@ -3473,22 +3661,61 @@ let scrollTimeout = null;
           // Normalize to 0-360 degrees
           bearing = (bearing + 360) % 360;
           
-          console.log(`Qibla calculation: User(${lat.toFixed(6)}, ${lng.toFixed(6)}) -> Bearing: ${bearing.toFixed(2)}°`);
-          return bearing;
+          // Apply magnetic declination correction for better accuracy
+          const magneticDeclination = getMagneticDeclination(lat, lng);
+          const correctedBearing = (bearing + magneticDeclination + 360) % 360;
+          
+          console.log(`Qibla calculation: User(${lat.toFixed(6)}, ${lng.toFixed(6)}) -> Bearing: ${bearing.toFixed(2)}° -> Corrected: ${correctedBearing.toFixed(2)}° (Declination: ${magneticDeclination.toFixed(2)}°)`);
+          return correctedBearing;
+      }
+      
+      // Simplified magnetic declination calculation
+      function getMagneticDeclination(lat, lng) {
+          // This is a simplified approximation - for production use a proper declination API
+          // Common declination values for major regions:
+          
+          // Middle East (approximate)
+          if (lat >= 15 && lat <= 40 && lng >= 25 && lng <= 65) {
+              return lat > 30 ? 3 : 2; // 2-3° East
+          }
+          
+          // North America
+          if (lat >= 25 && lat <= 70 && lng >= -170 && lng <= -50) {
+              return lng < -100 ? 15 : -10; // Varies widely
+          }
+          
+          // Europe
+          if (lat >= 35 && lat <= 70 && lng >= -10 && lng <= 40) {
+              return lat > 50 ? 2 : 1; // 1-2° East
+          }
+          
+          // Default: no correction
+          return 0;
       }
 
       function handleOrientation(event) {
           let heading;
+          let isHighAccuracy = false;
 
           if (typeof event.webkitCompassHeading !== "undefined") {
               // iOS: use the accurate magnetic heading (already true north corrected)
               heading = event.webkitCompassHeading;
+              isHighAccuracy = true;
           } else if (typeof event.alpha === "number") {
-              // Android: calculate heading from alpha
+              // Android/Other: calculate heading from alpha (less accurate than iOS)
               heading = event.alpha;
               
               // Convert to compass heading (0° = North)
               heading = (360 - heading) % 360;
+              
+              // Apply additional smoothing for non-iOS devices
+              if (typeof lastNonIOSHeading !== 'undefined') {
+                  let diff = heading - lastNonIOSHeading;
+                  if (diff > 180) diff -= 360;
+                  if (diff < -180) diff += 360;
+                  heading = lastNonIOSHeading + diff * 0.15; // More aggressive smoothing
+              }
+              lastNonIOSHeading = heading;
 
               // Adjust for screen orientation
               const orientation = window.screen.orientation?.angle || window.orientation || 0;
@@ -3532,6 +3759,7 @@ let scrollTimeout = null;
           }
 
           updateDegreeDisplay();
+          updateAccuracyIndicator(isHighAccuracy);
       }
 
       function smoothHeading(newHeading) {
@@ -3551,29 +3779,88 @@ let scrollTimeout = null;
           
           const relativeAngle = (qiblaAngle - currentHeading + 360) % 360;
           const degreeDisplay = document.getElementById('degreeValue');
+          const alignmentRings = document.getElementById('alignmentRings');
+          const alignmentDot = document.getElementById('alignmentDot');
+          const alignmentText = document.getElementById('alignmentText');
+          const directionArrow = document.getElementById('directionArrow');
+          const kaabaGlow = document.getElementById('kaabaGlow');
           
           if (!degreeDisplay) return;
           
-          // More precise alignment detection (within 3 degrees)
-          const isAligned = Math.abs(relativeAngle) <= 3 || Math.abs(relativeAngle - 360) <= 3;
+          // More precise alignment detection (within 5 degrees)
+          const isAligned = Math.abs(relativeAngle) <= 5 || Math.abs(relativeAngle - 360) <= 5;
+          const isVeryClose = Math.abs(relativeAngle) <= 2 || Math.abs(relativeAngle - 360) <= 2;
+          
+          // Update direction arrow rotation
+          if (directionArrow) {
+              directionArrow.style.transform = `rotate(${relativeAngle}deg)`;
+          }
           
           if (isAligned) {
               degreeDisplay.textContent = languages[currentLang].alignedMessage || 'Aligned with Qibla';
               degreeDisplay.parentElement.style.backgroundColor = 'rgba(34, 197, 94, 0.8)'; // Green background
               
+              // Show alignment rings
+              if (alignmentRings) alignmentRings.style.opacity = '1';
+              if (kaabaGlow) kaabaGlow.style.opacity = isVeryClose ? '0.8' : '0.4';
+              
+              // Update alignment status
+              if (alignmentDot) {
+                  alignmentDot.className = 'w-2 h-2 bg-green-400 rounded-full animate-pulse';
+              }
+              if (alignmentText) {
+                  alignmentText.textContent = isVeryClose ? 
+                      (currentLang === 'ar' ? 'محاذي للقبلة تماماً!' : 'Perfectly Aligned!') :
+                      (currentLang === 'ar' ? 'قريب من القبلة' : 'Close to Qibla');
+              }
+              
               // Haptic feedback when aligned
-              if ('vibrate' in navigator) {
-                  navigator.vibrate(50);
+              if ('vibrate' in navigator && isVeryClose) {
+                  navigator.vibrate([50, 100, 50]);
               }
           } else {
               // Round to nearest degree for stability
               const roundedAngle = Math.round(relativeAngle);
               degreeDisplay.textContent = `${roundedAngle}°`;
               degreeDisplay.parentElement.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+              
+              // Hide alignment rings and glow
+              if (alignmentRings) alignmentRings.style.opacity = '0';
+              if (kaabaGlow) kaabaGlow.style.opacity = '0';
+              
+              // Update alignment status
+              if (alignmentDot) {
+                  alignmentDot.className = 'w-2 h-2 bg-red-400 rounded-full';
+              }
+              if (alignmentText) {
+                  const distance = Math.min(relativeAngle, 360 - relativeAngle);
+                  if (distance > 45) {
+                      alignmentText.textContent = currentLang === 'ar' ? 'ابحث عن القبلة' : 'Finding Qibla';
+                  } else {
+                      alignmentText.textContent = currentLang === 'ar' ? 'اقترب من القبلة' : 'Getting closer';
+                  }
+              }
           }
           
           // Debug info (remove in production)
           console.log(`Qibla: ${qiblaAngle.toFixed(1)}°, Heading: ${currentHeading.toFixed(1)}°, Relative: ${relativeAngle.toFixed(1)}°`);
+      }
+      
+      function updateAccuracyIndicator(isHighAccuracy) {
+          const accuracyIndicator = document.getElementById('accuracyIndicator');
+          if (!accuracyIndicator) return;
+          
+          const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+          
+          if (isHighAccuracy && isIOS) {
+              accuracyIndicator.innerHTML = '<i class="fas fa-check-circle text-green-400 mr-1"></i>' + 
+                  (currentLang === 'ar' ? 'دقة عالية' : 'High Accuracy');
+              accuracyIndicator.className = 'text-green-400';
+          } else {
+              accuracyIndicator.innerHTML = '<i class="fas fa-exclamation-triangle text-yellow-400 mr-1"></i>' + 
+                  (currentLang === 'ar' ? 'دقة متوسطة - قم بمعايرة البوصلة' : 'Medium Accuracy - Calibrate Compass');
+              accuracyIndicator.className = 'text-yellow-400';
+          }
       }
 
       function startARRenderLoop() {
@@ -3581,6 +3868,7 @@ let scrollTimeout = null;
           const canvas = document.getElementById('arCanvas');
           const ctx = canvas.getContext('2d');
           const kaabaIndicator = document.getElementById('kaabaIndicator');
+          const compassRose = document.getElementById('compassRose');
 
           function render() {
               if (!arActive) return;
@@ -3595,48 +3883,128 @@ let scrollTimeout = null;
               canvas.width = displayWidth;
               canvas.height = displayHeight;
 
+              if (typeof qiblaAngle === 'undefined' || typeof currentHeading === 'undefined') {
+                  animationFrameId = requestAnimationFrame(render);
+                  return;
+              }
+
               const relativeAngle = (qiblaAngle - currentHeading + 360) % 360;
               const rad = relativeAngle * Math.PI / 180;
 
               const centerX = displayWidth / 2;
               const centerY = displayHeight / 2;
 
-              // Clear canvas
+              // Clear canvas for additional drawing
               ctx.clearRect(0, 0, displayWidth, displayHeight);
 
-              // Draw center dot (alignment target)
-              ctx.beginPath();
-              ctx.arc(centerX, centerY, 10, 0, 2 * Math.PI);
-              ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-              ctx.fill();
+              // Rotate compass rose based on device heading
+              if (compassRose) {
+                  compassRose.style.transform = `rotate(${-currentHeading}deg)`;
+                  // Show compass rose when not aligned for better orientation
+                  const isAligned = Math.abs(relativeAngle) <= 5 || Math.abs(relativeAngle - 360) <= 5;
+                  compassRose.style.opacity = isAligned ? '0.1' : '0.3';
+              }
 
               // Position Kaaba indicator
-              const radius = Math.min(centerX, centerY) * 0.5;
+              const radius = Math.min(centerX, centerY) * 0.6; // Slightly larger radius
               let kaabaX = centerX + Math.sin(rad) * radius;
               let kaabaY = centerY - Math.cos(rad) * radius;
 
-              kaabaX = Math.max(30, Math.min(displayWidth - 30, kaabaX));
-              kaabaY = Math.max(30, Math.min(displayHeight - 30, kaabaY));
+              // Keep Kaaba indicator within bounds with more margin
+              const margin = 64; // Increased margin for larger indicator
+              kaabaX = Math.max(margin, Math.min(displayWidth - margin, kaabaX));
+              kaabaY = Math.max(margin, Math.min(displayHeight - margin, kaabaY));
 
-              // Adjust Kaaba indicator opacity based on alignment
-              kaabaIndicator.style.transform = `translate(${kaabaX - 24}px, ${kaabaY - 24}px)`;
-              kaabaIndicator.style.opacity = Math.abs(relativeAngle) < 5 || Math.abs(relativeAngle - 360) < 5 ? '0.2' : '1';
+              // Update Kaaba indicator position
+              if (kaabaIndicator) {
+                  kaabaIndicator.style.transform = `translate(${kaabaX - 32}px, ${kaabaY - 32}px)`;
+                  
+                  // Update distance indicator
+                  const distanceSpan = document.getElementById('qiblaDistance');
+                  if (distanceSpan && typeof userLocation !== 'undefined') {
+                      const distance = calculateDistance(userLocation.lat, userLocation.lng, 21.4224779, 39.8262136);
+                      distanceSpan.textContent = `${distance.toFixed(0)} km`;
+                  }
+              }
 
-              // Draw alignment indicator when close to Qibla
-              if (Math.abs(relativeAngle) < 5 || Math.abs(relativeAngle - 360) < 5) {
+              // Draw directional line from center to Qibla when far from alignment
+              const isAligned = Math.abs(relativeAngle) <= 10 || Math.abs(relativeAngle - 360) <= 10;
+              if (!isAligned) {
                   ctx.beginPath();
-                  ctx.arc(centerX, centerY, 20, 0, 2 * Math.PI);
-                  ctx.fillStyle = 'rgba(34, 197, 94, 0.8)';
-                  ctx.fill();
+                  ctx.setLineDash([10, 10]);
+                  ctx.moveTo(centerX, centerY);
+                  ctx.lineTo(kaabaX, kaabaY);
+                  ctx.strokeStyle = 'rgba(34, 197, 94, 0.6)';
+                  ctx.lineWidth = 2;
+                  ctx.stroke();
+                  ctx.setLineDash([]);
               }
 
               animationFrameId = requestAnimationFrame(render);
           }
 
-          kaabaIndicator.style.opacity = '0';
-          kaabaIndicator.style.transition = 'opacity 0.5s, transform 0.2s';
+          // Initialize with smooth transitions
+          if (kaabaIndicator) {
+              kaabaIndicator.style.opacity = '1';
+              kaabaIndicator.style.transition = 'opacity 0.5s, transform 0.3s ease-out';
+          }
+          
           render();
       }
+      
+             // Helper function to calculate distance between two coordinates
+       function calculateDistance(lat1, lng1, lat2, lng2) {
+           const R = 6371; // Earth's radius in kilometers
+           const dLat = (lat2 - lat1) * Math.PI / 180;
+           const dLng = (lng2 - lng1) * Math.PI / 180;
+           const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                     Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                     Math.sin(dLng/2) * Math.sin(dLng/2);
+           const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+           return R * c;
+       }
+       
+       // Update location display with city/country info
+       function updateLocationDisplay(lat, lng) {
+           const locationInfo = document.getElementById('locationInfo');
+           if (!locationInfo) return;
+           
+           // Show coordinates initially
+           locationInfo.textContent = `${lat.toFixed(4)}°, ${lng.toFixed(4)}°`;
+           
+           // Try to get city name using reverse geocoding (optional)
+           // This is a simple approximation - in production, use a proper geocoding service
+           const cityName = getCityName(lat, lng);
+           if (cityName) {
+               locationInfo.textContent = cityName;
+           }
+       }
+       
+       // Simple city name approximation (replace with proper geocoding service)
+       function getCityName(lat, lng) {
+           // Major cities approximation - in production, use a proper geocoding API
+           const cities = [
+               { name: "Mecca, Saudi Arabia", lat: 21.4225, lng: 39.8262, radius: 50 },
+               { name: "Medina, Saudi Arabia", lat: 24.4539, lng: 39.6031, radius: 50 },
+               { name: "Riyadh, Saudi Arabia", lat: 24.7136, lng: 46.6753, radius: 100 },
+               { name: "Dubai, UAE", lat: 25.2048, lng: 55.2708, radius: 100 },
+               { name: "Cairo, Egypt", lat: 30.0444, lng: 31.2357, radius: 100 },
+               { name: "Istanbul, Turkey", lat: 41.0082, lng: 28.9784, radius: 100 },
+               { name: "London, UK", lat: 51.5074, lng: -0.1278, radius: 100 },
+               { name: "New York, USA", lat: 40.7128, lng: -74.0060, radius: 100 },
+               { name: "Los Angeles, USA", lat: 34.0522, lng: -118.2437, radius: 100 },
+               { name: "Toronto, Canada", lat: 43.6532, lng: -79.3832, radius: 100 },
+           ];
+           
+           for (const city of cities) {
+               const distance = calculateDistance(lat, lng, city.lat, city.lng);
+               if (distance < city.radius) {
+                   return city.name;
+               }
+           }
+           
+           return null;
+       }
 
 function showARUnsupported(errorType) {
     const qiblaContent = document.getElementById('qiblaContent');
@@ -3661,6 +4029,12 @@ function showARUnsupported(errorType) {
                 ? 'يرجى السماح بالوصول إلى مستشعرات الحركة في إعدادات المتصفح:\n\n1. افتح إعدادات جهازك\n2. انتقل إلى Safari > الإعدادات\n3. قم بتفعيل "السماح بالوصول إلى المستشعرات"\n4. أعد تشغيل التطبيق'
                 : 'Please allow access to motion sensors in browser settings:\n\n1. Open your device settings\n2. Go to Safari > Settings\n3. Enable "Allow Motion Sensors"\n4. Restart the app';
             break;
+        case "compass_inaccurate":
+            title = currentLang === 'ar' ? 'البوصلة غير دقيقة' : 'Compass Inaccurate';
+            message = currentLang === 'ar'
+                ? 'إذا كانت القبلة غير دقيقة، جرب هذه الحلول:\n\n1. ابتعد عن الأجهزة المغناطيسية\n2. معايرة البوصلة بحركة رقم 8\n3. تأكد من أن الجهاز مسطح\n4. استخدم Google Maps للمقارنة\n5. أعد تشغيل التطبيق'
+                : 'If Qibla direction seems inaccurate, try these solutions:\n\n1. Move away from magnetic devices\n2. Calibrate compass with figure-8 motion\n3. Keep device flat and steady\n4. Compare with Google Maps\n5. Restart the app';
+            break;
         // ... rest of the cases remain the same ...
     }
     
@@ -3671,6 +4045,15 @@ function showARUnsupported(errorType) {
                 <h3 class="font-bold text-xl mb-4">${title}</h3>
                 <p class="mb-6 whitespace-pre-line">${message}</p>
                 ${showFallback ? `
+                    <div class="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-700">
+                        <p class="text-sm text-yellow-700 dark:text-yellow-300">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            ${currentLang === 'ar' ? 
+                                'للحصول على أفضل دقة، قم بمعايرة البوصلة بتحريك الجهاز في شكل رقم 8' : 
+                                'For best accuracy, calibrate compass by moving device in figure-8 pattern'
+                            }
+                        </p>
+                    </div>
                     <button onclick="initCompassFallback()" class="bg-blue-500 text-white px-6 py-2 rounded-lg">
                         <i class="fas fa-compass mr-2"></i>
                         <span>${currentLang === 'ar' ? 'استخدام البوصلة الأساسية' : 'Use Basic Compass'}</span>
@@ -3874,14 +4257,21 @@ function showARUnsupported(errorType) {
       }
 
       function celebrateCompletion() {
-          const dhikrCard = document.querySelector('#adhkarView .bg-gradient-to-br');
           const counterNumber = document.getElementById('dhikrCountNumber');
+          const progressRing = document.getElementById('dhikrProgressRing');
           
           // Change counter color to green without animation
           counterNumber.style.color = '#10b981'; // Green color
           
-          // Create confetti effect
-          createConfettiEffect();
+          // Apply color pulse effect to the progress ring
+          if (progressRing) {
+              progressRing.classList.add('progress-ring-complete');
+              
+              // Remove the animation class after animation completes
+              setTimeout(() => {
+                  progressRing.classList.remove('progress-ring-complete');
+              }, 1500);
+          }
           
           // Play success sound if available
           if ('vibrate' in navigator) {
@@ -3889,41 +4279,7 @@ function showARUnsupported(errorType) {
           }
       }
 
-      function createConfettiEffect() {
-          // Simple confetti effect with CSS
-          const confettiContainer = document.createElement('div');
-          confettiContainer.style.cssText = `
-              position: fixed;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              pointer-events: none;
-              z-index: 9999;
-          `;
-          
-          for (let i = 0; i < 20; i++) {
-              const confetti = document.createElement('div');
-              confetti.style.cssText = `
-                  position: absolute;
-                  width: 8px;
-                  height: 8px;
-                  background: ${['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ef4444'][Math.floor(Math.random() * 5)]};
-                  top: -10px;
-                  left: ${Math.random() * 100}%;
-                  animation: confetti-fall 2s linear forwards;
-                  border-radius: 50%;
-              `;
-              confettiContainer.appendChild(confetti);
-          }
-          
-          document.body.appendChild(confettiContainer);
-          
-          // Remove confetti after animation
-          setTimeout(() => {
-              document.body.removeChild(confettiContainer);
-          }, 2000);
-      }
+
 
       function updateRepeatCounter() {
           document.getElementById('repeatValue').innerText = filteredAdhkar[current].remainingRepeats;
@@ -4002,6 +4358,7 @@ function showARUnsupported(errorType) {
               'adhkarTab': lang.adhkarTab,
               'prayerTab': lang.prayerTab,
               'qiblaTab': lang.qiblaTab,
+        'troubleshootText': document.getElementById('troubleshootText'),
               'tasbihTab': lang.tasbihTab,
               'quranTab': lang.quranTab,
               'notificationLabel': lang.notificationLabel,
@@ -5009,28 +5366,28 @@ function showARUnsupported(errorType) {
                               </div>
                               <div class="flex-1 min-w-0">
                                   <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-1">
-                                      ${currentLang === 'ar' ? 'متابعة القراءة' : 'Continue Reading'}
-                                  </h3>
+                                          ${currentLang === 'ar' ? 'متابعة القراءة' : 'Continue Reading'}
+                                      </h3>
                                   <p class="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
                                       ${quranData[savedBookmark.surah].name}
-                                  </p>
+                                      </p>
                                   <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
                                       ${quranData[savedBookmark.surah].englishName}
                                   </p>
                               </div>
                               <div class="flex-shrink-0 text-right">
                                   <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">
-                                      ${currentLang === 'ar' ? 'الآية' : 'Verse'} ${savedBookmark.ayah + 1}
-                                  </p>
+                                          ${currentLang === 'ar' ? 'الآية' : 'Verse'} ${savedBookmark.ayah + 1}
+                                      </p>
                                   <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
                                       ${new Date(savedBookmark.timestamp).toLocaleDateString()}
-                                  </p>
+                                      </p>
+                                  </div>
                               </div>
-                          </div>
                           <button onclick="goToBookmark()" class="w-full bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 shadow-sm hover:shadow-md">
                               <i class="fas fa-play text-sm"></i>
                               <span>${currentLang === 'ar' ? 'متابعة' : 'Continue'}</span>
-                          </button>
+                              </button>
                       </div>
                   ` : ''}
               </div>
@@ -7362,13 +7719,13 @@ function showARUnsupported(errorType) {
                 const ayahText = currentLang === 'ar' ? 'آية' : 'verses';
                 const revelationType = currentLang === 'ar' ? (surah.revelationType === 'Meccan' ? 'مكية' : 'مدنية') : surah.revelationType;
                 
-                // Color scheme based on surah number for visual variety
+                // Color scheme - all sky blue for consistent appearance
                 const colorSchemes = [
-                    'from-emerald-500 to-teal-600',
-                    'from-blue-500 to-indigo-600', 
-                    'from-purple-500 to-pink-600',
-                    'from-orange-500 to-red-600',
-                    'from-cyan-500 to-blue-600'
+                    'from-sky-400 to-sky-600',
+                    'from-sky-400 to-sky-600', 
+                    'from-sky-400 to-sky-600',
+                    'from-sky-400 to-sky-600',
+                    'from-sky-400 to-sky-600'
                 ];
                 const colorScheme = colorSchemes[surah.number % colorSchemes.length];
                 
@@ -7521,11 +7878,7 @@ function showARUnsupported(errorType) {
                 }
             }
             
-            // Focus search input with shorter delay
-            setTimeout(() => {
-                const searchInput = document.getElementById('surahSearchInput');
-                if (searchInput) searchInput.focus();
-            }, 100);
+
         }
         
         function closeSurahMenu() {
@@ -8330,6 +8683,416 @@ document.addEventListener('DOMContentLoaded', function() {
 async function displayReadingModeAyahs(shouldScrollToBookmark = false, scrollToVerseId = null) {
   return displayReadingModeAyahsByPages(shouldScrollToBookmark, scrollToVerseId);
 }
+
+// Voice Search Functionality
+let recognition = null;
+let isListening = false;
+
+// Comprehensive iOS Safari voice text normalization
+function normalizeiOSVoiceText(text) {
+  console.log('normalizeiOSVoiceText - input length:', text.length);
+  console.log('normalizeiOSVoiceText - first 5 char codes:', 
+    text.substring(0, 5).split('').map((char, i) => `${i}: "${char}" (${char.charCodeAt(0).toString(16)})`));
+  
+  let normalized = text
+    // AGGRESSIVE invisible character removal - iOS Safari adds these at the beginning
+    .replace(/^[\u0000-\u001F\u007F-\u009F\u00AD\u061C\u180E\u200B-\u200F\u202A-\u202E\u2060-\u206F\u2800\u3000\uFEFF\uFFF9-\uFFFB]+/, '') // Remove leading control chars
+    .replace(/[\u0000-\u001F\u007F-\u009F\u00AD\u061C\u180E\u200B-\u200F\u202A-\u202E\u2060-\u206F\u2800\u3000\uFEFF\uFFF9-\uFFFB]/g, '') // Remove all control chars
+    // Remove specific iOS Safari artifacts
+    .replace(/^[\u200E\u200F\u202A\u202B\u202C\u202D\u202E]+/, '') // Remove leading RTL/LTR marks
+    .replace(/[\u200E\u200F\u202A\u202B\u202C\u202D\u202E]/g, '') // Remove all RTL/LTR marks
+    // Remove zero-width characters that iOS Safari loves to add
+    .replace(/^[\u200B\u200C\u200D\uFEFF]+/, '') // Remove leading zero-width chars
+    .replace(/[\u200B\u200C\u200D\uFEFF]/g, '') // Remove all zero-width chars
+    // Remove non-breaking spaces and other space variants
+    .replace(/[\u00A0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]/g, ' ')
+    // Normalize Unicode to NFD (decomposed) then to NFC (composed)
+    .normalize('NFD').normalize('NFC')
+    // Handle iOS Safari specific Arabic character issues
+    .replace(/[\u064B-\u0652\u0670\u0640\u06D6-\u06ED\u08F0-\u08FF]/g, '') // Remove diacritics
+    // Normalize specific problematic characters iOS Safari might produce
+    .replace(/\u0627\u0644/g, 'ال') // Ensure proper "al" (alef + lam)
+    .replace(/\u0641\u0627\u062A\u062D/g, 'فاتح') // Specific fix for "فاتح"
+    .replace(/\u0641\u0627\u062A\u062D\u0629/g, 'فاتحة') // Specific fix for "فاتحة"
+    // Normalize alef variants
+    .replace(/[\u0623\u0625\u0622\u0671]/g, '\u0627') // أ إ آ ٱ -> ا
+    // Normalize other common variations
+    .replace(/\u0629/g, '\u0647') // ة -> ه
+    // Final cleanup - remove any remaining control characters
+    .replace(/[\u0000-\u001F\u007F-\u009F]/g, '')
+    // Trim whitespace
+    .trim();
+  
+  console.log('normalizeiOSVoiceText - output length:', normalized.length);
+  console.log('normalizeiOSVoiceText - output char codes:', 
+    normalized.split('').map((char, i) => `${i}: "${char}" (${char.charCodeAt(0).toString(16)})`));
+  
+  return normalized;
+}
+
+// Enhanced voice search function for iOS Safari compatibility
+function performEnhancedVoiceSearch(transcript) {
+  console.log('Enhanced voice search - original transcript:', transcript);
+  console.log('Enhanced voice search - transcript length:', transcript.length);
+  
+  // Detailed character analysis
+  console.log('Enhanced voice search - character codes:', 
+    transcript.split('').map((char, i) => `${i}: "${char}" (${char.charCodeAt(0).toString(16)})`));
+  
+  // Clean up the transcript for iOS Safari issues
+  let cleanedTranscript = transcript
+    // Remove any invisible characters that iOS Safari might add
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')
+    // Remove any extra whitespace
+    .replace(/\s+/g, ' ')
+    .trim();
+  
+  console.log('Enhanced voice search - cleaned transcript:', cleanedTranscript);
+  console.log('Enhanced voice search - cleaned character codes:', 
+    cleanedTranscript.split('').map((char, i) => `${i}: "${char}" (${char.charCodeAt(0).toString(16)})`));
+  
+  // Let's also check what's in our surah data for comparison
+  const searchData = surahsData.length > 0 ? surahsData : quickSurahList;
+  const fatihaInData = searchData.find(s => s.name && s.name.includes('فاتح'));
+  if (fatihaInData) {
+    console.log('Enhanced voice search - Al-Fatiha in data:', fatihaInData.name);
+    console.log('Enhanced voice search - Al-Fatiha character codes:', 
+      fatihaInData.name.split('').map((char, i) => `${i}: "${char}" (${char.charCodeAt(0).toString(16)})`));
+  }
+  
+  // Apply comprehensive iOS Safari character normalization
+  const normalizedTranscript = normalizeiOSVoiceText(cleanedTranscript);
+  console.log('Enhanced voice search - iOS normalized transcript:', normalizedTranscript);
+  console.log('Enhanced voice search - iOS normalized character codes:', 
+    normalizedTranscript.split('').map((char, i) => `${i}: "${char}" (${char.charCodeAt(0).toString(16)})`));
+  
+  // Try the regular search first with normalized text
+  searchSurahs(normalizedTranscript);
+  
+  // Check if we got results
+  setTimeout(() => {
+    const surahList = document.getElementById('surahList');
+    const hasResults = surahList.children.length > 0 && 
+                      !surahList.innerHTML.includes('لم يتم العثور') && 
+                      !surahList.innerHTML.includes('No results');
+    
+    console.log('Enhanced voice search - has results after regular search:', hasResults);
+    
+    if (!hasResults) {
+      console.log('Enhanced voice search - no results, trying enhanced matching');
+      
+      // Try enhanced matching for Arabic text
+      const searchData = surahsData.length > 0 ? surahsData : quickSurahList;
+      const enhancedResults = searchData.filter(surah => {
+        const arabicName = surah.name || '';
+        const englishName = surah.englishName || '';
+        
+                 // Create multiple search variants using normalized transcript
+         const searchVariants = [
+           normalizedTranscript,
+           normalizeArabicText(normalizedTranscript),
+           normalizedTranscript.replace(/^ال/, ''), // Remove "al" prefix
+           'ال' + normalizedTranscript, // Add "al" prefix
+           normalizedTranscript.replace(/[أإآٱ]/g, 'ا'), // Normalize Alef
+           normalizedTranscript.replace(/ة/g, 'ه'), // Normalize Teh Marbuta
+           // Enhanced hamza normalization for voice recognition
+           normalizedTranscript.replace(/اخ/g, 'إخ'), // اخ -> إخ (for الاخلاص -> الإخلاص)
+           normalizedTranscript.replace(/ا([خحجهعغفقثصضذدزرتبيسشظطكلمنوؤئء])/g, 'إ$1'), // Add hamza before consonants
+           normalizedTranscript.replace(/ء/g, ''), // Remove standalone hamza
+           normalizedTranscript.replace(/[ءؤئ]/g, ''), // Remove all hamza variants
+           // Also include the original cleaned transcript as fallback
+           cleanedTranscript,
+           normalizeArabicText(cleanedTranscript),
+         ];
+        
+        // Check each variant against surah names
+        return searchVariants.some(variant => {
+          if (!variant || variant.length === 0) return false;
+          
+                     // Flexible matching - check if variant is contained in surah name or vice versa
+           const normalizedArabic = normalizeArabicText(arabicName);
+           const normalizedVariant = normalizeArabicText(variant);
+           
+           // Additional hamza-agnostic normalization for both search and surah name
+           const hamzaFreeArabic = normalizedArabic.replace(/[ءؤئإأآ]/g, 'ا');
+           const hamzaFreeVariant = normalizedVariant.replace(/[ءؤئإأآ]/g, 'ا');
+           
+           return (
+             arabicName.includes(variant) ||
+             normalizedArabic.includes(normalizedVariant) ||
+             variant.includes(arabicName) ||
+             normalizedVariant.includes(normalizedArabic) ||
+             englishName.toLowerCase().includes(variant.toLowerCase()) ||
+             variant.toLowerCase().includes(englishName.toLowerCase()) ||
+             // Hamza-agnostic matching (key for voice recognition)
+             hamzaFreeArabic.includes(hamzaFreeVariant) ||
+             hamzaFreeVariant.includes(hamzaFreeArabic) ||
+             // Partial matching for better voice recognition results
+             (normalizedVariant.length >= 3 && normalizedArabic.includes(normalizedVariant)) ||
+             (normalizedArabic.length >= 3 && normalizedVariant.includes(normalizedArabic)) ||
+             // Hamza-free partial matching
+             (hamzaFreeVariant.length >= 3 && hamzaFreeArabic.includes(hamzaFreeVariant)) ||
+             (hamzaFreeArabic.length >= 3 && hamzaFreeVariant.includes(hamzaFreeArabic))
+           );
+        });
+      });
+      
+      console.log('Enhanced voice search - enhanced results count:', enhancedResults.length);
+      
+             if (enhancedResults.length > 0) {
+         populateSurahList(enhancedResults);
+       } else {
+         // LAST RESORT: Try progressively removing characters from the beginning
+         console.log('Enhanced voice search - trying progressive character removal');
+         let foundMatch = false;
+         
+         for (let i = 1; i <= Math.min(5, normalizedTranscript.length); i++) {
+           const strippedText = normalizedTranscript.substring(i);
+           console.log(`Enhanced voice search - trying without first ${i} chars: "${strippedText}"`);
+           
+           if (strippedText.length >= 2) { // Only try if we have at least 2 characters left
+             const progressiveResults = searchData.filter(surah => {
+               const arabicName = surah.name || '';
+               const normalizedArabic = normalizeArabicText(arabicName);
+               const normalizedStripped = normalizeArabicText(strippedText);
+               
+               return (
+                 arabicName.includes(strippedText) ||
+                 normalizedArabic.includes(normalizedStripped) ||
+                 strippedText.includes(arabicName) ||
+                 normalizedStripped.includes(normalizedArabic)
+               );
+             });
+             
+             if (progressiveResults.length > 0) {
+               console.log(`Enhanced voice search - found match after removing ${i} chars!`);
+               populateSurahList(progressiveResults);
+               foundMatch = true;
+               break;
+             }
+           }
+         }
+         
+         if (!foundMatch) {
+           // Absolute last resort: show all surahs with a message
+           console.log('Enhanced voice search - no matches found even with progressive removal, showing all surahs');
+           const surahList = document.getElementById('surahList');
+           populateSurahList(searchData);
+           
+           // Add a message at the top
+           const messageDiv = document.createElement('div');
+           messageDiv.className = 'p-3 mb-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg text-center';
+           messageDiv.innerHTML = `
+             <p class="text-sm text-yellow-700 dark:text-yellow-300">
+               ${currentLang === 'ar' ? 
+                 `لم يتم العثور على "${normalizedTranscript}" - عرض جميع السور` : 
+                 `"${normalizedTranscript}" not found - showing all surahs`
+               }
+             </p>
+           `;
+           surahList.insertBefore(messageDiv, surahList.firstChild);
+         }
+       }
+    }
+  }, 50);
+}
+
+function initVoiceSearch() {
+  // Check if browser supports speech recognition
+  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    
+    // Configure speech recognition
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    
+    // Set language based on current app language
+    recognition.lang = currentLang === 'ar' ? 'ar-SA' : 'en-US';
+    
+    // Handle speech recognition results
+    recognition.onresult = function(event) {
+      const transcript = event.results[0][0].transcript.trim();
+      console.log('Voice input:', transcript);
+      console.log('Voice search - transcript length:', transcript.length);
+      console.log('Voice search - transcript characters:', transcript.split('').map(c => c.charCodeAt(0)));
+      
+      // Set the search input value
+      const searchInput = document.getElementById('surahSearchInput');
+      searchInput.value = transcript;
+      
+      // Mobile-specific delay to ensure DOM is ready
+      setTimeout(() => {
+        console.log('Voice search - triggering search after delay');
+        console.log('Voice search - input value after set:', searchInput.value);
+        
+        // Try multiple event types for better mobile compatibility
+        const inputEvent = new Event('input', { bubbles: true, cancelable: true });
+        const changeEvent = new Event('change', { bubbles: true, cancelable: true });
+        const keyupEvent = new Event('keyup', { bubbles: true, cancelable: true });
+        
+        searchInput.dispatchEvent(inputEvent);
+        searchInput.dispatchEvent(changeEvent);
+        searchInput.dispatchEvent(keyupEvent);
+        
+                 // Direct function call with additional debugging
+         console.log('Voice search - calling searchSurahs directly with:', transcript);
+         console.log('Voice search - surahsData length:', surahsData ? surahsData.length : 'undefined');
+         console.log('Voice search - quickSurahList length:', quickSurahList ? quickSurahList.length : 'undefined');
+         
+         // Ensure surah data is available before searching
+         if ((!surahsData || surahsData.length === 0) && (!quickSurahList || quickSurahList.length === 0)) {
+           console.log('Voice search - no surah data available, initializing...');
+           // Try to initialize surah menu first
+           if (typeof initializeSurahMenu === 'function') {
+             initializeSurahMenu();
+           }
+           // Wait a bit more and try again
+           setTimeout(() => {
+             console.log('Voice search - retrying search after initialization');
+             performEnhancedVoiceSearch(transcript);
+           }, 200);
+         } else {
+           performEnhancedVoiceSearch(transcript);
+         }
+        
+        // Additional check to see if search worked
+        setTimeout(() => {
+          const surahList = document.getElementById('surahList');
+          console.log('Voice search - surah list content after search:', surahList.innerHTML.length > 0 ? 'Has content' : 'Empty');
+        }, 100);
+        
+      }, 100); // 100ms delay for mobile browsers
+      
+      // Stop listening
+      stopVoiceSearch();
+      
+      // Show success feedback
+      showVoiceSearchFeedback('success', currentLang === 'ar' ? 'تم البحث عن: ' + transcript : 'Searching for: ' + transcript);
+    };
+    
+    // Handle speech recognition errors
+    recognition.onerror = function(event) {
+      console.error('Speech recognition error:', event.error);
+      stopVoiceSearch();
+      
+      let errorMessage = '';
+      switch(event.error) {
+        case 'no-speech':
+          errorMessage = currentLang === 'ar' ? 'لم يتم سماع صوت' : 'No speech detected';
+          break;
+        case 'audio-capture':
+          errorMessage = currentLang === 'ar' ? 'لا يمكن الوصول للميكروفون' : 'Microphone not accessible';
+          break;
+        case 'not-allowed':
+          errorMessage = currentLang === 'ar' ? 'الرجاء السماح بالوصول للميكروفون' : 'Microphone permission denied';
+          break;
+        default:
+          errorMessage = currentLang === 'ar' ? 'خطأ في البحث الصوتي' : 'Voice search error';
+      }
+      
+      showVoiceSearchFeedback('error', errorMessage);
+    };
+    
+    // Handle speech recognition end
+    recognition.onend = function() {
+      stopVoiceSearch();
+    };
+    
+    return true;
+  }
+  return false;
+}
+
+function startVoiceSearch() {
+  if (!recognition && !initVoiceSearch()) {
+    // Browser doesn't support speech recognition
+    showVoiceSearchFeedback('error', currentLang === 'ar' ? 'المتصفح لا يدعم البحث الصوتي' : 'Voice search not supported');
+    return;
+  }
+  
+  if (isListening) {
+    stopVoiceSearch();
+    return;
+  }
+  
+  // Update language if changed
+  recognition.lang = currentLang === 'ar' ? 'ar-SA' : 'en-US';
+  
+  // Start listening
+  isListening = true;
+  recognition.start();
+  
+  // Update UI
+  const voiceBtn = document.getElementById('voiceSearchBtn');
+  const voiceStatus = document.getElementById('voiceSearchStatus');
+  const statusText = document.getElementById('voiceSearchStatusText');
+  
+  voiceBtn.innerHTML = '<i class="fas fa-stop text-white text-xs"></i>';
+  voiceBtn.classList.add('animate-pulse');
+  voiceBtn.title = currentLang === 'ar' ? 'إيقاف البحث الصوتي' : 'Stop voice search';
+  
+  voiceStatus.classList.remove('hidden');
+  statusText.textContent = currentLang === 'ar' ? 'جاري الاستماع... قل اسم السورة' : 'Listening... Say surah name';
+}
+
+function stopVoiceSearch() {
+  if (recognition) {
+    recognition.stop();
+  }
+  
+  isListening = false;
+  
+  // Update UI
+  const voiceBtn = document.getElementById('voiceSearchBtn');
+  const voiceStatus = document.getElementById('voiceSearchStatus');
+  
+  voiceBtn.innerHTML = '<i class="fas fa-microphone text-white text-xs"></i>';
+  voiceBtn.classList.remove('animate-pulse');
+  voiceBtn.title = currentLang === 'ar' ? 'البحث الصوتي' : 'Voice Search';
+  
+  voiceStatus.classList.add('hidden');
+}
+
+function showVoiceSearchFeedback(type, message) {
+  const statusDiv = document.getElementById('voiceSearchStatus');
+  const statusText = document.getElementById('voiceSearchStatusText');
+  const icon = statusDiv.querySelector('i');
+  
+  // Update icon and color based on type
+  if (type === 'success') {
+    icon.className = 'fas fa-check text-green-500 mr-1';
+    statusText.className = 'text-green-600 dark:text-green-400';
+  } else if (type === 'error') {
+    icon.className = 'fas fa-exclamation-triangle text-red-500 mr-1';
+    statusText.className = 'text-red-600 dark:text-red-400';
+  }
+  
+  statusText.textContent = message;
+  statusDiv.classList.remove('hidden');
+  
+  // Hide after 3 seconds
+  setTimeout(() => {
+    statusDiv.classList.add('hidden');
+    statusText.className = 'text-gray-600 dark:text-gray-400';
+    icon.className = 'fas fa-circle text-red-500 animate-pulse mr-1';
+  }, 3000);
+}
+
+// Initialize voice search when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  initVoiceSearch();
+  
+  // Update voice search language when app language changes
+  const originalSwitchLanguage = window.switchLanguage;
+  window.switchLanguage = function() {
+    originalSwitchLanguage();
+    if (recognition) {
+      recognition.lang = currentLang === 'ar' ? 'ar-SA' : 'en-US';
+    }
+  };
+});
       </script>
 
 <!-- Tafsir Popup Modal -->
@@ -8447,7 +9210,7 @@ async function displayReadingModeAyahs(shouldScrollToBookmark = false, scrollToV
 </div>
 
 <!-- Surah Selection Side Menu -->
-<div id="surahSideMenu" class="fixed inset-y-0 left-0 w-80 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out z-30 overflow-hidden border-r border-white/20 dark:border-gray-700/50 islamic-pattern">
+    <div id="surahSideMenu" class="fixed inset-y-0 left-0 w-80 bg-white/95 dark:bg-gray-900/95 shadow-2xl transform -translate-x-full transition-transform duration-200 ease-in-out z-30 overflow-hidden border-r border-white/20 dark:border-gray-700/50 islamic-pattern">
   <div class="flex flex-col h-full">
     <!-- Header -->
     <div class="flex items-center justify-between p-6 border-b border-white/20 dark:border-gray-700/50 bg-gradient-to-r from-white/80 to-gray-50/80 dark:from-gray-800/80 dark:to-gray-900/80 backdrop-blur-sm">
@@ -8469,12 +9232,25 @@ async function displayReadingModeAyahs(shouldScrollToBookmark = false, scrollToV
           type="text" 
           id="surahSearchInput" 
           placeholder="ابحث عن السورة... Search surah..."
-          class="w-full px-4 py-3 pl-12 pr-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-white/30 dark:border-gray-600/50 rounded-xl focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 dark:focus:ring-emerald-400/50 dark:focus:border-emerald-400/50 text-base text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 shadow-lg transition-all duration-200"
+          class="w-full px-4 py-3 pl-12 pr-16 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-white/30 dark:border-gray-600/50 rounded-xl focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 dark:focus:ring-emerald-400/50 dark:focus:border-emerald-400/50 text-base text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 shadow-lg transition-all duration-200"
           style="font-size: 16px;"
         >
         <div class="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center">
           <i class="fas fa-search text-white text-xs"></i>
         </div>
+        <button 
+          id="voiceSearchBtn" 
+          class="absolute right-4 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 rounded-full flex items-center justify-center transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500/50"
+          title="البحث الصوتي - Voice Search"
+          onclick="startVoiceSearch()"
+        >
+          <i class="fas fa-microphone text-white text-xs"></i>
+        </button>
+      </div>
+      <!-- Voice Search Status -->
+      <div id="voiceSearchStatus" class="mt-2 text-sm text-center text-gray-600 dark:text-gray-400 hidden">
+        <i class="fas fa-circle text-red-500 animate-pulse mr-1"></i>
+        <span id="voiceSearchStatusText">جاري الاستماع... Listening...</span>
       </div>
     </div>
     
