@@ -2016,6 +2016,39 @@
                             <button onclick="console.clear(); console.log('🧹 Console cleared - Ready for compass debugging')" class="text-gray-500 hover:text-gray-600 text-xs underline">
                                 Clear Console for Debugging
                             </button>
+                            <br>
+                            <div class="mt-2 space-y-1">
+                                <div class="text-xs text-gray-600">Compass Methods:</div>
+                                <div class="space-x-1">
+                                    <button onclick="window.testCompassMethod = 1; console.log('🔄 Switched to Method 1: 360 - alpha')" class="text-xs bg-blue-100 hover:bg-blue-200 px-2 py-1 rounded">
+                                        Method 1
+                                    </button>
+                                    <button onclick="window.testCompassMethod = 2; console.log('🔄 Switched to Method 2: Direct alpha')" class="text-xs bg-green-100 hover:bg-green-200 px-2 py-1 rounded">
+                                        Method 2
+                                    </button>
+                                    <button onclick="window.testCompassMethod = 3; console.log('🔄 Switched to Method 3: Alpha + 180°')" class="text-xs bg-yellow-100 hover:bg-yellow-200 px-2 py-1 rounded">
+                                        Method 3
+                                    </button>
+                                    <button onclick="window.testCompassMethod = 4; console.log('🔄 Switched to Method 4: 180 - alpha')" class="text-xs bg-red-100 hover:bg-red-200 px-2 py-1 rounded">
+                                        Method 4
+                                    </button>
+                                </div>
+                                <div class="text-xs text-gray-600">Qibla Direction:</div>
+                                <div class="space-x-1">
+                                    <button onclick="window.testQiblaMethod = 1; console.log('🕋 Switched to Qibla Method 1: qibla - heading')" class="text-xs bg-blue-100 hover:bg-blue-200 px-2 py-1 rounded">
+                                        Q1
+                                    </button>
+                                    <button onclick="window.testQiblaMethod = 2; console.log('🕋 Switched to Qibla Method 2: heading - qibla')" class="text-xs bg-green-100 hover:bg-green-200 px-2 py-1 rounded">
+                                        Q2
+                                    </button>
+                                    <button onclick="window.testQiblaMethod = 3; console.log('🕋 Switched to Qibla Method 3: +180°')" class="text-xs bg-yellow-100 hover:bg-yellow-200 px-2 py-1 rounded">
+                                        Q3
+                                    </button>
+                                    <button onclick="window.testQiblaMethod = 4; console.log('🕋 Switched to Qibla Method 4: -180°')" class="text-xs bg-red-100 hover:bg-red-200 px-2 py-1 rounded">
+                                        Q4
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -3620,9 +3653,44 @@ let scrollTimeout = null;
           } else if (typeof event.alpha === "number") {
               // Android/Other: calculate from alpha
               const rawAlpha = event.alpha;
-              heading = event.alpha;
-              heading = (360 - heading) % 360;
-              console.log('🤖 Android/Other - Raw alpha:', rawAlpha, 'Converted heading:', heading);
+              
+              // Try different Android conversion methods
+              const method1 = (360 - rawAlpha) % 360; // Current method
+              const method2 = rawAlpha; // Direct alpha
+              const method3 = (rawAlpha + 180) % 360; // Alpha + 180°
+              const method4 = (180 - rawAlpha + 360) % 360; // 180 - alpha
+              
+              console.log('🤖 Android conversion methods:', {
+                  rawAlpha: rawAlpha,
+                  method1_360_minus_alpha: method1,
+                  method2_direct_alpha: method2,
+                  method3_alpha_plus_180: method3,
+                  method4_180_minus_alpha: method4
+              });
+              
+              // Use the selected test method or default to method 1
+              const selectedMethod = window.testCompassMethod || 1;
+              switch (selectedMethod) {
+                  case 1:
+                      heading = method1;
+                      console.log('🤖 Using method 1 (360 - alpha):', heading);
+                      break;
+                  case 2:
+                      heading = method2;
+                      console.log('🤖 Using method 2 (direct alpha):', heading);
+                      break;
+                  case 3:
+                      heading = method3;
+                      console.log('🤖 Using method 3 (alpha + 180°):', heading);
+                      break;
+                  case 4:
+                      heading = method4;
+                      console.log('🤖 Using method 4 (180 - alpha):', heading);
+                      break;
+                  default:
+                      heading = method1;
+                      console.log('🤖 Using default method 1:', heading);
+              }
               
               // Check for screen orientation adjustments
               const orientation = screen.orientation?.angle || window.orientation || 0;
@@ -3670,11 +3738,62 @@ let scrollTimeout = null;
 
           currentHeading = smoothedHeading;
           
-          // Log Qibla calculation
+          // Log Qibla calculation with different methods
           if (typeof qiblaAngle !== 'undefined') {
-              const qiblaRelative = (qiblaAngle - currentHeading + 360) % 360;
-              const alignmentDiff = Math.min(qiblaRelative, 360 - qiblaRelative);
-              console.log('🕋 Qibla calculation - Qibla angle:', qiblaAngle.toFixed(1), 'Current heading:', currentHeading.toFixed(1), 'Relative:', qiblaRelative.toFixed(1), 'Alignment diff:', alignmentDiff.toFixed(1));
+              // Try different relative angle calculations
+              const method1 = (qiblaAngle - currentHeading + 360) % 360; // Current method
+              const method2 = (currentHeading - qiblaAngle + 360) % 360; // Reversed
+              const method3 = (qiblaAngle - currentHeading + 180 + 360) % 360; // +180°
+              const method4 = (qiblaAngle - currentHeading - 180 + 360) % 360; // -180°
+              
+              const alignmentDiff1 = Math.min(method1, 360 - method1);
+              const alignmentDiff2 = Math.min(method2, 360 - method2);
+              const alignmentDiff3 = Math.min(method3, 360 - method3);
+              const alignmentDiff4 = Math.min(method4, 360 - method4);
+              
+              console.log('🕋 Qibla relative angle methods:', {
+                  qiblaAngle: qiblaAngle.toFixed(1),
+                  currentHeading: currentHeading.toFixed(1),
+                  method1_qibla_minus_heading: method1.toFixed(1) + '° (diff: ' + alignmentDiff1.toFixed(1) + '°)',
+                  method2_heading_minus_qibla: method2.toFixed(1) + '° (diff: ' + alignmentDiff2.toFixed(1) + '°)',
+                  method3_plus_180: method3.toFixed(1) + '° (diff: ' + alignmentDiff3.toFixed(1) + '°)',
+                  method4_minus_180: method4.toFixed(1) + '° (diff: ' + alignmentDiff4.toFixed(1) + '°)'
+              });
+              
+              // Use the selected Qibla test method or default to method 1
+              const selectedQiblaMethod = window.testQiblaMethod || 1;
+              let qiblaRelative, alignmentDiff;
+              
+              switch (selectedQiblaMethod) {
+                  case 1:
+                      qiblaRelative = method1;
+                      alignmentDiff = alignmentDiff1;
+                      console.log('🕋 Using Qibla method 1 (qibla - heading) - Relative:', qiblaRelative.toFixed(1), 'Alignment diff:', alignmentDiff.toFixed(1));
+                      break;
+                  case 2:
+                      qiblaRelative = method2;
+                      alignmentDiff = alignmentDiff2;
+                      console.log('🕋 Using Qibla method 2 (heading - qibla) - Relative:', qiblaRelative.toFixed(1), 'Alignment diff:', alignmentDiff.toFixed(1));
+                      break;
+                  case 3:
+                      qiblaRelative = method3;
+                      alignmentDiff = alignmentDiff3;
+                      console.log('🕋 Using Qibla method 3 (+180°) - Relative:', qiblaRelative.toFixed(1), 'Alignment diff:', alignmentDiff.toFixed(1));
+                      break;
+                  case 4:
+                      qiblaRelative = method4;
+                      alignmentDiff = alignmentDiff4;
+                      console.log('🕋 Using Qibla method 4 (-180°) - Relative:', qiblaRelative.toFixed(1), 'Alignment diff:', alignmentDiff.toFixed(1));
+                      break;
+                  default:
+                      qiblaRelative = method1;
+                      alignmentDiff = alignmentDiff1;
+                      console.log('🕋 Using default Qibla method 1 - Relative:', qiblaRelative.toFixed(1), 'Alignment diff:', alignmentDiff.toFixed(1));
+              }
+              
+              // Store the calculated values for the compass display
+              window.currentQiblaRelative = qiblaRelative;
+              window.currentAlignmentDiff = alignmentDiff;
           }
           
           updateCompassDisplay();
@@ -3704,9 +3823,13 @@ let scrollTimeout = null;
               degreeDisplay.textContent = `${Math.round(currentHeading)}°`;
           }
 
-          // Calculate alignment with Qibla
-          const qiblaRelative = (qiblaAngle - currentHeading + 360) % 360;
-          const alignmentDiff = Math.min(qiblaRelative, 360 - qiblaRelative);
+          // Use stored calculated values or fallback to default calculation
+          const qiblaRelative = window.currentQiblaRelative !== undefined ? 
+              window.currentQiblaRelative : 
+              (qiblaAngle - currentHeading + 360) % 360;
+          const alignmentDiff = window.currentAlignmentDiff !== undefined ? 
+              window.currentAlignmentDiff : 
+              Math.min(qiblaRelative, 360 - qiblaRelative);
 
           if (directionStatus) {
               if (alignmentDiff <= 5) {
