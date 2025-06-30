@@ -2007,10 +2007,14 @@
                         </div>
 
                         <!-- Help Text -->
-                        <div class="text-center">
+                        <div class="text-center space-y-2">
                             <button onclick="showCompassHelp()" class="text-blue-500 hover:text-blue-600 text-sm underline">
                                 <i class="fas fa-question-circle mr-1"></i>
                                 <span id="helpText">كيفية استخدام البوصلة؟</span>
+                            </button>
+                            <br>
+                            <button onclick="console.clear(); console.log('🧹 Console cleared - Ready for compass debugging')" class="text-gray-500 hover:text-gray-600 text-xs underline">
+                                Clear Console for Debugging
                             </button>
                         </div>
                     </div>
@@ -3596,29 +3600,83 @@ let scrollTimeout = null;
 
           let heading;
           const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+          const isAndroid = /Android/i.test(navigator.userAgent);
+          
+          console.log('🧭 Raw orientation data:', {
+              webkitCompassHeading: event.webkitCompassHeading,
+              alpha: event.alpha,
+              beta: event.beta,
+              gamma: event.gamma,
+              absolute: event.absolute,
+              isIOS: isIOS,
+              isAndroid: isAndroid,
+              userAgent: navigator.userAgent
+          });
 
           if (isIOS && typeof event.webkitCompassHeading !== "undefined") {
               // iOS: use accurate magnetic heading
               heading = event.webkitCompassHeading;
+              console.log('📱 iOS using webkitCompassHeading:', heading);
           } else if (typeof event.alpha === "number") {
               // Android/Other: calculate from alpha
+              const rawAlpha = event.alpha;
               heading = event.alpha;
               heading = (360 - heading) % 360;
+              console.log('🤖 Android/Other - Raw alpha:', rawAlpha, 'Converted heading:', heading);
+              
+              // Check for screen orientation adjustments
+              const orientation = screen.orientation?.angle || window.orientation || 0;
+              console.log('📱 Screen orientation:', orientation);
+              
+              // Apply orientation correction for Android
+              if (isAndroid) {
+                  switch (orientation) {
+                      case 90:
+                          heading = (heading + 90) % 360;
+                          console.log('🔄 Applied +90° correction for landscape-left:', heading);
+                          break;
+                      case -90:
+                      case 270:
+                          heading = (heading - 90 + 360) % 360;
+                          console.log('🔄 Applied -90° correction for landscape-right:', heading);
+                          break;
+                      case 180:
+                          heading = (heading + 180) % 360;
+                          console.log('🔄 Applied 180° correction for portrait-upside-down:', heading);
+                          break;
+                      default:
+                          console.log('📱 No orientation correction needed (portrait)');
+                  }
+              }
           } else {
+              console.log('❌ No valid orientation data available');
               return;
           }
 
+          console.log('🧭 Final heading before smoothing:', heading);
+
           // Apply smoothing
+          const previousSmoothedHeading = smoothedHeading;
           if (smoothedHeading === null) {
               smoothedHeading = heading;
+              console.log('🎯 Initial heading set:', smoothedHeading);
           } else {
               let diff = heading - smoothedHeading;
               if (diff > 180) diff -= 360;
               if (diff < -180) diff += 360;
               smoothedHeading = (smoothedHeading + diff * 0.1 + 360) % 360;
+              console.log('📊 Smoothing - Previous:', previousSmoothedHeading.toFixed(1), 'Raw:', heading.toFixed(1), 'Diff:', diff.toFixed(1), 'Smoothed:', smoothedHeading.toFixed(1));
           }
 
           currentHeading = smoothedHeading;
+          
+          // Log Qibla calculation
+          if (typeof qiblaAngle !== 'undefined') {
+              const qiblaRelative = (qiblaAngle - currentHeading + 360) % 360;
+              const alignmentDiff = Math.min(qiblaRelative, 360 - qiblaRelative);
+              console.log('🕋 Qibla calculation - Qibla angle:', qiblaAngle.toFixed(1), 'Current heading:', currentHeading.toFixed(1), 'Relative:', qiblaRelative.toFixed(1), 'Alignment diff:', alignmentDiff.toFixed(1));
+          }
+          
           updateCompassDisplay();
       }
 
@@ -3684,17 +3742,43 @@ let scrollTimeout = null;
           const kaabaLat = 21.4224779;
           const kaabaLng = 39.8262136;
 
+          console.log('🕋 Calculating Qibla angle from:', { lat, lng, kaabaLat, kaabaLng });
+
           // Convert to radians
           const φ1 = lat * Math.PI / 180;
           const φ2 = kaabaLat * Math.PI / 180;
           const Δλ = (kaabaLng - lng) * Math.PI / 180;
 
+          console.log('📐 Radians:', { φ1, φ2, Δλ });
+
           // Calculate bearing
           const y = Math.sin(Δλ) * Math.cos(φ2);
           const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
           
+          console.log('📐 Intermediate calculations:', { y, x });
+          
           let bearing = Math.atan2(y, x) * 180 / Math.PI;
+          console.log('📐 Raw bearing (degrees):', bearing);
+          
           bearing = (bearing + 360) % 360;
+          
+          console.log('🕋 Final Qibla angle:', bearing);
+          
+          // Compare with known values for validation
+          const knownLocations = [
+              { name: "New York", lat: 40.7128, lng: -74.0060, expectedBearing: 58 },
+              { name: "London", lat: 51.5074, lng: -0.1278, expectedBearing: 119 },
+              { name: "Jakarta", lat: -6.2088, lng: 106.8456, expectedBearing: 295 }
+          ];
+          
+          const currentLocation = knownLocations.find(loc => 
+              Math.abs(loc.lat - lat) < 0.1 && Math.abs(loc.lng - lng) < 0.1
+          );
+          
+          if (currentLocation) {
+              const difference = Math.abs(bearing - currentLocation.expectedBearing);
+              console.log(`🎯 Validation for ${currentLocation.name}: Expected ${currentLocation.expectedBearing}°, Got ${bearing.toFixed(1)}°, Difference: ${difference.toFixed(1)}°`);
+          }
           
           return bearing;
       }
@@ -4137,6 +4221,7 @@ function showARUnsupported(errorType) {
 
             // Initialize location on page load
       async function initializeQiblaLocation() {
+          console.log('🌍 Initializing Qibla location on page load...');
           try {
               const position = await new Promise((resolve, reject) => {
                   navigator.geolocation.getCurrentPosition(resolve, reject, {
@@ -4144,6 +4229,12 @@ function showARUnsupported(errorType) {
                       timeout: 10000,
                       maximumAge: 300000 // 5 minutes cache
                   });
+              });
+              
+              console.log('📍 Location obtained:', {
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude,
+                  accuracy: position.coords.accuracy
               });
               
               userLocation = {
@@ -4154,8 +4245,10 @@ function showARUnsupported(errorType) {
               qiblaAngle = calculateQiblaAngle(position.coords.latitude, position.coords.longitude);
               updateLocationDisplay(position.coords.latitude, position.coords.longitude);
               
+              console.log('✅ Qibla location initialized successfully');
+              
           } catch (error) {
-              console.log("Could not get location on page load:", error);
+              console.log("❌ Could not get location on page load:", error);
               // Show default message
               const locationInfo = document.getElementById('locationInfo');
               const qiblaDistance = document.getElementById('qiblaDistance');
