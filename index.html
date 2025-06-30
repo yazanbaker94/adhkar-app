@@ -4047,213 +4047,24 @@ let scrollTimeout = null;
            return null;
       }
 
+// Legacy function for compatibility - simplified for basic compass
 function showARUnsupported(errorType) {
-    const qiblaContent = document.getElementById('qiblaContent');
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const isLaptop = !isMobile && window.innerWidth > 768;
-    const isInStandaloneMode = ('standalone' in navigator) && (navigator.standalone);
-    
-    let title, message, showFallback = true;
-    
-    switch(errorType) {
-        case "ios_not_standalone":
-            title = currentLang === 'ar' ? 'يرجى إضافة التطبيق إلى الشاشة الرئيسية' : 'Please Add to Home Screen';
-            message = currentLang === 'ar' 
-                ? 'لتفعيل ميزة القبلة، يرجى:\n\n1. اضغط على زر المشاركة (Share) في أسفل المتصفح\n2. اختر "إضافة إلى الشاشة الرئيسية"\n3. افتح التطبيق من الشاشة الرئيسية\n\nملاحظة: يجب إضافة التطبيق إلى الشاشة الرئيسية لتفعيل ميزة القبلة على iOS'
-                : 'To enable the Qibla feature, please:\n\n1. Tap the Share button at the bottom of the browser\n2. Select "Add to Home Screen"\n3. Open the app from your home screen\n\nNote: The app must be added to home screen to enable Qibla feature on iOS';
-            showFallback = false;
-            break;
-        case "motion_permission_denied":
-            title = currentLang === 'ar' ? 'تم رفض إذن المستشعرات' : 'Motion Sensors Denied';
-            message = currentLang === 'ar'
-                ? 'يرجى السماح بالوصول إلى مستشعرات الحركة في إعدادات المتصفح:\n\n1. افتح إعدادات جهازك\n2. انتقل إلى Safari > الإعدادات\n3. قم بتفعيل "السماح بالوصول إلى المستشعرات"\n4. أعد تشغيل التطبيق'
-                : 'Please allow access to motion sensors in browser settings:\n\n1. Open your device settings\n2. Go to Safari > Settings\n3. Enable "Allow Motion Sensors"\n4. Restart the app';
-            break;
-        case "compass_inaccurate":
-            title = currentLang === 'ar' ? 'البوصلة غير دقيقة' : 'Compass Inaccurate';
-            message = currentLang === 'ar'
-                ? 'إذا كانت القبلة غير دقيقة، جرب هذه الحلول:\n\n1. ابتعد عن الأجهزة المغناطيسية\n2. معايرة البوصلة بحركة رقم 8\n3. تأكد من أن الجهاز مسطح\n4. استخدم Google Maps للمقارنة\n5. أعد تشغيل التطبيق'
-                : 'If Qibla direction seems inaccurate, try these solutions:\n\n1. Move away from magnetic devices\n2. Calibrate compass with figure-8 motion\n3. Keep device flat and steady\n4. Compare with Google Maps\n5. Restart the app';
-            break;
-        case "samsung_browser_outdated":
-            title = currentLang === 'ar' ? 'متصفح سامسونج قديم' : 'Samsung Browser Outdated';
-            message = currentLang === 'ar'
-                ? 'يتطلب تشغيل القبلة متصفح سامسونج الإصدار 14 أو أحدث:\n\n1. افتح Galaxy Store أو Google Play\n2. ابحث عن "Samsung Internet"\n3. اضغط على "تحديث"\n4. أعد تشغيل التطبيق بعد التحديث\n\nأو استخدم Chrome/Firefox بدلاً من ذلك'
-                : 'Qibla feature requires Samsung Internet version 14 or newer:\n\n1. Open Galaxy Store or Google Play\n2. Search for "Samsung Internet"\n3. Tap "Update"\n4. Restart app after updating\n\nAlternatively, use Chrome/Firefox instead';
-            break;
-        case "samsung_sensors_blocked":
-            title = currentLang === 'ar' ? 'المستشعرات محجوبة في سامسونج' : 'Samsung Sensors Blocked';
-            message = currentLang === 'ar'
-                ? 'المستشعرات محجوبة في جهاز سامسونج:\n\n1. افتح الإعدادات > التطبيقات\n2. ابحث عن متصفح سامسونج\n3. اضغط على الأذونات\n4. فعّل أذونات المستشعرات والحركة\n5. أعد تشغيل المتصفح\n\nأو جرب Chrome بدلاً من متصفح سامسونج'
-                : 'Sensors are blocked on Samsung device:\n\n1. Open Settings > Apps\n2. Find Samsung Internet\n3. Tap Permissions\n4. Enable Motion & Sensor permissions\n5. Restart browser\n\nOr try Chrome instead of Samsung Internet';
-            break;
-        case "samsung_sensor_constructor_failed":
-            title = currentLang === 'ar' ? 'خطأ في مستشعرات سامسونج' : 'Samsung Sensor Error';
-            message = currentLang === 'ar'
-                ? 'فشل في تهيئة مستشعرات سامسونج:\n\n1. أعد تشغيل الجهاز\n2. امسح ذاكرة التخزين المؤقت للمتصفح\n3. جرب متصفح Chrome أو Firefox\n4. تأكد من تحديث نظام Android\n\nإذا استمر الخطأ، استخدم البوصلة الأساسية أدناه'
-                : 'Failed to initialize Samsung sensors:\n\n1. Restart your device\n2. Clear browser cache\n3. Try Chrome or Firefox browser\n4. Ensure Android system is updated\n\nIf error persists, use basic compass below';
-            break;
-        case "samsung_camera_denied":
-            title = currentLang === 'ar' ? 'إذن الكاميرا مرفوض في سامسونج' : 'Samsung Camera Permission Denied';
-            message = currentLang === 'ar'
-                ? 'تم رفض إذن الكاميرا في جهاز سامسونج:\n\n1. افتح الإعدادات > التطبيقات\n2. ابحث عن متصفح سامسونج\n3. اضغط على الأذونات\n4. فعّل إذن الكاميرا\n5. أعد تحميل الصفحة\n\nأو استخدم البوصلة الأساسية بدون كاميرا'
-                : 'Camera permission denied on Samsung device:\n\n1. Open Settings > Apps\n2. Find Samsung Internet\n3. Tap Permissions\n4. Enable Camera permission\n5. Reload the page\n\nOr use basic compass without camera';
-            break;
-        case "samsung_location_denied":
-            title = currentLang === 'ar' ? 'إذن الموقع مرفوض في سامسونج' : 'Samsung Location Permission Denied';
-            message = currentLang === 'ar'
-                ? 'تم رفض إذن الموقع في جهاز سامسونج:\n\n1. افتح الإعدادات > التطبيقات\n2. ابحث عن متصفح سامسونج\n3. اضغط على الأذونات\n4. فعّل إذن الموقع\n5. أعد تحميل الصفحة\n\nالموقع مطلوب لحساب اتجاه القبلة بدقة'
-                : 'Location permission denied on Samsung device:\n\n1. Open Settings > Apps\n2. Find Samsung Internet\n3. Tap Permissions\n4. Enable Location permission\n5. Reload the page\n\nLocation is required to calculate accurate Qibla direction';
-            break;
-        case "samsung_orientation_not_firing":
-            title = currentLang === 'ar' ? 'مستشعرات سامسونج لا تعمل' : 'Samsung Sensors Not Working';
-            message = currentLang === 'ar'
-                ? 'مستشعرات الاتجاه لا تعمل في جهاز سامسونج:\n\n1. أعد تشغيل الجهاز\n2. امسح ذاكرة التخزين المؤقت:\n   الإعدادات > التطبيقات > متصفح سامسونج > التخزين > مسح البيانات\n3. جرب Chrome أو Firefox\n4. تحقق من إعدادات الخصوصية:\n   الإعدادات > الخصوصية > أذونات الموقع\n5. فعّل "تحسين الدقة" في إعدادات الموقع\n\nاستخدم البوصلة الأساسية أدناه'
-                : 'Device orientation sensors not working on Samsung:\n\n1. Restart your device\n2. Clear browser cache:\n   Settings > Apps > Samsung Internet > Storage > Clear Data\n3. Try Chrome or Firefox browser\n4. Check privacy settings:\n   Settings > Privacy > Location Permissions\n5. Enable "Improve Accuracy" in Location settings\n\nUse basic compass below';
-            break;
-        case "samsung_retry_failed":
-            title = currentLang === 'ar' ? 'فشل في إعادة المحاولة لسامسونج' : 'Samsung Retry Failed';
-            message = currentLang === 'ar'
-                ? 'فشلت جميع محاولات تشغيل القبلة على جهاز سامسونج:\n\n1. استخدم متصفح Chrome أو Firefox\n2. تأكد من تحديث نظام Android\n3. أعد تشغيل الجهاز\n4. جرب من شبكة WiFi مختلفة\n\nاستخدم البوصلة الأساسية أدناه للحصول على اتجاه تقريبي'
-                : 'All attempts to run Qibla on Samsung device failed:\n\n1. Use Chrome or Firefox browser\n2. Ensure Android system is updated\n3. Restart your device\n4. Try from different WiFi network\n\nUse basic compass below for approximate direction';
-            break;
-    }
-    
-    const isSamsungError = errorType.startsWith('samsung_');
-    
-    qiblaContent.innerHTML = `
-        <div class="relative w-full h-[70vh] bg-black rounded-xl overflow-hidden">
-            <div id="arUnsupported" class="absolute inset-0 flex flex-col items-center justify-center bg-white dark:bg-gray-800 p-6 text-center">
-                <i class="fas fa-triangle-exclamation text-yellow-500 text-3xl mb-3"></i>
-                <h3 class="font-bold text-xl mb-4">${title}</h3>
-                <p class="mb-6 whitespace-pre-line">${message}</p>
-                ${isSamsungError && errorType !== 'samsung_retry_failed' ? `
-                    <div class="mb-4 space-y-2">
-                        <button onclick="retrySamsungInit()" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg transition-colors">
-                            <i class="fas fa-redo mr-2"></i>
-                            <span>${currentLang === 'ar' ? 'إعادة المحاولة' : 'Retry Samsung Init'}</span>
-                        </button>
-                    </div>
-                ` : ''}
-                ${showFallback ? `
-                    <div class="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-700">
-                        <p class="text-sm text-yellow-700 dark:text-yellow-300">
-                            <i class="fas fa-info-circle mr-1"></i>
-                            ${currentLang === 'ar' ? 
-                                'للحصول على أفضل دقة، قم بمعايرة البوصلة بتحريك الجهاز في شكل رقم 8' : 
-                                'For best accuracy, calibrate compass by moving device in figure-8 pattern'
-                            }
-                        </p>
-                    </div>
-                    <button onclick="initCompassFallback()" class="bg-blue-500 text-white px-6 py-2 rounded-lg">
-                        <i class="fas fa-compass mr-2"></i>
-                        <span>${currentLang === 'ar' ? 'استخدام البوصلة الأساسية' : 'Use Basic Compass'}</span>
-                </button>
-                ` : ''}
-            </div>
-        </div>
-    `;
-      }
+    // For backward compatibility, just show a simple error
+    showCompassError(currentLang === 'ar' ? 'حدث خطأ في البوصلة' : 'Compass error occurred');
+}
 
+      // Legacy functions for compatibility
       function showCalibrationPrompt() {
-          const unsupportedDiv = document.getElementById('arUnsupported');
-          unsupportedDiv.classList.remove('hidden');
-          unsupportedDiv.innerHTML = `
-              <i class="fas fa-exclamation-circle text-yellow-500 text-3xl mb-3"></i>
-              <h3 class="font-bold">${languages[currentLang].arErrorTitle}</h3>
-              <p class="mb-4">${languages[currentLang].calibrationMessage}</p>
-              <button onclick="dismissCalibrationPrompt()" class="bg-blue-500 text-white px-6 py-2 rounded-lg">
-                  <i class="fas fa-check mr-2"></i>
-                  ${languages[currentLang].calibrationDone}
-              </button>
-          `;
+          // No longer needed with simple compass
       }
 
       function dismissCalibrationPrompt() {
-          document.getElementById('arUnsupported').classList.add('hidden');
+          // No longer needed with simple compass
       }
 
+      // Legacy function for compatibility
       function initCompassFallback() {
-          stopARCamera();
-
-          const qiblaContent = document.getElementById('qiblaContent');
-          qiblaContent.innerHTML = `
-              <div class="relative w-full h-[70vh] bg-gray-800 rounded-xl flex items-center justify-center">
-                  <div id="compass" class="w-64 h-64 relative">
-                      <div class="absolute inset-0 bg-white rounded-full flex items-center justify-center">
-                          <i class="fas fa-compass text-6xl text-blue-500"></i>
-                      </div>
-                      <div id="qiblaNeedle" class="absolute w-4 h-32 bg-green-500 left-1/2 transform -translate-x-1/2 origin-bottom rounded-t-full"></div>
-                  </div>
-                  <div class="absolute bottom-4 text-white text-lg">
-                      <i class="fas fa-compass mr-2"></i>
-                      <span id="degreeValue">0°</span>
-                  </div>
-              </div>
-          `;
-
-          arActive = true;
-          window.addEventListener('deviceorientation', updateFallbackCompass);
-
-          navigator.geolocation.getCurrentPosition(
-              (position) => {
-                  qiblaAngle = calculateQiblaAngle(position.coords.latitude, position.coords.longitude);
-              },
-              () => {
-                  qiblaAngle = 0;
-                  updateDegreeDisplay();
-              },
-              { enableHighAccuracy: true, timeout: 10000 }
-          );
-      }
-
-      function updateFallbackCompass(event) {
-          if (!event.alpha && !event.webkitCompassHeading || !arActive) return;
-
-          let heading = event.webkitCompassHeading || event.alpha;
-
-          if (!event.webkitCompassHeading) {
-              const orientation = window.screen.orientation?.angle || 0;
-              switch (orientation) {
-                  case 90:
-                      heading = (heading + 270) % 360;
-                      break;
-                  case 270:
-                      heading = (heading + 90) % 360;
-                      break;
-                  case 180:
-                      heading = (360 - heading) % 360;
-                      break;
-              }
-          }
-
-          currentHeading = smoothHeading(heading);
-          const relativeAngle = (qiblaAngle - currentHeading + 360) % 360;
-          const degreeDisplay = document.getElementById('degreeValue');
-
-          if (Math.abs(relativeAngle) < 5 || Math.abs(relativeAngle - 360) < 5) {
-              degreeDisplay.textContent = languages[currentLang].alignedMessage;
-              degreeDisplay.parentElement.style.backgroundColor = 'rgba(34, 197, 94, 0.8)';
-          } else {
-              degreeDisplay.textContent = `${Math.round(relativeAngle)}°`;
-              degreeDisplay.parentElement.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
-          }
-
-          const needle = document.getElementById('qiblaNeedle');
-          needle.style.transform = `translateX(-50%) rotate(${relativeAngle}deg)`;
-      }
-
-      function stopARCamera() {
-          arActive = false;
-          if (animationFrameId) {
-              cancelAnimationFrame(animationFrameId);
-    }
-    if (cameraStream) {
-        cameraStream.getTracks().forEach(track => track.stop());
-          }
-          window.removeEventListener('deviceorientation', handleOrientation);
-    window.removeEventListener('deviceorientation', updateFallbackCompass);
+          initQiblaCompass();
       }
 
       // Test function to validate qibla accuracy for known locations
@@ -4315,17 +4126,56 @@ function showARUnsupported(errorType) {
               
               // Wait a bit then retry full initialization
               setTimeout(() => {
-                  initARCamera();
+                  initQiblaCompass();
               }, 1000);
               
           } catch (error) {
               console.error("Samsung retry failed:", error);
-              showARUnsupported("samsung_retry_failed");
+              showCompassError(currentLang === 'ar' ? 'فشل في إعادة المحاولة' : 'Retry failed');
           }
       }
 
-            // Event Listeners
+            // Initialize location on page load
+      async function initializeQiblaLocation() {
+          try {
+              const position = await new Promise((resolve, reject) => {
+                  navigator.geolocation.getCurrentPosition(resolve, reject, {
+                      enableHighAccuracy: true,
+                      timeout: 10000,
+                      maximumAge: 300000 // 5 minutes cache
+                  });
+              });
+              
+              userLocation = {
+                  lat: position.coords.latitude,
+                  lng: position.coords.longitude
+              };
+              
+              qiblaAngle = calculateQiblaAngle(position.coords.latitude, position.coords.longitude);
+              updateLocationDisplay(position.coords.latitude, position.coords.longitude);
+              
+          } catch (error) {
+              console.log("Could not get location on page load:", error);
+              // Show default message
+              const locationInfo = document.getElementById('locationInfo');
+              const qiblaDistance = document.getElementById('qiblaDistance');
+              
+              if (locationInfo) {
+                  locationInfo.textContent = currentLang === 'ar' ? 'اضغط على الزر لتحديد الموقع' : 'Click button to detect location';
+              }
+              if (qiblaDistance) {
+                  qiblaDistance.textContent = currentLang === 'ar' ? 'غير محدد' : 'Not determined';
+              }
+          }
+      }
+
+      // Event Listeners
       document.getElementById('startCompassBtn').addEventListener('click', initQiblaCompass);
+      
+      // Initialize location when page loads
+      document.addEventListener('DOMContentLoaded', () => {
+          setTimeout(initializeQiblaLocation, 1000); // Delay to ensure DOM is ready
+      });
 
       function handleDhikrClick() {
           const arabicText = document.getElementById('adhkarArabicText');
@@ -5261,9 +5111,8 @@ function showARUnsupported(errorType) {
                   }
 
                   if (tabId === 'qibla') {
-                     await initARCamera();
-                  } else {
-                      await stopARCamera();
+                     // Qibla tab is now ready - no auto-initialization needed
+                     // User will click the start button when ready
                   }
 
             
