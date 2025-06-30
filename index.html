@@ -1468,178 +1468,6 @@
       </div>
     </div>
 
-    
-<!-- Tafsir Popup Modal -->
-<div id="tafsirModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:20000;" class="flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-      <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
-        <div class="flex items-center gap-3">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white" id="tafsirModalTitle">التفسير</h3>
-          <select id="tafsirSelect" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 text-sm" title="Select Tafsir - اختر التفسير">
-            <optgroup label="Arabic Tafsir - التفسير العربي">
-              <option value="1">التفسير الميسر</option>
-              <option value="2">تفسير الجلالين</option>
-              <option value="3">تفسير السعدي</option>
-              <option value="4">تفسير البغوي</option>
-              <option value="5">تفسير القرطبي</option>
-              <option value="6">تفسير ابن كثير</option>
-              <option value="7">تفسير الطبري</option>
-            </optgroup>
-            <optgroup label="English Tafsir">
-              <option value="en-jalalayn">Tafsir al-Jalalayn (English)</option>
-              <option value="en-kathir">Tafsir Ibn Kathir (English)</option>
-              <option value="en-maarif">Ma'ariful Quran (English)</option>
-              <option value="en-tazkirul">Tazkirul Quran (English)</option>
-            </optgroup>
-          </select>
-        </div>
-        <button id="closeTafsirModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl">&times;</button>
-      </div>
-      <div class="p-4">
-        <div class="mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-          <div class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2" id="tafsirModalAyah">الآية</div>
-          <div class="text-lg text-gray-600 dark:text-gray-400" id="tafsirModalTranslation">Translation</div>
-        </div>
-        <div class="text-base text-gray-700 dark:text-gray-300 leading-relaxed" id="tafsirModalContent">جاري التحميل...</div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Translation Popup Modal -->
-  <div id="translationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:20000;" class="flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-      <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
-        <div class="flex items-center gap-3">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white" id="translationModalTitle">الترجمة</h3>
-          <select id="translationSelect" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 text-sm" title="Select Translation - اختر الترجمة">
-            <optgroup label="English">
-              <option value="en.sahih">English (Sahih International)</option>
-              <option value="en.pickthall">English (Pickthall)</option>
-              <option value="en.yusufali">English (Yusuf Ali)</option>
-              <option value="en.hilali">English (Hilali-Khan)</option>
-              <option value="en.arberry">English (Arberry)</option>
-              <option value="en.asad">English (Muhammad Asad)</option>
-              <option value="en.daryabadi">English (Daryabadi)</option>
-              <option value="en.shakir">English (Shakir)</option>
-            </optgroup>
-            <optgroup label="European">
-              <option value="fr.hamidullah">Français (Hamidullah)</option>
-              <option value="fr.leclerc">Français (Leclerc)</option>
-              <option value="de.bubenheim">Deutsch (Bubenheim)</option>
-              <option value="de.khoury">Deutsch (Khoury)</option>
-              <option value="es.cortes">Español (Cortés)</option>
-              <option value="es.garcia">Español (García)</option>
-              <option value="it.piccardo">Italiano (Piccardo)</option>
-              <option value="pt.elhayek">Português (El Hayek)</option>
-              <option value="ru.kuliev">Русский (Кулиев)</option>
-              <option value="ru.osmanov">Русский (Османов)</option>
-              <option value="nl.keyzer">Nederlands (Keyzer)</option>
-              <option value="bs.korkut">Bosanski (Korkut)</option>
-              <option value="cs.hrbek">Čeština (Hrbek)</option>
-              <option value="no.berg">Norsk (Berg)</option>
-              <option value="sv.bernstrom">Svenska (Bernström)</option>
-              <option value="sq.ahmeti">Shqip (Ahmeti)</option>
-            </optgroup>
-            <optgroup label="Middle East & Central Asia">
-              <option value="tr.diyanet">Türkçe (Diyanet)</option>
-              <option value="tr.bulac">Türkçe (Bulaç)</option>
-              <option value="ur.junagarhi">اردو (جونا گاری)</option>
-              <option value="ur.kanzuliman">اردو (کنز الایمان)</option>
-              <option value="fa.ansarian">فارسی (انصاریان)</option>
-              <option value="fa.makarem">فارسی (مکارم شیرازی)</option>
-              <option value="az.mammadaliyev">Azərbaycan (Məmmədəliyev)</option>
-              <option value="ku.asan">کوردی (ئاسان)</option>
-            </optgroup>
-            <optgroup label="South & Southeast Asia">
-              <option value="id.indonesian">Bahasa Indonesia (Kementerian Agama)</option>
-              <option value="ms.basmeih">Bahasa Melayu (Basmeih)</option>
-              <option value="bn.bengali">বাংলা (মুহিউদ্দীন খান)</option>
-              <option value="hi.hindi">हिन्दी (फारूक खान)</option>
-              <option value="ta.tamil">தமிழ் (ஜான் டிரஸ்ட்)</option>
-              <option value="th.thai">ไทย (สำนักงานพระราชวัง)</option>
-            </optgroup>
-            <optgroup label="East Asia">
-              <option value="zh.jian">中文简体 (马坚译)</option>
-              <option value="ja.japanese">日本語 (森亮一)</option>
-              <option value="ko.korean">한국어 (최하메드)</option>
-            </optgroup>
-            <optgroup label="African">
-              <option value="ha.gumi">Hausa (Abubakar Gumi)</option>
-              <option value="sw.barwani">Kiswahili (Barwani)</option>
-              <option value="so.abduh">Soomaali (Abduh)</option>
-              <option value="am.sadiq">አማርኛ (ሳዲቅ)</option>
-              <option value="yo.mikail">Yorùbá (Mikail)</option>
-            </optgroup>
-          </select>
-        </div>
-        <button id="closeTranslationModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl">&times;</button>
-      </div>
-      <div class="p-4">
-        <div class="mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-          <div class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2" id="translationModalAyah">الآية</div>
-        </div>
-        <div class="text-base text-gray-700 dark:text-gray-300 leading-relaxed" id="translationModalContent">Translation</div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Surah Selection Side Menu -->
-      <div id="surahSideMenu" class="fixed inset-y-0 left-0 w-80 bg-white/95 dark:bg-gray-900/95 shadow-2xl transform -translate-x-full transition-transform duration-200 ease-in-out z-30 overflow-hidden border-r border-white/20 dark:border-gray-700/50 islamic-pattern">
-    <div class="flex flex-col h-full">
-      <!-- Header -->
-      <div class="flex items-center justify-between p-6 border-b border-white/20 dark:border-gray-700/50 bg-gradient-to-r from-white/80 to-gray-50/80 dark:from-gray-800/80 dark:to-gray-900/80 backdrop-blur-sm">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-lg">
-            <i class="fas fa-book-open text-white text-sm"></i>
-          </div>
-          <h3 class="text-xl font-bold text-gray-800 dark:text-white" id="surahMenuTitle">اختر السورة</h3>
-        </div>
-        <button id="closeSurahMenu" class="w-10 h-10 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white rounded-full flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 backdrop-blur-sm">
-          <i class="fas fa-times text-sm"></i>
-        </button>
-      </div>
-      
-      <!-- Search Box -->
-      <div class="p-6 border-b border-white/20 dark:border-gray-700/50 bg-gradient-to-r from-white/60 to-gray-50/60 dark:from-gray-800/60 dark:to-gray-900/60 backdrop-blur-sm">
-        <div class="relative">
-          <input 
-            type="text" 
-            id="surahSearchInput" 
-            placeholder="ابحث عن السورة... Search surah..."
-            class="w-full px-4 py-3 pl-12 pr-16 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-white/30 dark:border-gray-600/50 rounded-xl focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 dark:focus:ring-emerald-400/50 dark:focus:border-emerald-400/50 text-base text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 shadow-lg transition-all duration-200"
-            style="font-size: 16px;"
-          >
-          <div class="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center">
-            <i class="fas fa-search text-white text-xs"></i>
-          </div>
-          <button 
-            id="voiceSearchBtn" 
-            class="absolute right-4 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 rounded-full flex items-center justify-center transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500/50"
-            title="البحث الصوتي - Voice Search"
-            onclick="startVoiceSearch()"
-          >
-            <i class="fas fa-microphone text-white text-xs"></i>
-          </button>
-        </div>
-        <!-- Voice Search Status -->
-        <div id="voiceSearchStatus" class="mt-2 text-sm text-center text-gray-600 dark:text-gray-400 hidden">
-          <i class="fas fa-circle text-red-500 animate-pulse mr-1"></i>
-          <span id="voiceSearchStatusText">جاري الاستماع... Listening...</span>
-        </div>
-      </div>
-      
-      <!-- Surah List -->
-      <div class="flex-1 overflow-y-auto bg-gradient-to-b from-white/50 to-gray-50/50 dark:from-gray-800/50 dark:to-gray-900/50 backdrop-blur-sm">
-        <div id="surahList" class="p-4 space-y-2">
-          <!-- Surah items will be populated here -->
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Overlay for side menu -->
-  <div id="surahMenuOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-20 hidden transition-all duration-300"></div>
-
         <!-- Add this script right after the header -->
         <script>
         // Dark mode functionality
@@ -2972,12 +2800,6 @@ let scrollTimeout = null;
               source_en: "Narrated by Muslim"
           },
           {
-              ar: "من توضأ فأحسن الوضوء ثم قال: أشهد أن لا إله إلا الله وحده لا شريك له وأشهد أن محمدا عبده ورسوله، فتحت له أبواب الجنة الثمانية يدخل من أيها شاء",
-              en: "Whoever performs ablution perfectly then says: 'I bear witness that there is no god but Allah alone with no partner, and I bear witness that Muhammad is His servant and messenger' the eight gates of Paradise will be opened for him to enter through whichever he wishes",
-              source_ar: "رواه مسلم",
-              source_en: "Narrated by Muslim"
-          },
-          {
               ar: "الطهور شطر الإيمان، والحمد لله تملأ الميزان، وسبحان الله والحمد لله تملآن أو تملأ ما بين السماوات والأرض",
               en: "Purification is half of faith, 'Praise be to Allah' fills the scale, and 'Glory be to Allah and praise be to Allah' fill what is between the heavens and the earth",
               source_ar: "رواه مسلم",
@@ -3735,7 +3557,14 @@ let scrollTimeout = null;
 
               // Start compass
               compassActive = true;
-              window.addEventListener('deviceorientation', handleCompassOrientation);
+              // Remove any previous listeners to avoid duplicates
+              window.removeEventListener('deviceorientation', handleCompassOrientation);
+              window.removeEventListener('deviceorientationabsolute', handleCompassOrientation);
+              if ('ondeviceorientationabsolute' in window) {
+                  window.addEventListener('deviceorientationabsolute', handleCompassOrientation, true);
+              } else {
+                  window.addEventListener('deviceorientation', handleCompassOrientation, true);
+              }
               
               // Hide start button and show compass
               startBtn.style.display = 'none';
@@ -3852,22 +3681,22 @@ let scrollTimeout = null;
 
       function calculateQiblaAngle(lat, lng) {
           // Kaaba coordinates
-          const kaabaLat = 21.422487;
-          const kaabaLng = 39.826206;
+          const kaabaLat = 21.4224779;
+          const kaabaLng = 39.8262136;
 
           // Convert to radians
-          const φ2 = (kaabaLat * Math.PI) / 180.0;
-          const λ2 = (kaabaLng * Math.PI) / 180.0;
-          const φ1 = (lat * Math.PI) / 180.0;
-          const λ1 = (lng * Math.PI) / 180.0;
+          const φ1 = lat * Math.PI / 180;
+          const φ2 = kaabaLat * Math.PI / 180;
+          const Δλ = (kaabaLng - lng) * Math.PI / 180;
 
-          // Calculate Qibla direction
-          const psi = (180.0 / Math.PI) * Math.atan2(
-              Math.sin(λ2 - λ1),
-              Math.cos(φ1) * Math.tan(φ2) - Math.sin(φ1) * Math.cos(λ2 - λ1)
-          );
-
-          return Math.round(psi);
+          // Calculate bearing
+          const y = Math.sin(Δλ) * Math.cos(φ2);
+          const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+          
+          let bearing = Math.atan2(y, x) * 180 / Math.PI;
+          bearing = (bearing + 360) % 360;
+          
+          return bearing;
       }
       
       // Update location display
@@ -7812,7 +7641,7 @@ function showARUnsupported(errorType) {
                 index: index,
                 number: surah.number,
                 name: surah.name,
-                englishName: surahNamesEnglish[index] || surah.englishName,
+                englishName: surah.englishName,
                 revelationType: surah.revelationType,
                 numberOfAyahs: surah.numberOfAyahs
             }));
@@ -9248,6 +9077,176 @@ document.addEventListener('DOMContentLoaded', function() {
 });
       </script>
 
+<!-- Tafsir Popup Modal -->
+<div id="tafsirModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:20000;" class="flex items-center justify-center p-4">
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+    <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+      <div class="flex items-center gap-3">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white" id="tafsirModalTitle">التفسير</h3>
+        <select id="tafsirSelect" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 text-sm" title="Select Tafsir - اختر التفسير">
+          <optgroup label="Arabic Tafsir - التفسير العربي">
+            <option value="1">التفسير الميسر</option>
+            <option value="2">تفسير الجلالين</option>
+            <option value="3">تفسير السعدي</option>
+            <option value="4">تفسير البغوي</option>
+            <option value="5">تفسير القرطبي</option>
+            <option value="6">تفسير ابن كثير</option>
+            <option value="7">تفسير الطبري</option>
+          </optgroup>
+          <optgroup label="English Tafsir">
+            <option value="en-jalalayn">Tafsir al-Jalalayn (English)</option>
+            <option value="en-kathir">Tafsir Ibn Kathir (English)</option>
+            <option value="en-maarif">Ma'ariful Quran (English)</option>
+            <option value="en-tazkirul">Tazkirul Quran (English)</option>
+          </optgroup>
+        </select>
+      </div>
+      <button id="closeTafsirModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl">&times;</button>
+    </div>
+    <div class="p-4">
+      <div class="mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+        <div class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2" id="tafsirModalAyah">الآية</div>
+        <div class="text-lg text-gray-600 dark:text-gray-400" id="tafsirModalTranslation">Translation</div>
+      </div>
+      <div class="text-base text-gray-700 dark:text-gray-300 leading-relaxed" id="tafsirModalContent">جاري التحميل...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Translation Popup Modal -->
+<div id="translationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:20000;" class="flex items-center justify-center p-4">
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+    <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+      <div class="flex items-center gap-3">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white" id="translationModalTitle">الترجمة</h3>
+        <select id="translationSelect" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 text-sm" title="Select Translation - اختر الترجمة">
+          <optgroup label="English">
+            <option value="en.sahih">English (Sahih International)</option>
+            <option value="en.pickthall">English (Pickthall)</option>
+            <option value="en.yusufali">English (Yusuf Ali)</option>
+            <option value="en.hilali">English (Hilali-Khan)</option>
+            <option value="en.arberry">English (Arberry)</option>
+            <option value="en.asad">English (Muhammad Asad)</option>
+            <option value="en.daryabadi">English (Daryabadi)</option>
+            <option value="en.shakir">English (Shakir)</option>
+          </optgroup>
+          <optgroup label="European">
+            <option value="fr.hamidullah">Français (Hamidullah)</option>
+            <option value="fr.leclerc">Français (Leclerc)</option>
+            <option value="de.bubenheim">Deutsch (Bubenheim)</option>
+            <option value="de.khoury">Deutsch (Khoury)</option>
+            <option value="es.cortes">Español (Cortés)</option>
+            <option value="es.garcia">Español (García)</option>
+            <option value="it.piccardo">Italiano (Piccardo)</option>
+            <option value="pt.elhayek">Português (El Hayek)</option>
+            <option value="ru.kuliev">Русский (Кулиев)</option>
+            <option value="ru.osmanov">Русский (Османов)</option>
+            <option value="nl.keyzer">Nederlands (Keyzer)</option>
+            <option value="bs.korkut">Bosanski (Korkut)</option>
+            <option value="cs.hrbek">Čeština (Hrbek)</option>
+            <option value="no.berg">Norsk (Berg)</option>
+            <option value="sv.bernstrom">Svenska (Bernström)</option>
+            <option value="sq.ahmeti">Shqip (Ahmeti)</option>
+          </optgroup>
+          <optgroup label="Middle East & Central Asia">
+            <option value="tr.diyanet">Türkçe (Diyanet)</option>
+            <option value="tr.bulac">Türkçe (Bulaç)</option>
+            <option value="ur.junagarhi">اردو (جونا گاری)</option>
+            <option value="ur.kanzuliman">اردو (کنز الایمان)</option>
+            <option value="fa.ansarian">فارسی (انصاریان)</option>
+            <option value="fa.makarem">فارسی (مکارم شیرازی)</option>
+            <option value="az.mammadaliyev">Azərbaycan (Məmmədəliyev)</option>
+            <option value="ku.asan">کوردی (ئاسان)</option>
+          </optgroup>
+          <optgroup label="South & Southeast Asia">
+            <option value="id.indonesian">Bahasa Indonesia (Kementerian Agama)</option>
+            <option value="ms.basmeih">Bahasa Melayu (Basmeih)</option>
+            <option value="bn.bengali">বাংলা (মুহিউদ্দীন খান)</option>
+            <option value="hi.hindi">हिन्दी (फारूक खान)</option>
+            <option value="ta.tamil">தமிழ் (ஜான் டிரஸ்ட்)</option>
+            <option value="th.thai">ไทย (สำนักงานพระราชวัง)</option>
+          </optgroup>
+          <optgroup label="East Asia">
+            <option value="zh.jian">中文简体 (马坚译)</option>
+            <option value="ja.japanese">日本語 (森亮一)</option>
+            <option value="ko.korean">한국어 (최하메드)</option>
+          </optgroup>
+          <optgroup label="African">
+            <option value="ha.gumi">Hausa (Abubakar Gumi)</option>
+            <option value="sw.barwani">Kiswahili (Barwani)</option>
+            <option value="so.abduh">Soomaali (Abduh)</option>
+            <option value="am.sadiq">አማርኛ (ሳዲቅ)</option>
+            <option value="yo.mikail">Yorùbá (Mikail)</option>
+          </optgroup>
+        </select>
+      </div>
+      <button id="closeTranslationModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl">&times;</button>
+    </div>
+    <div class="p-4">
+      <div class="mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+        <div class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2" id="translationModalAyah">الآية</div>
+      </div>
+      <div class="text-base text-gray-700 dark:text-gray-300 leading-relaxed" id="translationModalContent">Translation</div>
+    </div>
+  </div>
+</div>
+
+<!-- Surah Selection Side Menu -->
+    <div id="surahSideMenu" class="fixed inset-y-0 left-0 w-80 bg-white/95 dark:bg-gray-900/95 shadow-2xl transform -translate-x-full transition-transform duration-200 ease-in-out z-30 overflow-hidden border-r border-white/20 dark:border-gray-700/50 islamic-pattern">
+  <div class="flex flex-col h-full">
+    <!-- Header -->
+    <div class="flex items-center justify-between p-6 border-b border-white/20 dark:border-gray-700/50 bg-gradient-to-r from-white/80 to-gray-50/80 dark:from-gray-800/80 dark:to-gray-900/80 backdrop-blur-sm">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-lg">
+          <i class="fas fa-book-open text-white text-sm"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-800 dark:text-white" id="surahMenuTitle">اختر السورة</h3>
+      </div>
+      <button id="closeSurahMenu" class="w-10 h-10 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white rounded-full flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 backdrop-blur-sm">
+        <i class="fas fa-times text-sm"></i>
+      </button>
+    </div>
+    
+    <!-- Search Box -->
+    <div class="p-6 border-b border-white/20 dark:border-gray-700/50 bg-gradient-to-r from-white/60 to-gray-50/60 dark:from-gray-800/60 dark:to-gray-900/60 backdrop-blur-sm">
+      <div class="relative">
+        <input 
+          type="text" 
+          id="surahSearchInput" 
+          placeholder="ابحث عن السورة... Search surah..."
+          class="w-full px-4 py-3 pl-12 pr-16 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-white/30 dark:border-gray-600/50 rounded-xl focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 dark:focus:ring-emerald-400/50 dark:focus:border-emerald-400/50 text-base text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 shadow-lg transition-all duration-200"
+          style="font-size: 16px;"
+        >
+        <div class="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center">
+          <i class="fas fa-search text-white text-xs"></i>
+        </div>
+        <button 
+          id="voiceSearchBtn" 
+          class="absolute right-4 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 rounded-full flex items-center justify-center transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500/50"
+          title="البحث الصوتي - Voice Search"
+          onclick="startVoiceSearch()"
+        >
+          <i class="fas fa-microphone text-white text-xs"></i>
+        </button>
+      </div>
+      <!-- Voice Search Status -->
+      <div id="voiceSearchStatus" class="mt-2 text-sm text-center text-gray-600 dark:text-gray-400 hidden">
+        <i class="fas fa-circle text-red-500 animate-pulse mr-1"></i>
+        <span id="voiceSearchStatusText">جاري الاستماع... Listening...</span>
+      </div>
+    </div>
+    
+    <!-- Surah List -->
+    <div class="flex-1 overflow-y-auto bg-gradient-to-b from-white/50 to-gray-50/50 dark:from-gray-800/50 dark:to-gray-900/50 backdrop-blur-sm">
+      <div id="surahList" class="p-4 space-y-2">
+        <!-- Surah items will be populated here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay for side menu -->
+<div id="surahMenuOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-20 hidden transition-all duration-300"></div>
 
 </body>
 </html>
