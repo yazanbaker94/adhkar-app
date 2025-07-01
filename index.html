@@ -5152,6 +5152,18 @@ function showARUnsupported(errorType) {
                   if (tabId === 'qibla') {
                      // Qibla tab is now ready - no auto-initialization needed
                      // User will click the start button when ready
+                     
+                     // Scroll to show the entire Qibla compass clearly
+                     setTimeout(() => {
+                         const qiblaContent = document.getElementById('qiblaContent');
+                         if (qiblaContent) {
+                             qiblaContent.scrollIntoView({ 
+                                 behavior: 'smooth', 
+                                 block: 'start',
+                                 inline: 'nearest' 
+                             });
+                         }
+                     }, 100);
                   }
 
             
@@ -8909,6 +8921,592 @@ function performEnhancedVoiceSearch(transcript) {
   }, 50);
 }
 
+// Function to find the best Surah match from voice alternatives
+function findBestSurahMatch(alternatives) {
+  if (!alternatives || alternatives.length === 0) return null;
+  
+  // Get all Surah names in both Arabic and English
+  const surahNames = [];
+  
+  // Add from surahsData if available
+  if (surahsData && surahsData.length > 0) {
+    surahsData.forEach(surah => {
+      if (surah.name) surahNames.push(surah.name);
+      if (surah.englishName) surahNames.push(surah.englishName);
+      if (surah.englishNameTranslation) surahNames.push(surah.englishNameTranslation);
+    });
+  }
+  
+  // Add from quickSurahList if available
+  if (quickSurahList && quickSurahList.length > 0) {
+    quickSurahList.forEach(surah => {
+      if (surah.name) surahNames.push(surah.name);
+      if (surah.englishName) surahNames.push(surah.englishName);
+      if (surah.englishNameTranslation) surahNames.push(surah.englishNameTranslation);
+    });
+  }
+  
+  // Common Surah names as fallback
+  const commonSurahNames = [
+    'الفاتحة', 'Al-Fatiha', 'Fatiha', 'The Opening',
+    'البقرة', 'Al-Baqarah', 'Baqarah', 'The Cow',
+    'آل عمران', 'Al-Imran', 'Imran', 'Family of Imran',
+    'النساء', 'An-Nisa', 'Nisa', 'The Women',
+    'المائدة', 'Al-Maidah', 'Maidah', 'The Table Spread',
+    'الأنعام', 'Al-Anam', 'Anam', 'The Cattle',
+    'الأعراف', 'Al-Araf', 'Araf', 'The Heights',
+    'الأنفال', 'Al-Anfal', 'Anfal', 'The Spoils of War',
+    'التوبة', 'At-Tawbah', 'Tawbah', 'The Repentance',
+    'يونس', 'Yunus', 'Jonah',
+    'هود', 'Hud',
+    'يوسف', 'Yusuf', 'Joseph',
+    'الرعد', 'Ar-Rad', 'Rad', 'The Thunder',
+    'إبراهيم', 'Ibrahim', 'Abraham',
+    'الحجر', 'Al-Hijr', 'Hijr', 'The Rocky Tract',
+    'النحل', 'An-Nahl', 'Nahl', 'The Bee',
+    'الإسراء', 'Al-Isra', 'Isra', 'The Night Journey',
+    'الكهف', 'Al-Kahf', 'Kahf', 'The Cave',
+    'مريم', 'Maryam', 'Mary',
+    'طه', 'Ta-Ha', 'Taha',
+    'الأنبياء', 'Al-Anbiya', 'Anbiya', 'The Prophets',
+    'الحج', 'Al-Hajj', 'Hajj', 'The Pilgrimage',
+    'المؤمنون', 'Al-Muminun', 'Muminun', 'The Believers',
+    'النور', 'An-Nur', 'Nur', 'The Light',
+    'الفرقان', 'Al-Furqan', 'Furqan', 'The Criterion',
+    'الشعراء', 'Ash-Shuara', 'Shuara', 'The Poets',
+    'النمل', 'An-Naml', 'Naml', 'The Ant',
+    'القصص', 'Al-Qasas', 'Qasas', 'The Stories',
+    'العنكبوت', 'Al-Ankabut', 'Ankabut', 'The Spider',
+    'الروم', 'Ar-Rum', 'Rum', 'The Romans',
+    'لقمان', 'Luqman',
+    'السجدة', 'As-Sajdah', 'Sajdah', 'The Prostration',
+    'الأحزاب', 'Al-Ahzab', 'Ahzab', 'The Clans',
+    'سبأ', 'Saba', 'Sheba',
+    'فاطر', 'Fatir', 'Originator',
+    'يس', 'Ya-Sin', 'Yasin',
+    'الصافات', 'As-Saffat', 'Saffat', 'Those Ranged in Ranks',
+    'ص', 'Sad',
+    'الزمر', 'Az-Zumar', 'Zumar', 'The Groups',
+    'غافر', 'Ghafir', 'The Forgiver',
+    'فصلت', 'Fussilat', 'Explained in Detail',
+    'الشورى', 'Ash-Shura', 'Shura', 'The Consultation',
+    'الزخرف', 'Az-Zukhruf', 'Zukhruf', 'The Gold Adornments',
+    'الدخان', 'Ad-Dukhan', 'Dukhan', 'The Smoke',
+    'الجاثية', 'Al-Jathiyah', 'Jathiyah', 'The Kneeling',
+    'الأحقاف', 'Al-Ahqaf', 'Ahqaf', 'The Wind-Curved Sandhills',
+    'محمد', 'Muhammad',
+    'الفتح', 'Al-Fath', 'Fath', 'The Victory',
+    'الحجرات', 'Al-Hujurat', 'Hujurat', 'The Rooms',
+    'ق', 'Qaf',
+    'الذاريات', 'Adh-Dhariyat', 'Dhariyat', 'The Wind That Scatter',
+    'الطور', 'At-Tur', 'Tur', 'The Mount',
+    'النجم', 'An-Najm', 'Najm', 'The Star',
+    'القمر', 'Al-Qamar', 'Qamar', 'The Moon',
+    'الرحمن', 'Ar-Rahman', 'Rahman', 'The Most Merciful',
+    'الواقعة', 'Al-Waqiah', 'Waqiah', 'The Event',
+    'الحديد', 'Al-Hadid', 'Hadid', 'The Iron',
+    'المجادلة', 'Al-Mujadilah', 'Mujadilah', 'The Pleading Woman',
+    'الحشر', 'Al-Hashr', 'Hashr', 'The Exile',
+    'الممتحنة', 'Al-Mumtahanah', 'Mumtahanah', 'She That Is To Be Examined',
+    'الصف', 'As-Saff', 'Saff', 'The Ranks',
+    'الجمعة', 'Al-Jumuah', 'Jumuah', 'The Friday',
+    'المنافقون', 'Al-Munafiqun', 'Munafiqun', 'The Hypocrites',
+    'التغابن', 'At-Taghabun', 'Taghabun', 'The Mutual Disillusion',
+    'الطلاق', 'At-Talaq', 'Talaq', 'The Divorce',
+    'التحريم', 'At-Tahrim', 'Tahrim', 'The Prohibition',
+    'الملك', 'Al-Mulk', 'Mulk', 'The Sovereignty',
+    'القلم', 'Al-Qalam', 'Qalam', 'The Pen',
+    'الحاقة', 'Al-Haqqah', 'Haqqah', 'The Reality',
+    'المعارج', 'Al-Maarij', 'Maarij', 'The Ascending Stairways',
+    'نوح', 'Nuh', 'Noah',
+    'الجن', 'Al-Jinn', 'Jinn', 'The Jinn',
+    'المزمل', 'Al-Muzzammil', 'Muzzammil', 'The Enshrouded One',
+    'المدثر', 'Al-Muddaththir', 'Muddaththir', 'The Cloaked One',
+    'القيامة', 'Al-Qiyamah', 'Qiyamah', 'The Resurrection',
+    'الإنسان', 'Al-Insan', 'Insan', 'The Man',
+    'المرسلات', 'Al-Mursalat', 'Mursalat', 'The Emissaries',
+    'النبأ', 'An-Naba', 'Naba', 'The Tidings',
+    'النازعات', 'An-Naziat', 'Naziat', 'Those Who Drag Forth',
+    'عبس', 'Abasa', 'He Frowned',
+    'التكوير', 'At-Takwir', 'Takwir', 'The Overthrowing',
+    'الانفطار', 'Al-Infitar', 'Infitar', 'The Cleaving',
+    'المطففين', 'Al-Mutaffifin', 'Mutaffifin', 'The Defrauding',
+    'الانشقاق', 'Al-Inshiqaq', 'Inshiqaq', 'The Splitting Open',
+    'البروج', 'Al-Buruj', 'Buruj', 'The Mansions of the Stars',
+    'الطارق', 'At-Tariq', 'Tariq', 'The Morning Star',
+    'الأعلى', 'Al-Ala', 'Ala', 'The Most High',
+    'الغاشية', 'Al-Ghashiyah', 'Ghashiyah', 'The Overwhelming',
+    'الفجر', 'Al-Fajr', 'Fajr', 'The Dawn',
+    'البلد', 'Al-Balad', 'Balad', 'The City',
+    'الشمس', 'Ash-Shams', 'Shams', 'The Sun',
+    'الليل', 'Al-Layl', 'Layl', 'The Night',
+    'الضحى', 'Ad-Duha', 'Duha', 'The Morning Hours',
+    'الشرح', 'Ash-Sharh', 'Sharh', 'The Relief',
+    'التين', 'At-Tin', 'Tin', 'The Fig',
+    'العلق', 'Al-Alaq', 'Alaq', 'The Clot',
+    'القدر', 'Al-Qadr', 'Qadr', 'The Power',
+    'البينة', 'Al-Bayyinah', 'Bayyinah', 'The Clear Proof',
+    'الزلزلة', 'Az-Zalzalah', 'Zalzalah', 'The Earthquake',
+    'العاديات', 'Al-Adiyat', 'Adiyat', 'The Courser',
+    'القارعة', 'Al-Qariah', 'Qariah', 'The Calamity',
+    'التكاثر', 'At-Takathur', 'Takathur', 'The Rivalry in World Increase',
+    'العصر', 'Al-Asr', 'Asr', 'The Declining Day',
+    'الهمزة', 'Al-Humazah', 'Humazah', 'The Traducer',
+    'الفيل', 'Al-Fil', 'Fil', 'The Elephant',
+    'قريش', 'Quraysh',
+    'الماعون', 'Al-Maun', 'Maun', 'The Small Kindnesses',
+    'الكوثر', 'Al-Kawthar', 'Kawthar', 'The Abundance',
+    'الكافرون', 'Al-Kafirun', 'Kafirun', 'The Disbelievers',
+    'النصر', 'An-Nasr', 'Nasr', 'The Divine Support',
+    'المسد', 'Al-Masad', 'Masad', 'The Palm Fiber',
+    'الإخلاص', 'Al-Ikhlas', 'Ikhlas', 'The Sincerity',
+    'الفلق', 'Al-Falaq', 'Falaq', 'The Daybreak',
+    'الناس', 'An-Nas', 'Nas', 'The Mankind'
+  ];
+  
+  // Combine all available names
+  const allNames = [...new Set([...surahNames, ...commonSurahNames])];
+  
+  console.log('Available Surah names for matching:', allNames.length);
+  
+  let bestMatch = null;
+  let bestScore = 0;
+  
+  // Check each alternative against all Surah names
+  for (const alternative of alternatives) {
+    for (const surahName of allNames) {
+      const score = calculateSimilarity(alternative.toLowerCase(), surahName.toLowerCase());
+      if (score > bestScore && score > 0.3) { // Minimum similarity threshold
+        bestScore = score;
+        bestMatch = alternative;
+      }
+    }
+  }
+  
+  console.log('Best match found:', bestMatch, 'with score:', bestScore);
+  return bestMatch;
+}
+
+// Enhanced similarity calculation with phonetic matching
+function calculateSimilarity(str1, str2) {
+  // Normalize Arabic text
+  str1 = str1.replace(/[أإآ]/g, 'ا').replace(/[ىي]/g, 'ي').replace(/ة/g, 'ه');
+  str2 = str2.replace(/[أإآ]/g, 'ا').replace(/[ىي]/g, 'ي').replace(/ة/g, 'ه');
+  
+  // Check for exact match or substring
+  if (str1 === str2) return 1.0;
+  if (str1.includes(str2) || str2.includes(str1)) return 0.8;
+  
+  // Phonetic similarity for common voice recognition errors
+  const phoneticScore = calculatePhoneticSimilarity(str1, str2);
+  if (phoneticScore > 0.6) return phoneticScore;
+  
+  // Calculate Levenshtein distance
+  const matrix = [];
+  const len1 = str1.length;
+  const len2 = str2.length;
+  
+  if (len1 === 0) return len2 === 0 ? 1 : 0;
+  if (len2 === 0) return 0;
+  
+  // Initialize matrix
+  for (let i = 0; i <= len1; i++) {
+    matrix[i] = [i];
+  }
+  for (let j = 0; j <= len2; j++) {
+    matrix[0][j] = j;
+  }
+  
+  // Fill matrix
+  for (let i = 1; i <= len1; i++) {
+    for (let j = 1; j <= len2; j++) {
+      const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j] + 1,      // deletion
+        matrix[i][j - 1] + 1,      // insertion
+        matrix[i - 1][j - 1] + cost // substitution
+      );
+    }
+  }
+  
+  const distance = matrix[len1][len2];
+  const maxLength = Math.max(len1, len2);
+  return (maxLength - distance) / maxLength;
+}
+
+// Calculate phonetic similarity for common voice recognition errors
+function calculatePhoneticSimilarity(voiceInput, surahName) {
+  // Common phonetic mappings for Arabic names misheard as English
+  const phoneticMappings = {
+         // Al-Fatiha variants
+     'a lot': ['al-faatiha', 'al fatiha', 'alfatiha', 'fatiha'],
+     'alot': ['al-faatiha', 'al fatiha', 'alfatiha', 'fatiha'],
+     'a lot of': ['al-faatiha', 'al fatiha', 'fatiha'],
+     'allah': ['al-faatiha', 'al fatiha', 'fatiha'],
+     'al fatiha': ['al-faatiha', 'fatiha'],
+     'alfatiha': ['al-faatiha', 'fatiha'],
+     'fatiha': ['al-faatiha', 'fatiha'],
+    
+         // Al-Baqarah variants
+     'back': ['al-baqara', 'baqara', 'bakara'],
+     'back are': ['al-baqara', 'baqara'],
+     'baker': ['al-baqara', 'baqara', 'bakara'],
+     'backer': ['al-baqara', 'baqara'],
+     'baqara': ['al-baqara', 'baqara'],
+     'bakara': ['al-baqara', 'baqara'],
+    
+    // Al-Imran variants
+    'all run': ['al-imran', 'imran'],
+    'all ran': ['al-imran', 'imran'],
+    'elmer': ['al-imran', 'imran'],
+    'alimran': ['al-imran', 'imran'],
+    
+    // An-Nisa variants
+    'and lisa': ['an-nisa', 'nisa'],
+    'anissa': ['an-nisa', 'nisa'],
+    'a lisa': ['an-nisa', 'nisa'],
+    
+    // Al-Maidah variants
+    'my dad': ['al-maidah', 'maidah'],
+    'my data': ['al-maidah', 'maidah'],
+    'almighty': ['al-maidah', 'maidah'],
+    
+    // Al-Anam variants
+    'and am': ['al-anam', 'anam'],
+    'annam': ['al-anam', 'anam'],
+    'and i am': ['al-anam', 'anam'],
+    
+    // Al-Araf variants
+    'all rough': ['al-araf', 'araf'],
+    'allraf': ['al-araf', 'araf'],
+    'a rough': ['al-araf', 'araf'],
+    
+    // Al-Anfal variants
+    'and fall': ['al-anfal', 'anfal'],
+    'and fell': ['al-anfal', 'anfal'],
+    'awful': ['al-anfal', 'anfal'],
+    
+    // At-Tawbah variants
+    'at toba': ['at-tawbah', 'tawbah'],
+    'at tuba': ['at-tawbah', 'tawbah'],
+    'a tuba': ['at-tawbah', 'tawbah'],
+    
+    // Yunus variants
+    'you miss': ['yunus', 'jonas'],
+    'you ness': ['yunus', 'jonas'],
+    'jonas': ['yunus', 'jonas'],
+    
+    // Yusuf variants
+    'you surf': ['yusuf', 'joseph'],
+    'joseph': ['yusuf', 'joseph'],
+    'you suf': ['yusuf', 'joseph'],
+    
+    // Ibrahim variants
+    'abraham': ['ibrahim'],
+    'abe': ['ibrahim'],
+    'ibrahim': ['ibrahim'],
+    
+    // Al-Kahf variants
+    'all calf': ['al-kahf', 'kahf'],
+    'all half': ['al-kahf', 'kahf'],
+    'al calf': ['al-kahf', 'kahf'],
+    
+    // Maryam variants
+    'mary': ['maryam'],
+    'maria': ['maryam'],
+    'marry': ['maryam'],
+    
+    // Ta-Ha variants
+    'ta ha': ['ta-ha', 'taha'],
+    'taha': ['ta-ha', 'taha'],
+    'ta-ha': ['ta-ha', 'taha'],
+    
+    // Ya-Sin variants
+    'ya sin': ['ya-sin', 'yasin'],
+    'yasin': ['ya-sin', 'yasin'],
+    'ya seen': ['ya-sin', 'yasin'],
+    'yes in': ['ya-sin', 'yasin'],
+    
+         // Muhammad variants
+     'muhammad': ['muhammad'],
+     'mohamed': ['muhammad'],
+     'mohammed': ['muhammad'],
+     
+     // Az-Zumar variants
+     'azumar': ['az-zumar', 'zumar'],
+     'azuma': ['az-zumar', 'zumar'],
+     'ozumo': ['az-zumar', 'zumar'],
+     'azumah': ['az-zumar', 'zumar'],
+     'izumo': ['az-zumar', 'zumar'],
+     'zumar': ['az-zumar', 'zumar'],
+    
+    // Ar-Rahman variants
+    'our man': ['ar-rahman', 'rahman'],
+    'rahman': ['ar-rahman', 'rahman'],
+    'our rahman': ['ar-rahman', 'rahman'],
+    
+    // Al-Ikhlas variants
+    'all class': ['al-ikhlas', 'ikhlas'],
+    'all close': ['al-ikhlas', 'ikhlas'],
+    'a class': ['al-ikhlas', 'ikhlas'],
+    
+         // An-Nas variants
+     'and us': ['an-nas', 'nas'],
+     'and nas': ['an-nas', 'nas'],
+     'a nas': ['an-nas', 'nas'],
+     'anas': ['an-nas', 'nas'],
+     'nas': ['an-nas', 'nas'],
+     'agnes': ['an-nas', 'nas'],
+     'agnus': ['an-nas', 'nas'],
+     'honest': ['an-nas', 'nas'],
+    
+         // Al-Falaq variants
+     'all flack': ['al-falaq', 'falaq'],
+     'all flag': ['al-falaq', 'falaq'],
+     'a flag': ['al-falaq', 'falaq'],
+     'falak': ['al-falaq', 'falaq'],
+     'flak': ['al-falaq', 'falaq'],
+     
+     // Additional common misheard variants
+     'cow': ['al-baqarah', 'baqarah'],
+     'the cow': ['al-baqarah', 'baqarah'],
+     'women': ['an-nisa', 'nisa'],
+     'the women': ['an-nisa', 'nisa'],
+     'cave': ['al-kahf', 'kahf'],
+     'the cave': ['al-kahf', 'kahf'],
+     'light': ['an-nur', 'nur'],
+     'the light': ['an-nur', 'nur'],
+     'iron': ['al-hadid', 'hadid'],
+     'the iron': ['al-hadid', 'hadid'],
+     'moon': ['al-qamar', 'qamar'],
+     'the moon': ['al-qamar', 'qamar'],
+     'sun': ['ash-shams', 'shams'],
+     'the sun': ['ash-shams', 'shams'],
+     'night': ['al-layl', 'layl'],
+     'the night': ['al-layl', 'layl'],
+     'dawn': ['al-fajr', 'fajr'],
+     'the dawn': ['al-fajr', 'fajr'],
+     'elephant': ['al-fil', 'fil'],
+     'the elephant': ['al-fil', 'fil'],
+     'opening': ['al-fatiha', 'fatiha'],
+     'the opening': ['al-fatiha', 'fatiha']
+  };
+  
+  const voiceLower = voiceInput.toLowerCase().trim();
+  const surahLower = surahName.toLowerCase().trim();
+  
+  // Check if voice input matches any phonetic mapping
+  if (phoneticMappings[voiceLower]) {
+    for (const variant of phoneticMappings[voiceLower]) {
+      if (surahLower.includes(variant) || variant.includes(surahLower)) {
+        return 0.9; // High confidence for phonetic matches
+      }
+    }
+  }
+  
+  // Check reverse mapping (if surah name is in the phonetic alternatives)
+  for (const [key, variants] of Object.entries(phoneticMappings)) {
+    if (variants.some(variant => 
+      surahLower.includes(variant) || variant.includes(surahLower)
+    )) {
+      if (voiceLower.includes(key) || key.includes(voiceLower)) {
+        return 0.9;
+      }
+    }
+  }
+  
+  return 0;
+}
+
+// Convert phonetically matched voice input to proper Surah name
+function convertPhoneticToSurahName(voiceInput) {
+  const phoneticMappings = {
+         // Al-Fatiha variants
+     'a lot': 'Al-Faatiha',
+     'alot': 'Al-Faatiha',
+     'a lot of': 'Al-Faatiha',
+     'allah': 'Al-Faatiha',
+     'al fatiha': 'Al-Faatiha',
+     'alfatiha': 'Al-Faatiha',
+     'fatiha': 'Al-Faatiha',
+    
+         // Al-Baqarah variants
+     'back': 'Al-Baqara',
+     'back are': 'Al-Baqara',
+     'baker': 'Al-Baqara',
+     'backer': 'Al-Baqara',
+     'baqara': 'Al-Baqara',
+     'bakara': 'Al-Baqara',
+    
+    // Al-Imran variants
+    'all run': 'Al-Imran',
+    'all ran': 'Al-Imran',
+    'elmer': 'Al-Imran',
+    'alimran': 'Al-Imran',
+    
+    // An-Nisa variants
+    'and lisa': 'An-Nisa',
+    'anissa': 'An-Nisa',
+    'anisa': 'An-Nisa',
+    'aneesa': 'An-Nisa',
+    'annisa': 'An-Nisa',
+    'enisa': 'An-Nisa',
+    'a lisa': 'An-Nisa',
+    
+    // Al-Maidah variants
+    'my dad': 'Al-Maidah',
+    'my data': 'Al-Maidah',
+    'almighty': 'Al-Maidah',
+    
+    // Al-Anam variants
+    'and am': 'Al-Anam',
+    'annam': 'Al-Anam',
+    'and i am': 'Al-Anam',
+    
+    // Al-Araf variants
+    'all rough': 'Al-Araf',
+    'allraf': 'Al-Araf',
+    'a rough': 'Al-Araf',
+    
+    // Al-Anfal variants
+    'and fall': 'Al-Anfal',
+    'and fell': 'Al-Anfal',
+    'awful': 'Al-Anfal',
+    
+    // At-Tawbah variants
+    'at toba': 'At-Tawbah',
+    'at tuba': 'At-Tawbah',
+    'a tuba': 'At-Tawbah',
+    
+    // Yunus variants
+    'you miss': 'Yunus',
+    'you ness': 'Yunus',
+    'jonas': 'Yunus',
+    
+    // Yusuf variants
+    'you surf': 'Yusuf',
+    'joseph': 'Yusuf',
+    'you suf': 'Yusuf',
+    
+    // Ibrahim variants
+    'abraham': 'Ibrahim',
+    'abe': 'Ibrahim',
+    
+    // Al-Kahf variants
+    'all calf': 'Al-Kahf',
+    'all half': 'Al-Kahf',
+    'al calf': 'Al-Kahf',
+    
+    // Maryam variants
+    'mary': 'Maryam',
+    'maria': 'Maryam',
+    'marry': 'Maryam',
+    
+    // Ta-Ha variants
+    'ta ha': 'Ta-Ha',
+    'taha': 'Ta-Ha',
+    
+    // Ya-Sin variants
+    'ya sin': 'Ya-Sin',
+    'yasin': 'Ya-Sin',
+    'ya seen': 'Ya-Sin',
+    'yes in': 'Ya-Sin',
+    
+         // Muhammad variants
+     'mohamed': 'Muhammad',
+     'mohammed': 'Muhammad',
+     
+     // Az-Zumar variants
+     'azumar': 'Az-Zumar',
+     'azuma': 'Az-Zumar',
+     'ozumo': 'Az-Zumar',
+     'azumah': 'Az-Zumar',
+     'izumo': 'Az-Zumar',
+     'zumar': 'Az-Zumar',
+    
+    // Ar-Rahman variants
+    'our man': 'Ar-Rahman',
+    'rahman': 'Ar-Rahman',
+    'our rahman': 'Ar-Rahman',
+    
+    // Al-Ikhlas variants
+    'all class': 'Al-Ikhlas',
+    'all close': 'Al-Ikhlas',
+    'a class': 'Al-Ikhlas',
+    
+         // An-Nas variants
+     'and us': 'An-Nas',
+     'and nas': 'An-Nas',
+     'a nas': 'An-Nas',
+     'anas': 'An-Nas',
+     'nas': 'An-Nas',
+     'agnes': 'An-Nas',
+     'agnus': 'An-Nas',
+     'honest': 'An-Nas',
+    
+         // Al-Falaq variants
+     'all flack': 'Al-Falaq',
+     'all flag': 'Al-Falaq',
+     'a flag': 'Al-Falaq',
+     'falak': 'Al-Falaq',
+     'flak': 'Al-Falaq',
+     
+     // Additional common misheard variants
+     'cow': 'Al-Baqarah',
+     'the cow': 'Al-Baqarah',
+     'women': 'An-Nisa',
+     'the women': 'An-Nisa',
+     'cave': 'Al-Kahf',
+     'the cave': 'Al-Kahf',
+     'light': 'An-Nur',
+     'the light': 'An-Nur',
+     'iron': 'Al-Hadid',
+     'the iron': 'Al-Hadid',
+     'moon': 'Al-Qamar',
+     'the moon': 'Al-Qamar',
+     'sun': 'Ash-Shams',
+     'the sun': 'Ash-Shams',
+     'night': 'Al-Layl',
+     'the night': 'Al-Layl',
+     'dawn': 'Al-Fajr',
+     'the dawn': 'Al-Fajr',
+     'elephant': 'Al-Fil',
+     'the elephant': 'Al-Fil',
+     'opening': 'Al-Fatiha',
+     'the opening': 'Al-Fatiha'
+  };
+  
+  const voiceLower = voiceInput.toLowerCase().trim();
+  const mapped = phoneticMappings[voiceLower];
+  
+  if (mapped) {
+    console.log(`Voice search - Phonetic conversion: "${voiceInput}" → "${mapped}"`);
+    return mapped;
+  }
+  
+  // If no phonetic mapping, try to standardize the format
+  // Handle case variations like "al-fatiha" → "Al-Fatiha"
+  if (voiceLower.startsWith('al-') || voiceLower.startsWith('an-') || voiceLower.startsWith('at-') || voiceLower.startsWith('ar-') || voiceLower.startsWith('as-') || voiceLower.startsWith('ash-')) {
+    const parts = voiceInput.split('-');
+    if (parts.length >= 2) {
+      const prefix = parts[0].charAt(0).toUpperCase() + parts[0].slice(1).toLowerCase();
+      const suffix = parts[1].charAt(0).toUpperCase() + parts[1].slice(1).toLowerCase();
+      const standardized = `${prefix}-${suffix}`;
+      console.log(`Voice search - Case standardization: "${voiceInput}" → "${standardized}"`);
+      return standardized;
+    }
+  }
+  
+  // Capitalize first letter for single words
+  const capitalized = voiceInput.charAt(0).toUpperCase() + voiceInput.slice(1).toLowerCase();
+  if (capitalized !== voiceInput) {
+    console.log(`Voice search - Capitalization: "${voiceInput}" → "${capitalized}"`);
+    return capitalized;
+  }
+  
+  return voiceInput;
+}
+
 function initVoiceSearch() {
   // Check if browser supports speech recognition
   if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -8918,15 +9516,29 @@ function initVoiceSearch() {
     // Configure speech recognition
     recognition.continuous = false;
     recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
+    recognition.maxAlternatives = 5; // Get more alternatives for better matching
     
     // Set language based on current app language
     recognition.lang = currentLang === 'ar' ? 'ar-SA' : 'en-US';
     
     // Handle speech recognition results
     recognition.onresult = function(event) {
-      const transcript = event.results[0][0].transcript.trim();
-      console.log('Voice input:', transcript);
+      // Get all alternatives and find the best match
+      const alternatives = [];
+      for (let i = 0; i < event.results[0].length; i++) {
+        alternatives.push(event.results[0][i].transcript.trim());
+      }
+      
+      console.log('Voice alternatives:', alternatives);
+      
+      // Find the best matching alternative against Surah names
+      const bestMatch = findBestSurahMatch(alternatives);
+      let transcript = bestMatch || alternatives[0];
+      
+      // Convert phonetic matches to proper Surah names
+      transcript = convertPhoneticToSurahName(transcript);
+      
+      console.log('Voice input - best match:', transcript);
       console.log('Voice search - transcript length:', transcript.length);
       console.log('Voice search - transcript characters:', transcript.split('').map(c => c.charCodeAt(0)));
       
@@ -8966,6 +9578,16 @@ function initVoiceSearch() {
              performEnhancedVoiceSearch(transcript);
            }, 200);
          } else {
+           // Debug: Log the first few Surah names to see the format
+           if (surahsData && surahsData.length > 0) {
+             console.log('Voice search - Sample Surah data format:');
+             console.log('First Surah:', surahsData[0]);
+             console.log('Second Surah:', surahsData[1]);
+           }
+           if (quickSurahList && quickSurahList.length > 0) {
+             console.log('Voice search - Sample quickSurahList format:');
+             console.log('First item:', quickSurahList[0]);
+           }
            performEnhancedVoiceSearch(transcript);
          }
         
@@ -9030,7 +9652,7 @@ function startVoiceSearch() {
   }
   
   // Update language if changed
-  recognition.lang = currentLang === 'ar' ? 'ar-SA' : 'en-US';
+  recognition.lang ='ar';
   
   // Start listening
   isListening = true;
@@ -9101,7 +9723,7 @@ document.addEventListener('DOMContentLoaded', function() {
   window.switchLanguage = function() {
     originalSwitchLanguage();
     if (recognition) {
-      recognition.lang = currentLang === 'ar' ? 'ar-SA' : 'en-US';
+      recognition.lang = currentLang === 'ar';
     }
   };
 });
