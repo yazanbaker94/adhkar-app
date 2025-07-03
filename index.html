@@ -199,7 +199,7 @@
 
         /* Mobile Navigation Buttons */
         .mobile-nav-buttons {
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             gap: 12px;
@@ -369,6 +369,99 @@
             0% { transform: scale(1); box-shadow: 0 0 0 rgba(34, 197, 94, 0.5); }
             50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(34, 197, 94, 0.8); }
             100% { transform: scale(1); box-shadow: 0 0 0 rgba(34, 197, 94, 0.5); }
+        }
+        
+        /* Enhanced Qibla Alignment Animations */
+        @keyframes qibla-perfect-alignment {
+            0% { 
+                transform: scale(1) rotate(0deg); 
+                box-shadow: 0 0 0 rgba(34, 197, 94, 0.8);
+                filter: brightness(1);
+            }
+            25% { 
+                transform: scale(1.15) rotate(2deg); 
+                box-shadow: 0 0 30px rgba(34, 197, 94, 1);
+                filter: brightness(1.2);
+            }
+            50% { 
+                transform: scale(1.2) rotate(-1deg); 
+                box-shadow: 0 0 40px rgba(34, 197, 94, 0.9);
+                filter: brightness(1.3);
+            }
+            75% { 
+                transform: scale(1.15) rotate(1deg); 
+                box-shadow: 0 0 35px rgba(34, 197, 94, 1);
+                filter: brightness(1.2);
+            }
+            100% { 
+                transform: scale(1) rotate(0deg); 
+                box-shadow: 0 0 0 rgba(34, 197, 94, 0.8);
+                filter: brightness(1);
+            }
+        }
+        
+        @keyframes qibla-glow-pulse {
+            0% { 
+                box-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
+                background: linear-gradient(45deg, #22c55e, #16a34a);
+            }
+            50% { 
+                box-shadow: 0 0 25px rgba(34, 197, 94, 0.9);
+                background: linear-gradient(45deg, #16a34a, #22c55e);
+            }
+            100% { 
+                box-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
+                background: linear-gradient(45deg, #22c55e, #16a34a);
+            }
+        }
+        
+        @keyframes qibla-text-glow {
+            0% { 
+                text-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
+                color: #16a34a;
+            }
+            50% { 
+                text-shadow: 0 0 15px rgba(34, 197, 94, 0.8);
+                color: #22c55e;
+            }
+            100% { 
+                text-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
+                color: #16a34a;
+            }
+        }
+        
+        @keyframes qibla-ring-expand {
+            0% { 
+                transform: scale(1);
+                opacity: 0.8;
+                border-width: 2px;
+            }
+            50% { 
+                transform: scale(1.3);
+                opacity: 0.4;
+                border-width: 3px;
+            }
+            100% { 
+                transform: scale(1.6);
+                opacity: 0;
+                border-width: 1px;
+            }
+        }
+        
+        .qibla-perfect-aligned {
+            animation: qibla-perfect-alignment 1.5s ease-in-out infinite;
+        }
+        
+        .qibla-glow {
+            animation: qibla-glow-pulse 2s ease-in-out infinite;
+        }
+        
+        .qibla-text-glow {
+            animation: qibla-text-glow 1.5s ease-in-out infinite;
+        }
+        
+        .qibla-ring-expand {
+            animation: qibla-ring-expand 2s ease-in-out infinite;
         }
 
         /* General UI Element Styles */
@@ -593,6 +686,55 @@
             background: linear-gradient(135deg, rgba(96, 165, 250, 0.15), rgba(96, 165, 250, 0.08));
             border-color: rgba(96, 165, 250, 0.3);
             box-shadow: 0 2px 8px rgba(96, 165, 250, 0.2);
+        }
+        
+        /* Quran Search Styles */
+        .quran-search-container {
+            position: relative;
+        }
+        
+        .search-result-item {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .search-result-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-result-item:active {
+            transform: translateY(0);
+        }
+        
+        /* Custom scrollbar for search results */
+        #quranSearchResults::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        #quranSearchResults::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 3px;
+        }
+        
+        #quranSearchResults::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+        
+        #quranSearchResults::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .dark #quranSearchResults::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .dark #quranSearchResults::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .dark #quranSearchResults::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
         
         .dark .tab.active {
@@ -1688,6 +1830,40 @@
                         </div>
                         </div>
                         
+                <!-- Quran Search Bar -->
+                <div class="quran-search-container mb-4">
+                    <div class="relative">
+                                        <div class="flex items-center bg-white/90 dark:bg-gray-700/90 backdrop-blur-sm border border-gray-200 dark:border-gray-600 rounded-xl shadow-lg overflow-hidden" dir="ltr">
+                    <div class="flex-shrink-0 pl-4">
+                        <i class="fas fa-search text-gray-400 dark:text-gray-500"></i>
+                    </div>
+                    <input 
+                        type="text" 
+                        id="quranSearchInput" 
+                        class="flex-1 px-3 py-3 bg-transparent border-none outline-none text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400"
+                        placeholder="البحث في القرآن - Search Quran..."
+                        autocomplete="off"
+                        dir="auto"
+                    >
+                    <div class="flex-shrink-0 pr-2">
+                        <button 
+                            id="quranSearchClearBtn" 
+                            class="hidden p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                            onclick="clearQuranSearch()"
+                            title="Clear Search - مسح البحث"
+                        >
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                        
+                        <!-- Search Results Dropdown -->
+                        <div id="quranSearchResults" class="absolute top-full left-0 right-0 mt-2 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200 dark:border-gray-600 rounded-xl shadow-2xl max-h-96 overflow-y-auto z-[60] hidden">
+                            <!-- Results will be populated here -->
+                        </div>
+                    </div>
+                </div>
+                        
                 <!-- Quran Settings Side Menu -->
                 <div id="quranSettingsMenu" class="fixed inset-y-0 right-0 w-80 bg-white/95 dark:bg-gray-900/95 shadow-2xl border-l border-white/30 dark:border-gray-600/50 transform translate-x-full transition-transform duration-200 ease-in-out z-50 hidden" style="background-image: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 40% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%);">
                     <div class="flex flex-col h-full">
@@ -2049,11 +2225,7 @@
                         </button>
                     </div>
                     <div class="space-y-3 text-sm text-gray-600 dark:text-gray-300" id="helpModalContent">
-                        <p>1. اضغط على "ابدأ البوصلة" للبدء</p>
-                        <p>2. امسك الجهاز بشكل مسطح</p>
-                        <p>3. السهم الأحمر يشير إلى الشمال</p>
-                        <p>4. رمز الكعبة يشير إلى القبلة</p>
-                        <p>5. اتجه حتى يصبح رمز الكعبة في الأعلى</p>
+                        <!-- Content will be populated by JavaScript -->
                     </div>
                     <button onclick="closeCompassHelp()" class="w-full mt-4 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors">
                         <span id="closeHelpText">حسناً</span>
@@ -2302,7 +2474,7 @@
             </div>
 
             <!-- Adhkar View Section -->
-            <div id="adhkarView" class="hidden max-w-xl p-6 bg-white/90 dark:bg-gray-800/90 rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 space-y-6 text-center no-select mx-auto islamic-pattern">
+            <div id="adhkarView" class="hidden max-w-xl mt-6 p-6 bg-white/90 dark:bg-gray-800/90 rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 space-y-6 text-center no-select mx-auto islamic-pattern">
                 <!-- Header with Back Button and Counter -->
                 <div class="flex justify-between items-center mb-4">
                     <button onclick="goHome()" class="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-700" title="Back - العودة">
@@ -3030,6 +3202,13 @@ let scrollTimeout = null;
         calculating: "جاري الحساب...",
         clickStartCompass: "اضغط \"ابدأ البوصلة\" للبدء",
         notConnected: "غير متصل",
+        compassInstructions: [
+          "1. اضغط على \"ابدأ البوصلة\" للبدء",
+          "2. امسك الجهاز بشكل مسطح",
+          "3. السهم الأحمر يشير إلى الشمال",
+          "4. رمز الكعبة يشير إلى القبلة",
+          "5. اتجه حتى يصبح رمز الكعبة في الأعلى"
+        ],
         turnLeft: "اتجه يساراً",
               tiltMessage: "أمل جهازك بشكل مسطح",
               notificationPermissionDenied: "يرجى السماح بالإشعارات لتلقي تنبيهات أوقات الصلاة",
@@ -3254,6 +3433,13 @@ let scrollTimeout = null;
         calculating: "Calculating...",
         clickStartCompass: "Click 'Start Compass' to begin",
         notConnected: "Not connected",
+        compassInstructions: [
+          "1. Click 'Start Compass' to begin",
+          "2. Hold your device flat",
+          "3. The red arrow points to North",
+          "4. The Kaaba icon points to Qibla",
+          "5. Turn until the Kaaba icon is at the top"
+        ],
         turnLeft: "Turn left",
               tiltMessage: "Hold device flat",
               notificationPermissionDenied: "Please allow notifications to receive prayer time alerts",
@@ -3288,7 +3474,7 @@ let scrollTimeout = null;
               bookmarkVerse: "Click to bookmark this verse",
               translationNames: {
                   // English
-                  "en.sahih": "English (Sahih International)",
+                  "en.sahih": "English (Sahih Intl)",
                   "en.pickthall": "English (Pickthall)",
                   "en.yusufali": "English (Yusuf Ali)",
                   "en.hilali": "English (Hilali-Khan)",
@@ -3676,19 +3862,19 @@ let scrollTimeout = null;
           // Calculate alignment difference for status
           const alignmentDiff = Math.min(qiblaRelative, 360 - qiblaRelative);
 
-          // Update direction status with smooth scrolling effect
+          // Update direction status with enhanced animations
           if (directionStatus) {
               if (alignmentDiff <= 5) {
                   directionStatus.textContent = languages[currentLang].facingQibla;
-                  directionStatus.className = 'text-sm text-green-600 dark:text-green-400 font-semibold animate-pulse';
+                  directionStatus.className = 'text-sm font-semibold qibla-text-glow';
                   
                   // Add haptic feedback when perfectly aligned
                   if (alignmentDiff <= 2 && 'vibrate' in navigator) {
-                      navigator.vibrate([50]);
+                      navigator.vibrate([100, 50, 100]);
                   }
               } else if (alignmentDiff <= 15) {
                   directionStatus.textContent = languages[currentLang].closeToQibla;
-                  directionStatus.className = 'text-sm text-yellow-600 dark:text-yellow-400';
+                  directionStatus.className = 'text-sm text-yellow-600 dark:text-yellow-400 animate-pulse';
               } else {
                   // Calculate turn direction and angle
                   const turnAngle = Math.round(Math.min(qiblaRelative, 360 - qiblaRelative));
@@ -3712,29 +3898,52 @@ let scrollTimeout = null;
               }
           }
 
-          // Add visual feedback when aligned
+          // Add enhanced visual feedback when aligned
           const qiblaTab = document.getElementById('qiblaTab');
           const qiblaIndicator = document.querySelector('.bg-green-500.animate-pulse');
+          const alignmentRings = document.querySelectorAll('#alignmentRings .ring');
           
           if (qiblaTab) {
               if (alignmentDiff <= 5) {
-                  qiblaTab.style.backgroundColor = 'rgba(34, 197, 94, 0.1)';
+                  qiblaTab.classList.add('qibla-glow');
+                  qiblaTab.style.backgroundColor = 'rgba(34, 197, 94, 0.15)';
                   qiblaTab.style.borderColor = 'rgb(34, 197, 94)';
-                  qiblaTab.style.boxShadow = '0 0 20px rgba(34, 197, 94, 0.5)';
+                  qiblaTab.style.boxShadow = '0 0 30px rgba(34, 197, 94, 0.8)';
+                  qiblaTab.style.transform = 'scale(1.02)';
               } else {
+                  qiblaTab.classList.remove('qibla-glow');
                   qiblaTab.style.backgroundColor = '';
                   qiblaTab.style.borderColor = '';
                   qiblaTab.style.boxShadow = '';
+                  qiblaTab.style.transform = '';
               }
           }
+          
+          // Enhance compass rose animation when aligned
+          if (compassRose && alignmentDiff <= 5) {
+              compassRose.classList.add('qibla-perfect-aligned');
+          } else if (compassRose) {
+              compassRose.classList.remove('qibla-perfect-aligned');
+          }
+          
+          // Add expanding ring animation
+          alignmentRings.forEach((ring, index) => {
+              if (alignmentDiff <= 5) {
+                  ring.classList.add('qibla-ring-expand');
+                  ring.style.animationDelay = `${index * 0.3}s`;
+              } else {
+                  ring.classList.remove('qibla-ring-expand');
+                  ring.style.animationDelay = '';
+              }
+          });
           
           // Enhance qibla indicator animation when aligned
           if (qiblaIndicator) {
               if (alignmentDiff <= 5) {
-                  qiblaIndicator.style.animation = 'pulse 1s ease-in-out infinite, bounce 2s ease-in-out infinite';
-                  qiblaIndicator.style.transform = 'scale(1.1)';
-                  qiblaIndicator.style.boxShadow = '0 0 30px rgba(34, 197, 94, 0.8)';
+                  qiblaIndicator.classList.add('qibla-perfect-aligned');
+                  qiblaIndicator.style.boxShadow = '0 0 40px rgba(34, 197, 94, 1)';
               } else {
+                  qiblaIndicator.classList.remove('qibla-perfect-aligned');
                   qiblaIndicator.style.animation = 'pulse 2s ease-in-out infinite';
                   qiblaIndicator.style.transform = 'scale(1)';
                   qiblaIndicator.style.boxShadow = '';
@@ -3811,7 +4020,17 @@ let scrollTimeout = null;
 
       // Show compass help modal
       function showCompassHelp() {
+          updateCompassHelpContent();
           document.getElementById('compassHelpModal').classList.remove('hidden');
+      }
+      
+      // Update compass help modal content based on current language
+      function updateCompassHelpContent() {
+          const helpModalContent = document.getElementById('helpModalContent');
+          if (helpModalContent) {
+              const instructions = languages[currentLang].compassInstructions;
+              helpModalContent.innerHTML = instructions.map(instruction => `<p>${instruction}</p>`).join('');
+          }
       }
 
       // Close compass help modal
@@ -3838,6 +4057,9 @@ let scrollTimeout = null;
                   qiblaDistance.textContent = languages[currentLang].calculating;
               }
           }
+          
+          // Update compass help modal content
+          updateCompassHelpContent();
           
           // If compass is active, update display
           if (compassActive) {
@@ -5257,6 +5479,12 @@ function showARUnsupported(errorType) {
                           } else {
                               resetQuranContent();
                           }
+                          
+                          // Initialize Quran search if not already done
+                          if (!document.getElementById('quranSearchInput').hasAttribute('data-initialized')) {
+                              initializeQuranSearch();
+                              document.getElementById('quranSearchInput').setAttribute('data-initialized', 'true');
+                          }
                       } catch (error) {
                           const arabicText = document.getElementById('arabicText');
                           if (arabicText) {
@@ -6185,6 +6413,7 @@ function showARUnsupported(errorType) {
   return;
 }
           const bismillahText = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
+          const bismillahText2 = 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ';
           let bismillahHtml = '';
           let ayahText = surah.ayahs[currentAyah].text;
           let translationAyah = translation.ayahs[currentAyah];
@@ -6193,18 +6422,10 @@ function showARUnsupported(errorType) {
           // For all surahs except At-Tawbah, show Bismillah at the top and remove from ayah text if present
           if (currentAyah === 0 && currentSurah !== 8) {
             ayahText = ayahText.replace('بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ', '');
-
+            ayahText = ayahText.replace('بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ', '');
             
             bismillahHtml = `
               <div class="text-center my-6 text-xl md:text-3xl quran-uthmani-font text-gray-700 dark:text-gray-200 select-none max-w-full md:max-w-2xl mx-auto" dir="rtl" style="font-family: 'Quran.com Font', Arial, sans-serif; letter-spacing: 0.05em; margin-bottom: 2rem;">${bismillahText}</div>
-              <div class="mobile-nav-buttons">
-                <button onclick="prevAyah()" id="btnPrevAyahMobile" class="mobile-nav-btn" title="Previous - ${languages[currentLang].previousVerse}">
-                  <i class="fas fa-chevron-${currentLang === 'ar' ? 'right' : 'left'}"></i> ${languages[currentLang].previousVerse}
-                </button>
-                <button onclick="nextAyah()" id="btnNextAyahMobile" class="mobile-nav-btn" title="Next - ${languages[currentLang].nextVerse}">
-                  ${languages[currentLang].nextVerse} <i class="fas fa-chevron-${currentLang === 'ar' ? 'left' : 'right'}"></i>
-                </button>
-              </div>
             `;
             // If ayahText is empty after removing Bismillah (e.g., Al-Fatiha where first ayah is only Bismillah), 
             // skip to the actual first content ayah and increment currentAyah accordingly
@@ -6212,23 +6433,15 @@ function showARUnsupported(errorType) {
               currentAyah = 1; // Actually move to the next ayah
               ayahText = surah.ayahs[1].text;
               ayahText = ayahText.replace('بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ', '');
+              ayahText = ayahText.replace('بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ', '');
 
               translationAyah = translation.ayahs[1];
               ayahNumber = surah.ayahs[1].numberInSurah;
               displayedAyahIndex = 1;
             }
           } else if (currentAyah === 0 && currentSurah === 8) {
-            // For At-Tawbah first verse, add mobile navigation without bismillah
-            bismillahHtml = `
-              <div class="mobile-nav-buttons" style="margin-top: 20px;">
-                <button onclick="prevAyah()" id="btnPrevAyahMobile" class="mobile-nav-btn" title="Previous - ${languages[currentLang].previousVerse}">
-                  <i class="fas fa-chevron-${currentLang === 'ar' ? 'right' : 'left'}"></i> ${languages[currentLang].previousVerse}
-                </button>
-                <button onclick="nextAyah()" id="btnNextAyahMobile" class="mobile-nav-btn" title="Next - ${languages[currentLang].nextVerse}">
-                  ${languages[currentLang].nextVerse} <i class="fas fa-chevron-${currentLang === 'ar' ? 'left' : 'right'}"></i>
-                </button>
-              </div>
-            `;
+            // For At-Tawbah first verse, no bismillah
+            bismillahHtml = '';
           }
           // Log the ayah text as it will be displayed (after Bismillah removal)
           if (currentAyah === 0 && currentSurah !== 8) {
@@ -6242,10 +6455,8 @@ function showARUnsupported(errorType) {
               <span id="tafsir-loading">${currentLang === 'ar' ? 'جاري التحميل...' : 'Loading...'}</span>
             </div>`;
           }
-          // Add mobile navigation buttons for all verses if not already included in bismillahHtml
-          let mobileNavHtml = '';
-          if (!bismillahHtml.includes('mobile-nav-buttons')) {
-            mobileNavHtml = `
+          // Add mobile navigation buttons for all verses
+          let mobileNavHtml = `
               <div class="mobile-nav-buttons">
                 <button onclick="prevAyah()" id="btnPrevAyahMobile" class="mobile-nav-btn" title="Previous - ${languages[currentLang].previousVerse}">
                   <i class="fas fa-chevron-${currentLang === 'ar' ? 'right' : 'left'}"></i> ${languages[currentLang].previousVerse}
@@ -6255,7 +6466,6 @@ function showARUnsupported(errorType) {
                 </button>
               </div>
             `;
-          }
 
           const html = `
             <div class="mb-6">
@@ -6493,6 +6703,7 @@ function showARUnsupported(errorType) {
           let ayahText = surah.ayahs[currentAyah].text;
           if (currentAyah === 0 && currentSurah !== 8) {
             ayahText = ayahText.replace('بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ', '');
+            ayahText = ayahText.replace('بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ', '');
           }
             console.log("ayahText",ayahText)
           
@@ -6523,7 +6734,7 @@ function showARUnsupported(errorType) {
       }
 
       // Update displayReadingModeAyahs to fetch tafsir per ayah and group by pages
-      async function displayReadingModeAyahsByPages(shouldScrollToBookmark = false, scrollToVerseId = null) {
+      async function displayReadingModeAyahsByPages(shouldScrollToBookmark = false, scrollToVerseId = null, targetVerse = null) {
         const arabicText = document.getElementById('arabicText');
         const translationText = document.getElementById('translationText');
         const bookmarkText = languages[currentLang].bookmarkVerse;
@@ -6555,6 +6766,11 @@ function showARUnsupported(errorType) {
         if (currentSurah !== 8) {
           bismillahHtml = `
             <div class="text-center my-6 text-xl md:text-3xl quran-uthmani-font text-gray-700 dark:text-gray-200 select-none max-w-full md:max-w-2xl mx-auto" dir="rtl" style="font-family: 'Quran.com Font', Arial, sans-serif; letter-spacing: 0.05em; margin-bottom: 2rem;">${bismillahText}</div>
+          `;
+        }
+        
+        // Add mobile navigation for reading mode
+        let mobileNavReadingHtml = `
             <div class="mobile-nav-buttons">
               <button onclick="prevAyah()" id="btnPrevAyahMobileReading" class="mobile-nav-btn" title="Previous Surah - ${languages[currentLang].previousSurah}">
                 <i class="fas fa-chevron-${currentLang === 'ar' ? 'right' : 'left'}"></i> ${languages[currentLang].previousSurah}
@@ -6564,21 +6780,9 @@ function showARUnsupported(errorType) {
               </button>
             </div>
           `;
-        } else {
-          // For At-Tawbah (no bismillah), add mobile nav buttons at the top
-          bismillahHtml = `
-            <div class="mobile-nav-buttons" style="margin-top: 20px;">
-              <button onclick="prevAyah()" id="btnPrevAyahMobileReading" class="mobile-nav-btn" title="Previous Surah - ${languages[currentLang].previousSurah}">
-                <i class="fas fa-chevron-${currentLang === 'ar' ? 'right' : 'left'}"></i> ${languages[currentLang].previousSurah}
-              </button>
-              <button onclick="nextAyah()" id="btnNextAyahMobileReading" class="mobile-nav-btn" title="Next Surah - ${languages[currentLang].nextSurah}">
-                ${languages[currentLang].nextSurah} <i class="fas fa-chevron-${currentLang === 'ar' ? 'left' : 'right'}"></i>
-              </button>
-            </div>
-          `;
-        }
         
         html += bismillahHtml;
+        html += mobileNavReadingHtml;
         
         // Sort pages numerically and render each page group
         const sortedPages = Object.keys(pageGroups).sort((a, b) => parseInt(a) - parseInt(b));
@@ -6606,6 +6810,7 @@ function showARUnsupported(errorType) {
             // Remove Bismillah from first verse if needed
             if (verseData.originalIndex === 0 && currentSurah !== 8) {
               ayahText = ayahText.replace('بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ', '');
+              ayahText = ayahText.replace('بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ', '');
               console.log("ayahText",ayahText)
             console.log("verseData",verseData.originalIndex)
             }
@@ -6703,6 +6908,12 @@ function showARUnsupported(errorType) {
           if (verseElem) {
             verseElem.scrollIntoView({ behavior: 'auto', block: 'center' });
           }
+        } else if (shouldScrollToBookmark && targetVerse) {
+          // Scroll to target verse from search
+          const verseElem = document.getElementById(`verse-${targetVerse.surahIndex}-${targetVerse.ayahIndex}`);
+          if (verseElem) {
+            verseElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
         }
       }
 
@@ -6718,9 +6929,21 @@ function showARUnsupported(errorType) {
               btn.removeAttribute('data-tooltip');
               btn.classList.remove('show-tooltip');
               btn.setAttribute('title', 'Toggle Reading Mode - تبديل وضع القراءة');
-              // Don't reset currentAyah to 0, keep the current position
+              
+              // Check if we have a target verse from search
+              let targetVerseForScroll = null;
+              if (targetVerseFromSearch) {
+                  // Set the current position to the target verse
+                  currentSurah = targetVerseFromSearch.surahIndex;
+                  currentAyah = targetVerseFromSearch.ayahIndex;
+                  // Store the target verse for scrolling before clearing it
+                  targetVerseForScroll = { ...targetVerseFromSearch };
+                  // Clear the target verse after using it
+                  targetVerseFromSearch = null;
+              }
+              
               loadReadingModeAyahs();
-              displayReadingModeAyahsByPages(true); // Only scroll to bookmark when entering reading mode
+              displayReadingModeAyahsByPages(true, null, targetVerseForScroll); // Pass target verse for scrolling
               
 
           } else {
@@ -7874,6 +8097,9 @@ function showARUnsupported(errorType) {
                 currentAyah = 0;
                 isReadingMode = false;
                 document.getElementById('btnReadingMode').innerHTML = '<i class="fas fa-book-open"></i>';
+                
+                // Clear target verse from search when manually selecting a surah
+                targetVerseFromSearch = null;
             
             // Update button text
             const surah = quranData[surahIndex];
@@ -7914,6 +8140,9 @@ function showARUnsupported(errorType) {
 
         // Function to load quick surah (from quick access buttons)
         function loadQuickSurah(surahNumber) {
+            // Clear target verse from search when using quick surah access
+            targetVerseFromSearch = null;
+            
             // Ensure data is loaded
             if (!quranData) {
                 // Show loading state
@@ -8041,6 +8270,7 @@ function showARUnsupported(errorType) {
             return Array.from(variants);
         }
         
+        // Enhanced fuzzy search for surahs
         function searchSurahs(query) {
             if (!query.trim()) {
                 // If no query, show full list if available, otherwise show quick list
@@ -8057,58 +8287,17 @@ function showARUnsupported(errorType) {
             // Use full data if available, otherwise search in quick list
             const searchData = surahsData.length > 0 ? surahsData : quickSurahList;
             
-            const filteredSurahs = searchData.filter(surah => {
-                const arabicName = surah.name || '';
-                const englishName = surah.englishName || '';
-                
-                // Check exact matches first
-                if (arabicName.includes(searchTerm) || 
-                    englishName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    surah.number.toString().includes(searchTerm)) {
-                    return true;
-                }
-                
-                // Normalize both search term and surah name
-                const searchNormalized = normalizeArabicText(searchTerm);
-                const arabicNormalized = normalizeArabicText(arabicName);
-                
-                // Check normalized match
-                if (arabicNormalized.includes(searchNormalized)) {
-                    return true;
-                }
-                
-                // Handle definite article cases with normalization
-                let searchWithoutAl = searchTerm;
-                let searchWithAl = searchTerm;
-                
-                if (searchTerm.startsWith('ال')) {
-                    searchWithoutAl = searchTerm.substring(2);
-                } else if (searchNormalized.startsWith('ال')) {
-                    searchWithoutAl = searchNormalized.substring(2);
-                } else {
-                    searchWithAl = 'ال' + searchTerm;
-                }
-                
-                // Comprehensive search with all variations
-                const searchVariants = [
-                    searchTerm,
-                    searchNormalized,
-                    searchWithoutAl,
-                    searchWithAl,
-                    normalizeArabicText(searchWithoutAl),
-                    normalizeArabicText(searchWithAl)
-                ].filter(v => v && v.length > 0);
-                
-                // Check if any variant matches
-                return searchVariants.some(variant => 
-                    arabicName.includes(variant) || 
-                    arabicNormalized.includes(variant) ||
-                    arabicNormalized.includes(normalizeArabicText(variant))
-                );
-            });
+            // Enhanced fuzzy matching with comprehensive scoring
+            const scoredSurahs = searchData.map(surah => {
+                const score = calculateComprehensiveSurahMatchScore(searchTerm, surah);
+                return { ...surah, score };
+            }).filter(surah => surah.score > 0);
+            
+            // Sort by score (highest first)
+            scoredSurahs.sort((a, b) => b.score - a.score);
             
             // If no results in quick list but full data is loading, show a message
-            if (filteredSurahs.length === 0 && surahsData.length === 0 && quranData) {
+            if (scoredSurahs.length === 0 && surahsData.length === 0 && quranData) {
                 const surahList = document.getElementById('surahList');
                 surahList.innerHTML = `
                     <div class="p-4 text-center text-gray-500">
@@ -8119,7 +8308,1105 @@ function showARUnsupported(errorType) {
                 return;
             }
             
-            populateSurahList(filteredSurahs);
+            populateSurahList(scoredSurahs);
+        }
+        
+        // Calculate comprehensive match score for fuzzy search
+        function calculateComprehensiveSurahMatchScore(searchTerm, surah) {
+            const arabicName = surah.name || '';
+            const englishName = surah.englishName || '';
+            const number = surah.number.toString();
+            
+            let maxScore = 0;
+            
+            // Exact matches get highest score
+            if (arabicName === searchTerm || englishName.toLowerCase() === searchTerm.toLowerCase() || number === searchTerm) {
+                return 1000;
+            }
+            
+            // Check number match
+            if (number.includes(searchTerm)) {
+                maxScore = Math.max(maxScore, 900);
+            }
+            
+            // Get comprehensive search variants
+            const searchVariants = generateComprehensiveSearchVariants(searchTerm);
+            const surahVariants = generateComprehensiveSurahVariants(surah);
+            
+            // Check all combinations
+            for (const searchVariant of searchVariants) {
+                for (const surahVariant of surahVariants) {
+                    const score = calculateStringMatchScore(searchVariant, surahVariant);
+                    maxScore = Math.max(maxScore, score);
+                }
+            }
+            
+            // Additional similarity scoring based on character length and common patterns
+            const similarityScore = calculateSimilarityScore(searchTerm, surah);
+            maxScore = Math.max(maxScore, similarityScore);
+            
+            return maxScore;
+        }
+        
+        // Generate comprehensive search term variants
+        function generateComprehensiveSearchVariants(searchTerm) {
+            const variants = new Set();
+            const original = searchTerm.toLowerCase().trim();
+            
+            // Add original
+            variants.add(original);
+            
+            // Remove common prefixes
+            const prefixes = ['al-', 'al ', 'an-', 'an ', 'as-', 'as ', 'at-', 'at ', 'ar-', 'ar ', 
+                             'surat ', 'surah ', 'سورة ', 'سوره '];
+            prefixes.forEach(prefix => {
+                if (original.startsWith(prefix)) {
+                    variants.add(original.substring(prefix.length));
+                }
+            });
+            
+            // Add with common prefixes
+            variants.add('al-' + original);
+            variants.add('al ' + original);
+            variants.add('an-' + original);
+            variants.add('surat ' + original);
+            variants.add('surah ' + original);
+            
+            // Handle Arabic variations
+            if (isArabicText(original)) {
+                variants.add(normalizeArabicText(original));
+                
+                // Handle definite article variations
+                if (original.startsWith('ال')) {
+                    variants.add(original.substring(2));
+                } else {
+                    variants.add('ال' + original);
+                }
+                
+                // Handle Arabic numeral conversions
+                const arabicNumerals = {
+                    '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+                    '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+                };
+                let converted = original;
+                for (const [arabic, english] of Object.entries(arabicNumerals)) {
+                    converted = converted.replace(new RegExp(arabic, 'g'), english);
+                }
+                if (converted !== original) {
+                    variants.add(converted);
+                }
+            }
+            
+            // Handle transliteration variations
+            const transliterationMap = {
+                'waqia': 'waqi\'ah',
+                'waqiah': 'waqi\'ah',
+                'waqiyah': 'waqi\'ah',
+                'waq': 'waqi\'ah',
+                'al-waq': 'al-waqi\'ah',
+                'alwaq': 'al-waqi\'ah',
+                'ikhlas': 'ikhlas',
+                'ikhlaas': 'ikhlas',
+                'iklas': 'ikhlas',
+                'class': 'ikhlas',
+                'close': 'ikhlas',
+                'nas': 'nas',
+                'naas': 'nas',
+                'people': 'nas',
+                'mankind': 'nas',
+                'falaq': 'falaq',
+                'falaaq': 'falaq',
+                'daybreak': 'falaq',
+                'dawn': 'falaq',
+                'fajr': 'fajr',
+                'baqara': 'baqarah',
+                'baqarah': 'baqarah',
+                'bakara': 'baqarah',
+                'cow': 'baqarah',
+                'imran': 'imran',
+                'ali imran': 'imran',
+                'al imran': 'imran',
+                'nisa': 'nisa',
+                'nisaa': 'nisa',
+                'women': 'nisa',
+                'maidah': 'maidah',
+                'maidaah': 'maidah',
+                'table': 'maidah',
+                'anam': 'anam',
+                'anaam': 'anam',
+                'cattle': 'anam',
+                'araf': 'araf',
+                'araaf': 'araf',
+                'heights': 'araf',
+                'anfal': 'anfal',
+                'anfaal': 'anfal',
+                'spoils': 'anfal',
+                'tawbah': 'tawbah',
+                'tawba': 'tawbah',
+                'toba': 'tawbah',
+                'repentance': 'tawbah',
+                'yunus': 'yunus',
+                'jonah': 'yunus',
+                'jonas': 'yunus',
+                'hud': 'hud',
+                'yusuf': 'yusuf',
+                'joseph': 'yusuf',
+                'raad': 'raad',
+                'ra\'ad': 'raad',
+                'thunder': 'raad',
+                'ibrahim': 'ibrahim',
+                'abraham': 'ibrahim',
+                'hijr': 'hijr',
+                'nahl': 'nahl',
+                'bee': 'nahl',
+                'isra': 'isra',
+                'israa': 'isra',
+                'night journey': 'isra',
+                'kahf': 'kahf',
+                'cave': 'kahf',
+                'maryam': 'maryam',
+                'mary': 'maryam',
+                'maria': 'maryam',
+                'taha': 'taha',
+                'ta-ha': 'taha',
+                'anbiya': 'anbiya',
+                'anbiyaa': 'anbiya',
+                'prophets': 'anbiya',
+                'hajj': 'hajj',
+                'pilgrimage': 'hajj',
+                'muminun': 'muminun',
+                'mu\'minun': 'muminun',
+                'believers': 'muminun',
+                'nur': 'nur',
+                'noor': 'nur',
+                'light': 'nur',
+                'furqan': 'furqan',
+                'criterion': 'furqan',
+                'shuara': 'shuara',
+                'shu\'ara': 'shuara',
+                'poets': 'shuara',
+                'naml': 'naml',
+                'ant': 'naml',
+                'qasas': 'qasas',
+                'stories': 'qasas',
+                'ankabut': 'ankabut',
+                'spider': 'ankabut',
+                'rum': 'rum',
+                'romans': 'rum',
+                'luqman': 'luqman',
+                'lukman': 'luqman',
+                'sajda': 'sajda',
+                'sajdah': 'sajda',
+                'prostration': 'sajda',
+                'ahzab': 'ahzab',
+                'confederates': 'ahzab',
+                'saba': 'saba',
+                'sheba': 'saba',
+                'fatir': 'fatir',
+                'creator': 'fatir',
+                'yasin': 'yasin',
+                'ya-sin': 'yasin',
+                'saffat': 'saffat',
+                'ranks': 'saffat',
+                'sad': 'sad',
+                'zumar': 'zumar',
+                'groups': 'zumar',
+                'ghafir': 'ghafir',
+                'forgiver': 'ghafir',
+                'fussilat': 'fussilat',
+                'explained': 'fussilat',
+                'shura': 'shura',
+                'consultation': 'shura',
+                'zukhruf': 'zukhruf',
+                'ornaments': 'zukhruf',
+                'dukhan': 'dukhan',
+                'smoke': 'dukhan',
+                'jathiya': 'jathiya',
+                'kneeling': 'jathiya',
+                'ahqaf': 'ahqaf',
+                'sand dunes': 'ahqaf',
+                'muhammad': 'muhammad',
+                'mohammed': 'muhammad',
+                'mohamed': 'muhammad',
+                'fath': 'fath',
+                'victory': 'fath',
+                'hujurat': 'hujurat',
+                'chambers': 'hujurat',
+                'qaf': 'qaf',
+                'dhariyat': 'dhariyat',
+                'winds': 'dhariyat',
+                'tur': 'tur',
+                'mount': 'tur',
+                'najm': 'najm',
+                'star': 'najm',
+                'qamar': 'qamar',
+                'moon': 'qamar',
+                'rahman': 'rahman',
+                'most merciful': 'rahman',
+                'waqia': 'waqia',
+                'waqi\'ah': 'waqia',
+                'event': 'waqia',
+                'hadid': 'hadid',
+                'iron': 'hadid',
+                'mujadila': 'mujadila',
+                'pleading': 'mujadila',
+                'hashr': 'hashr',
+                'exile': 'hashr',
+                'mumtahina': 'mumtahina',
+                'examined': 'mumtahina',
+                'saff': 'saff',
+                'ranks': 'saff',
+                'jumua': 'jumua',
+                'jumu\'ah': 'jumua',
+                'friday': 'jumua',
+                'munafiqun': 'munafiqun',
+                'hypocrites': 'munafiqun',
+                'taghabun': 'taghabun',
+                'mutual loss': 'taghabun',
+                'talaq': 'talaq',
+                'divorce': 'talaq',
+                'tahrim': 'tahrim',
+                'prohibition': 'tahrim',
+                'mulk': 'mulk',
+                'sovereignty': 'mulk',
+                'qalam': 'qalam',
+                'pen': 'qalam',
+                'haqqah': 'haqqah',
+                'reality': 'haqqah',
+                'maarij': 'maarij',
+                'ascending': 'maarij',
+                'nuh': 'nuh',
+                'noah': 'nuh',
+                'jinn': 'jinn',
+                'muzzammil': 'muzzammil',
+                'wrapped': 'muzzammil',
+                'muddathir': 'muddathir',
+                'cloaked': 'muddathir',
+                'qiyama': 'qiyama',
+                'qiyamah': 'qiyama',
+                'resurrection': 'qiyama',
+                'insan': 'insan',
+                'man': 'insan',
+                'mursalat': 'mursalat',
+                'sent forth': 'mursalat',
+                'naba': 'naba',
+                'news': 'naba',
+                'naziat': 'naziat',
+                'pullers': 'naziat',
+                'abasa': 'abasa',
+                'frowned': 'abasa',
+                'takwir': 'takwir',
+                'folding': 'takwir',
+                'infitar': 'infitar',
+                'cleaving': 'infitar',
+                'mutaffifin': 'mutaffifin',
+                'defrauding': 'mutaffifin',
+                'inshiqaq': 'inshiqaq',
+                'splitting': 'inshiqaq',
+                'buruj': 'buruj',
+                'constellations': 'buruj',
+                'tariq': 'tariq',
+                'night comer': 'tariq',
+                'ala': 'ala',
+                'a\'la': 'ala',
+                'most high': 'ala',
+                'ghashiya': 'ghashiya',
+                'overwhelming': 'ghashiya',
+                'shams': 'shams',
+                'sun': 'shams',
+                'layl': 'layl',
+                'night': 'layl',
+                'duha': 'duha',
+                'morning': 'duha',
+                'sharh': 'sharh',
+                'expansion': 'sharh',
+                'tin': 'tin',
+                'fig': 'tin',
+                'alaq': 'alaq',
+                'clot': 'alaq',
+                'qadr': 'qadr',
+                'power': 'qadr',
+                'bayyina': 'bayyina',
+                'evidence': 'bayyina',
+                'zalzala': 'zalzala',
+                'earthquake': 'zalzala',
+                'adiyat': 'adiyat',
+                'chargers': 'adiyat',
+                'qaria': 'qaria',
+                'qari\'ah': 'qaria',
+                'calamity': 'qaria',
+                'takathur': 'takathur',
+                'competition': 'takathur',
+                'asr': 'asr',
+                'time': 'asr',
+                'humaza': 'humaza',
+                'slanderer': 'humaza',
+                'fil': 'fil',
+                'elephant': 'fil',
+                'quraysh': 'quraysh',
+                'maun': 'maun',
+                'assistance': 'maun',
+                'kawthar': 'kawthar',
+                'abundance': 'kawthar',
+                'kafirun': 'kafirun',
+                'disbelievers': 'kafirun',
+                'nasr': 'nasr',
+                'help': 'nasr',
+                'masad': 'masad',
+                'palm fiber': 'masad',
+                'lahab': 'lahab',
+                'flame': 'lahab'
+            };
+            
+            // Add transliteration variants
+            for (const [key, value] of Object.entries(transliterationMap)) {
+                if (original.includes(key)) {
+                    variants.add(original.replace(key, value));
+                }
+                if (original === key) {
+                    variants.add(value);
+                }
+            }
+            
+            // Add partial matches for longer terms
+            if (original.length > 3) {
+                for (let i = 3; i <= original.length; i++) {
+                    variants.add(original.substring(0, i));
+                }
+            }
+            
+            return Array.from(variants);
+        }
+        
+        // Generate comprehensive surah name variants
+        function generateComprehensiveSurahVariants(surah) {
+            const variants = new Set();
+            const arabicName = surah.name || '';
+            const englishName = surah.englishName || '';
+            
+            // Add original names
+            variants.add(arabicName.toLowerCase());
+            variants.add(englishName.toLowerCase());
+            
+            // Add normalized Arabic
+            if (arabicName) {
+                variants.add(normalizeArabicText(arabicName));
+            }
+            
+            // Add without common prefixes
+            const prefixes = ['al-', 'an-', 'as-', 'at-', 'ar-', 'the '];
+            prefixes.forEach(prefix => {
+                if (englishName.toLowerCase().startsWith(prefix)) {
+                    variants.add(englishName.toLowerCase().substring(prefix.length));
+                }
+            });
+            
+            // Add comprehensive transliteration variants for all surahs
+            const comprehensiveTransliterations = {
+                'الفاتحة': ['fatiha', 'fatihah', 'opening'],
+                'البقرة': ['baqara', 'baqarah', 'bakara', 'cow'],
+                'آل عمران': ['imran', 'ali imran', 'al imran'],
+                'النساء': ['nisa', 'nisaa', 'women'],
+                'المائدة': ['maidah', 'maidaah', 'table'],
+                'الأنعام': ['anam', 'anaam', 'cattle'],
+                'الأعراف': ['araf', 'araaf', 'heights'],
+                'الأنفال': ['anfal', 'anfaal', 'spoils'],
+                'التوبة': ['tawbah', 'tawba', 'toba', 'repentance'],
+                'يونس': ['yunus', 'jonah', 'jonas'],
+                'هود': ['hud'],
+                'يوسف': ['yusuf', 'joseph'],
+                'الرعد': ['raad', 'ra\'ad', 'thunder'],
+                'إبراهيم': ['ibrahim', 'abraham'],
+                'الحجر': ['hijr'],
+                'النحل': ['nahl', 'bee'],
+                'الإسراء': ['isra', 'israa', 'night journey'],
+                'الكهف': ['kahf', 'cave'],
+                'مريم': ['maryam', 'mary', 'maria'],
+                'طه': ['taha', 'ta-ha'],
+                'الأنبياء': ['anbiya', 'anbiyaa', 'prophets'],
+                'الحج': ['hajj', 'pilgrimage'],
+                'المؤمنون': ['muminun', 'mu\'minun', 'believers'],
+                'النور': ['nur', 'noor', 'light'],
+                'الفرقان': ['furqan', 'criterion'],
+                'الشعراء': ['shuara', 'shu\'ara', 'poets'],
+                'النمل': ['naml', 'ant'],
+                'القصص': ['qasas', 'stories'],
+                'العنكبوت': ['ankabut', 'spider'],
+                'الروم': ['rum', 'romans'],
+                'لقمان': ['luqman', 'lukman'],
+                'السجدة': ['sajda', 'sajdah', 'prostration'],
+                'الأحزاب': ['ahzab', 'confederates'],
+                'سبأ': ['saba', 'sheba'],
+                'فاطر': ['fatir', 'creator'],
+                'يس': ['yasin', 'ya-sin'],
+                'الصافات': ['saffat', 'ranks'],
+                'ص': ['sad'],
+                'الزمر': ['zumar', 'groups'],
+                'غافر': ['ghafir', 'forgiver'],
+                'فصلت': ['fussilat', 'explained'],
+                'الشورى': ['shura', 'consultation'],
+                'الزخرف': ['zukhruf', 'ornaments'],
+                'الدخان': ['dukhan', 'smoke'],
+                'الجاثية': ['jathiya', 'kneeling'],
+                'الأحقاف': ['ahqaf', 'sand dunes'],
+                'محمد': ['muhammad', 'mohammed', 'mohamed'],
+                'الفتح': ['fath', 'victory'],
+                'الحجرات': ['hujurat', 'chambers'],
+                'ق': ['qaf'],
+                'الذاريات': ['dhariyat', 'winds'],
+                'الطور': ['tur', 'mount'],
+                'النجم': ['najm', 'star'],
+                'القمر': ['qamar', 'moon'],
+                'الرحمن': ['rahman', 'most merciful'],
+                'الواقعة': ['waqia', 'waqi\'ah', 'waqiah', 'waqiyah', 'event'],
+                'الحديد': ['hadid', 'iron'],
+                'المجادلة': ['mujadila', 'pleading'],
+                'الحشر': ['hashr', 'exile'],
+                'الممتحنة': ['mumtahina', 'examined'],
+                'الصف': ['saff', 'ranks'],
+                'الجمعة': ['jumua', 'jumu\'ah', 'friday'],
+                'المنافقون': ['munafiqun', 'hypocrites'],
+                'التغابن': ['taghabun', 'mutual loss'],
+                'الطلاق': ['talaq', 'divorce'],
+                'التحريم': ['tahrim', 'prohibition'],
+                'الملك': ['mulk', 'sovereignty'],
+                'القلم': ['qalam', 'pen'],
+                'الحاقة': ['haqqah', 'reality'],
+                'المعارج': ['maarij', 'ascending'],
+                'نوح': ['nuh', 'noah'],
+                'الجن': ['jinn'],
+                'المزمل': ['muzzammil', 'wrapped'],
+                'المدثر': ['muddathir', 'cloaked'],
+                'القيامة': ['qiyama', 'qiyamah', 'resurrection'],
+                'الإنسان': ['insan', 'man'],
+                'المرسلات': ['mursalat', 'sent forth'],
+                'النبأ': ['naba', 'news'],
+                'النازعات': ['naziat', 'pullers'],
+                'عبس': ['abasa', 'frowned'],
+                'التكوير': ['takwir', 'folding'],
+                'الإنفطار': ['infitar', 'cleaving'],
+                'المطففين': ['mutaffifin', 'defrauding'],
+                'الإنشقاق': ['inshiqaq', 'splitting'],
+                'البروج': ['buruj', 'constellations'],
+                'الطارق': ['tariq', 'night comer'],
+                'الأعلى': ['ala', 'a\'la', 'most high'],
+                'الغاشية': ['ghashiya', 'overwhelming'],
+                'الفجر': ['fajr', 'dawn'],
+                'البلد': ['balad', 'city'],
+                'الشمس': ['shams', 'sun'],
+                'الليل': ['layl', 'night'],
+                'الضحى': ['duha', 'morning'],
+                'الشرح': ['sharh', 'expansion'],
+                'التين': ['tin', 'fig'],
+                'العلق': ['alaq', 'clot'],
+                'القدر': ['qadr', 'power'],
+                'البينة': ['bayyina', 'evidence'],
+                'الزلزلة': ['zalzala', 'earthquake'],
+                'العاديات': ['adiyat', 'chargers'],
+                'القارعة': ['qaria', 'qari\'ah', 'calamity'],
+                'التكاثر': ['takathur', 'competition'],
+                'العصر': ['asr', 'time'],
+                'الهمزة': ['humaza', 'slanderer'],
+                'الفيل': ['fil', 'elephant'],
+                'قريش': ['quraysh'],
+                'الماعون': ['maun', 'assistance'],
+                'الكوثر': ['kawthar', 'abundance'],
+                'الكافرون': ['kafirun', 'disbelievers'],
+                'النصر': ['nasr', 'help'],
+                'المسد': ['masad', 'lahab', 'palm fiber', 'flame'],
+                'الإخلاص': ['ikhlas', 'ikhlaas', 'iklas', 'sincerity'],
+                'الفلق': ['falaq', 'falaaq', 'daybreak'],
+                'الناس': ['nas', 'naas', 'people', 'mankind']
+            };
+            
+            // Add transliteration variants
+            for (const [arabic, transliterations] of Object.entries(comprehensiveTransliterations)) {
+                if (arabicName.includes(arabic)) {
+                    transliterations.forEach(t => variants.add(t));
+                }
+            }
+            
+            // Add specific Arabic name mappings for better search
+            const arabicNameMappings = {
+                'الاخلاص': ['ikhlas', 'ikhlaas', 'iklas', 'sincerity', 'اخلاص', 'إخلاص'],
+                'آل عمران': ['imran', 'ali imran', 'al imran', 'عمران', 'آل عمران', 'al-imran'],
+                'البقرة': ['baqara', 'baqarah', 'bakara', 'cow', 'بقرة', 'البقرة'],
+                'النساء': ['nisa', 'nisaa', 'women', 'نساء', 'النساء'],
+                'الفاتحة': ['fatiha', 'fatihah', 'opening', 'فاتحة', 'الفاتحة'],
+                'الرحمن': ['rahman', 'most merciful', 'رحمن', 'الرحمن'],
+                'الناس': ['nas', 'naas', 'people', 'mankind', 'ناس', 'الناس'],
+                'الفلق': ['falaq', 'falaaq', 'daybreak', 'فلق', 'الفلق'],
+                'الكوثر': ['kawthar', 'abundance', 'كوثر', 'الكوثر'],
+                'الكافرون': ['kafirun', 'disbelievers', 'كافرون', 'الكافرون'],
+                'النصر': ['nasr', 'help', 'نصر', 'النصر'],
+                'المسد': ['masad', 'lahab', 'palm fiber', 'flame', 'مسد', 'المسد'],
+                'الإخلاص': ['ikhlas', 'ikhlaas', 'iklas', 'sincerity', 'اخلاص', 'إخلاص'],
+                'الفلق': ['falaq', 'falaaq', 'daybreak', 'فلق', 'الفلق'],
+                'الناس': ['nas', 'naas', 'people', 'mankind', 'ناس', 'الناس']
+            };
+            
+            // Add Arabic name mappings
+            for (const [arabic, mappings] of Object.entries(arabicNameMappings)) {
+                if (arabicName.includes(arabic) || arabic.includes(arabicName)) {
+                    mappings.forEach(mapping => variants.add(mapping));
+                }
+            }
+            
+            return Array.from(variants);
+        }
+        
+        // Calculate string match score
+        function calculateStringMatchScore(search, target) {
+            if (!search || !target) return 0;
+            
+            const searchLower = search.toLowerCase();
+            const targetLower = target.toLowerCase();
+            
+            // Exact match
+            if (searchLower === targetLower) return 800;
+            
+            // Starts with
+            if (targetLower.startsWith(searchLower)) return 700;
+            
+            // Contains
+            if (targetLower.includes(searchLower)) return 600;
+            
+            // Partial match at word boundaries
+            const searchWords = searchLower.split(/\s+/);
+            const targetWords = targetLower.split(/\s+/);
+            
+            let wordMatches = 0;
+            for (const searchWord of searchWords) {
+                for (const targetWord of targetWords) {
+                    if (targetWord.startsWith(searchWord)) {
+                        wordMatches++;
+                        break;
+                    }
+                }
+            }
+            
+            if (wordMatches > 0) {
+                return 500 + (wordMatches * 50);
+            }
+            
+            // Fuzzy match using edit distance
+            const editDistance = levenshteinDistance(searchLower, targetLower);
+            const maxLength = Math.max(searchLower.length, targetLower.length);
+            
+            if (editDistance <= 2 && maxLength > 3) {
+                return 400 - (editDistance * 50);
+            }
+            
+            if (editDistance <= 3 && maxLength > 5) {
+                return 300 - (editDistance * 30);
+            }
+            
+            return 0;
+        }
+        
+        // Calculate similarity score based on character length and patterns
+        function calculateSimilarityScore(searchTerm, surah) {
+            const arabicName = surah.name || '';
+            const englishName = surah.englishName || '';
+            
+            let maxScore = 0;
+            
+            // Check length similarity (closer lengths get higher scores)
+            const searchLength = searchTerm.length;
+            const arabicLength = arabicName.length;
+            const englishLength = englishName.length;
+            
+            // Length similarity scoring
+            const arabicLengthDiff = Math.abs(searchLength - arabicLength);
+            const englishLengthDiff = Math.abs(searchLength - englishLength);
+            
+            if (arabicLengthDiff <= 2) {
+                maxScore = Math.max(maxScore, 200 - (arabicLengthDiff * 50));
+            }
+            if (englishLengthDiff <= 2) {
+                maxScore = Math.max(maxScore, 200 - (englishLengthDiff * 50));
+            }
+            
+            // Check for common character patterns
+            const searchChars = searchTerm.toLowerCase().split('').sort().join('');
+            const arabicChars = arabicName.toLowerCase().split('').sort().join('');
+            const englishChars = englishName.toLowerCase().split('').sort().join('');
+            
+            // Character pattern similarity
+            const arabicCharSimilarity = calculateCharacterSimilarity(searchChars, arabicChars);
+            const englishCharSimilarity = calculateCharacterSimilarity(searchChars, englishChars);
+            
+            maxScore = Math.max(maxScore, arabicCharSimilarity, englishCharSimilarity);
+            
+            // Check for word boundary matches
+            const searchWords = searchTerm.toLowerCase().split(/\s+/);
+            const englishWords = englishName.toLowerCase().split(/\s+/);
+            
+            let wordBoundaryScore = 0;
+            for (const searchWord of searchWords) {
+                for (const englishWord of englishWords) {
+                    if (englishWord.includes(searchWord) || searchWord.includes(englishWord)) {
+                        wordBoundaryScore += 100;
+                    }
+                }
+            }
+            maxScore = Math.max(maxScore, wordBoundaryScore);
+            
+            return maxScore;
+        }
+        
+        // Calculate character similarity between two strings
+        function calculateCharacterSimilarity(str1, str2) {
+            if (!str1 || !str2) return 0;
+            
+            const chars1 = str1.split('');
+            const chars2 = str2.split('');
+            
+            let commonChars = 0;
+            let totalChars = Math.max(chars1.length, chars2.length);
+            
+            for (const char of chars1) {
+                if (chars2.includes(char)) {
+                    commonChars++;
+                    // Remove the matched character to avoid double counting
+                    const index = chars2.indexOf(char);
+                    chars2.splice(index, 1);
+                }
+            }
+            
+            return (commonChars / totalChars) * 150;
+        }
+        
+        // Levenshtein distance for fuzzy matching
+        function levenshteinDistance(str1, str2) {
+            const matrix = [];
+            
+            if (str1.length === 0) return str2.length;
+            if (str2.length === 0) return str1.length;
+            
+            // Initialize matrix
+            for (let i = 0; i <= str2.length; i++) {
+                matrix[i] = [i];
+            }
+            
+            for (let j = 0; j <= str1.length; j++) {
+                matrix[0][j] = j;
+            }
+            
+            // Fill matrix
+            for (let i = 1; i <= str2.length; i++) {
+                for (let j = 1; j <= str1.length; j++) {
+                    if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+                        matrix[i][j] = matrix[i - 1][j - 1];
+                    } else {
+                        matrix[i][j] = Math.min(
+                            matrix[i - 1][j - 1] + 1, // substitution
+                            matrix[i][j - 1] + 1,     // insertion
+                            matrix[i - 1][j] + 1      // deletion
+                        );
+                    }
+                }
+            }
+            
+            return matrix[str2.length][str1.length];
+        }
+        
+        // Check if text contains Arabic characters
+        function isArabicText(text) {
+            const arabicRegex = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+            return arabicRegex.test(text);
+        }
+        
+        // Convert Arabic numerals to regular numbers
+        function convertArabicNumerals(text) {
+            const arabicNumerals = {
+                '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+                '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+            };
+            return text.replace(/[٠-٩]/g, match => arabicNumerals[match]);
+        }
+        
+        // Quran Search Functionality
+        let quranSearchTimeout;
+        let quranSearchResults = [];
+        let targetVerseFromSearch = null; // Track the verse selected from search
+        
+        // Initialize Quran search
+        function initializeQuranSearch() {
+            const searchInput = document.getElementById('quranSearchInput');
+            const searchResults = document.getElementById('quranSearchResults');
+            const clearBtn = document.getElementById('quranSearchClearBtn');
+            
+            if (!searchInput) return;
+            
+            // Search input event listener
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.trim();
+                
+                // Clear previous timeout
+                if (quranSearchTimeout) {
+                    clearTimeout(quranSearchTimeout);
+                }
+                
+                // Show/hide clear button
+                if (query.length > 0) {
+                    clearBtn.classList.remove('hidden');
+                } else {
+                    clearBtn.classList.add('hidden');
+                    hideQuranSearchResults();
+                    return;
+                }
+                
+                // Debounce search
+                quranSearchTimeout = setTimeout(() => {
+                    performQuranSearch(query);
+                }, 300);
+            });
+            
+            // Handle keyboard navigation
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    hideQuranSearchResults();
+                    searchInput.blur();
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const firstResult = document.querySelector('#quranSearchResults .search-result-item');
+                    if (firstResult) {
+                        firstResult.click();
+                    }
+                }
+            });
+            
+            // Hide results when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                    hideQuranSearchResults();
+                }
+            });
+        }
+        
+        // Perform Quran search
+        function performQuranSearch(query) {
+            if (!quranData || !translationData) {
+                console.log('Quran data not loaded yet');
+                return;
+            }
+            
+            const results = [];
+            const searchTerm = query.toLowerCase().trim();
+            
+            // Enhanced search patterns for page and juz (support Arabic numerals)
+            const pageMatch = searchTerm.match(/^(page|صفحة)\s*(\d+|[٠-٩]+)$/i);
+            const juzMatch = searchTerm.match(/^(juz|جزء)\s*(\d+|[٠-٩]+)$/i);
+            
+            // If it's a specific page or juz search, prioritize those results
+            if (pageMatch) {
+                const targetPage = parseInt(convertArabicNumerals(pageMatch[2]));
+                // Find the first verse on that page
+                for (let surahIndex = 0; surahIndex < quranData.length; surahIndex++) {
+                    const surah = quranData[surahIndex];
+                    if (!surah) continue;
+                    
+                    for (let ayahIndex = 0; ayahIndex < surah.ayahs.length; ayahIndex++) {
+                        const ayah = surah.ayahs[ayahIndex];
+                        if (ayah && ayah.page === targetPage) {
+                            const translation = translationData[surahIndex];
+                            const translationAyah = translation ? translation.ayahs[ayahIndex] : null;
+                            
+                            results.push({
+                                surahIndex,
+                                ayahIndex,
+                                surah,
+                                ayah,
+                                translationAyah,
+                                score: 1200, // Highest priority for exact page match
+                                matchType: 'page_exact',
+                                matchText: `Page ${ayah.page}`
+                            });
+                            break; // Found first verse on this page
+                        }
+                    }
+                    if (results.length > 0) break; // Found the page
+                }
+            } else if (juzMatch) {
+                const targetJuz = parseInt(convertArabicNumerals(juzMatch[2]));
+                // Find the first verse in that juz
+                for (let surahIndex = 0; surahIndex < quranData.length; surahIndex++) {
+                    const surah = quranData[surahIndex];
+                    if (!surah) continue;
+                    
+                    for (let ayahIndex = 0; ayahIndex < surah.ayahs.length; ayahIndex++) {
+                        const ayah = surah.ayahs[ayahIndex];
+                        if (ayah && ayah.juz === targetJuz) {
+                            const translation = translationData[surahIndex];
+                            const translationAyah = translation ? translation.ayahs[ayahIndex] : null;
+                            
+                            results.push({
+                                surahIndex,
+                                ayahIndex,
+                                surah,
+                                ayah,
+                                translationAyah,
+                                score: 1100, // High priority for exact juz match
+                                matchType: 'juz_exact',
+                                matchText: `Juz ${ayah.juz}`
+                            });
+                            break; // Found first verse in this juz
+                        }
+                    }
+                    if (results.length > 0) break; // Found the juz
+                }
+            } else {
+                // Regular search through all surahs and ayahs
+                for (let surahIndex = 0; surahIndex < quranData.length; surahIndex++) {
+                    const surah = quranData[surahIndex];
+                    const translation = translationData[surahIndex];
+                    
+                    if (!surah || !translation) continue;
+                    
+                    for (let ayahIndex = 0; ayahIndex < surah.ayahs.length; ayahIndex++) {
+                        const ayah = surah.ayahs[ayahIndex];
+                        const translationAyah = translation.ayahs[ayahIndex];
+                        
+                        if (!ayah || !translationAyah) continue;
+                        
+                        let score = 0;
+                        let matchType = '';
+                        let matchText = '';
+                        
+                        // Check verse number
+                        if (ayah.numberInSurah.toString().includes(searchTerm) || 
+                            ayah.numberInSurah.toString() === searchTerm) {
+                            score = 1000;
+                            matchType = 'verse';
+                            matchText = `Verse ${ayah.numberInSurah}`;
+                        }
+                        
+                        // Check page number
+                        else if (ayah.page && ayah.page.toString().includes(searchTerm)) {
+                            score = 900;
+                            matchType = 'page';
+                            matchText = `Page ${ayah.page}`;
+                        }
+                        
+                        // Check juz number
+                        else if (ayah.juz && ayah.juz.toString().includes(searchTerm)) {
+                            score = 800;
+                            matchType = 'juz';
+                            matchText = `Juz ${ayah.juz}`;
+                        }
+                        
+                        // Check Arabic text
+                        else if (ayah.text.toLowerCase().includes(searchTerm)) {
+                            score = 700;
+                            matchType = 'arabic';
+                            matchText = ayah.text.substring(0, 100) + (ayah.text.length > 100 ? '...' : '');
+                        }
+                        
+                        // Check translation text
+                        else if (translationAyah.text.toLowerCase().includes(searchTerm)) {
+                            score = 600;
+                            matchType = 'translation';
+                            matchText = translationAyah.text.substring(0, 100) + (translationAyah.text.length > 100 ? '...' : '');
+                        }
+                        
+                        // Check surah name
+                        else if (surah.name.toLowerCase().includes(searchTerm) || 
+                                 surah.englishName.toLowerCase().includes(searchTerm)) {
+                            score = 500;
+                            matchType = 'surah';
+                            matchText = `${surah.name} / ${surah.englishName}`;
+                        }
+                        
+                        // Fuzzy search for Arabic text
+                        else if (isArabicText(searchTerm)) {
+                            const arabicText = normalizeArabicText(ayah.text);
+                            const normalizedSearch = normalizeArabicText(searchTerm);
+                            
+                            if (arabicText.includes(normalizedSearch)) {
+                                score = 400;
+                                matchType = 'arabic_fuzzy';
+                                matchText = ayah.text.substring(0, 100) + (ayah.text.length > 100 ? '...' : '');
+                            }
+                        }
+                        
+                        if (score > 0) {
+                            results.push({
+                                surahIndex,
+                                ayahIndex,
+                                surah,
+                                ayah,
+                                translationAyah,
+                                score,
+                                matchType,
+                                matchText
+                            });
+                        }
+                    }
+                }
+            }
+            
+            // Sort by score and limit results
+            results.sort((a, b) => b.score - a.score);
+            quranSearchResults = results.slice(0, 20); // Limit to 20 results
+            
+            displayQuranSearchResults();
+        }
+        
+        // Display search results
+        function displayQuranSearchResults() {
+            const resultsContainer = document.getElementById('quranSearchResults');
+            
+            if (!resultsContainer || quranSearchResults.length === 0) {
+                hideQuranSearchResults();
+                return;
+            }
+            
+            let html = '';
+            
+            quranSearchResults.forEach((result, index) => {
+                const surahName = currentLang === 'ar' ? result.surah.name : result.surah.englishName;
+                const matchTypeIcon = getMatchTypeIcon(result.matchType);
+                const matchTypeText = getMatchTypeText(result.matchType);
+                
+                html += `
+                    <div class="search-result-item p-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-200 dark:border-gray-600 last:border-b-0 transition-colors"
+                         onclick="goToQuranVerse(${result.surahIndex}, ${result.ayahIndex})"
+                         data-surah="${result.surahIndex}" 
+                         data-ayah="${result.ayahIndex}">
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                                ${result.ayah.numberInSurah}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-sm font-semibold text-gray-800 dark:text-gray-200">
+                                        ${surahName}
+                                    </span>
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">
+                                        ${currentLang === 'ar' ? 'آية' : 'Verse'} ${result.ayah.numberInSurah}
+                                    </span>
+                                    <span class="text-xs text-gray-400 dark:text-gray-500">
+                                        ${matchTypeIcon} ${matchTypeText}
+                                    </span>
+                                </div>
+                                <div class="text-sm text-gray-600 dark:text-gray-300 mb-1" dir="rtl">
+                                    ${result.ayah.text.substring(0, 80)}${result.ayah.text.length > 80 ? '...' : ''}
+                                </div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400" dir="ltr">
+                                    ${result.translationAyah.text.substring(0, 60)}${result.translationAyah.text.length > 60 ? '...' : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            resultsContainer.innerHTML = html;
+            resultsContainer.classList.remove('hidden');
+        }
+        
+        // Get match type icon
+        function getMatchTypeIcon(matchType) {
+            const icons = {
+                'verse': '🔢',
+                'page': '📄',
+                'page_exact': '📄',
+                'juz': '📚',
+                'juz_exact': '📚',
+                'arabic': '📖',
+                'translation': '🌐',
+                'surah': '📋',
+                'arabic_fuzzy': '🔍'
+            };
+            return icons[matchType] || '🔍';
+        }
+        
+        // Get match type text
+        function getMatchTypeText(matchType) {
+            const texts = {
+                'verse': currentLang === 'ar' ? 'رقم الآية' : 'Verse Number',
+                'page': currentLang === 'ar' ? 'رقم الصفحة' : 'Page Number',
+                'page_exact': currentLang === 'ar' ? 'الصفحة المحددة' : 'Exact Page',
+                'juz': currentLang === 'ar' ? 'رقم الجزء' : 'Juz Number',
+                'juz_exact': currentLang === 'ar' ? 'الجزء المحدد' : 'Exact Juz',
+                'arabic': currentLang === 'ar' ? 'النص العربي' : 'Arabic Text',
+                'translation': currentLang === 'ar' ? 'الترجمة' : 'Translation',
+                'surah': currentLang === 'ar' ? 'اسم السورة' : 'Surah Name',
+                'arabic_fuzzy': currentLang === 'ar' ? 'بحث تقريبي' : 'Fuzzy Search'
+            };
+            return texts[matchType] || '';
+        }
+        
+        // Go to specific verse
+        function goToQuranVerse(surahIndex, ayahIndex) {
+            // Switch to Quran tab if not already there
+            if (!document.getElementById('quranContent').classList.contains('active')) {
+                switchTab('quran');
+            }
+            
+            // Set current surah and ayah
+            currentSurah = surahIndex;
+            currentAyah = ayahIndex;
+            isReadingMode = false;
+            
+            // Store the target verse for when user switches to full surah mode
+            targetVerseFromSearch = { surahIndex, ayahIndex };
+            
+            // Update surah menu button
+            const surah = quranData[surahIndex];
+            const surahName = currentLang === 'ar' ? surah.name : surah.englishName;
+            document.getElementById('selectedSurahText').textContent = `${surah.number}. ${surahName}`;
+            
+            // Display the verse
+            displayAyah();
+            
+            // Hide quick surahs section
+            const quickSurahsSection = document.getElementById('quickSurahsSection');
+            if (quickSurahsSection) {
+                quickSurahsSection.style.display = 'none';
+            }
+            
+            // Hide search results
+            hideQuranSearchResults();
+            
+            // Clear search input
+            document.getElementById('quranSearchInput').value = '';
+            document.getElementById('quranSearchClearBtn').classList.add('hidden');
+            
+            // Show success message
+            const ayah = quranData[surahIndex].ayahs[ayahIndex];
+            showToast(
+                currentLang === 'ar' 
+                    ? `تم الانتقال إلى ${surahName} - آية ${ayah.numberInSurah}` 
+                    : `Navigated to ${surahName} - Verse ${ayah.numberInSurah}`,
+                'success'
+            );
+        }
+        
+        // Hide search results
+        function hideQuranSearchResults() {
+            const resultsContainer = document.getElementById('quranSearchResults');
+            if (resultsContainer) {
+                resultsContainer.classList.add('hidden');
+            }
+        }
+        
+        // Clear search
+        function clearQuranSearch() {
+            const searchInput = document.getElementById('quranSearchInput');
+            const clearBtn = document.getElementById('quranSearchClearBtn');
+            
+            if (searchInput) {
+                searchInput.value = '';
+                searchInput.focus();
+            }
+            
+            if (clearBtn) {
+                clearBtn.classList.add('hidden');
+            }
+            
+            hideQuranSearchResults();
         }
         
         // Event Listeners for Surah Menu
@@ -8152,6 +9439,9 @@ function showARUnsupported(errorType) {
                     closeSurahMenu();
                 }
             });
+            
+            // Initialize Quran search
+            initializeQuranSearch();
             
             // Early initialization for better performance
             setTimeout(() => {
@@ -9852,7 +11142,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white" id="translationModalTitle">الترجمة</h3>
         <select id="translationSelect" class="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 text-sm" title="Select Translation - اختر الترجمة">
           <optgroup label="English">
-            <option value="en.sahih">English (Sahih International)</option>
+            <option value="en.sahih">English (Sahih Intl)</option>
             <option value="en.pickthall">English (Pickthall)</option>
             <option value="en.yusufali">English (Yusuf Ali)</option>
             <option value="en.hilali">English (Hilali-Khan)</option>
@@ -9981,4 +11271,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
+
 
