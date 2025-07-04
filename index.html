@@ -38,1530 +38,22 @@
         }
     </script>
 
-    <style>
-        .buttonActive {
-            color: #f39c12; /* Example color (golden/yellow) */
-            transform: scale(1.2); /* Slightly enlarge the element */
-            transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
-        }
-        /* Dark mode transitions - optimized */
-        * {
-            transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-        }
+    <!-- External CSS Files -->
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/animations.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/responsive.css">
 
-        /* --- CONSOLIDATED ANIMATIONS START --- */
-        @keyframes fadeInSimple {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
 
-        @keyframes quranHookFadeInFromTop {
-    from {
-        opacity: 0;
-        transform: translateX(-50%) translateY(-10px); /* Include translateX for centering */
-    }
-    to {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0); /* Include translateX for centering */
-    }
-}
 
-        @keyframes slideIn {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        @keyframes fadeInFromBottom { /* For toast notifications */
-            from { opacity: 0; transform: translate(-50%, -20px); }
-            to { opacity: 1; transform: translate(-50%, 0); }
-        }
 
-        @keyframes fadeOutToBottom { /* For toast notifications */
-            from { opacity: 1; transform: translate(-50%, 0); }
-            to { opacity: 0; transform: translate(-50%, -20px); }
-        }
 
-        @keyframes fadeInFromTop { /* For general UI elements */
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
 
-        /* Animation Utility Classes - optimized */
-        .animate-toast-in {
-            animation: fadeInFromBottom 0.15s ease-out forwards;
-        }
 
-        .animate-toast-out {
-            animation: fadeOutToBottom 0.15s ease-out forwards;
-        }
 
-        .animate-general-fade-in {
-            animation: fadeInFromTop 0.2s ease-out forwards;
-        }
-        /* --- CONSOLIDATED ANIMATIONS END --- */
 
-        /* Dark mode specific styles */
-        .dark .toast {
-            background: rgba(0, 0, 0, 0.9);
-        }
 
-        .dark .toast.success {
-            background: rgba(34, 197, 94, 0.9);
-        }
 
-        .dark .toast.info {
-            background: rgba(59, 130, 246, 0.9);
-        }
-
-        /* Dark mode for select elements */
-        .dark select {
-            background-color: #1f2937;
-            color: #f3f4f6;
-            border-color: #374151;
-        }
-
-        .dark select option {
-            background-color: #1f2937;
-            color: #f3f4f6;
-        }
-
-       /* Dark mode for buttons */
-               .dark button:not(.bg-blue-500):not(.bg-green-500):not(#langToggle):not(#btnBack):not(.ayah-play-btn):not(#closeTafsirModal):not(#darkModeToggle):not(#closeTranslationModal):not(#closeSurahMenu):not(#surahMenuBtn):not(#settingsBtn):not(#closeSettingsBtn):not(#currentFontSize):not(#decreaseBtn):not(#increaseBtn) { /* Added :not(#langToggle) */
-            background-color: #374151;
-            color: #f3f4f6;
-        }
-
-        .dark button:hover:not(.bg-blue-500):not(.bg-green-500):not(#langToggle):not(#btnBack):not(.ayah-play-btn):not(#ayahMenuPlay):not(#ayahMenuTranslation):not(#ayahMenuTafsir):not(#ayahMenuBookmark):not(#closeTafsirModal):not(#darkModeToggle):not(#closeTranslationModal):not(#closeSurahMenu):not(#surahMenuBtn):not(#closeSettingsBtn):not(#currentFontSize){
-            background-color: #4b5563;
-        }
-
-        /* Dark mode for cards */
-        .dark .bg-white {
-            background-color: #1f2937;
-        }
-
-        /* Dark mode for text */
-        .dark .text-gray-600 {
-            color: #d1d5db;
-        }
-
-        .dark .text-gray-500 {
-            color: #9ca3af;
-        }
-
-        /* Dark mode for borders */
-        .dark .border-gray-200 {
-            border-color: #374151;
-        }
-
-        /* Dark mode for hover states */
-        .dark .hover\\:bg-gray-100:hover {
-            background-color: #374151;
-        }
-
-        /* Dark mode for shadows */
-        .dark .shadow-lg {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Reading Progress Bar Styles */
-        .reading-progress-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background-color: rgba(0, 0, 0, 0.1);
-            z-index: 9999;
-            opacity: 0;
-            transition: opacity 0.15s ease;
-        }
-
-        .reading-progress-container.visible {
-            opacity: 1;
-        }
-
-        .reading-progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #3B82F6, #10B981);
-            transition: width 0.15s ease;
-            width: 0%;
-            border-radius: 0 2px 2px 0;
-        }
-
-        .dark .reading-progress-container {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .dark .reading-progress-bar {
-            background: linear-gradient(90deg, #60A5FA, #34D399);
-        }
-
-        /* Mobile Navigation Buttons */
-        .mobile-nav-buttons {
-            display: none;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin: 16px 0 8px 0;
-        }
-
-        .mobile-nav-btn {
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            color: #3B82F6;
-            padding: 6px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            transition: transform 0.1s ease;
-            min-width: 70px;
-            touch-action: manipulation;
-        }
-
-        .mobile-nav-btn:hover {
-            background: rgba(59, 130, 246, 0.15);
-            border-color: rgba(59, 130, 246, 0.5);
-            transform: scale(1.05);
-        }
-
-        .mobile-nav-btn:disabled {
-            background: rgba(156, 163, 175, 0.1);
-            border-color: rgba(156, 163, 175, 0.3);
-            color: #9CA3AF;
-            transform: none;
-        }
-
-        .dark .mobile-nav-btn {
-            background: rgba(96, 165, 250, 0.1);
-            border-color: rgba(96, 165, 250, 0.3);
-            color: #60A5FA;
-        }
-
-        .dark .mobile-nav-btn:hover {
-            background: rgba(96, 165, 250, 0.15);
-            border-color: rgba(96, 165, 250, 0.5);
-        }
-
-        .dark .mobile-nav-btn:disabled {
-            background: rgba(156, 163, 175, 0.1);
-            border-color: rgba(156, 163, 175, 0.3);
-            color: #6B7280;
-        }
-
-        /* Mobile optimizations */
-        @media (max-width: 768px) {
-            .reading-progress-container {
-                height: 3px;
-            }
-
-            .mobile-nav-buttons {
-                display: flex;
-            }
-        }
-
-        /* --- COMPONENT STYLES --- */
-        
-        /* Qibla / AR Styles */
-        #compass {
-            position: relative;
-            width: 16rem;
-            height: 16rem;
-            animation: fadeInSimple 0.2s ease-in; /* USE CONSOLIDATED */
-        }
-
-        #qiblaNeedle {
-            transition: transform 0.1s ease-out;
-            transform-origin: bottom center;
-        }
-
-        #kaabaIndicator {
-            position: absolute;
-            width: 48px;
-            height: 48px;
-            top: 0;
-            left: 0;
-            will-change: transform, opacity;
-            z-index: 100;
-            pointer-events: none;
-            filter: drop-shadow(0 0 12px rgba(255, 200, 50, 0.7));
-            transition: transform 0.2s ease-out, opacity 0.3s ease; /* Used 0.3s from a later definition */
-        }
-
-        #arUnsupported {
-            animation: slideIn 0.3s ease-out; /* USE CONSOLIDATED */
-        }
-
-        #arCamera {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            /* Removed transform: scaleX(-1) to fix inverted camera */
-        }
-
-        #arCanvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10;
-        }
-
-        #qiblaDegree {
-            backdrop-filter: blur(10px);
-            font-family: monospace;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-        }
-
-        #flipCameraBtn:hover {
-            background-color: rgba(255, 255, 255, 0.3);
-            transform: scale(1.1);
-            transition: all 0.2s ease;
-        }
-
-        @supports (-webkit-touch-callout: none) { /* iOS Specific AR fix */
-            #kaabaIndicator {
-                transform: translateZ(0);
-            }
-        }
-        
-        /* Enhanced Qibla AR Styles */
-        #directionArrow {
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-        }
-        
-        #compassRose {
-            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
-        }
-        
-        #kaabaIndicator {
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
-        }
-        
-        #alignmentRings .animate-pulse {
-            animation: pulse-ring 2s infinite;
-        }
-        
-        @keyframes pulse-ring {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.7; }
-            100% { transform: scale(1.2); opacity: 0; }
-        }
-        
-        @keyframes bounce {
-            0%, 20%, 53%, 80%, 100% {
-                transform: translateY(0);
-            }
-            40%, 43% {
-                transform: translateY(-10px);
-            }
-            70% {
-                transform: translateY(-5px);
-            }
-        }
-        
-        @keyframes qibla-success {
-            0% { transform: scale(1); box-shadow: 0 0 0 rgba(34, 197, 94, 0.5); }
-            50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(34, 197, 94, 0.8); }
-            100% { transform: scale(1); box-shadow: 0 0 0 rgba(34, 197, 94, 0.5); }
-        }
-        
-        /* Enhanced Qibla Alignment Animations */
-        @keyframes qibla-perfect-alignment {
-            0% { 
-                transform: scale(1) rotate(0deg); 
-                box-shadow: 0 0 0 rgba(34, 197, 94, 0.8);
-                filter: brightness(1);
-            }
-            25% { 
-                transform: scale(1.15) rotate(2deg); 
-                box-shadow: 0 0 30px rgba(34, 197, 94, 1);
-                filter: brightness(1.2);
-            }
-            50% { 
-                transform: scale(1.2) rotate(-1deg); 
-                box-shadow: 0 0 40px rgba(34, 197, 94, 0.9);
-                filter: brightness(1.3);
-            }
-            75% { 
-                transform: scale(1.15) rotate(1deg); 
-                box-shadow: 0 0 35px rgba(34, 197, 94, 1);
-                filter: brightness(1.2);
-            }
-            100% { 
-                transform: scale(1) rotate(0deg); 
-                box-shadow: 0 0 0 rgba(34, 197, 94, 0.8);
-                filter: brightness(1);
-            }
-        }
-        
-        @keyframes qibla-glow-pulse {
-            0% { 
-                box-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
-                background: linear-gradient(45deg, #22c55e, #16a34a);
-            }
-            50% { 
-                box-shadow: 0 0 25px rgba(34, 197, 94, 0.9);
-                background: linear-gradient(45deg, #16a34a, #22c55e);
-            }
-            100% { 
-                box-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
-                background: linear-gradient(45deg, #22c55e, #16a34a);
-            }
-        }
-        
-        @keyframes qibla-text-glow {
-            0% { 
-                text-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
-                color: #16a34a;
-            }
-            50% { 
-                text-shadow: 0 0 15px rgba(34, 197, 94, 0.8);
-                color: #22c55e;
-            }
-            100% { 
-                text-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
-                color: #16a34a;
-            }
-        }
-        
-        @keyframes qibla-ring-expand {
-            0% { 
-                transform: scale(1);
-                opacity: 0.8;
-                border-width: 2px;
-            }
-            50% { 
-                transform: scale(1.3);
-                opacity: 0.4;
-                border-width: 3px;
-            }
-            100% { 
-                transform: scale(1.6);
-                opacity: 0;
-                border-width: 1px;
-            }
-        }
-        
-        .qibla-perfect-aligned {
-            animation: qibla-perfect-alignment 1.5s ease-in-out infinite;
-        }
-        
-        .qibla-glow {
-            animation: qibla-glow-pulse 2s ease-in-out infinite;
-        }
-        
-        .qibla-text-glow {
-            animation: qibla-text-glow 1.5s ease-in-out infinite;
-        }
-        
-        .qibla-ring-expand {
-            animation: qibla-ring-expand 2s ease-in-out infinite;
-        }
-
-        /* General UI Element Styles */
-        .no-select {
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-
-        .clicked {
-            transform: scale(1.03);
-            opacity: 0.95;
-            transition: transform 0.15s ease-out, opacity 0.15s ease-out;
-        }
-
-        /* Islamic Pattern Background */
-        .islamic-pattern {
-            position: relative;
-            background-image: 
-                radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.03) 0%, transparent 50%),
-                radial-gradient(circle at 75% 75%, rgba(139, 69, 19, 0.03) 0%, transparent 50%);
-        }
-        
-        .islamic-pattern::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: 
-                repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(59, 130, 246, 0.015) 8px, rgba(59, 130, 246, 0.015) 16px),
-                repeating-linear-gradient(-45deg, transparent, transparent 8px, rgba(139, 69, 19, 0.015) 8px, rgba(139, 69, 19, 0.015) 16px);
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        /* Tasbih Button - Prevent zoom and improve touch */
-        #tasbihContent button[onclick="incrementTasbih()"] {
-            touch-action: manipulation;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        /* Prevent double-tap zoom on mobile */
-        @media (max-width: 768px) {
-            #tasbihContent {
-                touch-action: manipulation;
-            }
-            
-            #tasbihContent button[onclick="incrementTasbih()"] {
-                -webkit-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
-                user-select: none;
-                -webkit-touch-callout: none;
-                -webkit-tap-highlight-color: rgba(0,0,0,0);
-            }
-        }
-
-        /* LTR Text Styling */
-        .ltr-text {
-            direction: ltr !important;
-            text-align: left !important;
-            unicode-bidi: embed;
-        }
-        
-        /* When main language is English, Arabic text should be RTL */
-        [dir="ltr"] .arabic-text {
-            direction: rtl !important;
-            text-align: right !important;
-            unicode-bidi: embed;
-        }
-
-        /* Dhikr Counter Animations */
-        .dhikr-counter {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .dhikr-counter.animate-count {
-            transform: scale(1.2);
-            color: #10b981;
-        }
-        
-        .dhikr-counter.animate-count.dark {
-            color: #34d399;
-        }
-        
-        .dhikr-complete {
-            animation: celebration 0.8s ease-out;
-        }
-        
-        @keyframes celebration {
-            0% { transform: scale(1); }
-            25% { transform: scale(1.1) rotate(2deg); }
-            50% { transform: scale(1.05) rotate(-1deg); }
-            75% { transform: scale(1.08) rotate(1deg); }
-            100% { transform: scale(1) rotate(0deg); }
-        }
-        
-        .counter-pulse {
-            animation: pulse-glow 0.6s ease-out;
-        }
-        
-        @keyframes pulse-glow {
-            0% { 
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
-            }
-            70% { 
-                transform: scale(1.05);
-                box-shadow: 0 0 0 20px rgba(59, 130, 246, 0);
-            }
-            100% { 
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
-            }
-        }
-        
-        .number-flip {
-            animation: flip-number 0.4s ease-in-out;
-        }
-        
-        @keyframes flip-number {
-            0% { transform: rotateX(0deg); }
-            50% { transform: rotateX(90deg); }
-            100% { transform: rotateX(0deg); }
-        }
-        
-        /* Progress ring animation */
-        .progress-ring {
-            transition: stroke-dashoffset 0.3s ease-in-out;
-        }
-        
-        .progress-ring-complete {
-            animation: ring-pulse-complete 1.5s ease-out;
-        }
-        
-        @keyframes ring-pulse-complete {
-            0% { 
-                stroke-width: 8;
-                filter: drop-shadow(0 0 0 rgba(16, 185, 129, 0.8));
-            }
-            25% { 
-                stroke-width: 12;
-                filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.9));
-            }
-            50% { 
-                stroke-width: 10;
-                filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.7));
-            }
-            75% { 
-                stroke-width: 12;
-                filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.8));
-            }
-            100% { 
-                stroke-width: 8;
-                filter: drop-shadow(0 0 0 rgba(16, 185, 129, 0.5));
-            }
-        }
-        
-        /* Confetti animation */
-        @keyframes confetti-fall {
-            0% {
-                transform: translateY(-100vh) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
-        /* Tab Navigation */
-        .tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            color: #6B7280;
-            font-weight: 500;
-            font-size: 0.9rem;
-            position: relative;
-            background: transparent;
-            border: 1px solid transparent;
-            margin: 0 1px;
-            white-space: nowrap;
-        }
-        
-        .tab:hover {
-            color: #3B82F6;
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
-            border-color: rgba(59, 130, 246, 0.2);
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
-        }
-        
-        .tab.active {
-            color: white;
-            background: linear-gradient(135deg, #3B82F6, #2563EB);
-            border-color: #2563EB;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            transform: translateY(-1px);
-        }
-        
-        /* Dark mode tab styles */
-        .dark .tab {
-            color: #9CA3AF;
-        }
-        
-        .dark .tab:hover {
-            color: #60A5FA;
-            background: linear-gradient(135deg, rgba(96, 165, 250, 0.15), rgba(96, 165, 250, 0.08));
-            border-color: rgba(96, 165, 250, 0.3);
-            box-shadow: 0 2px 8px rgba(96, 165, 250, 0.2);
-        }
-        
-        /* Quran Search Styles */
-        .quran-search-container {
-            position: relative;
-        }
-        
-        .search-result-item {
-            transition: all 0.2s ease-in-out;
-        }
-        
-        .search-result-item:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        
-        .search-result-item:active {
-            transform: translateY(0);
-        }
-        
-        /* Custom scrollbar for search results */
-        #quranSearchResults::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        #quranSearchResults::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.05);
-            border-radius: 3px;
-        }
-        
-        #quranSearchResults::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 3px;
-        }
-        
-        #quranSearchResults::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 0, 0, 0.3);
-        }
-        
-        .dark #quranSearchResults::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-        }
-        
-        .dark #quranSearchResults::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        
-        .dark #quranSearchResults::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        .dark .tab.active {
-            color: white;
-            background: linear-gradient(135deg, #60A5FA, #3B82F6);
-            border-color: #3B82F6;
-            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        }
-
-        /* Modern Modal Button Styles */
-        #adhkarMenuModal button:not(#closeAdhkarMenu) {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 1rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.8), rgba(249, 250, 251, 0.8));
-            border: 1px solid rgba(229, 231, 235, 0.8);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: scale(1);
-        }
-        
-        #adhkarMenuModal button:not(#closeAdhkarMenu):hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
-            background: linear-gradient(145deg, rgba(249, 250, 251, 0.9), rgba(243, 244, 246, 0.9));
-        }
-        
-        .dark #adhkarMenuModal button:not(#closeAdhkarMenu) {
-            background: linear-gradient(145deg, rgba(31, 41, 55, 0.8), rgba(17, 24, 39, 0.8));
-            border-color: rgba(75, 85, 99, 0.8);
-        }
-        
-        .dark #adhkarMenuModal button:not(#closeAdhkarMenu):hover {
-            background: linear-gradient(145deg, rgba(55, 65, 81, 0.9), rgba(31, 41, 55, 0.9));
-        }
-        
-        #adhkarMenuModal button:not(#closeAdhkarMenu) i {
-            font-size: 1.25rem;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            background-color: rgba(255, 255, 255, 0.8);
-            transition: all 0.3s ease;
-        }
-        
-        .dark #adhkarMenuModal button:not(#closeAdhkarMenu) i {
-            background-color: rgba(17, 24, 39, 0.8);
-        }
-        
-        #adhkarMenuModal button:not(#closeAdhkarMenu) span {
-            font-size: 0.75rem;
-            font-weight: 500;
-            text-align: center;
-            line-height: 1.2;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        
-        /* Toast Notifications */
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s ease; /* This handles the show/hide opacity */
-            backdrop-filter: blur(8px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .toast.show {
-            opacity: 1;
-        }
-
-        .toast i {
-            font-size: 1.2em;
-        }
-
-        /* Mobile Layout Fixes */
-        @media (max-width: 768px) {
-            /* Fix header and navigation */
-            header {
-                padding: 0.001rem 0.05rem;
-                font-size: 0.5rem;
-            }
-
-            /* Fix tab navigation */
-            .tab { /* This was duplicated, keeping one */
-                padding: 8px 12px;
-                font-size: 0.8rem;  
-                white-space: nowrap;
-                margin: 0 1px;
-            }
-            
-            .tab:hover, .tab.active {
-                transform: none; /* Disable transform on mobile for better performance */
-            }
-
-            /* Fix Quran content layout - but NOT the sticky controls */
-            /* Selectors like #quranContent .flex.justify-between might need review if #quranContent is used multiple times in HTML */
-            /* Assuming #quranContent refers to the main Quran tab content area */
-            div#quranContent.tab-content .flex.justify-between:not(.quran-controls-sticky) { /* Made selector more specific and exclude sticky controls */
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            div#quranContent.tab-content .flex.gap-2:not(.quran-controls-sticky *) { /* Made selector more specific and exclude sticky controls children */
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            /* Fix select dropdowns - completely reset and rebuild */
-            select { 
-                /* Remove ALL native styling */
-                -webkit-appearance: none !important;
-                -moz-appearance: none !important;
-                appearance: none !important;
-                
-                /* Add our custom styling */
-                background-color: #fff !important;
-                border: 1px solid #e5e7eb !important;
-                border-radius: 0.5rem;
-                padding: 0.5rem 0.5rem 0.5rem 2.5rem;
-                font-size: 1rem;
-                width: 100%;
-                text-align: right;
-                direction: rtl;
-                color: #000 !important;
-                
-                /* Add our custom arrow */
-                background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
-                background-repeat: no-repeat !important;
-                background-position: left 0.5rem center !important;
-                background-size: 1.5em 1.5em !important;
-            }
-            
-            /* Remove native dropdown arrows completely */
-            select {
-                -webkit-appearance: none !important;
-                -moz-appearance: none !important;
-                appearance: none !important;
-            }
-            
-            select::-ms-expand {
-                display: none !important;
-            }
-            
-            /* Additional browser-specific arrow removal */
-            select::-webkit-inner-spin-button,
-            select::-webkit-outer-spin-button {
-                -webkit-appearance: none !important;
-                margin: 0 !important;
-            }
-            
-            /* English dropdowns should use LTR */
-            select[data-lang="en"], select.ltr {
-                background-position: right 0.5rem center;
-                padding-left: 0.5rem;
-                padding-right: 2.5rem;
-                text-align: left;
-                direction: ltr;
-            }
-
-            /* Fix buttons layout */
-            /* This selector seems quite generic, ensure it targets the correct element */
-            /* For instance, if it's for Quran nav buttons: */
-            div#quranContent.tab-content .flex.justify-between.mt-6 { 
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            div#quranContent.tab-content .flex.justify-between.mt-6 > * {
-                width: 100%;
-            }
-
-
-
-            /* Fix reading mode buttons - but preserve our horizontal layout */
-            /* This selector is also generic, assumed to be within Quran controls */
-            .quran-controls-sticky .flex.gap-2:not(.flex.items-center.gap-1) {
-                justify-content: center;
-                width: 100%;
-            }
-
-            /* Fix translation toggle */
-            #toggleTranslation, #toggleBookmark { /* This might be #toggleTafsir as well? */
-                padding: 0.5rem;
-            }
-
-            /* Fix surah select container */
-            #surahSelect, #translationSelect {
-                width: 100%;
-                margin-bottom: 0.5rem;
-            }
-
-            /* Mobile responsive for horizontal header */
-            .quran-controls-sticky {
-                margin: -1rem -1rem 1rem -1rem;
-                padding: 0.5rem 0.75rem;
-                gap: 0.25rem;
-                flex-wrap: nowrap !important;
-                flex-direction: row !important;
-                justify-content: space-between !important;
-                align-items: center !important;
-            }
-            
-            .quran-controls-sticky > div {
-                flex-shrink: 0;
-                min-width: 0;
-            }
-            
-            /* Force horizontal layout on mobile */
-            .quran-controls-sticky.flex.items-center.justify-between {
-                flex-direction: row !important;
-                flex-wrap: nowrap !important;
-            }
-            
-            /* Left section - controls */
-            .quran-controls-sticky > div:first-child {
-                flex: 0 0 auto;
-                max-width: 25%;
-            }
-            
-            /* Center section - page/juz indicator */
-            .quran-controls-sticky > div:nth-child(2) {
-                flex: 0 1 auto;
-                text-align: center;
-            }
-            
-            /* Right section - surah selector */
-            .quran-controls-sticky > div:last-child {
-                flex: 1 1 auto;
-                min-width: 120px;
-                max-width: 60%;
-            }
-            
-            .quran-controls-sticky #selectedSurahText {
-                max-width: 140px;
-                min-width: 80px;
-                font-size: 0.7rem;
-            }
-            
-            .quran-controls-sticky #surahMenuBtn {
-                min-width: 100px;
-                padding: 0.3rem 0.5rem !important;
-            }
-            
-            .quran-controls-sticky button {
-                padding: 0.3rem !important;
-                font-size: 0.7rem;
-            }
-
-            .quran-controls-sticky .flex.items-center.gap-1 {
-                gap: 0.125rem;
-            }
-
-            .quran-controls-sticky .flex.items-center.gap-1 button {
-                padding: 0.3rem 0.4rem !important;
-            }
-            
-            /* Fix Quran settings sidebar on mobile */
-            #quranSettingsMenu {
-                width: 100vw !important;
-                right: 0 !important;
-                left: auto !important;
-            }
-            
-            #quranSettingsMenu .flex.items-center.justify-between {
-                flex-direction: row !important;
-                flex-wrap: nowrap !important;
-                align-items: center !important;
-                padding: 1rem !important;
-                gap: 1rem !important;
-            }
-            
-            #quranSettingsMenu h3 {
-                font-size: 0.9rem !important;
-                flex: 1 1 auto !important;
-                min-width: 0 !important;
-                overflow: hidden !important;
-                text-overflow: ellipsis !important;
-                white-space: nowrap !important;
-                margin: 0 !important;
-            }
-            
-            #quranSettingsMenu .flex.items-center.justify-between button {
-                flex: 0 0 auto !important;
-                min-width: 44px !important;
-                min-height: 44px !important;
-                padding: 0.5rem !important;
-                margin: 0 !important;
-            }
-        }
-
-        /* iOS-specific fixes */
-        @supports (-webkit-touch-callout: none) {
-            select { /* This will override the general select styling on iOS */
-                -webkit-appearance: none !important;
-                appearance: none !important;
-                background-color: #fff !important;
-                border: 1px solid #e5e7eb !important;
-                border-radius: 0.5rem;
-                padding: 0.5rem 0.5rem 0.5rem 2.5rem; /* RTL: left padding for arrow */
-                font-size: 1rem;
-                width: 100%;
-                text-align: right;
-                direction: rtl;
-                color: #000 !important;
-                /* Background image is inherited from general rule */
-            }
-            
-            /* English dropdowns on iOS */
-            select[data-lang="en"], select.ltr {
-                padding: 0.5rem 2.5rem 0.5rem 0.5rem !important; /* LTR: right padding for arrow */
-                background-position: right 0.5rem center !important; /* LTR: arrow on right */
-                text-align: left;
-                direction: ltr;
-            }
-
-            select:focus {
-                outline: none;
-                border-color: #3B82F6;
-                box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-            }
-
-            select option { /* iOS option styling */
-                padding: 0.5rem;
-                font-size: 1rem;
-                background-color: #fff; /* Specific for iOS light mode */
-            }
-
-            /* Fix for iOS select dropdown - remove all native arrows */
-            select::-ms-expand {
-                display: none;
-            }
-            
-            /* Force remove all native select styling */
-            select {
-                -webkit-appearance: none !important;
-                -moz-appearance: none !important;
-                appearance: none !important;
-            }
-            
-            select::-webkit-inner-spin-button,
-            select::-webkit-outer-spin-button {
-                -webkit-appearance: none !important;
-                margin: 0 !important;
-            }
-
-            /* Ensure the select is clickable */
-            select:active,
-            select:focus {
-                -webkit-tap-highlight-color: transparent;
-            }
-
-            /* Fix for iOS select text alignment */
-            select option { /* This is duplicated, ensure it's intended */
-                text-align: right;
-                direction: rtl;
-            }
-        }
-
-        /* Android-specific fixes */
-        /* Styles for 'select' on Android if needed, currently basic */
-        @supports not (-webkit-touch-callout: none) { /* This targets non-iOS, effectively Android for this context */
-            select {
-                -webkit-appearance: none !important;
-                -moz-appearance: none !important;
-                appearance: none !important;
-                background-color: #fff !important;
-                border: 1px solid #e5e7eb !important;
-                border-radius: 0.5rem;
-                padding: 0.5rem 0.5rem 0.5rem 2.5rem; /* RTL: left padding for arrow */
-                font-size: 1rem;
-                text-align: right;
-                direction: rtl;
-                color: #000 !important;
-                /* Background image is inherited from general rule */
-            }
-            
-            /* English dropdowns on Android */
-            select[data-lang="en"], select.ltr {
-                padding: 0.5rem 2.5rem 0.5rem 0.5rem !important; /* LTR: right padding for arrow */
-                background-position: right 0.5rem center !important; /* LTR: arrow on right */
-                text-align: left;
-                direction: ltr;
-            }
-        }
-        
-        /* Quran Sticky Controls */
-        .quran-controls-sticky {
-            position: sticky;
-            top: 0;
-            z-index: 20;
-            background: #fff; /* Default light mode */
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            border-radius: 0.5rem;
-            margin: -1.5rem -1.5rem 1rem -1.5rem;
-            transition: transform 0.3s cubic-bezier(.4,2,.6,1), opacity 0.3s;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        .dark .quran-controls-sticky {
-            background: #1f2937; /* Dark mode */
-            border-bottom-color: #374151;
-        }
-        .quran-controls-hidden {
-          transform: translateY(-120%);
-          opacity: 0;
-          pointer-events: none;
-        }
-   
-
-
-        /* Prayer Time Highlighting */
-        .next-prayer-highlight { /* Base for light mode */
-            background-color: #e0f2fe !important; 
-            border-left: 4px solid #0ea5e9 !important; /* Added !important for consistency */
-            font-weight: 600 !important; /* Added !important for consistency */
-            color: #0ea5e9 !important; /* Ensuring text color contrasts, added !important */
-        }
-
-        .dark .next-prayer-highlight { /* For dark mode */
-            background-color: #80c8f7  !important; 
-            border-left-color: #0ea5e9 !important; /* Added !important */
-            color: #f0f9ff !important; 
-        }
-
-        
-
-        /* Modern Prayer Times Highlight Styles */
-        #prayerContent .next-prayer-highlight {
-            background: linear-gradient(135deg, rgba(34, 197, 94, 0.9), rgba(16, 185, 129, 0.9)) !important;
-            border: 2px solid rgba(34, 197, 94, 0.5) !important;
-            box-shadow: 0 8px 32px rgba(34, 197, 94, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
-            transform: scale(1.02) !important;
-            animation: prayerPulse 2s ease-in-out infinite !important;
-        }
-        
-        .dark #prayerContent .next-prayer-highlight {
-            background: linear-gradient(135deg, rgba(34, 197, 94, 0.8), rgba(16, 185, 129, 0.8)) !important;
-            border: 2px solid rgba(34, 197, 94, 0.6) !important;
-            box-shadow: 0 8px 32px rgba(34, 197, 94, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
-        }
-
-        /* Text styling for highlighted prayer */
-        #prayerContent .next-prayer-highlight span {
-            color: white !important;
-            font-weight: 700 !important;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
-        }
-
-        /* Icon styling for highlighted prayer */
-        #prayerContent .next-prayer-highlight .w-10 {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7)) !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
-        }
-
-        #prayerContent .next-prayer-highlight .w-10 i {
-            color: #059669 !important;
-        }
-
-        /* Pulse animation for next prayer */
-        @keyframes prayerPulse {
-            0%, 100% {
-                box-shadow: 0 8px 32px rgba(34, 197, 94, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
-            }
-            50% {
-                box-shadow: 0 8px 32px rgba(34, 197, 94, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.2);
-            }
-        }
-
-        /* General Fade transitions (often used with JS toggles) */
-        .fade-enter {
-            opacity: 0;
-            transform: translateY(10px); /* This is different from fadeInFromTop */
-            transition: all 0.4s ease;
-        }
-        .fade-enter-active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .fade-leave {
-            opacity: 1;
-            transform: translateY(0);
-            transition: all 0.4s ease;
-        }
-        .fade-leave-active {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-
-        /* Enhanced verse styling for better desktop reading */
-        .ayah {
-            transition: background-color 0.2s ease;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.375rem;
-            cursor: pointer;
-        }
-        
-        .ayah:hover {
-            background-color: rgba(59, 130, 246, 0.1);
-        }
-        
-        .dark .ayah:hover {
-            background-color: rgba(59, 130, 246, 0.2);
-        }
-
-        /* Better spacing for desktop reading */
-        @media (min-width: 768px) {
-            .text-2xl.leading-loose {
-                line-height: 2.4 !important;
-            }
-        }
-
-        /* Improved container for better reading flow */
-        .quran-reading-container {
-            max-width: 1024px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-        }
-        
-        @media (min-width: 768px) {
-            .quran-reading-container {
-                padding: 3rem 2rem;
-            }
-        }
-        @font-face {
-            font-family: 'KFGQPC Uthmanic Script HAFS';
-            src: url('https://cdn.jsdelivr.net/gh/quran/quran.com-frontend@master/static/fonts/KFGQPC-Uthmanic-Script-HAFS.woff2') format('woff2'),
-                 url('https://cdn.jsdelivr.net/gh/quran/quran.com-frontend@master/static/fonts/KFGQPC-Uthmanic-Script-HAFS.woff') format('woff');
-            font-weight: normal;
-            font-style: normal;
-        }
-        @font-face {
-    font-family: 'KFGQPC Uthman Taha Naskh';
-    src: url('fonts/UtmanTahaNaskh.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
-
-        @font-face {
-    font-family: 'AlMushafQuran';
-    src: url('fonts/AlMushafQuran.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-
-
-        .quran-uthmani-font {
-    font-family: 'Quran.com Font', Arial, sans-serif;
-    font-size: 2rem;
-    line-height: 2.5rem;
-    letter-spacing: 0.01em;
-    font-weight: bold;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* Font Family Options */
-        .font-quran-original {
-            font-family: 'UthmanicHafs1Ver18', 'Quran.com Font', Arial, sans-serif;
-        }
-        
-        .font-utman-taha {
-            font-family: 'KFGQPC Uthman Taha Naskh', 'UtmanTahaNaskh', Arial, sans-serif;
-        }
-        
-        .font-al-mushaf {
-            font-family: 'AlMushafQuran', Arial, sans-serif;
-        }
-        
-        .font-system-arabic {
-            font-family: Arial, Tahoma, 'Segoe UI', sans-serif;
-        }
-
-        /* Settings Menu Overlay */
-        .settings-overlay {
-            position: fixed;
-            inset: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 40;
-        }
-
-
-        .ayah {
-            display: inline;
-            cursor: pointer;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            padding: 2px 4px;
-            border-radius: 4px;
-        }
-        .ayah:hover {
-            background-color: rgba(59, 130, 246, 0.1);
-        }
-        .dark .ayah:hover {
-            background-color: rgba(96, 165, 250, 0.2);
-        }
-        .ayah-playing {
-            background-color: rgba(59, 130, 246, 0.2);
-            color: #3b82f6;
-        }
-        .dark .ayah-playing {
-            background-color: rgba(96, 165, 250, 0.3);
-            color: #60a5fa;
-        }
-            .verse-marker {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 2.5rem;
-            height: 2.5rem;
-            cursor: pointer;
-            margin: 0 0.25rem;
-            vertical-align: middle;
-            transition: box-shadow 0.25s, filter 0.25s;
-        }
-        .verse-marker:hover, .verse-marker:focus {
-            z-index: 2;
-        }
-        .verse-marker:hover .verse-icon, .verse-marker:focus .verse-icon {
-            filter: drop-shadow(0 0 8px #3b82f6aa) brightness(1.2);
-            transition: filter 0.2s;
-        }
-        .dark .verse-marker:hover .verse-icon, .dark .verse-marker:focus .verse-icon {
-            filter: drop-shadow(0 0 10px #60a5fa) brightness(1.3);
-        }
-        .verse-icon {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('icons/seperator.svg');
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
-        .verse-number {
-            position: relative;
-            z-index: 1;
-            font-size: 0.8rem;
-            font-weight: bold;
-            color: #2d3748; /* gray-800 */
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-        }
-        
-        /* Ensure page numbers and UI elements don't inherit Quran font */
-        .page-header, .page-header *, .text-blue-700, .text-blue-300 {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-        }
-        
-        /* Quran.com exact font - UthmanicHafs1 Ver18 */
-        @font-face {
-            font-family: 'Quran.com Font';
-            src: url('fonts/UthmanicHafs1Ver18.ttf?v=3') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-            font-display: swap;
-        }
-        
-        @font-face {
-            font-family: 'Quran.com Font';
-            src: url('fonts/UthmanicHafs1Ver18.ttf?v=3') format('truetype');
-            font-weight: bold;
-            font-style: normal;
-            font-display: swap;
-        }
-        
-        /* Local font fallback */
-        @font-face {
-            font-family: 'Uthmani Local';
-            src: url('fonts/UtmanTahaNaskh.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-            font-display: swap;
-        }
-        .dark .verse-number {
-            color: #f7fafc; /* gray-100 */
-        }
-
-        /* Ayah Context Menu Popover */
-        #ayahMenuPopover {
-            display: none;
-            position: absolute;
-            z-index: 10000;
-            min-width: 180px;
-            max-width: 260px;
-            background-color: #fff;
-            border: 0.1px solid #ccc;
-            border-radius: 0.375rem;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 10px;
-            transition: opacity 0.3s ease;
-            word-break: break-word;
-            white-space: normal;
-        }
-
-        #ayahMenuPopover button {
-            display: block;
-            width: 100%;
-            padding: 5px 0;
-            color: #333;
-            border: none;
-            background: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            text-align: inherit;
-            white-space: normal;
-        }
-
-        #ayahMenuPopover button:hover {
-            background-color: #f0f0f0;
-        }
-
-        #ayahMenuPopover i {
-            margin-right: 10px;
-        }
-
-        /* Ayah Context Menu Popover */
-        #ayahMenuPopover {
-            display: none;
-            position: absolute;
-            z-index: 10000;
-            background-color: #fff;
-            border: 0.1px solid #ccc;
-            border-radius: 0.375rem;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 8px;
-            transition: opacity 0.3s ease;
-        }
-
-        #ayahMenuPopover button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
-            color: #333;
-            border: none;
-            background: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            border-radius: 4px;
-        }
-
-        #ayahMenuPopover button:hover {
-            background-color: #f0f0f0;
-        }
-
-        .dark #ayahMenuPopover {
-            background-color: #374151;
-            border-color: #4b5563;
-        }
-
-        .dark #ayahMenuPopover button {
-            color: #f3f4f6;
-        }
-
-        .dark #ayahMenuPopover button:hover {
-            background-color: #4b5563;
-        }
-        
-        /* Auto-appearing tooltip for reading mode button */
-        #btnReadingMode.show-tooltip::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            white-space: nowrap;
-            z-index: 1000;
-            margin-bottom: 5px;
-            pointer-events: none;
-            animation: tooltipFadeIn 0.3s ease-out;
-        }
-        
-        #btnReadingMode.show-tooltip::before {
-            content: '';
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 5px solid transparent;
-            border-top-color: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
-            margin-bottom: -5px;
-            pointer-events: none;
-            animation: tooltipFadeIn 0.3s ease-out;
-        }
-        
-        @keyframes tooltipFadeIn {
-            from {
-                opacity: 0;
-                transform: translateX(-50%) translateY(5px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-            }
-        }
-        
-        #btnReadingMode {
-            position: relative;
-        }
-</style>
     <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap" rel="stylesheet">
 </head>
 
@@ -1798,7 +290,7 @@
         </div>
 
         <!-- Quran Tab Content -->
-        <div id="quranContent" class="tab-content w-full max-w-4xl p-4 hidden">
+        <div id="quranContent" class="tab-content w-full max-w-4xl p-4">
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
 
                 <div class="quran-controls-sticky flex items-center justify-between px-4 py-2 mb-6 gap-2 flex-nowrap min-w-0">
@@ -1841,7 +333,7 @@
                         type="text" 
                         id="quranSearchInput" 
                         class="flex-1 px-3 py-3 bg-transparent border-none outline-none text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400"
-                        placeholder="البحث في القرآن - Search Quran..."
+                        placeholder=""
                         autocomplete="off"
                         dir="auto"
                     >
@@ -1861,8 +353,8 @@
                         <div id="quranSearchResults" class="absolute top-full left-0 right-0 mt-2 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200 dark:border-gray-600 rounded-xl shadow-2xl max-h-96 overflow-y-auto z-[60] hidden">
                             <!-- Results will be populated here -->
                         </div>
-                    </div>
-                </div>
+                        </div>
+                        </div>
                         
                 <!-- Quran Settings Side Menu -->
                 <div id="quranSettingsMenu" class="fixed inset-y-0 right-0 w-80 bg-white/95 dark:bg-gray-900/95 shadow-2xl border-l border-white/30 dark:border-gray-600/50 transform translate-x-full transition-transform duration-200 ease-in-out z-50 hidden" style="background-image: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 40% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%);">
@@ -2002,11 +494,6 @@
 
                 <div id="quranContent" class="space-y-3">
                     <div class="text-center text-2xl leading-loose quran-uthmani-font" id="arabicText">
-                        <div class="text-gray-500 dark:text-gray-400 py-2" id="quranPlaceholder">
-                            <i class="fas fa-book-quran text-2xl mb-2"></i>
-                            <p class="text-lg">اختر سورة للبدء</p>
-                            <p class="text-sm mt-1">Select a Surah to begin</p>
-                        </div>
                     </div>
                     
                     <!-- Quick Surahs Section (shown when no surah is selected) -->
@@ -2092,7 +579,7 @@
         </div>
 
         <!-- Qibla Tab Content -->
-        <div id="qiblaContent" class="tab-content w-full p-4 hidden">
+        <div id="qiblaContent" class="tab-content w-full p-4">
             <!-- Simple Compass Interface -->
             <div class="max-w-md mx-auto">
                 <!-- Location Display -->
@@ -3150,6 +1637,12 @@ let scrollTimeout = null;
                tafsirLang = currentLang;
                document.documentElement.lang = currentLang;
                document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+               
+               // Set initial search input placeholder
+               const searchInput = document.getElementById('quranSearchInput');
+               if (searchInput) {
+                   searchInput.placeholder = currentLang === 'ar' ? 'البحث في القرآن' : 'Search Quran';
+               }
            }
        }
 
@@ -4791,6 +3284,12 @@ function showARUnsupported(errorType) {
           
           // Update Hijri date when language changes
           updateHijriDate();
+          
+          // Update search input placeholder
+          const searchInput = document.getElementById('quranSearchInput');
+          if (searchInput) {
+              searchInput.placeholder = currentLang === 'ar' ? 'البحث في القرآن' : 'Search Quran';
+          }
 
           // Update language toggle button with both desktop and mobile text
           const langToggle = document.getElementById('langToggle');
@@ -5468,8 +3967,32 @@ function showARUnsupported(errorType) {
                   }
 
             
-            if (tabId === 'prayer' && isIOS) {
-                
+            if (tabId === 'prayer') {
+                // Scroll to prayer times content
+                setTimeout(() => {
+                    const prayerContent = document.getElementById('prayerContent');
+                    if (prayerContent) {
+                        prayerContent.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'start',
+                            inline: 'nearest' 
+                        });
+                    }
+                }, 100);
+            }
+
+            if (tabId === 'tasbih') {
+                // Scroll to tasbih content
+                setTimeout(() => {
+                    const tasbihContent = document.getElementById('tasbihContent');
+                    if (tasbihContent) {
+                        tasbihContent.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'start',
+                            inline: 'nearest' 
+                        });
+                    }
+                }, 100);
             } 
 
                   if (tabId === 'quran') {
@@ -5685,11 +4208,7 @@ function showARUnsupported(errorType) {
               }
           }
           
-          document.getElementById('arabicText').innerHTML = `
-              <div class="text-gray-500 dark:text-gray-400 py-2">
-                  <i class="fas fa-book-quran text-2xl mb-2"></i>
-                  <p class="text-lg">${currentLang === 'ar' ? 'اختر سورة للبدء' : 'Select a Surah to begin'}</p>
-                  ${savedBookmark && quranData ? `
+          document.getElementById('arabicText').innerHTML = savedBookmark && quranData ? `
                       <div class="mt-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 p-4 max-w-xs mx-auto">
                           <div class="flex items-center gap-3 mb-3">
                               <div class="flex-shrink-0 w-10 h-10 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
@@ -5720,9 +4239,7 @@ function showARUnsupported(errorType) {
                               <span>${currentLang === 'ar' ? 'متابعة' : 'Continue'}</span>
                               </button>
                       </div>
-                  ` : ''}
-              </div>
-          `;
+          ` : '';
           
           document.getElementById('translationText').innerHTML = '';
           
@@ -6384,13 +4901,7 @@ function showARUnsupported(errorType) {
           console.log('First ayah from quranData:', surah.ayahs[0].text);
         }
         if (currentSurah === null || !quranData || !translationData) {
-          arabicTextElement.innerHTML = `
-            <div class="text-gray-500 dark:text-gray-400 py-2">
-              <i class="fas fa-book-quran text-2xl mb-2"></i>
-              <p class="text-lg">اختر سورة للبدء</p>
-              <p class="text-sm mt-1">Select a Surah to begin</p>
-            </div>
-          `;
+          arabicTextElement.innerHTML = '';
           translationTextElement.innerHTML = '';
           document.getElementById('btnReadingMode').disabled = true;
           return;
@@ -6793,8 +5304,8 @@ function showARUnsupported(errorType) {
           
           // Page header with number and Juz
           const juzNum = pageVersesData[0].ayah.juz || 1; // Get Juz from first verse of the page
-          html += `<div class="page-section mb-8">
-            <div class="page-header text-center mb-6">
+          html += `<div class="page-section mb-8" id="page-${pageNum}">
+            <div class="page-header text-center mb-6 pt-4">
               <div class="inline-flex items-center justify-center gap-3">
                 <span class="text-xs font-normal text-gray-500 dark:text-gray-400 px-3 py-1 rounded-md bg-gray-50 dark:bg-gray-800/50">${currentLang === 'ar' ? 'صفحة' : 'Page'} ${currentLang === 'ar' ? toArabicNumerals(pageNum) : pageNum}</span>
                 <span class="text-xs font-normal text-gray-500 dark:text-gray-400 px-3 py-1 rounded-md bg-gray-50 dark:bg-gray-800/50">${currentLang === 'ar' ? 'جزء' : 'Juz'} ${currentLang === 'ar' ? toArabicNumerals(juzNum) : juzNum}</span>
@@ -6897,34 +5408,85 @@ function showARUnsupported(errorType) {
             });
           }
         }
-        // Scroll logic
+        // Scroll logic with improved handling
+        setTimeout(() => {
         if (shouldScrollToBookmark && currentBookmark && currentBookmark.surah === currentSurah) {
           const verseElem = document.getElementById(`verse-${currentSurah}-${currentBookmark.ayah}`);
           if (verseElem) {
-            verseElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              const pageSection = verseElem.closest('.page-section');
+              if (pageSection) {
+                const pageHeader = pageSection.querySelector('.page-header');
+                if (pageHeader) {
+                  window.scrollTo({
+                    top: pageHeader.offsetTop - 60,
+                    behavior: 'smooth'
+                  });
+                }
+              }
           }
         } else if (scrollToVerseId) {
           const verseElem = document.getElementById(scrollToVerseId);
           if (verseElem) {
-            verseElem.scrollIntoView({ behavior: 'auto', block: 'center' });
+              const pageSection = verseElem.closest('.page-section');
+              if (pageSection) {
+                const pageHeader = pageSection.querySelector('.page-header');
+                if (pageHeader) {
+                  window.scrollTo({
+                    top: pageHeader.offsetTop - 60,
+                    behavior: 'smooth'
+                  });
+                }
+              }
+            }
+          } else if (targetVerse) {
+            // First try to scroll to the specific verse
+            const verseElem = document.getElementById(`verse-${targetVerse.surahIndex}-${targetVerse.ayahIndex}`);
+            if (verseElem) {
+              const pageSection = verseElem.closest('.page-section');
+              if (pageSection) {
+                const pageHeader = pageSection.querySelector('.page-header');
+                if (pageHeader) {
+                  window.scrollTo({
+                    top: pageHeader.offsetTop - 60,
+                    behavior: 'smooth'
+                  });
+                }
+              }
+              // Clear the target verse after scrolling
+              targetVerseFromSearch = null;
+            } else {
+              // If verse element not found, try to find and scroll to the page
+              const ayah = quranData[targetVerse.surahIndex].ayahs[targetVerse.ayahIndex];
+              if (ayah && ayah.page) {
+                const pageElem = document.getElementById(`page-${ayah.page}`);
+                if (pageElem) {
+                  // Add a small delay to ensure the page is rendered
+                  const pageHeader = pageElem.querySelector('.page-header');
+                  if (pageHeader) {
+                    setTimeout(() => {
+                      window.scrollTo({
+                        top: pageHeader.offsetTop - 60, // Account for sticky header
+                        behavior: 'smooth'
+                      });
+                    }, 100);
+                  }
+                }
+              }
+              // Clear the target verse after attempting to scroll
+              targetVerseFromSearch = null;
+            }
           }
-        } else if (shouldScrollToBookmark && targetVerse) {
-          // Scroll to target verse from search
-          const verseElem = document.getElementById(`verse-${targetVerse.surahIndex}-${targetVerse.ayahIndex}`);
-          if (verseElem) {
-            verseElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
-        }
+        }, 100);
       }
 
       // In toggleReadingMode, call displayReadingModeAyahs(true) when entering reading mode, otherwise false
       function toggleReadingMode() {
+          const wasReadingMode = isReadingMode;
           isReadingMode = !isReadingMode;
           const btn = document.getElementById('btnReadingMode');
           
-
-          
           if (isReadingMode) {
+              // Update button to show X
               btn.innerHTML = '<i class="fas fa-times"></i>';
               btn.removeAttribute('data-tooltip');
               btn.classList.remove('show-tooltip');
@@ -6938,15 +5500,13 @@ function showARUnsupported(errorType) {
                   currentAyah = targetVerseFromSearch.ayahIndex;
                   // Store the target verse for scrolling before clearing it
                   targetVerseForScroll = { ...targetVerseFromSearch };
-                  // Clear the target verse after using it
-                  targetVerseFromSearch = null;
               }
               
               loadReadingModeAyahs();
               displayReadingModeAyahsByPages(true, null, targetVerseForScroll); // Pass target verse for scrolling
-              
-
           } else {
+              // Clear target verse when exiting reading mode
+              targetVerseFromSearch = null;
               btn.innerHTML = '<i class="fas fa-book-open"></i>';
               btn.removeAttribute('title');
               
@@ -6971,7 +5531,10 @@ function showARUnsupported(errorType) {
               // Hide progress bar when exiting reading mode
               hideProgressBar();
               
+              // Only display single ayah if we were previously in reading mode
+              if (wasReadingMode) {
               displayAyah();
+              }
           }
       }
 
@@ -8313,8 +6876,8 @@ function showARUnsupported(errorType) {
         
         // Calculate comprehensive match score for fuzzy search
         function calculateComprehensiveSurahMatchScore(searchTerm, surah) {
-            const arabicName = surah.name || '';
-            const englishName = surah.englishName || '';
+                const arabicName = surah.name || '';
+                const englishName = surah.englishName || '';
             const number = surah.number.toString();
             
             let maxScore = 0;
@@ -9348,7 +7911,19 @@ function showARUnsupported(errorType) {
             // Set current surah and ayah
             currentSurah = surahIndex;
             currentAyah = ayahIndex;
-            isReadingMode = false;
+            
+            // If we're in reading mode, stay in reading mode
+            const wasInReadingMode = isReadingMode;
+            if (!wasInReadingMode) {
+                isReadingMode = false;
+                // Update reading mode button
+                const btn = document.getElementById('btnReadingMode');
+                btn.innerHTML = '<i class="fas fa-book-open"></i>';
+                btn.removeAttribute('title');
+                const tooltipText = languages[currentLang].displayFullSurah;
+                btn.setAttribute('data-tooltip', tooltipText);
+                btn.classList.add('show-tooltip');
+            }
             
             // Store the target verse for when user switches to full surah mode
             targetVerseFromSearch = { surahIndex, ayahIndex };
@@ -9358,8 +7933,13 @@ function showARUnsupported(errorType) {
             const surahName = currentLang === 'ar' ? surah.name : surah.englishName;
             document.getElementById('selectedSurahText').textContent = `${surah.number}. ${surahName}`;
             
-            // Display the verse
-            displayAyah();
+            // Display the verse based on mode
+            if (wasInReadingMode) {
+                loadReadingModeAyahs();
+                displayReadingModeAyahsByPages(true, null, targetVerseFromSearch);
+            } else {
+                displayAyah();
+            }
             
             // Hide quick surahs section
             const quickSurahsSection = document.getElementById('quickSurahsSection');
