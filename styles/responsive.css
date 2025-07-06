@@ -287,3 +287,28 @@
         padding: 3rem 2rem;
     }
 } 
+
+/* Mobile Prayer Time Interactions */
+@media (max-width: 768px) {
+    #prayerContent .prayer-time-item:active {
+        background: rgba(59, 130, 246, 0.1);
+        border-color: rgba(59, 130, 246, 0.2);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .dark #prayerContent .prayer-time-item:active {
+        background: rgba(96, 165, 250, 0.1);
+        border-color: rgba(96, 165, 250, 0.2);
+    }
+
+    /* Ensure next prayer highlight stays prominent on mobile */
+    #prayerContent .next-prayer-highlight:active {
+        transform: scale(1.02) !important;
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.9), rgba(16, 185, 129, 0.9)) !important;
+    }
+
+    .dark #prayerContent .next-prayer-highlight:active {
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.8), rgba(16, 185, 129, 0.8)) !important;
+    }
+} 
