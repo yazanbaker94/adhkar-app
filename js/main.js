@@ -51,9 +51,7 @@
             });
         }
 
-        // Call initDarkMode when the document is loaded
-        document.addEventListener('DOMContentLoaded', initDarkMode);
-        
+
         // Date Functions
         function updateHijriDate() {
             const today = new Date();
@@ -1130,32 +1128,25 @@ let scrollTimeout = null;
 
                       document.getElementById("azan-location").innerText = languages[currentLang].locationText(city, location);
                       // Debug prayer time selectors
-                      console.log("=== DEBUGGING PRAYER TIME UPDATES ===");
-                      console.log("Prayer times data:", timings);
+                     
                       
                       // Test different selectors for Fajr time
                       const fajrCard = document.getElementById('azan-fajr');
                       if (fajrCard) {
                           const allSpans = fajrCard.querySelectorAll('span');
-                          console.log("Fajr card spans:", allSpans.length);
                           allSpans.forEach((span, index) => {
-                              console.log(`Fajr span ${index}:`, span.textContent, span.className);
                           });
                           
                           // Try different selectors
                           const selector1 = fajrCard.querySelector('.flex span:last-child');
                           const selector2 = fajrCard.querySelector('.font-bold');
                           const selector3 = fajrCard.querySelector('span:nth-child(2)');
-                          
-                          console.log("Selector '.flex span:last-child':", selector1);
-                          console.log("Selector '.font-bold':", selector2);
-                          console.log("Selector 'span:nth-child(2)':", selector3);
+                     
                       }
                       
                       // Use the working selector for prayer times
                       const fajrTimeSpan = document.querySelector("#azan-fajr .font-bold");
                       if (fajrTimeSpan) {
-                          console.log("Updating Fajr time from", fajrTimeSpan.innerText, "to", timings.Fajr);
                           fajrTimeSpan.innerText = timings.Fajr;
                       } else {
                           console.error("Fajr time span not found!");
@@ -1176,7 +1167,6 @@ let scrollTimeout = null;
                       const ishaTimeSpan = document.querySelector("#azan-isha .font-bold");
                       if (ishaTimeSpan) ishaTimeSpan.innerText = timings.Isha;
                       
-                      console.log("=== END PRAYER TIME DEBUGGING ===");
                       
                       // Update prayer names after setting times
                       updatePrayerTimesUI();
@@ -1672,7 +1662,6 @@ let scrollTimeout = null;
           }
           
           // Debug info (remove in production)
-          console.log(`Qibla: ${qiblaAngle.toFixed(1)}°, Heading: ${currentHeading.toFixed(1)}°, Relative: ${relativeAngle.toFixed(1)}°`);
       }
       
       function updateAccuracyIndicator(isHighAccuracy) {
@@ -1865,12 +1854,10 @@ function showARUnsupported(errorType) {
               { name: "Cairo, Egypt", lat: 30.0444, lng: 31.2357, expectedBearing: 135 }
           ];
           
-          console.log("=== Qibla Accuracy Test ===");
           testLocations.forEach(location => {
               const calculated = calculateQiblaAngle(location.lat, location.lng);
               const difference = Math.abs(calculated - location.expectedBearing);
               const accuracy = difference <= 2 ? "✅ ACCURATE" : difference <= 5 ? "⚠️ CLOSE" : "❌ INACCURATE";
-              console.log(`${location.name}: Expected ${location.expectedBearing}°, Got ${calculated.toFixed(1)}°, Diff: ${difference.toFixed(1)}° ${accuracy}`);
           });
       }
       
@@ -1880,11 +1867,9 @@ function showARUnsupported(errorType) {
        // Test notification function (for debugging)
        function testNotification() {
            if (!notificationEnabled) {
-               console.log('Notifications not enabled. Enable them first.');
                return;
            }
            
-           console.log('Testing notification...');
            showBasicNotification('Dhuhr');
        }
        
@@ -1894,7 +1879,6 @@ function showARUnsupported(errorType) {
 
       // Samsung-specific retry function
       async function retrySamsungInit() {
-          console.log("Retrying Samsung initialization with different approach...");
           
           try {
               // Force request permissions again
@@ -1910,7 +1894,6 @@ function showARUnsupported(errorType) {
                   });
               });
               
-              console.log("Samsung retry: Permissions obtained, reinitializing...");
               
               // Wait a bit then retry full initialization
               setTimeout(() => {
@@ -1925,7 +1908,6 @@ function showARUnsupported(errorType) {
 
             // Initialize location on page load
       async function initializeQiblaLocation() {
-          console.log('🌍 Initializing Qibla location on page load...');
           try {
               const position = await new Promise((resolve, reject) => {
                   navigator.geolocation.getCurrentPosition(resolve, reject, {
@@ -1935,11 +1917,7 @@ function showARUnsupported(errorType) {
                   });
               });
               
-              console.log('📍 Location obtained:', {
-                  latitude: position.coords.latitude,
-                  longitude: position.coords.longitude,
-                  accuracy: position.coords.accuracy
-              });
+           
               
               userLocation = {
                   lat: position.coords.latitude,
@@ -1949,10 +1927,8 @@ function showARUnsupported(errorType) {
               qiblaAngle = calculateQiblaAngle(position.coords.latitude, position.coords.longitude);
               updateLocationDisplay(position.coords.latitude, position.coords.longitude);
               
-              console.log('✅ Qibla location initialized successfully');
               
           } catch (error) {
-              console.log("❌ Could not get location on page load:", error);
               // Show default message
               const locationInfo = document.getElementById('locationInfo');
               const qiblaDistance = document.getElementById('qiblaDistance');
@@ -1980,10 +1956,7 @@ function showARUnsupported(errorType) {
       // Event Listeners
       document.getElementById('startCompassBtn').addEventListener('click', initQiblaCompass);
       
-      // Initialize location when page loads
-      document.addEventListener('DOMContentLoaded', () => {
-          setTimeout(initializeQiblaLocation, 1000); // Delay to ensure DOM is ready
-      });
+ 
 
       function handleDhikrClick() {
           const arabicText = document.getElementById('adhkarArabicText');
@@ -2389,7 +2362,6 @@ function showARUnsupported(errorType) {
       // Add this new function to handle translation changes
       async function handleTranslationChange(selectedTranslation) {
           try {
-              console.log("Loading translation:", selectedTranslation);
               const response = await fetch(`https://api.alquran.cloud/v1/quran/${selectedTranslation}`);
               if (!response.ok) throw new Error('Failed to fetch translation');
               const data = await response.json();
@@ -2404,7 +2376,6 @@ function showARUnsupported(errorType) {
                   }
               }
               
-              console.log("Translation loaded successfully");
           } catch (error) {
               console.error('Error loading translation:', error);
               showToast(currentLang === 'ar' ? 'حدث خطأ في تحميل الترجمة' : 'Error loading translation', 'error');
@@ -2445,38 +2416,13 @@ function showARUnsupported(errorType) {
 
       function updatePrayerTimesUI() {
           const lang = languages[currentLang];
-          console.log("updatePrayerTimesUI called with lang:", lang);
-          console.log("currentLang:", currentLang);
+         
           
           document.getElementById('prayerTitle').innerText = lang.prayerTitle;
-          
-          // Debug: Test different selectors for Fajr
-          console.log("=== DEBUGGING PRAYER NAME SELECTORS ===");
-          
-          const fajrCard = document.getElementById('azan-fajr');
-          console.log("Fajr card found:", fajrCard);
-          
-          if (fajrCard) {
-              const allSpans = fajrCard.querySelectorAll('span');
-              console.log("All spans in fajr card:", allSpans.length);
-              allSpans.forEach((span, index) => {
-                  console.log(`Span ${index}:`, span.textContent, span.className);
-              });
-          }
-          
-          // Try different selectors
-          const selector1 = document.querySelector('#azan-fajr .flex .flex span');
-          const selector2 = document.querySelector('#azan-fajr span:first-of-type');
-          const selector3 = document.querySelector('#azan-fajr .font-medium');
-          
-          console.log("Selector '.flex .flex span':", selector1);
-          console.log("Selector 'span:first-of-type':", selector2);
-          console.log("Selector '.font-medium':", selector3);
           
           // Update prayer names with the working selector
           const fajrNameSpan = document.querySelector('#azan-fajr .font-medium');
           if (fajrNameSpan) {
-              console.log("Updating Fajr name from", fajrNameSpan.innerText, "to", lang.fajr);
               fajrNameSpan.innerText = lang.fajr;
           } else {
               console.error("Fajr name span not found!");
@@ -2497,7 +2443,7 @@ function showARUnsupported(errorType) {
           const ishaNameSpan = document.querySelector('#azan-isha .font-medium');
           if (ishaNameSpan) ishaNameSpan.innerText = lang.isha;
           
-          console.log("=== END DEBUGGING ===");
+
       }
 
       fetch('adhkar.json')
@@ -2531,7 +2477,7 @@ function showARUnsupported(errorType) {
               remainingRepeats: d.repeat
           }));
           
-          console.log(`Loaded ${timeFiltered.length} ${time} adhkar, deduplicated to ${filteredAdhkar.length} unique items`);
+
           current = 0;
           document.getElementById('home').classList.add('fade-leave');
           setTimeout(() => {
@@ -2549,7 +2495,7 @@ function showARUnsupported(errorType) {
       function displayDhikr() {
           if (!filteredAdhkar.length) return;
           const dhikr = filteredAdhkar[current];
-          console.log("dhikr", dhikr)
+
           
           // Update text content
           document.getElementById('adhkarArabicText').innerText = dhikr.arabic;
@@ -2827,7 +2773,7 @@ function showARUnsupported(errorType) {
                       
                       // Save to storage
                       savePrayerTimes(timings, location, city);
-                      console.log('Prayer times updated and saved:', timings);
+            
 
                       document.getElementById("azan-location").innerText = languages[currentLang].locationText(city, location);
                       // Use font-bold selectors for API prayer times
@@ -2854,7 +2800,7 @@ function showARUnsupported(errorType) {
 
                       // Setup notifications if enabled
                       if (notificationEnabled) {
-                          console.log('Setting up notifications after prayer times update');
+                
                           setupPrayerNotifications();
                       }
                       // Call highlighting function if times are loaded from storage
@@ -3014,12 +2960,12 @@ function showARUnsupported(errorType) {
                   
                   if (cachedQuran) {
                       quranJson = JSON.parse(cachedQuran);
-                      console.log('Using cached Quran data');
+      
                   }
                   
                   if (cachedTranslation) {
                       translationJson = JSON.parse(cachedTranslation);
-                      console.log('Using cached translation data');
+  
                   }
               } catch (error) {
                   console.error('Error reading from cache:', error);
@@ -3027,19 +2973,16 @@ function showARUnsupported(errorType) {
 
               // If no cached data, fetch from API
               if (!quranJson) {
-                  console.log('Fetching Quran data from API...');
                   const quranResponse = await fetch('https://api.alquran.cloud/v1/quran/quran-simple');
                   if (!quranResponse.ok) {
                       throw new Error(`Failed to load Quran data: ${quranResponse.status}`);
                   }
                   quranJson = await quranResponse.json();
-                  console.log('Quran data loaded successfully');
                   
                   // Cache the data asynchronously to avoid blocking
                   setTimeout(() => {
                   try {
                       localStorage.setItem('quranData', JSON.stringify(quranJson));
-                          console.log('Quran data cached successfully');
                   } catch (error) {
                       console.error('Error caching Quran data:', error);
                   }
@@ -3047,19 +2990,16 @@ function showARUnsupported(errorType) {
               }
 
               if (!translationJson) {
-                  console.log('Fetching translation data from API...');
                   const translationResponse = await fetch('https://api.alquran.cloud/v1/quran/en.sahih');
                   if (!translationResponse.ok) {
                       throw new Error(`Failed to load translation: ${translationResponse.status}`);
                   }
                   translationJson = await translationResponse.json();
-                  console.log('Translation data loaded successfully');
                   
                   // Cache the data asynchronously to avoid blocking
                   setTimeout(() => {
                   try {
                       localStorage.setItem('translationData', JSON.stringify(translationJson));
-                          console.log('Translation data cached successfully');
                   } catch (error) {
                       console.error('Error caching translation data:', error);
                   }
@@ -3089,7 +3029,7 @@ function showARUnsupported(errorType) {
             //   document.getElementById('btnBookmark').disabled = false;
 
               let savedBookmark = null;
-              console.log("savedBookmark", savedBookmark);
+
               try {
                   const localStorageBookmark = localStorage.getItem('quranBookmark');
                   if (localStorageBookmark) {
@@ -3229,15 +3169,12 @@ function showARUnsupported(errorType) {
                   const registration = await navigator.serviceWorker.register('sw.js', {
                       scope: './'
                   });
-                  console.log('Service Worker registered with scope:', registration.scope);
-
                   // For iOS, request background fetch permission
                   if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
                       try {
                           await registration.periodicSync.register('prayer-times', {
                               minInterval: 15 * 60 * 1000 // 15 minutes
                           });
-                          console.log('Periodic sync registered for prayer times');
                       } catch (error) {
                           console.error('Periodic sync registration failed:', error);
                       }
@@ -3365,7 +3302,6 @@ function showARUnsupported(errorType) {
 
       function setupBasicNotifications() {
           if (!notificationEnabled) {
-              console.log('Notifications not enabled');
               return;
           }
 
@@ -3376,12 +3312,8 @@ function showARUnsupported(errorType) {
           const timings = prayerNotifications;
           
           if (!timings || Object.keys(timings).length === 0) {
-              console.log('No prayer times available for notifications');
               return;
           }
-
-          console.log('Setting up notifications for:', now.toDateString());
-          console.log('Prayer times:', timings);
 
           // Schedule notifications for all remaining prayers today
           const prayerOrder = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
@@ -3393,8 +3325,6 @@ function showARUnsupported(errorType) {
                   const timeUntilPrayer = prayerTime - now;
                   
                   if (timeUntilPrayer > 0) {
-                      console.log(`Scheduling ${prayer} notification for ${prayerTime.toLocaleTimeString()} (in ${Math.floor(timeUntilPrayer / 60000)} minutes)`);
-                      
                       const timeoutId = setTimeout(() => {
                           showBasicNotification(prayer);
                           // Schedule next day's notifications after Isha
@@ -3410,15 +3340,12 @@ function showARUnsupported(errorType) {
                   }
               }
           });
-
-          console.log(`Scheduled ${scheduledCount} prayer notifications for today`);
           
           // Save notification state
           saveNotificationState();
           
           // If no prayers left today, schedule for tomorrow
           if (scheduledCount === 0) {
-              console.log('No more prayers today, scheduling for tomorrow');
               scheduleNextDayNotifications();
           }
       }
@@ -3443,7 +3370,7 @@ function showARUnsupported(errorType) {
           const timeUntilTomorrow = tomorrow - new Date();
           
           setTimeout(() => {
-              console.log('Setting up notifications for next day');
+    
               fetchPrayerTimes(currentCity).then(() => {
                   setupBasicNotifications();
               });
@@ -3499,9 +3426,9 @@ function showARUnsupported(errorType) {
               try {
                   const audio = new Audio('adhan.mp3');
                   audio.volume = 0.5;
-                  audio.play().catch(e => console.log('Audio play failed:', e));
+                  audio.play().catch(() => {});
               } catch (audioError) {
-                  console.log('Audio not available:', audioError);
+                  
               }
 
               const notification = new Notification(languages[currentLang].prayerTimeNotification, {
@@ -3548,7 +3475,7 @@ function showARUnsupported(errorType) {
                   await registration.periodicSync.register('prayer-times', {
                       minInterval: 15 * 60 * 1000 // 15 minutes
                   });
-                  console.log('Periodic sync registered for prayer times');
+        
               } catch (error) {
                   console.error('Periodic sync registration failed:', error);
                   // Fallback to basic notifications
@@ -3564,7 +3491,7 @@ function showARUnsupported(errorType) {
       function setupPeriodicChecks() {
           // Check prayer times every hour
           setInterval(() => {
-              console.log('Running periodic prayer times check');
+    
               fetchPrayerTimes(currentCity);
           }, 60 * 60 * 1000); // Every hour
       }
@@ -3574,12 +3501,6 @@ function showARUnsupported(errorType) {
           // Basic iOS detection
           const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
           const isInStandaloneMode = window.navigator.standalone === true;
-          
-          console.log('Showing tutorial for:', {
-              isIOS,
-              isInStandaloneMode,
-              userAgent: navigator.userAgent
-          });
 
           
           const modal = document.getElementById('tutorialModal');
@@ -3662,7 +3583,7 @@ function showARUnsupported(errorType) {
               modal.classList.add('hidden');
           }, 300);
       }
-
+    
       // Add tafsir cache object at the top
       let tafsirCache = {};
       let currentTafsirSource = '2'; // Default tafsir source (Jalalayn ID)
@@ -3732,14 +3653,14 @@ function showARUnsupported(errorType) {
                    return data;
                  }
                } catch (cdnError) {
-                 console.log(`Failed to fetch from ${cdnUrl}:`, cdnError);
+
                  continue;
                }
              }
              throw new Error('All CDN sources failed');
            }
         } catch (error) {
-           console.log(`Failed to fetch tafsir from API:`, error);
+
            
            // Fallback to default tafsir if not already using it
            if (source !== '2') {
@@ -3864,7 +3785,7 @@ function showARUnsupported(errorType) {
         if (currentPageNum && currentJuzNum) {
           updatePageJuzIndicator(currentPageNum, currentJuzNum);
         } else {
-          console.log('Could not detect page/Juz:', { currentPageNum, currentJuzNum, sectionsFound: pageSections.length });
+
         }
       }
 
@@ -3874,7 +3795,7 @@ function showARUnsupported(errorType) {
         const translationTextElement = document.getElementById('translationText');
         const surah = quranData && currentSurah !== null ? quranData[currentSurah] : null;
         if (surah && surah.ayahs && surah.ayahs[0]) {
-          console.log('First ayah from quranData:', surah.ayahs[0].text);
+
         }
         if (currentSurah === null || !quranData || !translationData) {
           arabicTextElement.innerHTML = '';
@@ -3932,7 +3853,6 @@ function showARUnsupported(errorType) {
           }
           // Log the ayah text as it will be displayed (after Bismillah removal)
           if (currentAyah === 0 && currentSurah !== 8) {
-            console.log('First ayah as displayed (after Bismillah removal):', ayahText);
           }
           const bookmarkText = languages[currentLang].bookmarkVerse;
           let tafsirHtml = '';
@@ -4034,23 +3954,12 @@ function showARUnsupported(errorType) {
 
       function nextAyah() {
           if (currentSurah === null || !quranData) {
-              console.log('Cannot navigate: No surah selected or data not loaded');
               return;
           }
 
           const surah = quranData[currentSurah];
           
-          // Debug log for navigation attempt
-          console.log('Attempting next ayah navigation:', {
-              currentSurah,
-              currentAyah,
-              totalAyahs: surah.ayahs.length,
-              nextAyahIndex: currentAyah + 1,
-              isReadingMode,
-              surahName: surah.name,
-              currentAyahData: surah.ayahs[currentAyah],
-              nextAyahData: surah.ayahs[currentAyah + 1]
-          });
+
 
           if (isReadingMode) {
               // In reading mode, move to next surah
@@ -4059,11 +3968,6 @@ function showARUnsupported(errorType) {
                   currentAyah = 0;
                   // Update surah menu button text
                   updateSurahDropdown();
-                  console.log('Moving to next surah:', {
-                      from: currentSurah - 1,
-                      to: currentSurah,
-                      firstAyah: quranData[currentSurah].ayahs[0]
-                  });
                   loadReadingModeAyahs();
                   // Scroll to the top of the page when moving to a new surah in reading mode
                   setTimeout(() => {
@@ -4078,11 +3982,7 @@ function showARUnsupported(errorType) {
               // Single verse navigation
               if (currentAyah < surah.ayahs.length - 1) {
                   currentAyah++;
-                  console.log('Moving to next ayah:', {
-                      from: currentAyah - 1,
-                      to: currentAyah,
-                      ayahData: surah.ayahs[currentAyah]
-                  });
+
                   displayAyah();
               } else if (currentSurah < quranData.length - 1) {
                   // Move to next surah
@@ -4090,11 +3990,7 @@ function showARUnsupported(errorType) {
                   currentAyah = 0;
                   // Update surah menu button text
                   updateSurahDropdown();
-                  console.log('Moving to next surah:', {
-                      from: currentSurah - 1,
-                      to: currentSurah,
-                      firstAyah: quranData[currentSurah].ayahs[0]
-                  });
+                 
                   displayAyah();
               }
           }
@@ -4102,23 +3998,12 @@ function showARUnsupported(errorType) {
 
       function prevAyah() {
           if (currentSurah === null || !quranData) {
-              console.log('Cannot navigate: No surah selected or data not loaded');
               return;
           }
 
           const surah = quranData[currentSurah];
           
-          // Debug log for navigation attempt
-          console.log('Attempting previous ayah navigation:', {
-              currentSurah,
-              currentAyah,
-              totalAyahs: surah.ayahs.length,
-              prevAyahIndex: currentAyah - 1,
-              isReadingMode,
-              surahName: surah.name,
-              currentAyahData: surah.ayahs[currentAyah],
-              prevAyahData: surah.ayahs[currentAyah - 1]
-          });
+
 
           if (isReadingMode) {
               // In reading mode, move to previous surah
@@ -4127,11 +4012,6 @@ function showARUnsupported(errorType) {
                   currentAyah = 0;
                   // Update surah menu button text
                   updateSurahDropdown();
-                  console.log('Moving to previous surah:', {
-                      from: currentSurah + 1,
-                      to: currentSurah,
-                      lastAyah: quranData[currentSurah].ayahs[currentAyah]
-                  });
                   loadReadingModeAyahs();
                   // Scroll to the top of the page when moving to a previous surah in reading mode
                   setTimeout(() => {
@@ -4146,11 +4026,7 @@ function showARUnsupported(errorType) {
               // Single verse navigation
               if (currentAyah > 0) {
                   currentAyah--;
-                  console.log('Moving to previous ayah:', {
-                      from: currentAyah + 1,
-                      to: currentAyah,
-                      ayahData: surah.ayahs[currentAyah]
-                  });
+
                   displayAyah();
               } else if (currentSurah > 0) {
                   // Move to previous surah
@@ -4158,11 +4034,7 @@ function showARUnsupported(errorType) {
                   currentAyah = quranData[currentSurah].ayahs.length - 1;
                   // Update surah menu button text
                   updateSurahDropdown();
-                  console.log('Moving to previous surah:', {
-                      from: currentSurah + 1,
-                      to: currentSurah,
-                      lastAyah: quranData[currentSurah].ayahs[currentAyah]
-                  });
+                
                   displayAyah();
               }
           }
@@ -4170,29 +4042,18 @@ function showARUnsupported(errorType) {
 
       function loadReadingModeAyahs() {
           if (currentSurah === null || !quranData || !translationData) {
-              console.log('Cannot load reading mode: No surah selected or data not loaded');
               return;
           }
           
           const surah = quranData[currentSurah];
           const translation = translationData[currentSurah];
           
-          // Debug log for reading mode
-          console.log('Loading reading mode:', {
-              currentSurah,
-              currentAyah,
-              surahName: surah.name,
-              totalAyahs: surah.ayahs.length,
-              isReadingMode,
-              firstAyah: surah.ayahs[0],
-              secondAyah: surah.ayahs[1]
-          });
+
           let ayahText = surah.ayahs[currentAyah].text;
           if (currentAyah === 0 && currentSurah !== 8) {
             ayahText = ayahText.replace('بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ', '');
             ayahText = ayahText.replace('بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ', '');
           }
-            console.log("ayahText",ayahText)
           
           // Load all verses in the surah
           readingModeAyahs = [];
@@ -4211,11 +4072,7 @@ function showARUnsupported(errorType) {
           // Set currentAyah to 0 since we're showing the whole surah
           currentAyah = 0;
           
-          // Debug log for batch loading
-          console.log('Reading mode batch:', {
-              totalAyahs: surah.ayahs.length,
-              loadedAyahs: readingModeAyahs.map(ayah => ayah.number)
-          });
+
           
           displayReadingModeAyahs();
       }
@@ -4298,8 +4155,7 @@ function showARUnsupported(errorType) {
             if (verseData.originalIndex === 0 && currentSurah !== 8) {
               ayahText = ayahText.replace('بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ', '');
               ayahText = ayahText.replace('بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ', '');
-              console.log("ayahText",ayahText)
-            console.log("verseData",verseData.originalIndex)
+
             }
             
             const verseNumber = currentAyah + verseData.originalIndex + 1 - startIdx;
@@ -4522,7 +4378,6 @@ function showARUnsupported(errorType) {
           
           // Ensure ayah is within valid range
           const surahData = quranData[surah];
-          console.log("surahData", surahData);
           if (!surahData || ayah < 0 || ayah >= surahData.ayahs.length) {
               console.error('Invalid ayah number:', ayah);
               return;
@@ -4764,11 +4619,12 @@ function showARUnsupported(errorType) {
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
+                   initDarkMode();
+          setTimeout(initializeQiblaLocation, 1000); // Delay to ensure DOM is ready
             // Load saved language preference first
             loadLanguagePreference();
             
             tafsirLang = currentLang;
-            console.log("tafsirLang", tafsirLang)
 
             const adhkarView = document.getElementById('adhkarView');
             const adhkarArabicText = document.getElementById('adhkarArabicText');
@@ -4793,7 +4649,6 @@ function showARUnsupported(errorType) {
             
             // Initialize Tasbih
             loadTasbihState();
-            console.log('After updateUI - currentLang:', currentLang);
             
 
 
@@ -4814,7 +4669,6 @@ function showARUnsupported(errorType) {
                 
                 // Setup notifications if they were previously enabled
                 if (notificationEnabled && Object.keys(prayerNotifications).length > 0) {
-                    console.log('Restoring notification setup');
                     setupBasicNotifications();
                 }
                         }
@@ -4850,9 +4704,156 @@ function showARUnsupported(errorType) {
             }
 
          
+            loadTextSizePreference();
 
-          
+            await loadTafsirData();
+
+
+               // Surah menu button
+               document.getElementById('surahMenuBtn').addEventListener('click', openSurahMenu);
+            
+               // Close menu button
+               document.getElementById('closeSurahMenu').addEventListener('click', closeSurahMenu);
+               
+               // Overlay click to close
+               document.getElementById('surahMenuOverlay').addEventListener('click', closeSurahMenu);
+               
+               // Search functionality
+               document.getElementById('surahSearchInput').addEventListener('input', function(e) {
+                   searchSurahs(e.target.value);
+               });
+               
+               // Event delegation for surah items (more efficient)
+               document.getElementById('surahList').addEventListener('click', function(e) {
+                   const surahItem = e.target.closest('.surah-item');
+                   if (surahItem && surahItem.dataset.surahIndex) {
+                       selectSurah(parseInt(surahItem.dataset.surahIndex));
+                   }
+               });
+               
+               // Escape key to close menu
+               document.addEventListener('keydown', function(e) {
+                   if (e.key === 'Escape') {
+                       closeSurahMenu();
+                   }
+               });
+               
+               // Initialize Quran search
+               initializeQuranSearch();
+               
+               // Early initialization for better performance
+               setTimeout(() => {
+                   if (quranData && surahsData.length === 0) {
+                       initializeSurahMenu();
+                   }
+               }, 1000); // Initialize after 1 second to avoid blocking initial load
+
+               const menuBtn = document.getElementById('adhkarMenuBtn');
+               const modal = document.getElementById('adhkarMenuModal');
+               const closeBtn = document.getElementById('closeAdhkarMenu');
+               // Open modal
+               menuBtn.addEventListener('click', function() {
+                 modal.classList.remove('hidden');
+               });
+               // Close modal by X
+               closeBtn.addEventListener('click', function() {
+                 modal.classList.add('hidden');
+               });
+               // Close modal by clicking outside
+               modal.addEventListener('click', function(e) {
+                 if (e.target === modal) {
+                   modal.classList.add('hidden');
+                 }
+               });
+                         //nnn
+                         var quranHook = document.getElementById('quranHook');
+                         if (quranHook) {
+                           // Force layout calculation to prevent jump
+                           void quranHook.offsetWidth;
+                         }
+
+                         updateAzkarTypeLabels();
+
+
+                   
+
+
+                         document.getElementById('closeTafsirModal').onclick = closeTafsirModal;
+  document.getElementById('tafsirModal').onclick = function(e) {
+    if (e.target === this) closeTafsirModal();
+  };
+
+  document.getElementById('closeTranslationModal').onclick = closeTranslationModal;
+  document.getElementById('translationModal').onclick = function(e) {
+    if (e.target === this) closeTranslationModal();
+  };
+
+
+
+
+
+    tafsirModalObserver();
+    translationModalObserver();
+
+    initVoiceSearch();
+  
+    // Update voice search language when app language changes
+    const originalSwitchLanguage = window.switchLanguage;
+    window.switchLanguage = function() {
+      originalSwitchLanguage();
+      if (recognition) {
+        recognition.lang = currentLang === 'ar';
+      }
+    };
+    
         });
+
+
+
+ function translationModalObserver() {
+    const translationModal = document.getElementById('translationModal');
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+          const translationSelect = document.getElementById('translationSelect');
+          if (translationModal.style.display === 'flex' && translationSelect) {
+            translationSelect.value = currentTranslationKey;
+            // Remove existing listeners to avoid duplicates
+            translationSelect.onchange = function() {
+              currentTranslationKey = this.value;
+              // Reload translation data and content in modal
+              handleTranslationChange(this.value).then(() => {
+                document.getElementById('translationModalContent').textContent = currentLang === 'ar' ? 'جاري التحميل...' : 'Loading...';
+                loadTranslationContent();
+              });
+            };
+          }
+        }
+      });
+    });
+    observer.observe(translationModal, { attributes: true });
+}
+        function tafsirModalObserver() {
+            const tafsirModal = document.getElementById('tafsirModal');
+            const observer = new MutationObserver(function(mutations) {
+              mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                  const tafsirSelect = document.getElementById('tafsirSelect');
+                  if (tafsirModal.style.display === 'flex' && tafsirSelect) {
+                    tafsirSelect.value = currentTafsirSource;
+                    // Remove existing listeners to avoid duplicates
+                    tafsirSelect.onchange = function() {
+                      currentTafsirSource = this.value;
+                      // Reload tafsir content in modal
+                      document.getElementById('tafsirModalContent').textContent = currentLang === 'ar' ? 'جاري التحميل...' : 'Loading...';
+                      loadTafsirContent();
+                    };
+                  }
+                }
+              });
+            });
+            observer.observe(tafsirModal, { attributes: true });
+        }
 
         // Add this function to show toast notifications
         function showToast(message, type = 'info') {
@@ -4951,16 +4952,6 @@ function showARUnsupported(errorType) {
                 }, 300);
             }
         }
-
-        // Add this to your document.addEventListener('DOMContentLoaded', ...) section
-        document.addEventListener('DOMContentLoaded', async () => {
-            // ... existing code ...
-
-            // Add translation select handler
-            // Translation selector will be handled in modal initialization
-
-            // ... rest of your existing code ...
-        });
 
         // Add these variables at the top with other variables
         let currentTextSize = 1; // Base size multiplier
@@ -5224,7 +5215,6 @@ function showARUnsupported(errorType) {
                 continuousToggle.addEventListener('change', function() {
                     isContinuousPlayEnabled = this.checked;
                     localStorage.setItem('quranContinuousPlay', this.checked);
-                    console.log('Continuous play setting changed:', this.checked);
                     
                     // Show feedback about setting change
                     const message = currentLang === 'ar' ? 
@@ -5420,22 +5410,12 @@ function showARUnsupported(errorType) {
             }
         }
 
-        // Add this to your document.addEventListener('DOMContentLoaded', ...) section
-        document.addEventListener('DOMContentLoaded', async () => {
-            // ... existing code ...
-            
-            // Load saved text size preference
-            loadTextSizePreference();
-            
-            // ... rest of your existing code ...
-        });
 
         // Add this function to load Tafsir data
         async function loadTafsirData() {
             try {
                 // Initialize tafsirData as an object to store surah data
                 tafsirData = {};
-                console.log('Tafsir data initialized');
             } catch (error) {
                 console.error('Error initializing Tafsir data:', error);
                 showToast(currentLang === 'ar' ? 'حدث خطأ في تحميل التفسير' : 'Error loading Tafsir', 'error');
@@ -5470,30 +5450,16 @@ function showARUnsupported(errorType) {
             }
         }
 
-        // Update the document.addEventListener('DOMContentLoaded', ...) section
-        document.addEventListener('DOMContentLoaded', async () => {
-            // ... existing code ...
-            
-            // Add Tafsir toggle handler
-            
-            // Load Tafsir data
-            await loadTafsirData();
-            
-            // ... rest of your existing code ...
-        });
 
         // Add a function to load Tafsir for a specific surah
         async function loadTafsirForSurah(surahNumber) {
             try {
                 const langCode = tafsirLang === 'ar' ? 'ar-tafsir-muyassar' : 'en-al-jalalayn';
                 const response = await fetch(`https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir/${langCode}/${surahNumber}.json`);
-                console.log(response);
                 if (!response.ok) throw new Error('Failed to fetch Tafsir data');
                 const data = await response.json();
                 tafsirData[surahNumber - 1] = data; // Store with 0-based index
-                console.log(`Tafsir data loaded successfully for Surah ${surahNumber} (${tafsirLang})`);
-                console.log('Tafsir data:', tafsirData[surahNumber - 1]);
-                console.log('Tafsir ayah keys:', Object.keys(tafsirData[surahNumber - 1].ayahs));
+              
             } catch (error) {
                 console.error('Error loading Tafsir data:', error);
                 showToast(currentLang === 'ar' ? 'حدث خطأ في تحميل التفسير' : 'Error loading Tafsir', 'error');
@@ -5561,9 +5527,7 @@ function showARUnsupported(errorType) {
                 const primaryName = currentLang === 'ar' ? surah.name : englishName;
                 const secondaryName = currentLang === 'ar' ? englishName : surah.name;
                 // Debug: Check what properties are available
-                console.log(`Surah ${surah.number} properties:`, Object.keys(surah));
-                console.log(`numberOfAyahs:`, surah.numberOfAyahs);
-                console.log(`ayahs length:`, surah.ayahs ? surah.ayahs.length : 'no ayahs array');
+ 
                 
                 // Try multiple ways to get the verse count
                 let numberOfAyahs = 0;
@@ -5579,7 +5543,6 @@ function showARUnsupported(errorType) {
                     numberOfAyahs = surahVerseCounts[surah.number - 1] || 0;
                 }
                 
-                console.log(`Final numberOfAyahs for surah ${surah.number}:`, numberOfAyahs);
                 const ayahCount = currentLang === 'ar' ? toArabicNumerals(numberOfAyahs) : numberOfAyahs;
                 const ayahText = currentLang === 'ar' ? 'آية' : 'verses';
                 const revelationType = currentLang === 'ar' ? (surah.revelationType === 'Meccan' ? 'مكية' : 'مدنية') : surah.revelationType;
@@ -7080,50 +7043,7 @@ function showARUnsupported(errorType) {
             
             hideQuranSearchResults();
         }
-        
-        // Event Listeners for Surah Menu
-        document.addEventListener('DOMContentLoaded', function() {
-            // Surah menu button
-            document.getElementById('surahMenuBtn').addEventListener('click', openSurahMenu);
-            
-            // Close menu button
-            document.getElementById('closeSurahMenu').addEventListener('click', closeSurahMenu);
-            
-            // Overlay click to close
-            document.getElementById('surahMenuOverlay').addEventListener('click', closeSurahMenu);
-            
-            // Search functionality
-            document.getElementById('surahSearchInput').addEventListener('input', function(e) {
-                searchSurahs(e.target.value);
-            });
-            
-            // Event delegation for surah items (more efficient)
-            document.getElementById('surahList').addEventListener('click', function(e) {
-                const surahItem = e.target.closest('.surah-item');
-                if (surahItem && surahItem.dataset.surahIndex) {
-                    selectSurah(parseInt(surahItem.dataset.surahIndex));
-                }
-            });
-            
-            // Escape key to close menu
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    closeSurahMenu();
-                }
-            });
-            
-            // Initialize Quran search
-            initializeQuranSearch();
-            
-            // Early initialization for better performance
-            setTimeout(() => {
-                if (quranData && surahsData.length === 0) {
-                    initializeSurahMenu();
-                }
-            }, 1000); // Initialize after 1 second to avoid blocking initial load
-        });
-
-            
+  
 
         // Utility to get the verse closest to the center of the viewport
         function getCenteredVerseId() {
@@ -7154,7 +7074,6 @@ function showARUnsupported(errorType) {
             // If the same ayah is playing, pause it (do not restart)
             if (window.currentAyahAudio && currentAudioSurah === surah && currentAudioAyah === ayah && !window.currentAyahAudio.paused) {
                 window.currentAyahAudio.pause();
-                console.log('Ayah audio stopped:', { surah, ayah });
                 updateAyahHighlights();
                 window.isPlayingAudio = false;
                 return;
@@ -7190,7 +7109,6 @@ function showARUnsupported(errorType) {
             currentAudioAyah = ayah;
             // Use a promise to handle play to avoid AbortError
             audio.play().then(() => {
-                console.log('Ayah audio playing:', { surah, ayah, reciter: selectedReciter, speed: currentPlaybackSpeed });
                 updateAyahHighlights();
                 
 
@@ -7214,7 +7132,6 @@ function showARUnsupported(errorType) {
                     
                     // If there's a next ayah in the current surah, play it
                     if (nextAyah < currentSurahData.ayahs.length) {
-                        console.log('Continuous play: moving to next ayah', { surah, nextAyah });
                         // Reset current audio state first
                         currentAudioSurah = null;
                         currentAudioAyah = null;
@@ -7243,7 +7160,6 @@ function showARUnsupported(errorType) {
                 window.currentAyahAudio = null;
                 updateAyahHighlights();
                 window.isPlayingAudio = false;
-                console.log('Ayah audio stopped (ended):', { surah, ayah });
             };
         }
 
@@ -7274,15 +7190,11 @@ function showARUnsupported(errorType) {
         let prayerHighlightInterval = null;
 
         function updateNextPrayerHighlight() {
-            console.log("--- updateNextPrayerHighlight --- Triggered at", new Date().toLocaleTimeString());
             if (!prayerNotifications || Object.keys(prayerNotifications).length === 0) {
-                console.log("Prayer times not available for highlighting or empty.");
                 return;
             }
-            // console.log("Current prayerNotifications:", JSON.parse(JSON.stringify(prayerNotifications)));
 
             const now = new Date();
-            // console.log("Device current time for highlight check:", now.toLocaleTimeString());
             const prayerOrder = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
             let nextPrayerName = null;
 
@@ -7336,25 +7248,7 @@ function showARUnsupported(errorType) {
           document.getElementById('adhkarMenuModal').classList.add('hidden');
           loadAdhkar(section);
         }
-        document.addEventListener('DOMContentLoaded', function() {
-          const menuBtn = document.getElementById('adhkarMenuBtn');
-          const modal = document.getElementById('adhkarMenuModal');
-          const closeBtn = document.getElementById('closeAdhkarMenu');
-          // Open modal
-          menuBtn.addEventListener('click', function() {
-            modal.classList.remove('hidden');
-          });
-          // Close modal by X
-          closeBtn.addEventListener('click', function() {
-            modal.classList.add('hidden');
-          });
-          // Close modal by clicking outside
-          modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-              modal.classList.add('hidden');
-            }
-          });
-        });
+    
 (function() {
   const quranControls = document.querySelector('.quran-controls-sticky');
   const quranHook = document.getElementById('quranHook');
@@ -7392,13 +7286,7 @@ function showARUnsupported(errorType) {
   }
 })();
       
-document.addEventListener('DOMContentLoaded', function() {
-  var quranHook = document.getElementById('quranHook');
-  if (quranHook) {
-    // Force layout calculation to prevent jump
-    void quranHook.offsetWidth;
-  }
-});
+
 
 function updateAzkarTypeLabels() {
   const types = [
@@ -7453,7 +7341,6 @@ function updateAzkarTypeLabels() {
     }
   });
 }
-document.addEventListener('DOMContentLoaded', updateAzkarTypeLabels);
 // Patch switchLanguage to also update azkar labels
 const origSwitchLanguage = window.switchLanguage;
 window.switchLanguage = function() {
@@ -7461,30 +7348,7 @@ window.switchLanguage = function() {
   updateAzkarTypeLabels();
 };
       
-(function() {
-    // Initialize tafsir selector when modal is shown
-  document.addEventListener('DOMContentLoaded', function() {
-    const tafsirModal = document.getElementById('tafsirModal');
-    const observer = new MutationObserver(function(mutations) {
-      mutations.forEach(function(mutation) {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-          const tafsirSelect = document.getElementById('tafsirSelect');
-          if (tafsirModal.style.display === 'flex' && tafsirSelect) {
-            tafsirSelect.value = currentTafsirSource;
-            // Remove existing listeners to avoid duplicates
-            tafsirSelect.onchange = function() {
-              currentTafsirSource = this.value;
-              // Reload tafsir content in modal
-              document.getElementById('tafsirModalContent').textContent = currentLang === 'ar' ? 'جاري التحميل...' : 'Loading...';
-              loadTafsirContent();
-            };
-          }
-        }
-      });
-    });
-    observer.observe(tafsirModal, { attributes: true });
-  });
-})();
+
      
 (function() {
   let popover = document.getElementById('ayahMenuPopover');
@@ -7651,13 +7515,7 @@ function closeTafsirModal() {
   currentTafsirAyah = null;
 }
 
-// Close modal handlers
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('closeTafsirModal').onclick = closeTafsirModal;
-  document.getElementById('tafsirModal').onclick = function(e) {
-    if (e.target === this) closeTafsirModal();
-  };
-});
+
 
 // Add translation modal functions
 let currentTranslationSurah = null;
@@ -7698,41 +7556,9 @@ function closeTranslationModal() {
   currentTranslationAyah = null;
 }
 
-// Close modal handlers for translation modal
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('closeTranslationModal').onclick = closeTranslationModal;
-  document.getElementById('translationModal').onclick = function(e) {
-    if (e.target === this) closeTranslationModal();
-  };
-});
 
-// Initialize translation modal dropdown
-(function() {
-  // Initialize translation language selector when modal is shown
-  document.addEventListener('DOMContentLoaded', function() {
-    const translationModal = document.getElementById('translationModal');
-    const observer = new MutationObserver(function(mutations) {
-      mutations.forEach(function(mutation) {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-          const translationSelect = document.getElementById('translationSelect');
-          if (translationModal.style.display === 'flex' && translationSelect) {
-            translationSelect.value = currentTranslationKey;
-            // Remove existing listeners to avoid duplicates
-            translationSelect.onchange = function() {
-              currentTranslationKey = this.value;
-              // Reload translation data and content in modal
-              handleTranslationChange(this.value).then(() => {
-                document.getElementById('translationModalContent').textContent = currentLang === 'ar' ? 'جاري التحميل...' : 'Loading...';
-                loadTranslationContent();
-              });
-            };
-          }
-        }
-      });
-    });
-    observer.observe(translationModal, { attributes: true });
-  });
-})();
+
+
 
 // Create an alias for backward compatibility
 async function displayReadingModeAyahs(shouldScrollToBookmark = false, scrollToVerseId = null) {
@@ -7745,10 +7571,7 @@ let isListening = false;
 
 // Comprehensive iOS Safari voice text normalization
 function normalizeiOSVoiceText(text) {
-  console.log('normalizeiOSVoiceText - input length:', text.length);
-  console.log('normalizeiOSVoiceText - first 5 char codes:', 
-    text.substring(0, 5).split('').map((char, i) => `${i}: "${char}" (${char.charCodeAt(0).toString(16)})`));
-  
+ 
   let normalized = text
     // AGGRESSIVE invisible character removal - iOS Safari adds these at the beginning
     .replace(/^[\u0000-\u001F\u007F-\u009F\u00AD\u061C\u180E\u200B-\u200F\u202A-\u202E\u2060-\u206F\u2800\u3000\uFEFF\uFFF9-\uFFFB]+/, '') // Remove leading control chars
@@ -7778,22 +7601,13 @@ function normalizeiOSVoiceText(text) {
     // Trim whitespace
     .trim();
   
-  console.log('normalizeiOSVoiceText - output length:', normalized.length);
-  console.log('normalizeiOSVoiceText - output char codes:', 
-    normalized.split('').map((char, i) => `${i}: "${char}" (${char.charCodeAt(0).toString(16)})`));
-  
+
   return normalized;
 }
 
 // Enhanced voice search function for iOS Safari compatibility
 function performEnhancedVoiceSearch(transcript) {
-  console.log('Enhanced voice search - original transcript:', transcript);
-  console.log('Enhanced voice search - transcript length:', transcript.length);
-  
-  // Detailed character analysis
-  console.log('Enhanced voice search - character codes:', 
-    transcript.split('').map((char, i) => `${i}: "${char}" (${char.charCodeAt(0).toString(16)})`));
-  
+
   // Clean up the transcript for iOS Safari issues
   let cleanedTranscript = transcript
     // Remove any invisible characters that iOS Safari might add
@@ -7802,24 +7616,8 @@ function performEnhancedVoiceSearch(transcript) {
     .replace(/\s+/g, ' ')
     .trim();
   
-  console.log('Enhanced voice search - cleaned transcript:', cleanedTranscript);
-  console.log('Enhanced voice search - cleaned character codes:', 
-    cleanedTranscript.split('').map((char, i) => `${i}: "${char}" (${char.charCodeAt(0).toString(16)})`));
-  
-  // Let's also check what's in our surah data for comparison
-  const searchData = surahsData.length > 0 ? surahsData : quickSurahList;
-  const fatihaInData = searchData.find(s => s.name && s.name.includes('فاتح'));
-  if (fatihaInData) {
-    console.log('Enhanced voice search - Al-Fatiha in data:', fatihaInData.name);
-    console.log('Enhanced voice search - Al-Fatiha character codes:', 
-      fatihaInData.name.split('').map((char, i) => `${i}: "${char}" (${char.charCodeAt(0).toString(16)})`));
-  }
-  
   // Apply comprehensive iOS Safari character normalization
   const normalizedTranscript = normalizeiOSVoiceText(cleanedTranscript);
-  console.log('Enhanced voice search - iOS normalized transcript:', normalizedTranscript);
-  console.log('Enhanced voice search - iOS normalized character codes:', 
-    normalizedTranscript.split('').map((char, i) => `${i}: "${char}" (${char.charCodeAt(0).toString(16)})`));
   
   // Try the regular search first with normalized text
   searchSurahs(normalizedTranscript);
@@ -7831,10 +7629,8 @@ function performEnhancedVoiceSearch(transcript) {
                       !surahList.innerHTML.includes('لم يتم العثور') && 
                       !surahList.innerHTML.includes('No results');
     
-    console.log('Enhanced voice search - has results after regular search:', hasResults);
     
     if (!hasResults) {
-      console.log('Enhanced voice search - no results, trying enhanced matching');
       
       // Try enhanced matching for Arabic text
       const searchData = surahsData.length > 0 ? surahsData : quickSurahList;
@@ -7892,18 +7688,15 @@ function performEnhancedVoiceSearch(transcript) {
         });
       });
       
-      console.log('Enhanced voice search - enhanced results count:', enhancedResults.length);
       
              if (enhancedResults.length > 0) {
          populateSurahList(enhancedResults);
        } else {
          // LAST RESORT: Try progressively removing characters from the beginning
-         console.log('Enhanced voice search - trying progressive character removal');
          let foundMatch = false;
          
          for (let i = 1; i <= Math.min(5, normalizedTranscript.length); i++) {
            const strippedText = normalizedTranscript.substring(i);
-           console.log(`Enhanced voice search - trying without first ${i} chars: "${strippedText}"`);
            
            if (strippedText.length >= 2) { // Only try if we have at least 2 characters left
              const progressiveResults = searchData.filter(surah => {
@@ -7920,7 +7713,6 @@ function performEnhancedVoiceSearch(transcript) {
              });
              
              if (progressiveResults.length > 0) {
-               console.log(`Enhanced voice search - found match after removing ${i} chars!`);
                populateSurahList(progressiveResults);
                foundMatch = true;
                break;
@@ -7930,7 +7722,6 @@ function performEnhancedVoiceSearch(transcript) {
          
          if (!foundMatch) {
            // Absolute last resort: show all surahs with a message
-           console.log('Enhanced voice search - no matches found even with progressive removal, showing all surahs');
            const surahList = document.getElementById('surahList');
            populateSurahList(searchData);
            
@@ -8098,7 +7889,6 @@ function findBestSurahMatch(alternatives) {
   // Combine all available names
   const allNames = [...new Set([...surahNames, ...commonSurahNames])];
   
-  console.log('Available Surah names for matching:', allNames.length);
   
   let bestMatch = null;
   let bestScore = 0;
@@ -8114,7 +7904,6 @@ function findBestSurahMatch(alternatives) {
     }
   }
   
-  console.log('Best match found:', bestMatch, 'with score:', bestScore);
   return bestMatch;
 }
 
@@ -8511,7 +8300,6 @@ function convertPhoneticToSurahName(voiceInput) {
   const mapped = phoneticMappings[voiceLower];
   
   if (mapped) {
-    console.log(`Voice search - Phonetic conversion: "${voiceInput}" → "${mapped}"`);
     return mapped;
   }
   
@@ -8523,7 +8311,6 @@ function convertPhoneticToSurahName(voiceInput) {
       const prefix = parts[0].charAt(0).toUpperCase() + parts[0].slice(1).toLowerCase();
       const suffix = parts[1].charAt(0).toUpperCase() + parts[1].slice(1).toLowerCase();
       const standardized = `${prefix}-${suffix}`;
-      console.log(`Voice search - Case standardization: "${voiceInput}" → "${standardized}"`);
       return standardized;
     }
   }
@@ -8531,7 +8318,6 @@ function convertPhoneticToSurahName(voiceInput) {
   // Capitalize first letter for single words
   const capitalized = voiceInput.charAt(0).toUpperCase() + voiceInput.slice(1).toLowerCase();
   if (capitalized !== voiceInput) {
-    console.log(`Voice search - Capitalization: "${voiceInput}" → "${capitalized}"`);
     return capitalized;
   }
   
@@ -8560,7 +8346,6 @@ function initVoiceSearch() {
         alternatives.push(event.results[0][i].transcript.trim());
       }
       
-      console.log('Voice alternatives:', alternatives);
       
       // Find the best matching alternative against Surah names
       const bestMatch = findBestSurahMatch(alternatives);
@@ -8569,19 +8354,14 @@ function initVoiceSearch() {
       // Convert phonetic matches to proper Surah names
       transcript = convertPhoneticToSurahName(transcript);
       
-      console.log('Voice input - best match:', transcript);
-      console.log('Voice search - transcript length:', transcript.length);
-      console.log('Voice search - transcript characters:', transcript.split('').map(c => c.charCodeAt(0)));
-      
+     
       // Set the search input value
       const searchInput = document.getElementById('surahSearchInput');
       searchInput.value = transcript;
       
       // Mobile-specific delay to ensure DOM is ready
       setTimeout(() => {
-        console.log('Voice search - triggering search after delay');
-        console.log('Voice search - input value after set:', searchInput.value);
-        
+  
         // Try multiple event types for better mobile compatibility
         const inputEvent = new Event('input', { bubbles: true, cancelable: true });
         const changeEvent = new Event('change', { bubbles: true, cancelable: true });
@@ -8592,40 +8372,25 @@ function initVoiceSearch() {
         searchInput.dispatchEvent(keyupEvent);
         
                  // Direct function call with additional debugging
-         console.log('Voice search - calling searchSurahs directly with:', transcript);
-         console.log('Voice search - surahsData length:', surahsData ? surahsData.length : 'undefined');
-         console.log('Voice search - quickSurahList length:', quickSurahList ? quickSurahList.length : 'undefined');
-         
+ 
          // Ensure surah data is available before searching
          if ((!surahsData || surahsData.length === 0) && (!quickSurahList || quickSurahList.length === 0)) {
-           console.log('Voice search - no surah data available, initializing...');
            // Try to initialize surah menu first
            if (typeof initializeSurahMenu === 'function') {
              initializeSurahMenu();
            }
            // Wait a bit more and try again
            setTimeout(() => {
-             console.log('Voice search - retrying search after initialization');
              performEnhancedVoiceSearch(transcript);
            }, 200);
          } else {
-           // Debug: Log the first few Surah names to see the format
-           if (surahsData && surahsData.length > 0) {
-             console.log('Voice search - Sample Surah data format:');
-             console.log('First Surah:', surahsData[0]);
-             console.log('Second Surah:', surahsData[1]);
-           }
-           if (quickSurahList && quickSurahList.length > 0) {
-             console.log('Voice search - Sample quickSurahList format:');
-             console.log('First item:', quickSurahList[0]);
-           }
+         
            performEnhancedVoiceSearch(transcript);
          }
         
         // Additional check to see if search worked
         setTimeout(() => {
           const surahList = document.getElementById('surahList');
-          console.log('Voice search - surah list content after search:', surahList.innerHTML.length > 0 ? 'Has content' : 'Empty');
         }, 100);
         
       }, 100); // 100ms delay for mobile browsers
@@ -8745,17 +8510,3 @@ function showVoiceSearchFeedback(type, message) {
   }, 3000);
 }
 
-// Initialize voice search when page loads
-document.addEventListener('DOMContentLoaded', function() {
-  initVoiceSearch();
-  
-  // Update voice search language when app language changes
-  const originalSwitchLanguage = window.switchLanguage;
-  window.switchLanguage = function() {
-    originalSwitchLanguage();
-    if (recognition) {
-      recognition.lang = currentLang === 'ar';
-    }
-  };
-});
-      
