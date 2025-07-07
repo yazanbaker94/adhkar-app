@@ -51,8 +51,10 @@ self.addEventListener("fetch", event => {
         try {
           // Try network first
           const networkResponse = await fetch(event.request);
+          // Clone the response before using it
+          const responseToCache = networkResponse.clone();
           // Update cache with fresh response
-          cache.put(event.request, networkResponse.clone());
+          await cache.put(event.request, responseToCache);
           return networkResponse;
         } catch (error) {
           // Network failed, try cache
@@ -73,11 +75,16 @@ self.addEventListener("fetch", event => {
     // For static assets, use cache-first strategy
     event.respondWith(
       caches.match(event.request).then((response) => {
-        return response || fetch(event.request).then((networkResponse) => {
+        if (response) {
+          return response;
+        }
+        return fetch(event.request).then((networkResponse) => {
+          // Clone the response before caching
+          const responseToCache = networkResponse.clone();
           // Cache new responses for static assets
           if (event.request.url.match(/\.(js|css|png|jpg|jpeg|gif|svg|mp3)$/)) {
             caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, networkResponse.clone());
+              cache.put(event.request, responseToCache);
             });
           }
           return networkResponse;
