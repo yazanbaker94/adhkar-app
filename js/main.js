@@ -7490,9 +7490,25 @@ function showTafsirModal(surah, ayah) {
   
   // Set modal content
   document.getElementById('tafsirModalTitle').textContent = currentLang === 'ar' ? 'التفسير' : 'Tafsir';
-  document.getElementById('tafsirModalAyah').textContent = ayahData.text;
-  document.getElementById('tafsirModalTranslation').textContent = translationAyah ? translationAyah.text : '';
-  document.getElementById('tafsirModalContent').textContent = currentLang === 'ar' ? 'جاري التحميل...' : 'Loading...';
+  
+  // Set text direction for ayah and translation
+  const tafsirModalAyah = document.getElementById('tafsirModalAyah');
+  const tafsirModalTranslation = document.getElementById('tafsirModalTranslation');
+  const tafsirModalContent = document.getElementById('tafsirModalContent');
+  
+  // Arabic ayah is always RTL
+  tafsirModalAyah.dir = 'rtl';
+  tafsirModalAyah.textContent = ayahData.text;
+  
+  // Translation is LTR
+  tafsirModalTranslation.dir = 'ltr';
+  tafsirModalTranslation.textContent = translationAyah ? translationAyah.text : '';
+  
+  // Tafsir content direction based on selected source
+  const tafsirSelect = document.getElementById('tafsirSelect');
+  const isEnglishTafsir = tafsirSelect.value.startsWith('en-');
+  tafsirModalContent.dir = isEnglishTafsir ? 'ltr' : 'rtl';
+  tafsirModalContent.textContent = currentLang === 'ar' ? 'جاري التحميل...' : 'Loading...';
   
   // Show modal
   modal.style.display = 'flex';
@@ -7504,7 +7520,13 @@ function showTafsirModal(surah, ayah) {
 function loadTafsirContent() {
   if (currentTafsirSurah !== null && currentTafsirAyah !== null) {
     getTafsirForAyah(currentTafsirSurah, currentTafsirAyah).then(tafsir => {
-      document.getElementById('tafsirModalContent').textContent = tafsir.text || (currentLang === 'ar' ? 'لا يوجد تفسير متاح' : 'Tafsir not available');
+      const tafsirModalContent = document.getElementById('tafsirModalContent');
+      const tafsirSelect = document.getElementById('tafsirSelect');
+      const isEnglishTafsir = tafsirSelect.value.startsWith('en-');
+      
+      // Set direction based on tafsir source
+      tafsirModalContent.dir = isEnglishTafsir ? 'ltr' : 'rtl';
+      tafsirModalContent.textContent = tafsir.text || (currentLang === 'ar' ? 'لا يوجد تفسير متاح' : 'Tafsir not available');
     });
   }
 }
@@ -7532,8 +7554,18 @@ function showTranslationModal(surah, ayah) {
   
   // Set modal content
   document.getElementById('translationModalTitle').textContent = currentLang === 'ar' ? 'الترجمة' : 'Translation';
-  document.getElementById('translationModalAyah').textContent = ayahData.text;
-  document.getElementById('translationModalContent').textContent = currentLang === 'ar' ? 'جاري التحميل...' : 'Loading...';
+  
+  // Set text direction for ayah and translation
+  const translationModalAyah = document.getElementById('translationModalAyah');
+  const translationModalContent = document.getElementById('translationModalContent');
+  
+  // Arabic ayah is always RTL
+  translationModalAyah.dir = 'rtl';
+  translationModalAyah.textContent = ayahData.text;
+  
+  // Translation content is always LTR since we only have English translations
+  translationModalContent.dir = 'ltr';
+  translationModalContent.textContent = currentLang === 'ar' ? 'جاري التحميل...' : 'Loading...';
   
   // Show modal
   modal.style.display = 'flex';
@@ -7546,7 +7578,11 @@ function loadTranslationContent() {
   if (currentTranslationSurah !== null && currentTranslationAyah !== null) {
     const translationAyahs = translationData[currentTranslationSurah];
     const translationAyah = translationAyahs.ayahs[currentTranslationAyah];
-    document.getElementById('translationModalContent').textContent = translationAyah ? translationAyah.text : (currentLang === 'ar' ? 'لا توجد ترجمة متاحة' : 'No translation available');
+    const translationModalContent = document.getElementById('translationModalContent');
+    
+    // Translation is always LTR
+    translationModalContent.dir = 'ltr';
+    translationModalContent.textContent = translationAyah ? translationAyah.text : (currentLang === 'ar' ? 'لا توجد ترجمة متاحة' : 'No translation available');
   }
 }
 
