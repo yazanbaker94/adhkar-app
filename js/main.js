@@ -1227,6 +1227,9 @@ let scrollTimeout = null;
               qiblaAngle = calculateQiblaAngle(position.coords.latitude, position.coords.longitude);
               updateLocationDisplay(position.coords.latitude, position.coords.longitude);
 
+              // Generate degree markings for professional compass
+              generateDegreeMarkings();
+
               // Start compass
               compassActive = true;
               // Remove any previous listeners to avoid duplicates
@@ -1238,8 +1241,11 @@ let scrollTimeout = null;
                   window.addEventListener('deviceorientation', handleCompassOrientation, true);
               }
               
-              // Hide start button and show compass
-              startBtn.style.display = 'none';
+              // Hide start button container and show compass
+              const startContainer = document.getElementById('startCompassContainer');
+              if (startContainer) {
+                  startContainer.style.display = 'none';
+              }
               updateCompassDisplay();
 
           } catch (error) {
@@ -1357,32 +1363,26 @@ let scrollTimeout = null;
               }
           }
 
-          // Add enhanced visual feedback when aligned
-          const qiblaTab = document.getElementById('qiblaTab');
-          const qiblaIndicator = document.querySelector('.bg-green-500.animate-pulse');
-          const alignmentRings = document.querySelectorAll('#alignmentRings .ring');
+          // Professional visual feedback when aligned
+          const qiblaIndicator = document.getElementById('qiblaIndicator');
           
-          if (qiblaTab) {
+          if (qiblaIndicator) {
               if (alignmentDiff <= 5) {
-                  qiblaTab.classList.add('qibla-glow');
-                  qiblaTab.style.backgroundColor = 'rgba(34, 197, 94, 0.15)';
-                  qiblaTab.style.borderColor = 'rgb(34, 197, 94)';
-                  qiblaTab.style.boxShadow = '0 0 30px rgba(34, 197, 94, 0.8)';
-                  qiblaTab.style.transform = 'scale(1.02)';
+                  // Perfect alignment - subtle glow effect
+                  qiblaIndicator.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.6), 0 0 40px rgba(16, 185, 129, 0.3)';
+                  qiblaIndicator.style.transform = 'scale(1.1)';
+                  qiblaIndicator.classList.add('animate-pulse');
+              } else if (alignmentDiff <= 15) {
+                  // Close to alignment - gentle highlight
+                  qiblaIndicator.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.4)';
+                  qiblaIndicator.style.transform = 'scale(1.05)';
+                  qiblaIndicator.classList.remove('animate-pulse');
               } else {
-                  qiblaTab.classList.remove('qibla-glow');
-                  qiblaTab.style.backgroundColor = '';
-                  qiblaTab.style.borderColor = '';
-                  qiblaTab.style.boxShadow = '';
-                  qiblaTab.style.transform = '';
+                  // Not aligned - reset to normal
+                  qiblaIndicator.style.boxShadow = '';
+                  qiblaIndicator.style.transform = '';
+                  qiblaIndicator.classList.remove('animate-pulse');
               }
-          }
-          
-          // Enhance compass rose animation when aligned
-          if (compassRose && alignmentDiff <= 5) {
-              compassRose.classList.add('qibla-perfect-aligned');
-          } else if (compassRose) {
-              compassRose.classList.remove('qibla-perfect-aligned');
           }
           
           // Add expanding ring animation
@@ -2839,6 +2839,109 @@ function showARUnsupported(errorType) {
           }
       }
 
+      // Generate professional degree markings
+      function generateDegreeMarkings() {
+          const degreeMarkings = document.getElementById('degreeMarkings');
+          if (!degreeMarkings) return;
+          
+          degreeMarkings.innerHTML = '';
+          
+          // Create major markings every 30 degrees and minor markings every 10 degrees
+          for (let degree = 0; degree < 360; degree += 10) {
+              const marking = document.createElement('div');
+              marking.className = 'absolute';
+              
+              // Calculate position
+              const angle = (degree - 90) * (Math.PI / 180); // -90 to start from top
+              const radius = degree % 30 === 0 ? 85 : 90; // Major marks are longer
+              const x = 50 + radius * Math.cos(angle);
+              const y = 50 + radius * Math.sin(angle);
+              
+              if (degree % 30 === 0) {
+                  // Major markings (every 30°)
+                  marking.style.cssText = `
+                      left: ${x}%; 
+                      top: ${y}%; 
+                      width: 2px; 
+                      height: 12px; 
+                      background: linear-gradient(to bottom, #6b7280, #374151);
+                      transform: translate(-50%, -50%) rotate(${degree}deg);
+                      border-radius: 1px;
+                      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+                  `;
+              } else {
+                  // Minor markings (every 10°)
+                  marking.style.cssText = `
+                      left: ${x}%; 
+                      top: ${y}%; 
+                      width: 1px; 
+                      height: 6px; 
+                      background: linear-gradient(to bottom, #9ca3af, #6b7280);
+                      transform: translate(-50%, -50%) rotate(${degree}deg);
+                      border-radius: 0.5px;
+                      opacity: 0.7;
+                  `;
+              }
+              
+              degreeMarkings.appendChild(marking);
+          }
+      }
+
+      // Stop compass function to clean up effects
+      function stopQiblaCompass() {
+          compassActive = false;
+          
+          // Remove event listeners
+          window.removeEventListener('deviceorientation', handleCompassOrientation);
+          window.removeEventListener('deviceorientationabsolute', handleCompassOrientation);
+          
+          // Reset qibla indicator styling
+          const qiblaIndicator = document.getElementById('qiblaIndicator');
+          if (qiblaIndicator) {
+              qiblaIndicator.style.boxShadow = '';
+              qiblaIndicator.style.transform = '';
+              qiblaIndicator.classList.remove('animate-pulse');
+          }
+          
+          // Reset compass rose
+          const compassRose = document.getElementById('compassRose');
+          if (compassRose) {
+              compassRose.style.transform = 'rotate(0deg)';
+          }
+          
+          // Show start button container again
+          const startContainer = document.getElementById('startCompassContainer');
+          const startBtn = document.getElementById('startCompassBtn');
+          const startText = document.getElementById('startCompassText');
+          if (startContainer) {
+              startContainer.style.display = 'flex';
+          }
+          if (startBtn && startText) {
+              startBtn.disabled = false;
+              startText.textContent = currentLang === 'ar' ? 'ابدأ البوصلة' : 'Start Compass';
+          }
+          
+          // Reset displays
+          const degreeDisplay = document.getElementById('degreeDisplay');
+          const directionStatus = document.getElementById('directionStatus');
+          const accuracyIndicator = document.getElementById('accuracyIndicator');
+          const accuracyText = document.getElementById('accuracyText');
+          
+          if (degreeDisplay) degreeDisplay.textContent = '--°';
+          if (directionStatus) {
+              directionStatus.textContent = languages[currentLang].clickStartCompass;
+              directionStatus.className = 'text-sm text-gray-600 dark:text-gray-300';
+          }
+          if (accuracyIndicator) accuracyIndicator.className = 'w-2 h-2 rounded-full bg-gray-400';
+          if (accuracyText) accuracyText.textContent = languages[currentLang].accuracyDisconnected;
+          
+          // Reset global variables
+          currentHeading = 0;
+          smoothedHeading = null;
+          qiblaAngle = null;
+          userLocation = null;
+      }
+
       function setupTabs() {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
@@ -2847,6 +2950,11 @@ function showARUnsupported(errorType) {
               tab.addEventListener('click', async () => {
                   const previousActiveTab = document.querySelector('.tab.active');
                   const previousTabId = previousActiveTab ? previousActiveTab.getAttribute('data-tab') : null;
+                  
+                  // Stop qibla compass when switching away from qibla tab
+                  if (previousTabId === 'qibla' && compassActive) {
+                      stopQiblaCompass();
+                  }
                   
                   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                   document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -4790,7 +4898,6 @@ function showARUnsupported(errorType) {
                            void quranHook.offsetWidth;
                          }
 
-                         updateAzkarTypeLabels();
 
 
                    
@@ -6593,9 +6700,9 @@ function showARUnsupported(errorType) {
                         suggestionItems.forEach(item => {
                 item.addEventListener('click', async () => {
                     const searchInput = document.getElementById('quranSearchInput');
-                    // Extract the example from the suggestion text (text between quotes)
-                    const example = item.textContent.match(/"([^"]+)"/);
-                    if (example && example[1]) {
+                    // Extract the example from the suggestion text (text between quotes or use the whole text if no quotes)
+                    const example = item.textContent.match(/"([^"]+)"/) || [null, item.textContent.trim()];
+                    if (example[1]) {
                         // Set the input value
                         searchInput.value = example[1];
                         // Create and dispatch an input event to trigger the search
@@ -7303,788 +7410,6 @@ function showARUnsupported(errorType) {
     });
   }
 })();
-      
-
-
-function updateAzkarTypeLabels() {
-  const types = [
-    ['Morning', 'sabah'],
-    ['Evening', 'masaa'],
-    ['WakingSleeping', 'waking_sleeping'],
-    ['Home', 'home'],
-    ['Bathroom', 'bathroom'],
-    ['Eating', 'eating'],
-    ['Masjid', 'masjid'],
-    ['Traveling', 'traveling'],
-    ['Clothes', 'clothes'],
-    ['Anxiety', 'anxiety'],
-    ['Hardship', 'hardship'],
-    ['Istighfar', 'istighfar'],
-    ['PatienceGratitude', 'patience_gratitude'],
-    ['Rabbana', 'rabbana'],
-    ['Prophetic', 'prophetic'],
-    ['Prophets', 'prophets'],
-    ['Rain', 'rain'],
-    ['Patient', 'patient'],
-    ['Deceased', 'deceased'],
-    ['MarriageChildrenRizq', 'marriage_children_rizq'],
-    ['Protection', 'protection'],
-    ['Salah', 'salah'],
-    ['SujoodTashahhud', 'sujood_tashahhud'],
-    ['Qunoot', 'qunoot'],
-    ['Tahajjud', 'tahajjud'],
-    ['Istikhara', 'istikhara'],
-    ['Ramadan', 'ramadan'],
-    ['Hajj', 'hajj'],
-    ['LaylatAlQadr', 'laylat_al_qadr'],
-    ['Eid', 'eid'],
-    ['NaturalEvents', 'natural_events']
-  ];
-  types.forEach(([labelIdPrefix, typeKey]) => {
-    const el = document.getElementById('label' + labelIdPrefix);
-    if (el) {
-      // Set text content first
-      if (languages[currentLang].azkarTypes[typeKey]) {
-        el.textContent = languages[currentLang].azkarTypes[typeKey];
-      }
-      
-      // Clear any previous dynamic font size classes
-      el.classList.remove('text-xs', 'text-sm'); 
-
-      if (currentLang === 'en') {
-        el.classList.add('text-xs'); // Smaller font for English labels
-      } else { // Arabic
-        el.classList.add('text-sm'); // Slightly larger font for Arabic labels
-      }
-    }
-  });
-}
-// Patch switchLanguage to also update azkar labels
-const origSwitchLanguage = window.switchLanguage;
-window.switchLanguage = function() {
-  origSwitchLanguage();
-  updateAzkarTypeLabels();
-};
-      
-
-     
-(function() {
-  let popover = document.getElementById('ayahMenuPopover');
-  let lastAyahElem = null;
-  let popoverAyah = null;
-  let popoverSurah = null;
-
-  // Helper to close the popover
-  function closePopover() {
-    popover.style.display = 'none';
-    lastAyahElem = null;
-    popoverAyah = null;
-    popoverSurah = null;
-    
-    // Clear any active tooltips
-    clearAyahMenuTooltips();
-  }
-  
-  // Function to show sequential tooltips for ayah menu buttons
-  function showAyahMenuTooltips() {
-    const langIsAr = currentLang === 'ar';
-    const isMobile = window.innerWidth <= 768;
-    const buttons = [
-      {
-        id: 'ayahMenuPlay',
-        tooltip: window.currentAyahAudio && currentAudioSurah === popoverSurah && currentAudioAyah === popoverAyah && !window.currentAyahAudio.paused 
-          ? (langIsAr ? 'ايقاف الاية' : 'Stop Ayah')
-          : (langIsAr ? 'تشغيل الآية' : 'Play Ayah'),
-        delay: isMobile ? 800 : 500
-      },
-      {
-        id: 'ayahMenuTranslation',
-        tooltip: isTranslationVisible 
-          ? (langIsAr ? 'إخفاء الترجمة' : 'Hide Translation') 
-          : (langIsAr ? 'إظهار الترجمة' : 'Show Translation'),
-        delay: isMobile ? 2800 : 2000
-      },
-      {
-        id: 'ayahMenuTafsir',
-        tooltip: isTafsirVisible 
-          ? (langIsAr ? 'إخفاء التفسير' : 'Hide Tafsir') 
-          : (langIsAr ? 'إظهار التفسير' : 'Show Tafsir'),
-        delay: isMobile ? 5100 : 3500
-      },
-      {
-        id: 'ayahMenuBookmark',
-        tooltip: currentBookmark && currentBookmark.surah === popoverSurah && currentBookmark.ayah === popoverAyah
-          ? (langIsAr ? 'إزالة العلامة' : 'Remove Bookmark')
-          : (langIsAr ? 'إشارة مرجعية' : 'Bookmark'),
-        delay: isMobile ? 7400 : 5000
-      }
-    ];
-    
-    // Clear any existing tooltips first
-    clearAyahMenuTooltips();
-    
-    buttons.forEach(button => {
-      setTimeout(() => {
-        const btn = document.getElementById(button.id);
-        const popover = document.getElementById('ayahMenuPopover');
-        if (btn && popover && popover.style.display !== 'none') {
-          // Clear any other active tooltips before showing this one
-          clearAyahMenuTooltips();
-          
-          btn.setAttribute('data-tooltip', button.tooltip);
-          btn.classList.add('show-tooltip');
-          
-          // Auto-hide tooltip after longer duration on mobile
-          const tooltipDuration = isMobile ? 2000 : 1500;
-          setTimeout(() => {
-            if (btn.classList.contains('show-tooltip')) {
-              btn.classList.remove('show-tooltip');
-            }
-          }, tooltipDuration);
-        }
-      }, button.delay);
-    });
-  }
-  
-  // Function to clear all ayah menu tooltips
-  function clearAyahMenuTooltips() {
-    const buttons = ['ayahMenuPlay', 'ayahMenuTranslation', 'ayahMenuTafsir', 'ayahMenuBookmark'];
-    buttons.forEach(buttonId => {
-      const btn = document.getElementById(buttonId);
-      if (btn) {
-        btn.classList.remove('show-tooltip');
-      }
-    });
-  }
-
-  // Attach popover to ayah click
-  document.addEventListener('click', function(e) {
-    // If click is on an ayah
-    if (e.target.classList.contains('ayah')) {
-      e.preventDefault();
-      e.stopPropagation();
-      lastAyahElem = e.target;
-      popoverAyah = parseInt(e.target.getAttribute('data-ayah'));
-      popoverSurah = parseInt(e.target.getAttribute('data-surah'));
-      // Position popover with smart viewport-aware positioning
-      const rect = e.target.getBoundingClientRect();
-      const scrollY = window.scrollY || window.pageYOffset;
-      const scrollX = window.scrollX || window.pageXOffset;
-      
-      // Show popover first to get its dimensions
-      popover.style.display = 'block';
-      popover.style.visibility = 'hidden'; // Hide while positioning
-      
-      const popoverRect = popover.getBoundingClientRect();
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      
-      // Calculate initial position (centered above the ayah)
-      let top = rect.top + scrollY - popoverRect.height - 8;
-      let left = rect.left + scrollX + rect.width/2 - popoverRect.width/2;
-      
-      // Adjust horizontal position to stay within viewport
-      const minLeft = 8; // 8px margin from left edge
-      const maxLeft = viewportWidth - popoverRect.width - 8; // 8px margin from right edge
-      left = Math.max(minLeft, Math.min(left, maxLeft));
-      
-      // Adjust vertical position for mobile and small screens
-      const isMobile = viewportWidth <= 768;
-      if (isMobile) {
-        // On mobile, if there's not enough space above, position below
-        if (top < 60) { // 60px from top to avoid header
-          top = rect.bottom + scrollY + 8;
-        }
-        
-        // Ensure popover doesn't go off bottom of screen
-        if (top + popoverRect.height > scrollY + viewportHeight - 20) {
-          top = scrollY + viewportHeight - popoverRect.height - 20;
-        }
-        
-        // For very short verses on mobile, center the popover more
-        if (rect.width < 50) {
-          left = viewportWidth/2 - popoverRect.width/2;
-        }
-      } else {
-        // Desktop: ensure popover stays within viewport vertically
-        if (top < scrollY + 8) {
-          top = rect.bottom + scrollY + 8; // Position below if not enough space above
-        }
-      }
-      
-      popover.style.top = top + 'px';
-      popover.style.left = left + 'px';
-      popover.style.visibility = 'visible';
-      // Set direction and alignment based on language
-      if (currentLang === 'en') {
-        popover.style.direction = 'ltr';
-        popover.style.textAlign = 'left';
-        } else {
-        popover.style.direction = 'rtl';
-        popover.style.textAlign = 'right';
-      }
-      // Update menu text/icons based on current state
-      const langIsAr = currentLang === 'ar';
-      // Update tooltips based on current state and language
-      document.getElementById('ayahMenuTranslation').title = isTranslationVisible ? (langIsAr ? 'إخفاء الترجمة' : 'Hide Translation') : (langIsAr ? 'إظهار الترجمة' : 'Show Translation');
-      document.getElementById('ayahMenuTafsir').title = isTafsirVisible ? (langIsAr ? 'إخفاء التفسير' : 'Hide Tafsir') : (langIsAr ? 'إظهار التفسير' : 'Show Tafsir');
-      // Bookmark icon and tooltip
-      const isBookmarked = currentBookmark && currentBookmark.surah === popoverSurah && currentBookmark.ayah === popoverAyah;
-      document.getElementById('ayahMenuBookmark').querySelector('i').className = isBookmarked ? 'fas fa-bookmark text-yellow-500' : 'far fa-bookmark';
-      document.getElementById('ayahMenuBookmark').title = isBookmarked ? (langIsAr ? 'إزالة العلامة' : 'Remove Bookmark') : (langIsAr ? 'إشارة مرجعية' : 'Bookmark');
-      // Play/Stop icon and tooltip
-      const isPlaying = window.currentAyahAudio && currentAudioSurah === popoverSurah && currentAudioAyah === popoverAyah && !window.currentAyahAudio.paused;
-      const playBtn = document.getElementById('ayahMenuPlay');
-      playBtn.querySelector('i').className = isPlaying ? 'fas fa-stop' : 'fas fa-play';
-      playBtn.title = isPlaying ? (langIsAr ? 'ايقاف الاية' : 'Stop Ayah') : (langIsAr ? 'تشغيل الآية' : 'Play Ayah');
-      
-      // Show sequential tooltips for menu buttons
-      showAyahMenuTooltips();
-    } else if (!popover.contains(e.target)) {
-      closePopover();
-      }
-    });
-  // Hide popover on scroll
-  window.addEventListener('scroll', closePopover);
-  // Menu actions
-  document.getElementById('ayahMenuPlay').onclick = function() {
-    if (popoverSurah !== null && popoverAyah !== null) playAyahAudio(popoverSurah, popoverAyah);
-    closePopover();
-  };
-  document.getElementById('ayahMenuTranslation').onclick = function() {
-    if (popoverSurah !== null && popoverAyah !== null) {
-      showTranslationModal(popoverSurah, popoverAyah);
-    }
-    closePopover();
-  };
-  document.getElementById('ayahMenuTafsir').onclick = function() {
-    if (popoverSurah !== null && popoverAyah !== null) {
-      showTafsirModal(popoverSurah, popoverAyah);
-    }
-    closePopover();
-  };
-  document.getElementById('ayahMenuBookmark').onclick = function() {
-    if (popoverSurah !== null && popoverAyah !== null) bookmarkAyah(popoverSurah, popoverAyah);
-    closePopover();
-  };
-})();
-
-// Add tafsir modal functions
-let currentTafsirSurah = null;
-let currentTafsirAyah = null;
-
-function showTafsirModal(surah, ayah) {
-  const modal = document.getElementById('tafsirModal');
-  const surahData = quranData[surah];
-  const translationAyahs = translationData[surah];
-  const ayahData = surahData.ayahs[ayah];
-  const translationAyah = translationAyahs.ayahs[ayah];
-  
-  // Store current ayah for language change
-  currentTafsirSurah = surah;
-  currentTafsirAyah = ayah;
-  
-  // Set modal content
-  document.getElementById('tafsirModalTitle').textContent = currentLang === 'ar' ? 'التفسير' : 'Tafsir';
-  
-  // Set text direction for ayah and translation
-  const tafsirModalAyah = document.getElementById('tafsirModalAyah');
-  const tafsirModalTranslation = document.getElementById('tafsirModalTranslation');
-  const tafsirModalContent = document.getElementById('tafsirModalContent');
-  
-  // Arabic ayah is always RTL
-  tafsirModalAyah.dir = 'rtl';
-  tafsirModalAyah.textContent = ayahData.text;
-  
-  // Translation is LTR
-  tafsirModalTranslation.dir = 'ltr';
-  tafsirModalTranslation.textContent = translationAyah ? translationAyah.text : '';
-  
-  // Tafsir content direction based on selected source
-  const tafsirSelect = document.getElementById('tafsirSelect');
-  const isEnglishTafsir = tafsirSelect.value.startsWith('en-');
-  tafsirModalContent.dir = isEnglishTafsir ? 'ltr' : 'rtl';
-  tafsirModalContent.textContent = currentLang === 'ar' ? 'جاري التحميل...' : 'Loading...';
-  
-  // Show modal
-  modal.style.display = 'flex';
-  
-  // Load tafsir
-  loadTafsirContent();
-}
-
-function loadTafsirContent() {
-  if (currentTafsirSurah !== null && currentTafsirAyah !== null) {
-    getTafsirForAyah(currentTafsirSurah, currentTafsirAyah).then(tafsir => {
-      const tafsirModalContent = document.getElementById('tafsirModalContent');
-      const tafsirSelect = document.getElementById('tafsirSelect');
-      const isEnglishTafsir = tafsirSelect.value.startsWith('en-');
-      
-      // Set direction based on tafsir source
-      tafsirModalContent.dir = isEnglishTafsir ? 'ltr' : 'rtl';
-      tafsirModalContent.textContent = tafsir.text || (currentLang === 'ar' ? 'لا يوجد تفسير متاح' : 'Tafsir not available');
-    });
-  }
-}
-
-function closeTafsirModal() {
-  document.getElementById('tafsirModal').style.display = 'none';
-  currentTafsirSurah = null;
-  currentTafsirAyah = null;
-}
-
-
-
-// Add translation modal functions
-let currentTranslationSurah = null;
-let currentTranslationAyah = null;
-
-function showTranslationModal(surah, ayah) {
-  const modal = document.getElementById('translationModal');
-  const surahData = quranData[surah];
-  const ayahData = surahData.ayahs[ayah];
-  
-  // Store current ayah for translation change
-  currentTranslationSurah = surah;
-  currentTranslationAyah = ayah;
-  
-  // Set modal content
-  document.getElementById('translationModalTitle').textContent = currentLang === 'ar' ? 'الترجمة' : 'Translation';
-  
-  // Set text direction for ayah and translation
-  const translationModalAyah = document.getElementById('translationModalAyah');
-  const translationModalContent = document.getElementById('translationModalContent');
-  
-  // Arabic ayah is always RTL
-  translationModalAyah.dir = 'rtl';
-  translationModalAyah.textContent = ayahData.text;
-  
-  // Translation content is always LTR since we only have English translations
-  translationModalContent.dir = 'ltr';
-  translationModalContent.textContent = currentLang === 'ar' ? 'جاري التحميل...' : 'Loading...';
-  
-  // Show modal
-  modal.style.display = 'flex';
-  
-  // Load translation
-  loadTranslationContent();
-}
-
-function loadTranslationContent() {
-  if (currentTranslationSurah !== null && currentTranslationAyah !== null) {
-    const translationAyahs = translationData[currentTranslationSurah];
-    const translationAyah = translationAyahs.ayahs[currentTranslationAyah];
-    const translationModalContent = document.getElementById('translationModalContent');
-    
-    // Translation is always LTR
-    translationModalContent.dir = 'ltr';
-    translationModalContent.textContent = translationAyah ? translationAyah.text : (currentLang === 'ar' ? 'لا توجد ترجمة متاحة' : 'No translation available');
-  }
-}
-
-function closeTranslationModal() {
-  document.getElementById('translationModal').style.display = 'none';
-  currentTranslationSurah = null;
-  currentTranslationAyah = null;
-}
-
-
-
-
-
-// Create an alias for backward compatibility
-async function displayReadingModeAyahs(shouldScrollToBookmark = false, scrollToVerseId = null) {
-  return displayReadingModeAyahsByPages(shouldScrollToBookmark, scrollToVerseId);
-}
-
-// Voice Search Functionality
-let recognition = null;
-let isListening = false;
-
-// Comprehensive iOS Safari voice text normalization
-function normalizeiOSVoiceText(text) {
- 
-  let normalized = text
-    // AGGRESSIVE invisible character removal - iOS Safari adds these at the beginning
-    .replace(/^[\u0000-\u001F\u007F-\u009F\u00AD\u061C\u180E\u200B-\u200F\u202A-\u202E\u2060-\u206F\u2800\u3000\uFEFF\uFFF9-\uFFFB]+/, '') // Remove leading control chars
-    .replace(/[\u0000-\u001F\u007F-\u009F\u00AD\u061C\u180E\u200B-\u200F\u202A-\u202E\u2060-\u206F\u2800\u3000\uFEFF\uFFF9-\uFFFB]/g, '') // Remove all control chars
-    // Remove specific iOS Safari artifacts
-    .replace(/^[\u200E\u200F\u202A\u202B\u202C\u202D\u202E]+/, '') // Remove leading RTL/LTR marks
-    .replace(/[\u200E\u200F\u202A\u202B\u202C\u202D\u202E]/g, '') // Remove all RTL/LTR marks
-    // Remove zero-width characters that iOS Safari loves to add
-    .replace(/^[\u200B\u200C\u200D\uFEFF]+/, '') // Remove leading zero-width chars
-    .replace(/[\u200B\u200C\u200D\uFEFF]/g, '') // Remove all zero-width chars
-    // Remove non-breaking spaces and other space variants
-    .replace(/[\u00A0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]/g, ' ')
-    // Normalize Unicode to NFD (decomposed) then to NFC (composed)
-    .normalize('NFD').normalize('NFC')
-    // Handle iOS Safari specific Arabic character issues
-    .replace(/[\u064B-\u0652\u0670\u0640\u06D6-\u06ED\u08F0-\u08FF]/g, '') // Remove diacritics
-    // Normalize specific problematic characters iOS Safari might produce
-    .replace(/\u0627\u0644/g, 'ال') // Ensure proper "al" (alef + lam)
-    .replace(/\u0641\u0627\u062A\u062D/g, 'فاتح') // Specific fix for "فاتح"
-    .replace(/\u0641\u0627\u062A\u062D\u0629/g, 'فاتحة') // Specific fix for "فاتحة"
-    // Normalize alef variants
-    .replace(/[\u0623\u0625\u0622\u0671]/g, '\u0627') // أ إ آ ٱ -> ا
-    // Normalize other common variations
-    .replace(/\u0629/g, '\u0647') // ة -> ه
-    // Final cleanup - remove any remaining control characters
-    .replace(/[\u0000-\u001F\u007F-\u009F]/g, '')
-    // Trim whitespace
-    .trim();
-  
-
-  return normalized;
-}
-
-// Enhanced voice search function for iOS Safari compatibility
-function performEnhancedVoiceSearch(transcript) {
-
-  // Clean up the transcript for iOS Safari issues
-  let cleanedTranscript = transcript
-    // Remove any invisible characters that iOS Safari might add
-    .replace(/[\u200B-\u200D\uFEFF]/g, '')
-    // Remove any extra whitespace
-    .replace(/\s+/g, ' ')
-    .trim();
-  
-  // Apply comprehensive iOS Safari character normalization
-  const normalizedTranscript = normalizeiOSVoiceText(cleanedTranscript);
-  
-  // Try the regular search first with normalized text
-  searchSurahs(normalizedTranscript);
-  
-  // Check if we got results
-  setTimeout(() => {
-    const surahList = document.getElementById('surahList');
-    const hasResults = surahList.children.length > 0 && 
-                      !surahList.innerHTML.includes('لم يتم العثور') && 
-                      !surahList.innerHTML.includes('No results');
-    
-    
-    if (!hasResults) {
-      
-      // Try enhanced matching for Arabic text
-      const searchData = surahsData.length > 0 ? surahsData : quickSurahList;
-      const enhancedResults = searchData.filter(surah => {
-        const arabicName = surah.name || '';
-        const englishName = surah.englishName || '';
-        
-                 // Create multiple search variants using normalized transcript
-         const searchVariants = [
-           normalizedTranscript,
-           normalizeArabicText(normalizedTranscript),
-           normalizedTranscript.replace(/^ال/, ''), // Remove "al" prefix
-           'ال' + normalizedTranscript, // Add "al" prefix
-           normalizedTranscript.replace(/[أإآٱ]/g, 'ا'), // Normalize Alef
-           normalizedTranscript.replace(/ة/g, 'ه'), // Normalize Teh Marbuta
-           // Enhanced hamza normalization for voice recognition
-           normalizedTranscript.replace(/اخ/g, 'إخ'), // اخ -> إخ (for الاخلاص -> الإخلاص)
-           normalizedTranscript.replace(/ا([خحجهعغفقثصضذدزرتبيسشظطكلمنوؤئء])/g, 'إ$1'), // Add hamza before consonants
-           normalizedTranscript.replace(/ء/g, ''), // Remove standalone hamza
-           normalizedTranscript.replace(/[ءؤئ]/g, ''), // Remove all hamza variants
-           // Also include the original cleaned transcript as fallback
-           cleanedTranscript,
-           normalizeArabicText(cleanedTranscript),
-         ];
-        
-        // Check each variant against surah names
-        return searchVariants.some(variant => {
-          if (!variant || variant.length === 0) return false;
-          
-                     // Flexible matching - check if variant is contained in surah name or vice versa
-           const normalizedArabic = normalizeArabicText(arabicName);
-           const normalizedVariant = normalizeArabicText(variant);
-           
-           // Additional hamza-agnostic normalization for both search and surah name
-           const hamzaFreeArabic = normalizedArabic.replace(/[ءؤئإأآ]/g, 'ا');
-           const hamzaFreeVariant = normalizedVariant.replace(/[ءؤئإأآ]/g, 'ا');
-           
-           return (
-             arabicName.includes(variant) ||
-             normalizedArabic.includes(normalizedVariant) ||
-             variant.includes(arabicName) ||
-             normalizedVariant.includes(normalizedArabic) ||
-             englishName.toLowerCase().includes(variant.toLowerCase()) ||
-             variant.toLowerCase().includes(englishName.toLowerCase()) ||
-             // Hamza-agnostic matching (key for voice recognition)
-             hamzaFreeArabic.includes(hamzaFreeVariant) ||
-             hamzaFreeVariant.includes(hamzaFreeArabic) ||
-             // Partial matching for better voice recognition results
-             (normalizedVariant.length >= 3 && normalizedArabic.includes(normalizedVariant)) ||
-             (normalizedArabic.length >= 3 && normalizedVariant.includes(normalizedArabic)) ||
-             // Hamza-free partial matching
-             (hamzaFreeVariant.length >= 3 && hamzaFreeArabic.includes(hamzaFreeVariant)) ||
-             (hamzaFreeArabic.length >= 3 && hamzaFreeVariant.includes(hamzaFreeArabic))
-           );
-        });
-      });
-      
-      
-             if (enhancedResults.length > 0) {
-         populateSurahList(enhancedResults);
-       } else {
-         // LAST RESORT: Try progressively removing characters from the beginning
-         let foundMatch = false;
-         
-         for (let i = 1; i <= Math.min(5, normalizedTranscript.length); i++) {
-           const strippedText = normalizedTranscript.substring(i);
-           
-           if (strippedText.length >= 2) { // Only try if we have at least 2 characters left
-             const progressiveResults = searchData.filter(surah => {
-               const arabicName = surah.name || '';
-               const normalizedArabic = normalizeArabicText(arabicName);
-               const normalizedStripped = normalizeArabicText(strippedText);
-               
-               return (
-                 arabicName.includes(strippedText) ||
-                 normalizedArabic.includes(normalizedStripped) ||
-                 strippedText.includes(arabicName) ||
-                 normalizedStripped.includes(normalizedArabic)
-               );
-             });
-             
-             if (progressiveResults.length > 0) {
-               populateSurahList(progressiveResults);
-               foundMatch = true;
-               break;
-             }
-           }
-         }
-         
-         if (!foundMatch) {
-           // Absolute last resort: show all surahs with a message
-           const surahList = document.getElementById('surahList');
-           populateSurahList(searchData);
-           
-           // Add a message at the top
-           const messageDiv = document.createElement('div');
-           messageDiv.className = 'p-3 mb-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg text-center';
-           messageDiv.innerHTML = `
-             <p class="text-sm text-yellow-700 dark:text-yellow-300">
-               ${currentLang === 'ar' ? 
-                 `لم يتم العثور على "${normalizedTranscript}" - عرض جميع السور` : 
-                 `"${normalizedTranscript}" not found - showing all surahs`
-               }
-             </p>
-           `;
-           surahList.insertBefore(messageDiv, surahList.firstChild);
-         }
-       }
-    }
-  }, 50);
-}
-
-// Function to find the best Surah match from voice alternatives
-function findBestSurahMatch(alternatives) {
-  if (!alternatives || alternatives.length === 0) return null;
-  
-  // Get all Surah names in both Arabic and English
-  const surahNames = [];
-  
-  // Add from surahsData if available
-  if (surahsData && surahsData.length > 0) {
-    surahsData.forEach(surah => {
-      if (surah.name) surahNames.push(surah.name);
-      if (surah.englishName) surahNames.push(surah.englishName);
-      if (surah.englishNameTranslation) surahNames.push(surah.englishNameTranslation);
-    });
-  }
-  
-  // Add from quickSurahList if available
-  if (quickSurahList && quickSurahList.length > 0) {
-    quickSurahList.forEach(surah => {
-      if (surah.name) surahNames.push(surah.name);
-      if (surah.englishName) surahNames.push(surah.englishName);
-      if (surah.englishNameTranslation) surahNames.push(surah.englishNameTranslation);
-    });
-  }
-  
-  // Common Surah names as fallback
-  const commonSurahNames = [
-    'الفاتحة', 'Al-Fatiha', 'Fatiha', 'The Opening',
-    'البقرة', 'Al-Baqarah', 'Baqarah', 'The Cow',
-    'آل عمران', 'Al-Imran', 'Imran', 'Family of Imran',
-    'النساء', 'An-Nisa', 'Nisa', 'The Women',
-    'المائدة', 'Al-Maidah', 'Maidah', 'The Table Spread',
-    'الأنعام', 'Al-Anam', 'Anam', 'The Cattle',
-    'الأعراف', 'Al-Araf', 'Araf', 'The Heights',
-    'الأنفال', 'Al-Anfal', 'Anfal', 'The Spoils of War',
-    'التوبة', 'At-Tawbah', 'Tawbah', 'The Repentance',
-    'يونس', 'Yunus', 'Jonah',
-    'هود', 'Hud',
-    'يوسف', 'Yusuf', 'Joseph',
-    'الرعد', 'Ar-Rad', 'Rad', 'The Thunder',
-    'إبراهيم', 'Ibrahim', 'Abraham',
-    'الحجر', 'Al-Hijr', 'Hijr', 'The Rocky Tract',
-    'النحل', 'An-Nahl', 'Nahl', 'The Bee',
-    'الإسراء', 'Al-Isra', 'Isra', 'The Night Journey',
-    'الكهف', 'Al-Kahf', 'Kahf', 'The Cave',
-    'مريم', 'Maryam', 'Mary',
-    'طه', 'Ta-Ha', 'Taha',
-    'الأنبياء', 'Al-Anbiya', 'Anbiya', 'The Prophets',
-    'الحج', 'Al-Hajj', 'Hajj', 'The Pilgrimage',
-    'المؤمنون', 'Al-Muminun', 'Muminun', 'The Believers',
-    'النور', 'An-Nur', 'Nur', 'The Light',
-    'الفرقان', 'Al-Furqan', 'Furqan', 'The Criterion',
-    'الشعراء', 'Ash-Shuara', 'Shuara', 'The Poets',
-    'النمل', 'An-Naml', 'Naml', 'The Ant',
-    'القصص', 'Al-Qasas', 'Qasas', 'The Stories',
-    'العنكبوت', 'Al-Ankabut', 'Ankabut', 'The Spider',
-    'الروم', 'Ar-Rum', 'Rum', 'The Romans',
-    'لقمان', 'Luqman',
-    'السجدة', 'As-Sajdah', 'Sajdah', 'The Prostration',
-    'الأحزاب', 'Al-Ahzab', 'Ahzab', 'The Clans',
-    'سبأ', 'Saba', 'Sheba',
-    'فاطر', 'Fatir', 'Originator',
-    'يس', 'Ya-Sin', 'Yasin',
-    'الصافات', 'As-Saffat', 'Saffat', 'Those Ranged in Ranks',
-    'ص', 'Sad',
-    'الزمر', 'Az-Zumar', 'Zumar', 'The Groups',
-    'غافر', 'Ghafir', 'The Forgiver',
-    'فصلت', 'Fussilat', 'Explained in Detail',
-    'الشورى', 'Ash-Shura', 'Shura', 'The Consultation',
-    'الزخرف', 'Az-Zukhruf', 'Zukhruf', 'The Gold Adornments',
-    'الدخان', 'Ad-Dukhan', 'Dukhan', 'The Smoke',
-    'الجاثية', 'Al-Jathiyah', 'Jathiyah', 'The Kneeling',
-    'الأحقاف', 'Al-Ahqaf', 'Ahqaf', 'The Wind-Curved Sandhills',
-    'محمد', 'Muhammad',
-    'الفتح', 'Al-Fath', 'Fath', 'The Victory',
-    'الحجرات', 'Al-Hujurat', 'Hujurat', 'The Rooms',
-    'ق', 'Qaf',
-    'الذاريات', 'Adh-Dhariyat', 'Dhariyat', 'The Wind That Scatter',
-    'الطور', 'At-Tur', 'Tur', 'The Mount',
-    'النجم', 'An-Najm', 'Najm', 'The Star',
-    'القمر', 'Al-Qamar', 'Qamar', 'The Moon',
-    'الرحمن', 'Ar-Rahman', 'Rahman', 'The Most Merciful',
-    'الواقعة', 'Al-Waqiah', 'Waqiah', 'The Event',
-    'الحديد', 'Al-Hadid', 'Hadid', 'The Iron',
-    'المجادلة', 'Al-Mujadilah', 'Mujadilah', 'The Pleading Woman',
-    'الحشر', 'Al-Hashr', 'Hashr', 'The Exile',
-    'الممتحنة', 'Al-Mumtahanah', 'Mumtahanah', 'She That Is To Be Examined',
-    'الصف', 'As-Saff', 'Saff', 'The Ranks',
-    'الجمعة', 'Al-Jumuah', 'Jumuah', 'The Friday',
-    'المنافقون', 'Al-Munafiqun', 'Munafiqun', 'The Hypocrites',
-    'التغابن', 'At-Taghabun', 'Taghabun', 'The Mutual Disillusion',
-    'الطلاق', 'At-Talaq', 'Talaq', 'The Divorce',
-    'التحريم', 'At-Tahrim', 'Tahrim', 'The Prohibition',
-    'الملك', 'Al-Mulk', 'Mulk', 'The Sovereignty',
-    'القلم', 'Al-Qalam', 'Qalam', 'The Pen',
-    'الحاقة', 'Al-Haqqah', 'Haqqah', 'The Reality',
-    'المعارج', 'Al-Maarij', 'Maarij', 'The Ascending Stairways',
-    'نوح', 'Nuh', 'Noah',
-    'الجن', 'Al-Jinn', 'Jinn', 'The Jinn',
-    'المزمل', 'Al-Muzzammil', 'Muzzammil', 'The Enshrouded One',
-    'المدثر', 'Al-Muddaththir', 'Muddaththir', 'The Cloaked One',
-    'القيامة', 'Al-Qiyamah', 'Qiyamah', 'The Resurrection',
-    'الإنسان', 'Al-Insan', 'Insan', 'The Man',
-    'المرسلات', 'Al-Mursalat', 'Mursalat', 'The Emissaries',
-    'النبأ', 'An-Naba', 'Naba', 'The Tidings',
-    'النازعات', 'An-Naziat', 'Naziat', 'Those Who Drag Forth',
-    'عبس', 'Abasa', 'He Frowned',
-    'التكوير', 'At-Takwir', 'Takwir', 'The Overthrowing',
-    'الانفطار', 'Al-Infitar', 'Infitar', 'The Cleaving',
-    'المطففين', 'Al-Mutaffifin', 'Mutaffifin', 'The Defrauding',
-    'الانشقاق', 'Al-Inshiqaq', 'Inshiqaq', 'The Splitting Open',
-    'البروج', 'Al-Buruj', 'Buruj', 'The Mansions of the Stars',
-    'الطارق', 'At-Tariq', 'Tariq', 'The Morning Star',
-    'الأعلى', 'Al-Ala', 'Ala', 'The Most High',
-    'الغاشية', 'Al-Ghashiyah', 'Ghashiyah', 'The Overwhelming',
-    'الفجر', 'Al-Fajr', 'Fajr', 'The Dawn',
-    'البلد', 'Al-Balad', 'Balad', 'The City',
-    'الشمس', 'Ash-Shams', 'Shams', 'The Sun',
-    'الليل', 'Al-Layl', 'Layl', 'The Night',
-    'الضحى', 'Ad-Duha', 'Duha', 'The Morning Hours',
-    'الشرح', 'Ash-Sharh', 'Sharh', 'The Relief',
-    'التين', 'At-Tin', 'Tin', 'The Fig',
-    'العلق', 'Al-Alaq', 'Alaq', 'The Clot',
-    'القدر', 'Al-Qadr', 'Qadr', 'The Power',
-    'البينة', 'Al-Bayyinah', 'Bayyinah', 'The Clear Proof',
-    'الزلزلة', 'Az-Zalzalah', 'Zalzalah', 'The Earthquake',
-    'العاديات', 'Al-Adiyat', 'Adiyat', 'The Courser',
-    'القارعة', 'Al-Qariah', 'Qariah', 'The Calamity',
-    'التكاثر', 'At-Takathur', 'Takathur', 'The Rivalry in World Increase',
-    'العصر', 'Al-Asr', 'Asr', 'The Declining Day',
-    'الهمزة', 'Al-Humazah', 'Humazah', 'The Traducer',
-    'الفيل', 'Al-Fil', 'Fil', 'The Elephant',
-    'قريش', 'Quraysh',
-    'الماعون', 'Al-Maun', 'Maun', 'The Small Kindnesses',
-    'الكوثر', 'Al-Kawthar', 'Kawthar', 'The Abundance',
-    'الكافرون', 'Al-Kafirun', 'Kafirun', 'The Disbelievers',
-    'النصر', 'An-Nasr', 'Nasr', 'The Divine Support',
-    'المسد', 'Al-Masad', 'Masad', 'The Palm Fiber',
-    'الإخلاص', 'Al-Ikhlas', 'Ikhlas', 'The Sincerity',
-    'الفلق', 'Al-Falaq', 'Falaq', 'The Daybreak',
-    'الناس', 'An-Nas', 'Nas', 'The Mankind'
-  ];
-  
-  // Combine all available names
-  const allNames = [...new Set([...surahNames, ...commonSurahNames])];
-  
-  
-  let bestMatch = null;
-  let bestScore = 0;
-  
-  // Check each alternative against all Surah names
-  for (const alternative of alternatives) {
-    for (const surahName of allNames) {
-      const score = calculateSimilarity(alternative.toLowerCase(), surahName.toLowerCase());
-      if (score > bestScore && score > 0.3) { // Minimum similarity threshold
-        bestScore = score;
-        bestMatch = alternative;
-      }
-    }
-  }
-  
-  return bestMatch;
-}
-
-// Enhanced similarity calculation with phonetic matching
-function calculateSimilarity(str1, str2) {
-  // Normalize Arabic text
-  str1 = str1.replace(/[أإآ]/g, 'ا').replace(/[ىي]/g, 'ي').replace(/ة/g, 'ه');
-  str2 = str2.replace(/[أإآ]/g, 'ا').replace(/[ىي]/g, 'ي').replace(/ة/g, 'ه');
-  
-  // Check for exact match or substring
-  if (str1 === str2) return 1.0;
-  if (str1.includes(str2) || str2.includes(str1)) return 0.8;
-  
-  // Phonetic similarity for common voice recognition errors
-  const phoneticScore = calculatePhoneticSimilarity(str1, str2);
-  if (phoneticScore > 0.6) return phoneticScore;
-  
-  // Calculate Levenshtein distance
-  const matrix = [];
-  const len1 = str1.length;
-  const len2 = str2.length;
-  
-  if (len1 === 0) return len2 === 0 ? 1 : 0;
-  if (len2 === 0) return 0;
-  
-  // Initialize matrix
-  for (let i = 0; i <= len1; i++) {
-    matrix[i] = [i];
-  }
-  for (let j = 0; j <= len2; j++) {
-    matrix[0][j] = j;
-  }
-  
-  // Fill matrix
-  for (let i = 1; i <= len1; i++) {
-    for (let j = 1; j <= len2; j++) {
-      const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
-      matrix[i][j] = Math.min(
-        matrix[i - 1][j] + 1,      // deletion
-        matrix[i][j - 1] + 1,      // insertion
-        matrix[i - 1][j - 1] + cost // substitution
-      );
-    }
-  }
-  
-  const distance = matrix[len1][len2];
-  const maxLength = Math.max(len1, len2);
-  return (maxLength - distance) / maxLength;
-}
 
 // Calculate phonetic similarity for common voice recognition errors
 function calculatePhoneticSimilarity(voiceInput, surahName) {
