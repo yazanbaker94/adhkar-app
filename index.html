@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl" class="dark">
 <head>
     <meta charset="UTF-8">
@@ -455,157 +455,172 @@
 
         <!-- Qibla Tab Content -->
         <div id="qiblaContent" class="tab-content w-full p-4">
-            <!-- Simple Compass Interface -->
+            <!-- Professional Compass Interface -->
             <div class="max-w-md mx-auto">
                 <!-- Location Display -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl p-4 mb-4 shadow-lg">
-                    <div class="flex items-center justify-between mb-2">
-                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white" id="locationTitle">الموقع الحالي</h3>
-                        <button id="refreshLocationBtn" class="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors">
-                            <i class="fas fa-location-arrow text-sm"></i>
+                <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-4 mb-4 shadow-2xl border border-white/20 dark:border-gray-700/50">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+                                <i class="fas fa-location-dot text-white text-sm"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-white" id="locationTitle">الموقع الحالي</h3>
+                        </div>
+                        <button id="refreshLocationBtn" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white p-2.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
+                            <i class="fas fa-sync-alt text-sm"></i>
                         </button>
                     </div>
-                    <div class="text-sm text-gray-600 dark:text-gray-300">
-                        <div class="flex items-center gap-2 mb-1">
-                            <i class="fas fa-location-dot text-blue-500"></i>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+                            <i class="fas fa-map-marker-alt text-blue-500 w-4"></i>
                             <span id="locationInfo">جاري تحديد الموقع...</span>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-route text-green-500"></i>
+                        <div class="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+                            <i class="fas fa-route text-green-500 w-4"></i>
                             <span id="qiblaDistance">جاري الحساب...</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Professional Compass Container -->
-                <div class="bg-gradient-to-br from-white via-gray-50 to-white dark:from-gray-800 dark:via-gray-850 dark:to-gray-800 rounded-2xl p-8 shadow-2xl border border-gray-200/50 dark:border-gray-700/50">
+                <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-white/20 dark:border-gray-700/50">
                     <div class="relative w-80 h-80 mx-auto">
-                        <!-- Outer Ring with Subtle Gradient -->
-                        <div class="absolute inset-0 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-gray-700 dark:to-gray-800 shadow-inner border-2 border-slate-300/50 dark:border-gray-600/50">
-                            <!-- Inner Compass Face -->
-                            <div class="absolute inset-3 rounded-full bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-lg border border-gray-200/50 dark:border-gray-700/50">
-                                
+                        <!-- Outer Ring with Degree Markings -->
+                        <div class="absolute inset-0 rounded-full bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 border-4 border-gray-200/50 dark:border-gray-500/50 shadow-inner">
+                            <!-- Degree Ring -->
+                            <div class="absolute inset-2 rounded-full border border-gray-300/30 dark:border-gray-500/30">
                                 <!-- Rotating Compass Rose -->
-                                <div class="absolute inset-6 rounded-full transition-transform duration-700 ease-out" id="compassRose" style="transform: rotate(0deg);">
-                                    
-                                    <!-- Cardinal Direction Labels -->
+                                <div class="absolute inset-0 rounded-full transition-transform duration-500 ease-out" id="compassRose" style="transform: rotate(0deg);">
+                                    <!-- Cardinal Direction Markers -->
                                     <div class="absolute inset-0 rounded-full">
                                         <!-- North -->
-                                        <div class="absolute top-2 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
-                                            <div class="w-1 h-6 bg-gradient-to-b from-red-500 to-red-600 rounded-full shadow-sm"></div>
-                                            <div class="mt-1 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">N</div>
+                                        <div class="absolute top-1 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+                                            <div class="w-1 h-6 bg-red-500 rounded-full shadow-lg"></div>
+                                            <div class="mt-1 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-lg">N</div>
                                         </div>
-                                        
                                         <!-- East -->
-                                        <div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex flex-col items-center rotate-90">
-                                            <div class="w-1 h-4 bg-gradient-to-b from-gray-400 to-gray-500 rounded-full"></div>
-                                            <div class="mt-1 bg-gray-500 text-white text-xs font-medium px-1.5 py-0.5 rounded-full">E</div>
+                                        <div class="absolute right-1 top-1/2 transform -translate-y-1/2 flex flex-col items-center">
+                                            <div class="h-1 w-6 bg-gray-500 rounded-full shadow-lg"></div>
+                                            <div class="mt-1 bg-gray-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-lg">E</div>
                                         </div>
-                                        
                                         <!-- South -->
-                                        <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex flex-col items-center rotate-180">
-                                            <div class="w-1 h-4 bg-gradient-to-b from-gray-400 to-gray-500 rounded-full"></div>
-                                            <div class="mt-1 bg-gray-500 text-white text-xs font-medium px-1.5 py-0.5 rounded-full">S</div>
+                                        <div class="absolute bottom-1 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+                                            <div class="w-1 h-6 bg-gray-500 rounded-full shadow-lg"></div>
+                                            <div class="mt-1 bg-gray-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-lg">S</div>
                                         </div>
-                                        
                                         <!-- West -->
-                                        <div class="absolute left-2 top-1/2 transform -translate-y-1/2 flex flex-col items-center -rotate-90">
-                                            <div class="w-1 h-4 bg-gradient-to-b from-gray-400 to-gray-500 rounded-full"></div>
-                                            <div class="mt-1 bg-gray-500 text-white text-xs font-medium px-1.5 py-0.5 rounded-full">W</div>
+                                        <div class="absolute left-1 top-1/2 transform -translate-y-1/2 flex flex-col items-center">
+                                            <div class="h-1 w-6 bg-gray-500 rounded-full shadow-lg"></div>
+                                            <div class="mt-1 bg-gray-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-lg">W</div>
                                         </div>
                                     </div>
                                     
                                     <!-- Degree Markings -->
-                                    <div class="absolute inset-4 rounded-full">
-                                        <!-- Major degree marks every 30° -->
-                                        <div class="absolute inset-0" id="degreeMarkings">
-                                            <!-- Will be generated by JavaScript -->
-                                        </div>
+                                    <div class="absolute inset-4 rounded-full" id="degreeMarkings">
+                                        <!-- Generated by JavaScript -->
                                     </div>
-                                </div>
-                                
-                                <!-- Fixed Qibla Direction Indicator -->
-                                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                    <div class="absolute -top-12 left-1/2 transform -translate-x-1/2 z-20">
-                                        <!-- Elegant Qibla Indicator -->
-                                        <div class="flex flex-col items-center">
-                                            <div class="bg-gradient-to-b from-emerald-400 to-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg border-2 border-white dark:border-gray-700 transition-all duration-300" id="qiblaIndicator">
-                                                <i class="fas fa-kaaba text-sm"></i>
-                                            </div>
-                                            <div class="w-0.5 h-8 bg-gradient-to-b from-emerald-500 to-emerald-600 mt-1 rounded-full shadow-sm"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Device Direction Needle -->
-                                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                    <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 z-30">
-                                        <div class="flex flex-col items-center">
-                                            <div class="w-0 h-0 border-l-2 border-r-2 border-b-6 border-transparent border-b-blue-500 drop-shadow-sm"></div>
-                                            <div class="w-0.5 h-6 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full shadow-sm"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Center Hub -->
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                    <div class="w-4 h-4 bg-gradient-to-br from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-700 rounded-full shadow-inner border border-gray-400/50 dark:border-gray-500/50"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Start Button (when compass is inactive) -->
-                        <div class="absolute inset-0 flex items-center justify-center z-40" id="startCompassContainer">
-                            <button id="startCompassBtn" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white px-6 py-3 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-emerald-400/50">
-                                <div class="flex items-center gap-3">
-                                    <i class="fas fa-compass text-lg"></i>
-                                    <span id="startCompassText" class="font-medium">ابدأ البوصلة</span>
+                        <!-- Qibla Direction Indicator (Fixed) -->
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 z-20">
+                                <div class="flex flex-col items-center">
+                                    <!-- Qibla Icon -->
+                                    <div id="qiblaIndicator" class="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center shadow-2xl border-2 border-white/50 dark:border-gray-700/50 transition-all duration-300">
+                                        <i class="fas fa-kaaba text-white text-lg"></i>
+                                    </div>
+                                    <!-- Direction Arrow -->
+                                    <div class="w-0 h-0 border-l-3 border-r-3 border-t-8 border-transparent border-t-green-500 mt-1 shadow-lg"></div>
+                                    <!-- Direction Line -->
+                                    <div class="w-0.5 h-8 bg-green-500 shadow-lg"></div>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Device Direction Needle (Rotates) -->
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <div id="deviceNeedle" class="absolute transition-transform duration-300 ease-out" style="transform: rotate(0deg);">
+                                <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 z-30">
+                                    <div class="flex flex-col items-center">
+                                        <!-- Device Direction Arrow -->
+                                        <div class="w-0 h-0 border-l-2 border-r-2 border-b-6 border-transparent border-b-blue-500 shadow-lg"></div>
+                                        <!-- Needle Line -->
+                                        <div class="w-0.5 h-6 bg-blue-500 shadow-lg"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Center Hub -->
+                        <div class="absolute inset-0 flex items-center justify-center z-40">
+                            <div class="w-8 h-8 bg-gradient-to-br from-gray-300 to-gray-500 dark:from-gray-600 dark:to-gray-800 rounded-full shadow-xl border-2 border-white/50 dark:border-gray-700/50"></div>
+                        </div>
+
+                        <!-- Start Button Overlay -->
+                        <div id="compassStartOverlay" class="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full z-50">
+                            <button id="startCompassBtn" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 py-3 rounded-full shadow-2xl hover:shadow-emerald-500/25 transition-all duration-300 transform hover:scale-105 font-medium">
+                                <i class="fas fa-compass mr-2"></i>
+                                <span id="startCompassText">ابدأ البوصلة</span>
                             </button>
                         </div>
                     </div>
 
                     <!-- Status Display -->
-                    <div class="mt-6 space-y-3">
-                        <!-- Direction Display -->
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center">
-                            <div class="text-2xl font-bold text-gray-800 dark:text-white mb-1" id="degreeDisplay">--°</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-300" id="directionStatus">اضغط "ابدأ البوصلة" للبدء</div>
+                    <div class="mt-6 space-y-4">
+                        <!-- Direction and Accuracy Display -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- Direction Display -->
+                            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-xl p-4 text-center border border-blue-200/50 dark:border-blue-700/50">
+                                <div class="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1" id="degreeDisplay">--°</div>
+                                <div class="text-xs text-gray-600 dark:text-gray-400" id="degreeLabel">الدرجة</div>
+                            </div>
+                            
+                            <!-- Status Display -->
+                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30 rounded-xl p-4 text-center border border-green-200/50 dark:border-green-700/50">
+                                <div class="text-sm font-medium text-green-600 dark:text-green-400 mb-1" id="alignmentStatus">غير متصل</div>
+                                <div class="text-xs text-gray-600 dark:text-gray-400" id="statusLabel">الحالة</div>
+                            </div>
+                        </div>
+
+                        <!-- Alignment Progress Bar -->
+                        <div class="bg-gray-100 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+                            <div id="alignmentProgress" class="h-full bg-gradient-to-r from-green-400 to-emerald-500 rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
                         </div>
 
                         <!-- Accuracy Indicator -->
                         <div class="flex items-center justify-center gap-2 text-sm">
-                            <div class="flex items-center gap-1">
-                                <div class="w-2 h-2 rounded-full" id="accuracyIndicator"></div>
-                                <span id="accuracyText">غير متصل</span>
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full transition-colors duration-300" id="accuracyIndicator"></div>
+                                <span id="accuracyText" class="text-gray-600 dark:text-gray-400">غير متصل</span>
                             </div>
                         </div>
 
-                        <!-- Help Text -->
-                        <div class="text-center space-y-2">
-                            <button onclick="showCompassHelp()" class="text-blue-500 hover:text-blue-600 text-sm underline">
+                        <!-- Help Button -->
+                        <div class="text-center">
+                            <button onclick="showCompassHelp()" class="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 text-sm underline transition-colors duration-200">
                                 <i class="fas fa-question-circle mr-1"></i>
                                 <span id="helpText">كيفية استخدام البوصلة؟</span>
                             </button>
-
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Help Modal -->
-            <div id="compassHelpModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md mx-4">
+            <div id="compassHelpModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+                <div class="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-2xl p-6 max-w-md mx-4 shadow-2xl border border-white/20 dark:border-gray-700/50">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-semibold text-gray-800 dark:text-white" id="helpModalTitle">كيفية استخدام البوصلة</h3>
-                        <button onclick="closeCompassHelp()" class="text-gray-500 hover:text-gray-700">
-                            <i class="fas fa-times"></i>
+                        <button onclick="closeCompassHelp()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors duration-200">
+                            <i class="fas fa-times text-xl"></i>
                         </button>
                     </div>
                     <div class="space-y-3 text-sm text-gray-600 dark:text-gray-300" id="helpModalContent">
                         <!-- Content will be populated by JavaScript -->
                     </div>
-                    <button onclick="closeCompassHelp()" class="w-full mt-4 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                    <button onclick="closeCompassHelp()" class="w-full mt-6 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
                         <span id="closeHelpText">حسناً</span>
                     </button>
                 </div>
@@ -1114,7 +1129,7 @@
     <!-- Footer Section -->
     <footer class="p-4 text-center space-x-2 border-t border-gray-200 dark:border-gray-700 mt-auto">
         <p class="text-sm text-gray-500 dark:text-gray-400">
-            Made by <a href="https://github.com/yazanbaker94" target="_blank" rel="noopener noreferrer" class="text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100 font-semibold">Yazan Baker</a>
+            Made by <a href="https://github.com/yazanbaker94" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-semibold">Yazan Baker</a>
         </p>
     </footer>
 
