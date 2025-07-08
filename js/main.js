@@ -1247,6 +1247,25 @@ let scrollTimeout = null;
               if (startOverlay) {
                   startOverlay.style.display = 'none';
               }
+              
+              // Initialize compass display elements
+              const alignmentStatus = document.getElementById('alignmentStatus');
+              const accuracyIndicator = document.getElementById('accuracyIndicator');
+              const accuracyText = document.getElementById('accuracyText');
+              
+              if (alignmentStatus) {
+                  alignmentStatus.textContent = currentLang === 'ar' ? 'متصل' : 'Connected';
+                  alignmentStatus.className = 'text-sm font-medium text-green-600 dark:text-green-400 mb-1';
+              }
+              
+              if (accuracyIndicator) {
+                  accuracyIndicator.classList.add('status-connected');
+              }
+              
+              if (accuracyText) {
+                  accuracyText.textContent = currentLang === 'ar' ? 'متصل' : 'Connected';
+              }
+              
               updateCompassDisplay();
 
           } catch (error) {
@@ -1308,7 +1327,6 @@ let scrollTimeout = null;
 
           const compassRose = document.getElementById('compassRose');
           const degreeDisplay = document.getElementById('degreeDisplay');
-          const directionStatus = document.getElementById('directionStatus');
           const accuracyIndicator = document.getElementById('accuracyIndicator');
           const accuracyText = document.getElementById('accuracyText');
 
@@ -1452,17 +1470,58 @@ let scrollTimeout = null;
 
       // Show compass error
       function showCompassError(message) {
-          const directionStatus = document.getElementById('directionStatus');
-          if (directionStatus) {
-              directionStatus.textContent = message;
-              directionStatus.className = 'text-sm text-red-600 dark:text-red-400';
+          const alignmentStatus = document.getElementById('alignmentStatus');
+          if (alignmentStatus) {
+              alignmentStatus.textContent = message;
+              alignmentStatus.className = 'text-sm font-medium text-red-600 dark:text-red-400 mb-1';
+          }
+      }
+
+      // Stop compass function
+      function stopCompass() {
+          compassActive = false;
+          window.removeEventListener('deviceorientation', handleCompassOrientation);
+          window.removeEventListener('deviceorientationabsolute', handleCompassOrientation);
+          
+          // Reset overlay
+          const startOverlay = document.getElementById('compassStartOverlay');
+          const startBtn = document.getElementById('startCompassBtn');
+          const startText = document.getElementById('startCompassText');
+          
+          if (startOverlay) {
+              startOverlay.style.display = 'flex';
+          }
+          if (startBtn) {
+              startBtn.disabled = false;
+          }
+          if (startText) {
+              startText.textContent = currentLang === 'ar' ? 'ابدأ البوصلة' : 'Start Compass';
+          }
+          
+          // Reset status
+          const alignmentStatus = document.getElementById('alignmentStatus');
+          const accuracyText = document.getElementById('accuracyText');
+          const degreeDisplay = document.getElementById('degreeDisplay');
+          
+          if (alignmentStatus) {
+              alignmentStatus.textContent = currentLang === 'ar' ? 'غير متصل' : 'Disconnected';
+              alignmentStatus.className = 'text-sm font-medium text-gray-600 dark:text-gray-400 mb-1';
+          }
+          if (accuracyText) {
+              accuracyText.textContent = currentLang === 'ar' ? 'غير متصل' : 'Disconnected';
+          }
+          if (degreeDisplay) {
+              degreeDisplay.textContent = '--°';
           }
       }
 
       // Show compass help modal
       function showCompassHelp() {
           updateCompassHelpContent();
-          document.getElementById('compassHelpModal').classList.remove('hidden');
+          const modal = document.getElementById('compassHelpModal');
+          if (modal) {
+              modal.classList.remove('hidden');
+          }
       }
       
       // Update compass help modal content based on current language
@@ -1476,7 +1535,10 @@ let scrollTimeout = null;
 
       // Close compass help modal
       function closeCompassHelp() {
-          document.getElementById('compassHelpModal').classList.add('hidden');
+          const modal = document.getElementById('compassHelpModal');
+          if (modal) {
+              modal.classList.add('hidden');
+          }
       }
       
       // Update compass UI elements when language changes
@@ -1508,25 +1570,7 @@ let scrollTimeout = null;
           }
       }
 
-      // Stop compass
-      function stopCompass() {
-          compassActive = false;
-          window.removeEventListener('deviceorientation', handleCompassOrientation);
-          window.removeEventListener('deviceorientationabsolute', handleCompassOrientation);
-          
-          const startBtn = document.getElementById('startCompassBtn');
-          if (startBtn) {
-              startBtn.style.display = 'block';
-              startBtn.disabled = false;
-          }
-          
-          // Reset tab visual feedback
-          const qiblaTab = document.getElementById('qiblaTab');
-          if (qiblaTab) {
-              qiblaTab.style.backgroundColor = '';
-              qiblaTab.style.borderColor = '';
-          }
-      }
+
 
       // Add event listener for refresh location button
       document.getElementById('refreshLocationBtn').addEventListener('click', async () => {
@@ -2851,6 +2895,11 @@ function showARUnsupported(errorType) {
                       }
                       // Hide page/Juz indicator
                       hidePageJuzIndicator();
+                  }
+                  
+                  // Stop compass when switching away from Qibla tab
+                  if (previousTabId === 'qibla' && tabId !== 'qibla') {
+                      stopCompass();
                   }
 
                   if (tabId === 'qibla') {
