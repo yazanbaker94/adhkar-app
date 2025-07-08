@@ -3884,7 +3884,8 @@ function showARUnsupported(errorType) {
                 </span>
                 <span class="verse-marker" 
                   onclick="bookmarkAyah(${currentSurah}, ${displayedAyahIndex})"
-                  title="${bookmarkText}">
+                  title="${bookmarkText}"
+                  data-tooltip="${bookmarkText}">
                   <span class="verse-icon"></span><span class="verse-number">${toArabicNumerals(ayahNumber)}</span>
                 </span>
               </div>
@@ -3915,6 +3916,23 @@ function showARUnsupported(errorType) {
                   }
               }, 4000);
           }
+          
+          // Show verse marker tooltip
+          setTimeout(() => {
+              const verseMarker = document.querySelector('.verse-marker');
+              if (verseMarker) {
+                  verseMarker.classList.add('show-tooltip');
+                  
+                  // Auto-hide tooltip after longer duration on mobile
+                  const isMobile = window.innerWidth <= 768;
+                  const tooltipDuration = isMobile ? 4000 : 3000;
+                  setTimeout(() => {
+                      if (verseMarker.classList.contains('show-tooltip')) {
+                          verseMarker.classList.remove('show-tooltip');
+                      }
+                  }, tooltipDuration);
+              }
+          }, window.innerWidth <= 768 ? 1500 : 1000); // Show after longer delay on mobile
           
           // Update mobile button states
           const prevMobileBtn = document.getElementById('btnPrevAyahMobile');
@@ -6544,7 +6562,7 @@ function showARUnsupported(errorType) {
                 { type: 'suggestion', text: 'رقم الصفحة (مثال: "صفحة ١")', icon: 'fas fa-file' }
             ] : [
                 { type: 'tip', text: 'Try searching by:', icon: 'fas fa-lightbulb' },
-                { type: 'suggestion', text: 'Surah name (e.g., "Baqarah" or "البقرة")', icon: 'fas fa-book-open' },
+                { type: 'suggestion', text: 'Surah name (e.g., "Al-Baqara" or "البقرة")', icon: 'fas fa-book-open' },
                 { type: 'suggestion', text: 'Verse number (e.g., "Verse 1")', icon: 'fas fa-bookmark' },
                 { type: 'suggestion', text: 'Juz number (e.g., "Juz 1")', icon: 'fas fa-star' },
                 { type: 'suggestion', text: 'Page number (e.g., "Page 1")', icon: 'fas fa-file' }
@@ -7362,6 +7380,81 @@ window.switchLanguage = function() {
     lastAyahElem = null;
     popoverAyah = null;
     popoverSurah = null;
+    
+    // Clear any active tooltips
+    clearAyahMenuTooltips();
+  }
+  
+  // Function to show sequential tooltips for ayah menu buttons
+  function showAyahMenuTooltips() {
+    const langIsAr = currentLang === 'ar';
+    const isMobile = window.innerWidth <= 768;
+    const buttons = [
+      {
+        id: 'ayahMenuPlay',
+        tooltip: window.currentAyahAudio && currentAudioSurah === popoverSurah && currentAudioAyah === popoverAyah && !window.currentAyahAudio.paused 
+          ? (langIsAr ? 'ايقاف الاية' : 'Stop Ayah')
+          : (langIsAr ? 'تشغيل الآية' : 'Play Ayah'),
+        delay: isMobile ? 800 : 500
+      },
+      {
+        id: 'ayahMenuTranslation',
+        tooltip: isTranslationVisible 
+          ? (langIsAr ? 'إخفاء الترجمة' : 'Hide Translation') 
+          : (langIsAr ? 'إظهار الترجمة' : 'Show Translation'),
+        delay: isMobile ? 2800 : 2000
+      },
+      {
+        id: 'ayahMenuTafsir',
+        tooltip: isTafsirVisible 
+          ? (langIsAr ? 'إخفاء التفسير' : 'Hide Tafsir') 
+          : (langIsAr ? 'إظهار التفسير' : 'Show Tafsir'),
+        delay: isMobile ? 5100 : 3500
+      },
+      {
+        id: 'ayahMenuBookmark',
+        tooltip: currentBookmark && currentBookmark.surah === popoverSurah && currentBookmark.ayah === popoverAyah
+          ? (langIsAr ? 'إزالة العلامة' : 'Remove Bookmark')
+          : (langIsAr ? 'إشارة مرجعية' : 'Bookmark'),
+        delay: isMobile ? 7400 : 5000
+      }
+    ];
+    
+    // Clear any existing tooltips first
+    clearAyahMenuTooltips();
+    
+    buttons.forEach(button => {
+      setTimeout(() => {
+        const btn = document.getElementById(button.id);
+        const popover = document.getElementById('ayahMenuPopover');
+        if (btn && popover && popover.style.display !== 'none') {
+          // Clear any other active tooltips before showing this one
+          clearAyahMenuTooltips();
+          
+          btn.setAttribute('data-tooltip', button.tooltip);
+          btn.classList.add('show-tooltip');
+          
+          // Auto-hide tooltip after longer duration on mobile
+          const tooltipDuration = isMobile ? 2000 : 1500;
+          setTimeout(() => {
+            if (btn.classList.contains('show-tooltip')) {
+              btn.classList.remove('show-tooltip');
+            }
+          }, tooltipDuration);
+        }
+      }, button.delay);
+    });
+  }
+  
+  // Function to clear all ayah menu tooltips
+  function clearAyahMenuTooltips() {
+    const buttons = ['ayahMenuPlay', 'ayahMenuTranslation', 'ayahMenuTafsir', 'ayahMenuBookmark'];
+    buttons.forEach(buttonId => {
+      const btn = document.getElementById(buttonId);
+      if (btn) {
+        btn.classList.remove('show-tooltip');
+      }
+    });
   }
 
   // Attach popover to ayah click
@@ -7444,6 +7537,9 @@ window.switchLanguage = function() {
       const playBtn = document.getElementById('ayahMenuPlay');
       playBtn.querySelector('i').className = isPlaying ? 'fas fa-stop' : 'fas fa-play';
       playBtn.title = isPlaying ? (langIsAr ? 'ايقاف الاية' : 'Stop Ayah') : (langIsAr ? 'تشغيل الآية' : 'Play Ayah');
+      
+      // Show sequential tooltips for menu buttons
+      showAyahMenuTooltips();
     } else if (!popover.contains(e.target)) {
       closePopover();
       }
