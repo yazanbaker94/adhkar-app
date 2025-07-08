@@ -87,62 +87,43 @@
     100% { transform: scale(1); box-shadow: 0 0 0 rgba(34, 197, 94, 0.5); }
 }
 
-/* Enhanced Qibla Alignment Animations */
-@keyframes qibla-perfect-alignment {
+/* Professional Qibla Alignment Animations */
+@keyframes qibla-compass-smooth-rotation {
     0% { 
-        transform: scale(1) rotate(0deg); 
-        box-shadow: 0 0 0 rgba(34, 197, 94, 0.8);
-        filter: brightness(1);
-    }
-    25% { 
-        transform: scale(1.15) rotate(2deg); 
-        box-shadow: 0 0 30px rgba(34, 197, 94, 1);
-        filter: brightness(1.2);
-    }
-    50% { 
-        transform: scale(1.2) rotate(-1deg); 
-        box-shadow: 0 0 40px rgba(34, 197, 94, 0.9);
-        filter: brightness(1.3);
-    }
-    75% { 
-        transform: scale(1.15) rotate(1deg); 
-        box-shadow: 0 0 35px rgba(34, 197, 94, 1);
-        filter: brightness(1.2);
+        transform: rotate(0deg); 
     }
     100% { 
-        transform: scale(1) rotate(0deg); 
-        box-shadow: 0 0 0 rgba(34, 197, 94, 0.8);
-        filter: brightness(1);
+        transform: rotate(360deg); 
     }
 }
 
-@keyframes qibla-glow-pulse {
+@keyframes qibla-indicator-glow {
     0% { 
-        box-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
-        background: linear-gradient(45deg, #22c55e, #16a34a);
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+        transform: scale(1);
     }
     50% { 
-        box-shadow: 0 0 25px rgba(34, 197, 94, 0.9);
-        background: linear-gradient(45deg, #16a34a, #22c55e);
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.6), 0 0 40px rgba(16, 185, 129, 0.3);
+        transform: scale(1.05);
     }
     100% { 
-        box-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
-        background: linear-gradient(45deg, #22c55e, #16a34a);
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+        transform: scale(1);
     }
 }
 
-@keyframes qibla-text-glow {
+@keyframes qibla-perfect-pulse {
     0% { 
-        text-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
-        color: #16a34a;
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+        transform: scale(1);
     }
     50% { 
-        text-shadow: 0 0 15px rgba(34, 197, 94, 0.8);
-        color: #22c55e;
+        box-shadow: 0 0 25px rgba(16, 185, 129, 0.7), 0 0 50px rgba(16, 185, 129, 0.4);
+        transform: scale(1.1);
     }
     100% { 
-        text-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
-        color: #16a34a;
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+        transform: scale(1);
     }
 }
 
@@ -164,16 +145,16 @@
     }
 }
 
-.qibla-perfect-aligned {
-    animation: qibla-perfect-alignment 1.5s ease-in-out infinite;
+.qibla-compass-rotating {
+    animation: qibla-compass-smooth-rotation 30s linear infinite;
 }
 
-.qibla-glow {
-    animation: qibla-glow-pulse 2s ease-in-out infinite;
+.qibla-indicator-aligned {
+    animation: qibla-indicator-glow 2s ease-in-out infinite;
 }
 
-.qibla-text-glow {
-    animation: qibla-text-glow 1.5s ease-in-out infinite;
+.qibla-perfect-alignment {
+    animation: qibla-perfect-pulse 1.5s ease-in-out infinite;
 }
 
 .qibla-ring-expand {
