@@ -606,7 +606,7 @@
     left: 50%;
     transform: translateX(-50%);
     border: 5px solid transparent;
-    border-top-color: rgba(0, 0, 0, 0.9);
+    border-top-color: rgba(236, 10, 10, 0.95);
     z-index: 1000;
     margin-bottom: -5px;
     pointer-events: none;
@@ -615,4 +615,182 @@
 
 #btnReadingMode {
     position: relative;
+}
+
+/* Auto-appearing tooltips for ayah menu buttons */
+#ayahMenuPopover button.show-tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    white-space: nowrap;
+    z-index: 20001;
+    margin-bottom: 5px;
+    pointer-events: none;
+    animation: tooltipFadeIn 0.3s ease-out;
+}
+
+#ayahMenuPopover button.show-tooltip::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-top-color: rgba(236, 10, 10, 0.95);
+    z-index: 20001;
+    margin-bottom: -4px;
+    pointer-events: none;
+    animation: tooltipFadeIn 0.3s ease-out;
+}
+
+/* Mobile-specific tooltip positioning */
+@media (max-width: 768px) {
+    #ayahMenuPopover button.show-tooltip::after {
+        bottom: auto;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-bottom: 0;
+        margin-top: 15px;
+        font-size: 12px;
+        padding: 8px 12px;
+        max-width: 150px;
+        white-space: nowrap; /* Change from 'normal' to 'nowrap' */
+        text-align: center;
+        word-wrap: normal;   /* Change from 'break-word' to 'normal' */
+        hyphens: manual;     /* Change from 'auto' to 'manual' */
+    }
+    
+    #ayahMenuPopover button.show-tooltip::before {
+        bottom: auto;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-bottom: 0;
+        margin-top: 10px;
+        border-top-color: rgba(236, 10, 10, 0.95);
+        border-bottom-color: rgba(0, 0, 0, 0.9);
+    }
+    
+    /* Specific positioning for each button to avoid overlap */
+    #ayahMenuPlay.show-tooltip::after {
+        margin-top: 20px;
+    }
+    
+    #ayahMenuPlay.show-tooltip::before {
+        margin-top: 15px;
+    }
+    
+    #ayahMenuTranslation.show-tooltip::after {
+        margin-top: 20px;
+    }
+    
+    #ayahMenuTranslation.show-tooltip::before {
+        margin-top: 15px;
+    }
+    
+    #ayahMenuTafsir.show-tooltip::after {
+        margin-top: 20px;
+    }
+    
+    #ayahMenuTafsir.show-tooltip::before {
+        margin-top: 15px;
+    }
+    
+    #ayahMenuBookmark.show-tooltip::after {
+        margin-top: 20px;
+    }
+    
+    #ayahMenuBookmark.show-tooltip::before {
+        margin-top: 15px;
+    }
+}
+
+#ayahMenuPopover button {
+    position: relative;
+}
+
+/* Auto-appearing tooltip for verse marker */
+.verse-marker.show-tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    white-space: nowrap;
+    z-index: 1000;
+    margin-bottom: 8px;
+    pointer-events: none;
+    animation: tooltipFadeIn 0.3s ease-out;
+}
+
+.verse-marker.show-tooltip::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-top-color: rgba(236, 10, 10, 0.95);
+    z-index: 1000;
+    margin-bottom: -4px;
+    pointer-events: none;
+    animation: tooltipFadeIn 0.3s ease-out;
+}
+
+/* Mobile-specific verse marker tooltip positioning */
+@media (max-width: 768px) {
+    .verse-marker.show-tooltip::after {
+        font-size: 12px;
+        padding: 8px 12px;
+        margin-bottom: 10px;
+        max-width: 200px;
+        white-space: nowrap; /* Add this line */
+        text-align: center;
+    }
+}
+
+/* Dark mode tooltip styles */
+.dark #ayahMenuPopover button.show-tooltip::after,
+.dark .verse-marker.show-tooltip::after,
+.dark #btnReadingMode.show-tooltip::after {
+    background: rgba(255, 255, 255, 0.95);
+    color: #1f2937;
+}
+
+.dark #ayahMenuPopover button.show-tooltip::before,
+.dark .verse-marker.show-tooltip::before,
+.dark #btnReadingMode.show-tooltip::before {
+    border-top-color: rgba(236, 10, 10, 0.95);
+}
+
+/* Dark mode mobile tooltips */
+@media (max-width: 768px) {
+    .dark #ayahMenuPopover button.show-tooltip::before {
+        border-top-color: rgba(236, 10, 10, 0.95);
+        border-bottom-color: rgba(255, 255, 255, 0.95);
+    }
+}
+
+@keyframes tooltipFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
 } 
