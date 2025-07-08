@@ -2142,7 +2142,14 @@ function showARUnsupported(errorType) {
               'dailyAdhkarTitle': lang.dailyAdhkarTitle,
               'dailyAdhkarDesc': lang.dailyAdhkarDesc,
               'quickSurahsTitle': lang.quickSurahsTitle,
-              'quickSurahsDesc': lang.quickSurahsDesc
+              'quickSurahsDesc': lang.quickSurahsDesc,
+              'calculating': lang.calculating,
+              'clickStartCompass': lang.clickStartCompass,
+              'notConnected': lang.notConnected,
+              'backText': lang.backText,
+              'refresh': lang.refresh,
+              'searchQuran': lang.searchQuran,
+              'searchQuranPlaceholder': lang.searchQuranPlaceholder,
 
           };
           
@@ -2259,6 +2266,9 @@ function showARUnsupported(errorType) {
 
           // Update surah menu button text
           updateSurahDropdown();
+
+          // Always update Qibla UI elements to ensure correct language and state
+          updateCompassUI();
           
           // Update translation select options
           const translationSelect = document.getElementById('translationSelect');
