@@ -6562,7 +6562,7 @@ function showARUnsupported(errorType) {
                 { type: 'suggestion', text: 'رقم الصفحة (مثال: "صفحة ١")', icon: 'fas fa-file' }
             ] : [
                 { type: 'tip', text: 'Try searching by:', icon: 'fas fa-lightbulb' },
-                { type: 'suggestion', text: 'Surah name (e.g., "Al-Baqara" )', icon: 'fas fa-book-open' },
+                { type: 'suggestion', text: 'Surah name (e.g., "Al-Baqara")', icon: 'fas fa-book-open' },
                 { type: 'suggestion', text: 'Verse number (e.g., "Verse 1")', icon: 'fas fa-bookmark' },
                 { type: 'suggestion', text: 'Juz number (e.g., "Juz 1")', icon: 'fas fa-star' },
                 { type: 'suggestion', text: 'Page number (e.g., "Page 1")', icon: 'fas fa-file' }
