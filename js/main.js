@@ -139,6 +139,10 @@ let is24HourFormat = localStorage.getItem('is24HourFormat') === 'true';
 // First visit tracking for bookmark tooltip
 let isFirstVisit = localStorage.getItem('hasVisitedBefore') !== 'true';
 
+// Single verse loop for memorization
+let isSingleVerseLoop = localStorage.getItem('isSingleVerseLoop') === 'true';
+let singleVerseLoopTimeout = null;
+
 // Simple Qibla Compass
       let compassActive = false;
       let currentHeading = 0;
@@ -707,6 +711,43 @@ let scrollTimeout = null;
                setTimeout(() => {
                    showBookmarkTooltips();
                }, 3000);
+           }
+       }
+
+       // Initialize single verse loop toggle
+       function initializeSingleVerseLoop() {
+           const toggle = document.getElementById('singleVerseLoopToggle');
+           if (toggle) {
+               toggle.checked = isSingleVerseLoop;
+               toggle.addEventListener('change', function() {
+                   isSingleVerseLoop = this.checked;
+                   localStorage.setItem('isSingleVerseLoop', isSingleVerseLoop.toString());
+                   
+                   // Clear any existing loop timeout
+                   if (singleVerseLoopTimeout) {
+                       clearTimeout(singleVerseLoopTimeout);
+                       singleVerseLoopTimeout = null;
+                   }
+                   
+                   // Update labels
+                   updateSingleVerseLoopLabels();
+               });
+           }
+       }
+
+       // Update single verse loop labels based on language
+       function updateSingleVerseLoopLabels() {
+           const label = document.getElementById('singleVerseLoopLabel');
+           const desc = document.getElementById('singleVerseLoopDesc');
+           
+           if (label && desc) {
+               if (currentLang === 'ar') {
+                   label.textContent = 'تكرار الآية الواحدة للحفظ';
+                   desc.textContent = 'يكرر الآية الحالية باستمرار لمساعدة الحفظ';
+               } else {
+                   label.textContent = 'Single Verse Loop for Memorization';
+                   desc.textContent = 'Repeats current verse continuously to aid memorization';
+               }
            }
        }
 
@@ -4051,19 +4092,22 @@ function showARUnsupported(errorType) {
               translationTextElement.innerHTML = '';
               document.getElementById('btnReadingMode').disabled = false;
               
-              // Update tooltip for reading mode button when single verse is displayed
+              // Update tooltip for reading mode button when single verse is displayed - only on first visit
               const readingModeBtn = document.getElementById('btnReadingMode');
               if (readingModeBtn && !isReadingMode) {
-                  const tooltipText = languages[currentLang].displayFullSurah;
-                  readingModeBtn.setAttribute('data-tooltip', tooltipText);
-                  readingModeBtn.classList.add('show-tooltip');
-                  
-                  // Auto-hide tooltip after 4 seconds
-                  setTimeout(() => {
-                      if (readingModeBtn.classList.contains('show-tooltip')) {
-                          readingModeBtn.classList.remove('show-tooltip');
-                      }
-                  }, 4000);
+                  const isFirstVisitCheck = localStorage.getItem('hasVisitedBefore') !== 'true';
+                  if (isFirstVisitCheck) {
+                      const tooltipText = languages[currentLang].displayFullSurah;
+                      readingModeBtn.setAttribute('data-tooltip', tooltipText);
+                      readingModeBtn.classList.add('show-tooltip');
+                      
+                      // Auto-hide tooltip after 4 seconds
+                      setTimeout(() => {
+                          if (readingModeBtn.classList.contains('show-tooltip')) {
+                              readingModeBtn.classList.remove('show-tooltip');
+                          }
+                      }, 4000);
+                  }
               }
               
               // Show verse marker tooltip only on first visit to Quran tab
@@ -4516,17 +4560,20 @@ function showARUnsupported(errorType) {
               btn.innerHTML = '<i class="fas fa-book-open"></i>';
               btn.removeAttribute('title');
               
-              // Show auto-appearing tooltip for single verse mode
-              const tooltipText = languages[currentLang].displayFullSurah;
-              btn.setAttribute('data-tooltip', tooltipText);
-              btn.classList.add('show-tooltip');
-              
-              // Auto-hide tooltip after 4 seconds
-              setTimeout(() => {
-                  if (btn.classList.contains('show-tooltip')) {
-                      btn.classList.remove('show-tooltip');
-                  }
-              }, 4000);
+              // Show auto-appearing tooltip for single verse mode - only on first visit
+              const isFirstVisitCheck = localStorage.getItem('hasVisitedBefore') !== 'true';
+              if (isFirstVisitCheck) {
+                  const tooltipText = languages[currentLang].displayFullSurah;
+                  btn.setAttribute('data-tooltip', tooltipText);
+                  btn.classList.add('show-tooltip');
+                  
+                  // Auto-hide tooltip after 4 seconds
+                  setTimeout(() => {
+                      if (btn.classList.contains('show-tooltip')) {
+                          btn.classList.remove('show-tooltip');
+                      }
+                  }, 4000);
+              }
               
               // Remove scroll listener when exiting reading mode
               if (window.currentScrollListener) {
@@ -4840,6 +4887,9 @@ function showARUnsupported(errorType) {
 
             // Initialize first visit tracking
             initializeFirstVisit();
+
+            // Initialize single verse loop toggle
+            initializeSingleVerseLoop();
 
             // Add notification toggle handler
             const notificationToggle = document.getElementById('notificationToggle');
@@ -5427,6 +5477,8 @@ function showARUnsupported(errorType) {
               playbackSpeedLabel: 'سرعة التشغيل',
               continuousPlayLabel: 'تشغيل مستمر حتى نهاية السورة',
               continuousPlayDesc: 'عند التشغيل، يستمر حتى آخر آية في السورة',
+              singleVerseLoopLabel: 'تكرار الآية الواحدة للحفظ',
+              singleVerseLoopDesc: 'يكرر الآية الحالية باستمرار لمساعدة الحفظ',
 
                     speed1: 'بطيء (0.5x)',
                     speed2: 'أبطأ (0.75x)',
@@ -5453,6 +5505,8 @@ function showARUnsupported(errorType) {
               playbackSpeedLabel: 'Playback Speed',
               continuousPlayLabel: 'Continuous Play Until End of Surah',
               continuousPlayDesc: 'When playing, continues until the last verse of the surah',
+              singleVerseLoopLabel: 'Single Verse Loop for Memorization',
+              singleVerseLoopDesc: 'Repeats current verse continuously to aid memorization',
 
                     speed1: 'Slow (0.5x)',
                     speed2: 'Slower (0.75x)',
@@ -5484,6 +5538,8 @@ function showARUnsupported(errorType) {
             { id: 'playbackSpeedLabel', text: texts.playbackSpeedLabel },
             { id: 'continuousPlayLabel', text: texts.continuousPlayLabel },
             { id: 'continuousPlayDesc', text: texts.continuousPlayDesc },
+            { id: 'singleVerseLoopLabel', text: texts.singleVerseLoopLabel },
+            { id: 'singleVerseLoopDesc', text: texts.singleVerseLoopDesc },
 
                 { id: 'speed1', text: texts.speed1 },
                 { id: 'speed2', text: texts.speed2 },
@@ -5507,6 +5563,9 @@ function showARUnsupported(errorType) {
             if (settingsBtn) settingsBtn.title = texts.settingsBtn;
             if (decreaseBtn) decreaseBtn.title = texts.decreaseBtn;
             if (increaseBtn) increaseBtn.title = texts.increaseBtn;
+            
+            // Update single verse loop labels
+            updateSingleVerseLoopLabels();
         }
 
         // Function to update reciter dropdown options based on current language
@@ -7305,6 +7364,22 @@ function showARUnsupported(errorType) {
             });
             updateAyahHighlights();
             audio.onended = () => {
+                // Check if single verse loop is enabled first (highest priority)
+                if (isSingleVerseLoop) {
+                    // Reset current audio state first
+                    currentAudioSurah = null;
+                    currentAudioAyah = null;
+                    window.currentAyahAudio = null;
+                    updateAyahHighlights();
+                    window.isPlayingAudio = false;
+                    
+                    // Small delay before repeating the same verse
+                    singleVerseLoopTimeout = setTimeout(() => {
+                        playAyahAudio(surah, ayah);
+                    }, 1000);
+                    return;
+                }
+                
                 // Check if continuous play is enabled and we're not at the end of the surah
                 if (isContinuousPlayEnabled && quranData && quranData[surah]) {
                     const currentSurahData = quranData[surah];
