@@ -812,7 +812,8 @@ let scrollTimeout = null;
               calibrationMessage: "حرك الجهاز على شكل رقم 8 لمعايرة البوصلة",
               calibrationDone: "تم",
               alignedMessage: "موجه نحو القبلة",
-        locationTitle: "الموقع الحالي",
+                            locationTitle: "الموقع الحالي",
+                    requestLocationText: "تحديد الموقع",
         startCompassText: "ابدأ البوصلة",
         helpText: "كيفية استخدام البوصلة؟",
         helpModalTitle: "كيفية استخدام البوصلة",
@@ -1046,7 +1047,8 @@ let scrollTimeout = null;
               calibrationMessage: "Move your device in a figure-8 pattern to calibrate the compass",
               calibrationDone: "Done",
               alignedMessage: "Aligned with Qibla",
-        locationTitle: "Current Location",
+                            locationTitle: "Current Location",
+                    requestLocationText: "Detect Location",
         startCompassText: "Start Compass",
         helpText: "How to use compass?",
         helpModalTitle: "How to Use Compass",
@@ -1248,15 +1250,25 @@ let scrollTimeout = null;
       };
 
 
-      // Add debug logging to API calls
-      async function fetchPrayerTimes(city = "Amman") {
+      // Enhanced prayer times function that can work with coordinates or city
+      async function fetchPrayerTimes(cityOrCoords = "Amman", coordinates = null) {
           const today = new Date().toISOString().split('T')[0];
           const formattedDate = today.split('-').reverse().join('-');
-          const cacheKey = `prayer-${city}-${formattedDate}`;
+          const city = typeof cityOrCoords === 'string' ? cityOrCoords : 'Unknown Location';
+          const cacheKey = coordinates ? 
+              `prayer-coords-${coordinates.lat.toFixed(4)}-${coordinates.lng.toFixed(4)}-${formattedDate}` :
+              `prayer-${city}-${formattedDate}`;
           
           const strategies = [
               async () => {
-                  const url = `https://api.aladhan.com/v1/timingsByAddress/${formattedDate}?address=${encodeURIComponent(city)}`;
+                  let url;
+                  if (coordinates) {
+                      // Use coordinates for more accurate prayer times
+                      url = `https://api.aladhan.com/v1/timings/${formattedDate}?latitude=${coordinates.lat}&longitude=${coordinates.lng}&method=2`;
+                  } else {
+                      // Fallback to city-based lookup
+                      url = `https://api.aladhan.com/v1/timingsByAddress/${formattedDate}?address=${encodeURIComponent(city)}`;
+                  }
                   const response = await fetch(url);
                   if (!response.ok) throw new Error(`Direct API failed: ${response.status}`);
                   return response.json();
@@ -2294,6 +2306,7 @@ function showARUnsupported(errorType) {
               'prayerTab': lang.prayerTab,
               'qiblaTab': lang.qiblaTab,
         'locationTitle': lang.locationTitle,
+        'requestLocationText': lang.requestLocationText,
         'startCompassText': lang.startCompassText,
         'helpText': lang.helpText,
         'helpModalTitle': lang.helpModalTitle,
@@ -3005,13 +3018,74 @@ function showARUnsupported(errorType) {
 
       async function detectCityAndFetchTimes() {
           try {
-              const locationRes = await fetch("https://ipapi.co/json/");
-              const locationData = await locationRes.json();
-              currentCity = locationData.city || "Amman";
-              await fetchPrayerTimes(currentCity);
+              // Request user's actual location using device geolocation
+              const position = await new Promise((resolve, reject) => {
+                  if (!navigator.geolocation) {
+                      reject(new Error('Geolocation is not supported by this browser'));
+                      return;
+                  }
+                  
+                  navigator.geolocation.getCurrentPosition(resolve, reject, {
+                      enableHighAccuracy: true,
+                      timeout: 10000,
+                      maximumAge: 300000 // 5 minutes
+                  });
+              });
+              
+              const lat = position.coords.latitude;
+              const lng = position.coords.longitude;
+              
+                             // Try to get city name from coordinates
+               const cityName = await getCityNameFromCoordinates(lat, lng);
+               currentCity = cityName || "Amman";
+               
+               // Fetch prayer times using coordinates for maximum accuracy
+               await fetchPrayerTimes(currentCity, { lat, lng });
+              
+              // Update location display
+              const locationElement = document.getElementById("azan-location");
+              if (locationElement) {
+                  locationElement.innerText = languages[currentLang].locationText(currentCity, 'Local Time');
+              }
+              
           } catch (error) {
-              console.error("Could not detect city, falling back to Amman.", error);
+              console.error("Could not detect location, falling back to Amman.", error);
+              
+                             // Show user-friendly message about location access
+               const locationElement = document.getElementById("azan-location");
+               const requestLocationBtn = document.getElementById("requestLocationBtn");
+               
+               if (locationElement && requestLocationBtn) {
+                   const message = currentLang === 'ar' ? 
+                       'موقع افتراضي - عمان' : 
+                       'Default location - Amman';
+                   locationElement.innerText = message;
+                   
+                   // Show the location request button
+                   requestLocationBtn.classList.remove('hidden');
+               }
+              
               await fetchPrayerTimes("Amman");
+          }
+      }
+      
+      // Helper function to get city name from coordinates
+      async function getCityNameFromCoordinates(lat, lng) {
+          try {
+              // Use a more comprehensive city lookup
+              const cityName = getCityName(lat, lng);
+              if (cityName) {
+                  return cityName;
+              }
+              
+              // Fallback: use reverse geocoding API
+              const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`);
+              const data = await response.json();
+              
+              return data.city || data.locality || data.principalSubdivision || "Amman";
+          } catch (error) {
+              console.error("Error getting city name from coordinates:", error);
+              return null;
           }
       }
 
@@ -4890,6 +4964,40 @@ function showARUnsupported(errorType) {
 
             // Initialize single verse loop toggle
             initializeSingleVerseLoop();
+
+            // Add location request button handler
+            const requestLocationBtn = document.getElementById('requestLocationBtn');
+            if (requestLocationBtn) {
+                requestLocationBtn.addEventListener('click', async () => {
+                    const btn = requestLocationBtn;
+                    const btnText = document.getElementById('requestLocationText');
+                    
+                    // Show loading state
+                    btn.disabled = true;
+                    const originalText = btnText.textContent;
+                    btnText.textContent = currentLang === 'ar' ? 'جاري التحديد...' : 'Detecting...';
+                    
+                    try {
+                        await detectCityAndFetchTimes();
+                        // Hide button on success
+                        btn.classList.add('hidden');
+                    } catch (error) {
+                        console.error('Location request failed:', error);
+                        // Show error message
+                        const locationElement = document.getElementById("azan-location");
+                        if (locationElement) {
+                            const message = currentLang === 'ar' ? 
+                                'فشل في تحديد الموقع - يرجى المحاولة مرة أخرى' : 
+                                'Location detection failed - Please try again';
+                            locationElement.innerText = message;
+                        }
+                    } finally {
+                        // Reset button state
+                        btn.disabled = false;
+                        btnText.textContent = originalText;
+                    }
+                });
+            }
 
             // Add notification toggle handler
             const notificationToggle = document.getElementById('notificationToggle');

@@ -1039,7 +1039,13 @@
                         <i class="fas fa-mosque text-lg text-white"></i>
                     </div>
                     <h2 class="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-1" id="prayerTitle">أوقات الصلاة</h2>
-                    <p id="azan-location" class="text-gray-600 dark:text-gray-400 text-xs">جاري تحديد الموقع...</p>
+                    <div class="flex items-center justify-center gap-2">
+                        <p id="azan-location" class="text-gray-600 dark:text-gray-400 text-xs">جاري تحديد الموقع...</p>
+                        <button id="requestLocationBtn" class="hidden bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-2 py-1 rounded-md text-xs transition-all duration-200 shadow-sm hover:shadow-md">
+                            <i class="fas fa-location-arrow text-xs mr-1"></i>
+                            <span id="requestLocationText">تحديد الموقع</span>
+                        </button>
+                    </div>
                 </div>
                 
                 <!-- Settings Cards -->
