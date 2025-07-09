@@ -133,6 +133,12 @@
 let currentLang = 'ar';
 let currentCity = "Amman";
 
+// Prayer time format preference
+let is24HourFormat = localStorage.getItem('is24HourFormat') === 'true';
+
+// First visit tracking for bookmark tooltip
+let isFirstVisit = localStorage.getItem('hasVisitedBefore') !== 'true';
+
 // Simple Qibla Compass
       let compassActive = false;
       let currentHeading = 0;
@@ -620,6 +626,115 @@ let scrollTimeout = null;
            }
        }
 
+       // Time format conversion function
+       function formatTime(timeString, use24Hour = is24HourFormat) {
+           if (!timeString || timeString === '--:--') return timeString;
+           
+           try {
+               const [hours, minutes] = timeString.split(':').map(Number);
+               
+               if (use24Hour) {
+                   return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+               } else {
+                   const period = hours >= 12 ? 'PM' : 'AM';
+                   const displayHours = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
+                   const timeStr = `${displayHours}:${minutes.toString().padStart(2, '0')}`;
+                   
+                   // For Arabic RTL, use LTR directional override to keep AM/PM after time
+                   if (currentLang === 'ar') {
+                       return `\u202D${timeStr} ${period}\u202C`;
+                   } else {
+                       return `${timeStr} ${period}`;
+                   }
+               }
+           } catch (error) {
+               console.error('Error formatting time:', error);
+               return timeString;
+           }
+       }
+
+       // Update all displayed prayer times with current format
+       function updatePrayerTimeFormat() {
+           const timeElements = [
+               { selector: "#azan-fajr .font-bold", time: prayerNotifications.Fajr },
+               { selector: "#azan-sunrise .font-bold", time: prayerNotifications.Sunrise },
+               { selector: "#azan-dhuhr .font-bold", time: prayerNotifications.Dhuhr },
+               { selector: "#azan-asr .font-bold", time: prayerNotifications.Asr },
+               { selector: "#azan-maghrib .font-bold", time: prayerNotifications.Maghrib },
+               { selector: "#azan-isha .font-bold", time: prayerNotifications.Isha }
+           ];
+
+           timeElements.forEach(({ selector, time }) => {
+               const element = document.querySelector(selector);
+               if (element && time) {
+                   element.textContent = formatTime(time);
+               }
+           });
+       }
+
+       // Initialize time format toggle
+       function initializeTimeFormatToggle() {
+           const toggle = document.getElementById('timeFormatToggle');
+           if (toggle) {
+               toggle.checked = is24HourFormat;
+               toggle.addEventListener('change', function() {
+                   is24HourFormat = this.checked;
+                   localStorage.setItem('is24HourFormat', is24HourFormat.toString());
+                   updatePrayerTimeFormat();
+                   updateTimeFormatLabel();
+               });
+           }
+           updateTimeFormatLabel();
+       }
+
+       // Update time format label
+       function updateTimeFormatLabel() {
+           const label = document.getElementById('timeFormatLabel');
+           if (label) {
+               if (currentLang === 'ar') {
+                   label.textContent = is24HourFormat ? 'تنسيق الوقت 24 ساعة' : 'تنسيق الوقت 12 ساعة';
+               } else {
+                   label.textContent = is24HourFormat ? '24-Hour Format' : '12-Hour Format';
+               }
+           }
+       }
+
+       // Initialize first visit tracking
+       function initializeFirstVisit() {
+           // Don't mark as visited here - only mark after showing Quran tooltips
+           if (isFirstVisit) {
+               // Show bookmark tooltips on first visit after Quran content loads
+               setTimeout(() => {
+                   showBookmarkTooltips();
+               }, 3000);
+           }
+       }
+
+       // Show bookmark tooltips only on first visit to Quran tab
+       function showBookmarkTooltips() {
+           // Only show tooltips if this is the first visit to Quran tab
+           const isFirstVisitCheck = localStorage.getItem('hasVisitedBefore') !== 'true';
+           if (!isFirstVisitCheck) return;
+           
+           const verseMarkers = document.querySelectorAll('.verse-marker');
+           if (verseMarkers.length === 0) return; // No verse markers found
+           
+           // Mark as visited now that we're showing Quran tooltips
+           localStorage.setItem('hasVisitedBefore', 'true');
+           isFirstVisit = false;
+           
+           verseMarkers.forEach(marker => {
+               marker.classList.add('show-tooltip');
+           });
+           
+           // Hide tooltips after 5 seconds
+           setTimeout(() => {
+               verseMarkers.forEach(marker => {
+                   marker.classList.remove('show-tooltip');
+               });
+           }, 5000);
+       }
+
       const languages = {
           ar: {
               title: "Sakinah",
@@ -709,6 +824,7 @@ let scrollTimeout = null;
               },
               gotIt: "فهمت",
               notificationLabel: "إشعارات أوقات الصلاة",
+            timeFormatLabel: "تنسيق الوقت 24 ساعة",
               bookmarkVerse: "اضغط لتعيين علامة مرجعية",
               translationNames: {
                   // English
@@ -942,6 +1058,7 @@ let scrollTimeout = null;
               },
               gotIt: "Got it",
               notificationLabel: "Prayer Time Notifications",
+            timeFormatLabel: "24-Hour Format",
               bookmarkVerse: "Click to bookmark this verse",
               translationNames: {
                   // English
@@ -1148,28 +1265,28 @@ let scrollTimeout = null;
                      
                       }
                       
-                      // Use the working selector for prayer times
+                      // Use the working selector for prayer times with formatting
                       const fajrTimeSpan = document.querySelector("#azan-fajr .font-bold");
                       if (fajrTimeSpan) {
-                          fajrTimeSpan.innerText = timings.Fajr;
+                          fajrTimeSpan.innerText = formatTime(timings.Fajr);
                       } else {
                           console.error("Fajr time span not found!");
                       }
                       
                       const sunriseTimeSpan = document.querySelector("#azan-sunrise .font-bold");
-                      if (sunriseTimeSpan) sunriseTimeSpan.innerText = timings.Sunrise;
+                      if (sunriseTimeSpan) sunriseTimeSpan.innerText = formatTime(timings.Sunrise);
                       
                       const dhuhrTimeSpan = document.querySelector("#azan-dhuhr .font-bold");
-                      if (dhuhrTimeSpan) dhuhrTimeSpan.innerText = timings.Dhuhr;
+                      if (dhuhrTimeSpan) dhuhrTimeSpan.innerText = formatTime(timings.Dhuhr);
                       
                       const asrTimeSpan = document.querySelector("#azan-asr .font-bold");
-                      if (asrTimeSpan) asrTimeSpan.innerText = timings.Asr;
+                      if (asrTimeSpan) asrTimeSpan.innerText = formatTime(timings.Asr);
                       
                       const maghribTimeSpan = document.querySelector("#azan-maghrib .font-bold");
-                      if (maghribTimeSpan) maghribTimeSpan.innerText = timings.Maghrib;
+                      if (maghribTimeSpan) maghribTimeSpan.innerText = formatTime(timings.Maghrib);
                       
                       const ishaTimeSpan = document.querySelector("#azan-isha .font-bold");
-                      if (ishaTimeSpan) ishaTimeSpan.innerText = timings.Isha;
+                      if (ishaTimeSpan) ishaTimeSpan.innerText = formatTime(timings.Isha);
                       
                       
                       // Update prayer names after setting times
@@ -2144,6 +2261,7 @@ function showARUnsupported(errorType) {
               'tasbihTab': lang.tasbihTab,
               'quranTab': lang.quranTab,
               'notificationLabel': lang.notificationLabel,
+            'timeFormatLabel': lang.timeFormatLabel,
               'quranTitle': lang.quranTitle,
               'surahMenuTitle': lang.selectSurah,
               // Adhkar home page elements
@@ -2719,24 +2837,24 @@ function showARUnsupported(errorType) {
                   currentCity = savedData.city;
                   // ... (existing UI updates for prayer times)
                   document.getElementById("azan-location").innerText = languages[currentLang].locationText(savedData.city, savedData.location);
-                  // Use font-bold selectors for cached prayer times
+                  // Use font-bold selectors for cached prayer times with formatting
                   const fajrSpan = document.querySelector("#azan-fajr .font-bold");
-                  if (fajrSpan) fajrSpan.innerText = savedData.timings.Fajr;
+                  if (fajrSpan) fajrSpan.innerText = formatTime(savedData.timings.Fajr);
                   
                   const sunriseSpan = document.querySelector("#azan-sunrise .font-bold");
-                  if (sunriseSpan) sunriseSpan.innerText = savedData.timings.Sunrise;
+                  if (sunriseSpan) sunriseSpan.innerText = formatTime(savedData.timings.Sunrise);
                   
                   const dhuhrSpan = document.querySelector("#azan-dhuhr .font-bold");
-                  if (dhuhrSpan) dhuhrSpan.innerText = savedData.timings.Dhuhr;
+                  if (dhuhrSpan) dhuhrSpan.innerText = formatTime(savedData.timings.Dhuhr);
                   
                   const asrSpan = document.querySelector("#azan-asr .font-bold");
-                  if (asrSpan) asrSpan.innerText = savedData.timings.Asr;
+                  if (asrSpan) asrSpan.innerText = formatTime(savedData.timings.Asr);
                   
                   const maghribSpan = document.querySelector("#azan-maghrib .font-bold");
-                  if (maghribSpan) maghribSpan.innerText = savedData.timings.Maghrib;
+                  if (maghribSpan) maghribSpan.innerText = formatTime(savedData.timings.Maghrib);
                   
                   const ishaSpan = document.querySelector("#azan-isha .font-bold");
-                  if (ishaSpan) ishaSpan.innerText = savedData.timings.Isha;
+                  if (ishaSpan) ishaSpan.innerText = formatTime(savedData.timings.Isha);
                   
                   // Update prayer names after setting times
                   updatePrayerTimesUI();
@@ -2802,24 +2920,24 @@ function showARUnsupported(errorType) {
             
 
                       document.getElementById("azan-location").innerText = languages[currentLang].locationText(city, location);
-                      // Use font-bold selectors for API prayer times
-                      const fajrEl = document.querySelector("#azan-fajr .font-bold");
-                      if (fajrEl) fajrEl.innerText = timings.Fajr;
-                      
-                      const sunriseEl = document.querySelector("#azan-sunrise .font-bold");
-                      if (sunriseEl) sunriseEl.innerText = timings.Sunrise;
-                      
-                      const dhuhrEl = document.querySelector("#azan-dhuhr .font-bold");
-                      if (dhuhrEl) dhuhrEl.innerText = timings.Dhuhr;
-                      
-                      const asrEl = document.querySelector("#azan-asr .font-bold");
-                      if (asrEl) asrEl.innerText = timings.Asr;
-                      
-                      const maghribEl = document.querySelector("#azan-maghrib .font-bold");
-                      if (maghribEl) maghribEl.innerText = timings.Maghrib;
-                      
-                      const ishaEl = document.querySelector("#azan-isha .font-bold");
-                      if (ishaEl) ishaEl.innerText = timings.Isha;
+                                        // Use font-bold selectors for API prayer times with formatting
+                  const fajrEl = document.querySelector("#azan-fajr .font-bold");
+                  if (fajrEl) fajrEl.innerText = formatTime(timings.Fajr);
+                  
+                  const sunriseEl = document.querySelector("#azan-sunrise .font-bold");
+                  if (sunriseEl) sunriseEl.innerText = formatTime(timings.Sunrise);
+                  
+                  const dhuhrEl = document.querySelector("#azan-dhuhr .font-bold");
+                  if (dhuhrEl) dhuhrEl.innerText = formatTime(timings.Dhuhr);
+                  
+                  const asrEl = document.querySelector("#azan-asr .font-bold");
+                  if (asrEl) asrEl.innerText = formatTime(timings.Asr);
+                  
+                  const maghribEl = document.querySelector("#azan-maghrib .font-bold");
+                  if (maghribEl) maghribEl.innerText = formatTime(timings.Maghrib);
+                  
+                  const ishaEl = document.querySelector("#azan-isha .font-bold");
+                  if (ishaEl) ishaEl.innerText = formatTime(timings.Isha);
                       
                       // Update prayer names after setting times
                       updatePrayerTimesUI();
@@ -3948,20 +4066,27 @@ function showARUnsupported(errorType) {
                   }, 4000);
               }
               
-              // Show verse marker tooltip
+              // Show verse marker tooltip only on first visit to Quran tab
               setTimeout(() => {
-                  const verseMarker = document.querySelector('.verse-marker');
-                  if (verseMarker) {
-                      verseMarker.classList.add('show-tooltip');
-                      
-                      // Auto-hide tooltip after longer duration on mobile
-                      const isMobile = window.innerWidth <= 768;
-                      const tooltipDuration = isMobile ? 4000 : 3000;
-                      setTimeout(() => {
-                          if (verseMarker.classList.contains('show-tooltip')) {
-                              verseMarker.classList.remove('show-tooltip');
-                          }
-                      }, tooltipDuration);
+                  const isFirstVisitCheck = localStorage.getItem('hasVisitedBefore') !== 'true';
+                  if (isFirstVisitCheck) {
+                      const verseMarker = document.querySelector('.verse-marker');
+                      if (verseMarker) {
+                          // Mark as visited now that we're showing Quran tooltip
+                          localStorage.setItem('hasVisitedBefore', 'true');
+                          isFirstVisit = false;
+                          
+                          verseMarker.classList.add('show-tooltip');
+                          
+                          // Auto-hide tooltip after longer duration on mobile
+                          const isMobile = window.innerWidth <= 768;
+                          const tooltipDuration = isMobile ? 4000 : 3000;
+                          setTimeout(() => {
+                              if (verseMarker.classList.contains('show-tooltip')) {
+                                  verseMarker.classList.remove('show-tooltip');
+                              }
+                          }, tooltipDuration);
+                      }
                   }
               }, window.innerWidth <= 768 ? 1500 : 1000); // Show after longer delay on mobile
               
@@ -4709,6 +4834,12 @@ function showARUnsupported(errorType) {
 
             // Load notification state
             loadNotificationState();
+
+            // Initialize time format toggle
+            initializeTimeFormatToggle();
+
+            // Initialize first visit tracking
+            initializeFirstVisit();
 
             // Add notification toggle handler
             const notificationToggle = document.getElementById('notificationToggle');
@@ -7430,9 +7561,7 @@ window.switchLanguage = function() {
       },
       {
         id: 'ayahMenuTranslation',
-        tooltip: isTranslationVisible 
-          ? (langIsAr ? 'إخفاء الترجمة' : 'Hide Translation') 
-          : (langIsAr ? 'إظهار الترجمة' : 'Show Translation'),
+        tooltip: langIsAr ? 'إظهار الترجمة' : 'Show Translation',
         delay: isMobile ? 2800 : 2000
       },
       {

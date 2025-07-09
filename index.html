@@ -1032,19 +1032,41 @@
                     <p id="azan-location" class="text-gray-600 dark:text-gray-400 text-xs">جاري تحديد الموقع...</p>
                 </div>
                 
-                <!-- Compact Notification Toggle Card -->
-                <div class="mb-4 p-3 bg-gradient-to-r from-blue-50/70 to-indigo-50/70 dark:from-blue-900/30 dark:to-indigo-900/30 backdrop-blur-sm rounded-lg border border-blue-200/50 dark:border-blue-700/50">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
-                                <i class="fas fa-bell text-white text-xs"></i>
+                <!-- Settings Cards -->
+                <div class="mb-4">
+                    <!-- Notification and Time Format Toggle Cards on Same Line -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <!-- Notification Toggle Card -->
+                        <div class="p-2 sm:p-3 bg-gradient-to-r from-blue-50/70 to-indigo-50/70 dark:from-blue-900/30 dark:to-indigo-900/30 backdrop-blur-sm rounded-lg border border-blue-200/50 dark:border-blue-700/50">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+                                <div class="flex items-center gap-1 sm:gap-2">
+                                    <div class="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-bell text-white text-xs"></i>
+                                    </div>
+                                    <span class="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 leading-tight" id="notificationLabel">إشعارات أوقات الصلاة</span>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer self-center sm:self-auto">
+                                    <input type="checkbox" id="notificationToggle" class="sr-only peer">
+                                    <div class="w-8 h-5 sm:w-10 sm:h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300/50 dark:peer-focus:ring-blue-800/50 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 sm:after:h-5 sm:after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-indigo-600 shadow-inner"></div>
+                                </label>
                             </div>
-                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300" id="notificationLabel">إشعارات أوقات الصلاة</span>
                         </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="notificationToggle" class="sr-only peer">
-                            <div class="w-10 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300/50 dark:peer-focus:ring-blue-800/50 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-indigo-600 shadow-inner"></div>
-                    </label>
+
+                        <!-- Time Format Toggle Card -->
+                        <div class="p-2 sm:p-3 bg-gradient-to-r from-purple-50/70 to-pink-50/70 dark:from-purple-900/30 dark:to-pink-900/30 backdrop-blur-sm rounded-lg border border-purple-200/50 dark:border-purple-700/50">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+                                <div class="flex items-center gap-1 sm:gap-2">
+                                    <div class="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-clock text-white text-xs"></i>
+                                    </div>
+                                    <span class="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 leading-tight" id="timeFormatLabel">تنسيق الوقت 24 ساعة</span>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer self-center sm:self-auto">
+                                    <input type="checkbox" id="timeFormatToggle" class="sr-only peer">
+                                    <div class="w-8 h-5 sm:w-10 sm:h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-purple-300/50 dark:peer-focus:ring-purple-800/50 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 sm:after:h-5 sm:after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-gradient-to-r peer-checked:from-purple-500 peer-checked:to-pink-600 shadow-inner"></div>
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1125,13 +1147,19 @@
             </div>
         </div>
     </main>
+<!-- Footer Section -->
+<footer class="p-4 text-center space-x-2 border-t border-gray-200 dark:border-gray-700 mt-auto">
+  <p class="text-sm text-gray-500 dark:text-gray-400">
+      Made by 
+      <a href="https://github.com/yazanbaker94" 
+         target="_blank" 
+         rel="noopener noreferrer" 
+         class="font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+         Yazan Baker
+      </a>
+  </p>
+</footer>
 
-    <!-- Footer Section -->
-    <footer class="p-4 text-center space-x-2 border-t border-gray-200 dark:border-gray-700 mt-auto">
-        <p class="text-sm text-gray-500 dark:text-gray-400">
-            Made by <a href="https://github.com/yazanbaker94" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-semibold">Yazan Baker</a>
-        </p>
-    </footer>
 
     
 
