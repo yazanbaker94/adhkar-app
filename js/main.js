@@ -7340,6 +7340,15 @@ function showARUnsupported(errorType) {
             const url = `https://everyayah.com/data/${reciter}/${surahStr}${ayahStr}.mp3`;
             const audio = new Audio(url);
             
+            // iOS specific audio setup
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            if (isIOS) {
+                // Set audio attributes for better iOS compatibility
+                audio.preload = 'auto';
+                audio.setAttribute('playsinline', 'true');
+                audio.setAttribute('webkit-playsinline', 'true');
+            }
+            
             // Apply playback speed from settings
             audio.playbackRate = currentPlaybackSpeed || 1;
             
@@ -7347,21 +7356,34 @@ function showARUnsupported(errorType) {
             currentAudioSurah = surah;
             currentAudioAyah = ayah;
             // Use a promise to handle play to avoid AbortError
-            audio.play().then(() => {
+            const playPromise = audio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    updateAyahHighlights();
+                    window.isPlayingAudio = false;
+                }).catch(error => {
+                    console.error("Audio play error:", error);
+                    
+                    // iOS specific error handling
+                    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                    if (isIOS && error.name === 'NotAllowedError') {
+                        showToast(currentLang === 'ar' ? 'يرجى النقر على الآية مرة أخرى لتشغيل الصوت' : 'Please tap the verse again to play audio', 'info');
+                    } else {
+                        showToast(currentLang === 'ar' ? 'حدث خطأ أثناء تشغيل الصوت' : 'Error playing audio', 'error');
+                    }
+                    
+                    currentAudioSurah = null;
+                    currentAudioAyah = null;
+                    window.currentAyahAudio = null;
+                    updateAyahHighlights();
+                    window.isPlayingAudio = false;
+                });
+            } else {
+                // Fallback for older browsers
                 updateAyahHighlights();
-                
-
-                
                 window.isPlayingAudio = false;
-            }).catch(error => {
-                console.error("Audio play error:", error);
-                showToast(currentLang === 'ar' ? 'حدث خطأ أثناء تشغيل الصوت' : 'Error playing audio', 'error');
-                currentAudioSurah = null;
-                currentAudioAyah = null;
-                window.currentAyahAudio = null;
-                updateAyahHighlights();
-                window.isPlayingAudio = false;
-            });
+            }
             updateAyahHighlights();
             audio.onended = () => {
                 // Check if single verse loop is enabled first (highest priority)
@@ -7373,10 +7395,55 @@ function showARUnsupported(errorType) {
                     updateAyahHighlights();
                     window.isPlayingAudio = false;
                     
-                    // Small delay before repeating the same verse
-                    singleVerseLoopTimeout = setTimeout(() => {
-                        playAyahAudio(surah, ayah);
-                    }, 1000);
+                    // For iOS, we need to reuse the same audio object to avoid playback restrictions
+                    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                    
+                    if (isIOS) {
+                        // On iOS, reuse the same audio object and reset it
+                        singleVerseLoopTimeout = setTimeout(() => {
+                            try {
+                                if (audio && !audio.paused) {
+                                    audio.pause();
+                                }
+                                audio.currentTime = 0;
+                                window.currentAyahAudio = audio;
+                                currentAudioSurah = surah;
+                                currentAudioAyah = ayah;
+                                
+                                const replayPromise = audio.play();
+                                if (replayPromise !== undefined) {
+                                    replayPromise.then(() => {
+                                        updateAyahHighlights();
+                                        window.isPlayingAudio = false;
+                                    }).catch(error => {
+                                        console.error("iOS Audio replay error:", error);
+                                        // Fallback: try creating a new audio object
+                                        currentAudioSurah = null;
+                                        currentAudioAyah = null;
+                                        window.currentAyahAudio = null;
+                                        window.isPlayingAudio = false;
+                                        playAyahAudio(surah, ayah);
+                                    });
+                                } else {
+                                    updateAyahHighlights();
+                                    window.isPlayingAudio = false;
+                                }
+                            } catch (error) {
+                                console.error("iOS Audio setup error:", error);
+                                // Fallback: try creating a new audio object
+                                currentAudioSurah = null;
+                                currentAudioAyah = null;
+                                window.currentAyahAudio = null;
+                                window.isPlayingAudio = false;
+                                playAyahAudio(surah, ayah);
+                            }
+                        }, 1000);
+                    } else {
+                        // Non-iOS devices: create new audio object
+                        singleVerseLoopTimeout = setTimeout(() => {
+                            playAyahAudio(surah, ayah);
+                        }, 1000);
+                    }
                     return;
                 }
                 
