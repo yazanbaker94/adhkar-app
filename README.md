@@ -1,21 +1,30 @@
-# SakinahTime - Your Daily Islamic Companion
+<p align="center">
+  <img src="icon2.png" alt="SakinahTime Logo" width="150"/>
+</p>
 
-SakinahTime is a comprehensive web application designed to help Muslims in their daily worship and spiritual journey. It provides essential tools and resources, including Quran reading, prayer times, daily remembrances (adhkar), Qibla direction, and a digital tasbih counter.
+<h1 align="center">SakinahTime - Your Daily Islamic Companion</h1>
 
-## Features
+<p align="center">
+  A comprehensive web application providing essential Islamic tools for daily worship and spiritual growth.
+</p>
 
-- **Holy Quran**: Read and search the Quran with multiple recitations, translations, and tafsir (commentaries).
-- **Prayer Times**: Accurate prayer times based on your location, with customizable notification and time format (12hr/24hr) options.
-- **Daily Adhkar**: Access a wide range of morning, evening, and other daily remembrances with counter functionality.
-- **Qibla Direction**: Find the precise Qibla direction using your device's compass.
-- **Digital Tasbih**: A convenient digital counter for performing tasbih.
-- **Multi-language Support**: Seamlessly switch between Arabic and English interfaces.
-- **Dark Mode**: A comfortable dark theme for better readability in low-light conditions.
-- **Offline Access**: Progressive Web App (PWA) features for offline use.
+---
 
-## Getting Started
+## ✨ Features
 
-To run SakinahTime locally, follow these steps:
+-   **Holy Quran**: Read and search the Quran with multiple recitations, translations, and tafsir (commentaries).
+-   **Prayer Times**: Accurate prayer times based on your location, with customizable notification and time format (12hr/24hr) options.
+-   **Daily Adhkar**: Access a wide range of morning, evening, and other daily remembrances with counter functionality.
+-   **Qibla Direction**: Find the precise Qibla direction using your device's compass.
+-   **Digital Tasbih**: A convenient digital counter for performing tasbih.
+-   **Multi-language Support**: Seamlessly switch between Arabic and English interfaces.
+-   **Dark Mode**: A comfortable dark theme for better readability in low-light conditions.
+-   **Offline Access**: Progressive Web App (PWA) features for offline use.
+-   **Single Verse Loop**: Repeat a single verse indefinitely for memorization.
+
+## 🚀 Getting Started
+
+To run SakinahTime locally, follow these simple steps:
 
 1.  **Clone the repository**:
     ```bash
@@ -23,20 +32,24 @@ To run SakinahTime locally, follow these steps:
     cd adkhar-app
     ```
 
-2.  **Open `index.html`**: Simply open the `index.html` file in your web browser. There's no complex build process or backend server required, as this is a client-side only application.
+2.  **Open `index.html`**:
+    Simply open the `index.html` file in your preferred web browser. No complex build process or backend server is required, as this is a client-side only application.
 
-### For Development:
+### 👩‍💻 For Developers
 
-If you plan to modify the code, you'll need a basic understanding of:
+If you plan to contribute or modify the codebase, a basic understanding of the following technologies is recommended:
 
 -   HTML
--   CSS (with Tailwind CSS)
--   JavaScript
+-   CSS (with Tailwind CSS for utility-first styling)
+-   JavaScript (Vanilla JS)
 
-## Contributing
+## 🤝 Contributing
 
-Contributions are welcome! If you find any bugs, have suggestions for new features, or want to improve the codebase, feel free to open an issue or submit a pull request.
+Contributions are highly welcome! If you find any bugs, have suggestions for new features, or wish to improve the codebase, please feel free to:
 
-## License
+1.  Open an [issue](https://github.com/yazanbaker94/adkhar-app/issues).
+2.  Submit a [pull request](https://github.com/yazanbaker94/adkhar-app/pulls).
+
+## 📄 License
 
 This project is open-source and available under the [MIT License](LICENSE). 
