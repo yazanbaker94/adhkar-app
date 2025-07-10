@@ -393,6 +393,7 @@ let scrollTimeout = null;
       let islamicGuidesData = null;
       let islamicGuidesVisible = false;
       let showAllGuides = false;
+      let selectedCategory = 'all';
       const INITIAL_GUIDES_COUNT = 6;
 
       async function loadIslamicGuides() {
@@ -413,8 +414,13 @@ let scrollTimeout = null;
           
           guidesList.innerHTML = '';
           
+          // Filter guides by category
+          let filteredGuides = selectedCategory === 'all' ? 
+              islamicGuidesData.guides : 
+              islamicGuidesData.guides.filter(guide => guide.category.en.toLowerCase() === selectedCategory.toLowerCase());
+          
           // Determine how many guides to show
-          const guidesToShow = showAllGuides ? islamicGuidesData.guides : islamicGuidesData.guides.slice(0, INITIAL_GUIDES_COUNT);
+          const guidesToShow = showAllGuides ? filteredGuides : filteredGuides.slice(0, INITIAL_GUIDES_COUNT);
           
           guidesToShow.forEach(guide => {
               const guideCard = document.createElement('button');
@@ -439,12 +445,15 @@ let scrollTimeout = null;
           });
           
           // Show/hide the "Show More" button
-          if (islamicGuidesData.guides.length > INITIAL_GUIDES_COUNT) {
+          if (filteredGuides.length > INITIAL_GUIDES_COUNT) {
               showMoreContainer.classList.remove('hidden');
-              updateShowMoreButton();
+              updateShowMoreButton(filteredGuides.length);
           } else {
               showMoreContainer.classList.add('hidden');
           }
+          
+          // Update guides count display
+          updateGuidesCountDisplay(filteredGuides.length);
       }
       
       function toggleShowAllGuides() {
@@ -452,7 +461,7 @@ let scrollTimeout = null;
           renderIslamicGuides();
       }
       
-      function updateShowMoreButton() {
+      function updateShowMoreButton(totalFilteredCount) {
           const showMoreBtn = document.getElementById('showMoreGuidesBtn');
           const showMoreText = document.getElementById('showMoreGuidesText');
           const showMoreIcon = document.getElementById('showMoreGuidesIcon');
@@ -461,12 +470,129 @@ let scrollTimeout = null;
               showMoreText.textContent = currentLang === 'ar' ? 'عرض أقل' : 'Show Less';
               showMoreIcon.className = 'fas fa-chevron-up text-xs';
           } else {
-              const remainingCount = islamicGuidesData.guides.length - INITIAL_GUIDES_COUNT;
+              const remainingCount = totalFilteredCount - INITIAL_GUIDES_COUNT;
               showMoreText.textContent = currentLang === 'ar' ? 
                   `عرض ${remainingCount} أدلة أخرى` : 
                   `Show ${remainingCount} More Guides`;
               showMoreIcon.className = 'fas fa-chevron-down text-xs';
           }
+      }
+      
+      function updateGuidesCountDisplay(count) {
+          const countDisplay = document.getElementById('guidesCountDisplay');
+          if (countDisplay) {
+              if (selectedCategory === 'all') {
+                  countDisplay.textContent = currentLang === 'ar' ? 
+                      `${count} دليل متاح` : 
+                      `${count} guides available`;
+              } else {
+                  const categoryName = getCategoryDisplayName(selectedCategory);
+                  countDisplay.textContent = currentLang === 'ar' ? 
+                      `${count} دليل في ${categoryName}` : 
+                      `${count} guides in ${categoryName}`;
+              }
+          }
+      }
+      
+      function getCategoryDisplayName(category) {
+          if (!islamicGuidesData) return category;
+          
+          const guide = islamicGuidesData.guides.find(g => g.category.en.toLowerCase() === category.toLowerCase());
+          return guide ? guide.category[currentLang] : category;
+      }
+      
+      function getUniqueCategories() {
+          if (!islamicGuidesData) return [];
+          
+          const categories = new Set();
+          islamicGuidesData.guides.forEach(guide => {
+              categories.add(guide.category.en);
+          });
+          
+          return Array.from(categories).sort();
+      }
+      
+      function filterGuidesByCategory(category) {
+          selectedCategory = category;
+          showAllGuides = false; // Reset to show initial count when filtering
+          renderIslamicGuides();
+          updateCategoryFilterUI();
+      }
+      
+      function updateCategoryFilterUI() {
+          const filterBtn = document.getElementById('categoryFilterBtn');
+          const filterText = document.getElementById('categoryFilterText');
+          
+          if (selectedCategory === 'all') {
+              filterText.textContent = currentLang === 'ar' ? 'جميع الفئات' : 'All Categories';
+          } else {
+              filterText.textContent = getCategoryDisplayName(selectedCategory);
+          }
+      }
+      
+      function toggleCategoryFilter() {
+          const dropdown = document.getElementById('categoryFilterDropdown');
+          const isHidden = dropdown.classList.contains('hidden');
+          
+          if (isHidden) {
+              // Populate dropdown before showing
+              populateCategoryDropdown();
+              dropdown.classList.remove('hidden');
+          } else {
+              dropdown.classList.add('hidden');
+          }
+      }
+      
+      function populateCategoryDropdown() {
+          const dropdown = document.getElementById('categoryFilterOptions');
+          dropdown.innerHTML = '';
+          
+          // Add "All Categories" option
+          const allOption = document.createElement('button');
+          allOption.className = `w-full text-left px-3 py-2 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors ${selectedCategory === 'all' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200' : 'text-gray-700 dark:text-gray-300'}`;
+          allOption.innerHTML = `
+              <div class="flex items-center gap-2">
+                  <i class="fas fa-list text-amber-600 dark:text-amber-400"></i>
+                  <span>${currentLang === 'ar' ? 'جميع الفئات' : 'All Categories'}</span>
+                  ${selectedCategory === 'all' ? '<i class="fas fa-check text-amber-600 dark:text-amber-400 ml-auto"></i>' : ''}
+              </div>
+          `;
+          allOption.onclick = () => {
+              filterGuidesByCategory('all');
+              toggleCategoryFilter();
+          };
+          dropdown.appendChild(allOption);
+          
+          // Add separator
+          const separator = document.createElement('div');
+          separator.className = 'border-t border-gray-200 dark:border-gray-600 my-1';
+          dropdown.appendChild(separator);
+          
+          // Add category options
+          const categories = getUniqueCategories();
+          categories.forEach(category => {
+              const option = document.createElement('button');
+              const isSelected = selectedCategory.toLowerCase() === category.toLowerCase();
+              option.className = `w-full text-left px-3 py-2 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors ${isSelected ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200' : 'text-gray-700 dark:text-gray-300'}`;
+              
+              const guide = islamicGuidesData.guides.find(g => g.category.en === category);
+              const categoryName = guide ? guide.category[currentLang] : category;
+              const categoryCount = islamicGuidesData.guides.filter(g => g.category.en === category).length;
+              
+              option.innerHTML = `
+                  <div class="flex items-center gap-2">
+                      <i class="${guide ? guide.icon : 'fas fa-book'} text-amber-600 dark:text-amber-400"></i>
+                      <span class="flex-1">${categoryName}</span>
+                      <span class="text-xs text-gray-500 dark:text-gray-400">${categoryCount}</span>
+                      ${isSelected ? '<i class="fas fa-check text-amber-600 dark:text-amber-400"></i>' : ''}
+                  </div>
+              `;
+              option.onclick = () => {
+                  filterGuidesByCategory(category);
+                  toggleCategoryFilter();
+              };
+              dropdown.appendChild(option);
+          });
       }
 
       function toggleIslamicGuides() {
@@ -557,9 +683,10 @@ let scrollTimeout = null;
               renderIslamicGuides();
           }
           
-          // Update show more button text
-          if (islamicGuidesData && islamicGuidesData.guides.length > INITIAL_GUIDES_COUNT) {
-              updateShowMoreButton();
+          // Update category filter and show more button
+          updateCategoryFilterUI();
+          if (islamicGuidesData) {
+              renderIslamicGuides(); // Re-render to update counts and text
           }
       }
 
@@ -5296,6 +5423,16 @@ function showARUnsupported(errorType) {
                        }
                    });
                }
+               
+               // Close category filter dropdown when clicking outside
+               document.addEventListener('click', function(e) {
+                   const dropdown = document.getElementById('categoryFilterDropdown');
+                   const filterBtn = document.getElementById('categoryFilterBtn');
+                   
+                   if (dropdown && filterBtn && !dropdown.contains(e.target) && !filterBtn.contains(e.target)) {
+                       dropdown.classList.add('hidden');
+                   }
+               });
                          //nnn
                          var quranHook = document.getElementById('quranHook');
                          if (quranHook) {
@@ -6112,7 +6249,7 @@ function showARUnsupported(errorType) {
                                         <span>${secondaryName}</span>
                                         <span class="w-1 h-1 bg-gray-400 rounded-full"></span>
                                         <span class="flex items-center gap-1">
-                                            <i class="fas fa-bookmark text-xs"></i>
+                                            <i class="fas fa-star text-xs"></i>
                                             ${ayahCount} ${ayahText}
                                         </span>
                                     </div>
