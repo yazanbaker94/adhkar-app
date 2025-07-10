@@ -37,12 +37,12 @@
 }
 
 /* Dark mode for buttons */
-.dark button:not(.bg-blue-500):not(.bg-green-500):not(#langToggle):not(#btnBack):not(.ayah-play-btn):not(#closeTafsirModal):not(#darkModeToggle):not(#closeTranslationModal):not(#closeSurahMenu):not(#surahMenuBtn):not(#settingsBtn):not(#closeSettingsBtn):not(#currentFontSize):not(#decreaseBtn):not(#increaseBtn) {
+.dark button:not(.bg-blue-500):not(.bg-green-500):not(#langToggle):not(#btnBack):not(.ayah-play-btn):not(#closeTafsirModal):not(#darkModeToggle):not(#closeTranslationModal):not(#closeSurahMenu):not(#surahMenuBtn):not(#settingsBtn):not(#closeSettingsBtn):not(#currentFontSize):not(#decreaseBtn):not(#increaseBtn):not(#btnReadingMode) {
     background-color: #374151;
     color: #f3f4f6;
 }
 
-.dark button:hover:not(.bg-blue-500):not(.bg-green-500):not(#langToggle):not(#btnBack):not(.ayah-play-btn):not(#ayahMenuPlay):not(#ayahMenuTranslation):not(#ayahMenuTafsir):not(#ayahMenuBookmark):not(#closeTafsirModal):not(#darkModeToggle):not(#closeTranslationModal):not(#closeSurahMenu):not(#surahMenuBtn):not(#closeSettingsBtn):not(#currentFontSize){
+.dark button:hover:not(.bg-blue-500):not(.bg-green-500):not(#langToggle):not(#btnBack):not(.ayah-play-btn):not(#ayahMenuPlay):not(#ayahMenuTranslation):not(#ayahMenuTafsir):not(#ayahMenuBookmark):not(#closeTafsirModal):not(#darkModeToggle):not(#closeTranslationModal):not(#closeSurahMenu):not(#surahMenuBtn):not(#closeSettingsBtn):not(#currentFontSize):not(#btnReadingMode){
     background-color: #4b5563;
 }
 
