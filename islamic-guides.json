@@ -1,0 +1,1222 @@
+{
+  "guides": [
+    {
+      "id": "ghusl",
+      "title": {
+        "ar": "كيفية أداء الغسل (الطهارة الكبرى)",
+        "en": "How to Perform Ghusl (Full Purification)"
+      },
+      "category": {
+        "ar": "الطهارة",
+        "en": "Purification"
+      },
+      "description": {
+        "ar": "دليل شامل لأداء الغسل الشرعي بالطريقة الصحيحة",
+        "en": "Complete guide for performing Islamic ritual purification correctly"
+      },
+      "icon": "fas fa-droplet",
+      "steps": [
+        {
+          "title": {
+            "ar": "النية",
+            "en": "Intention (Niyyah)"
+          },
+          "description": {
+            "ar": "اعقد النية في قلبك لأداء الغسل لرفع الجنابة أو الحدث الأكبر",
+            "en": "Make the intention in your heart to perform ghusl for purification from major ritual impurity"
+          }
+        },
+        {
+          "title": {
+            "ar": "التسمية",
+            "en": "Say Bismillah"
+          },
+          "description": {
+            "ar": "قل 'بسم الله الرحمن الرحيم' قبل البدء",
+            "en": "Say 'Bismillah Ar-Rahman Ar-Raheem' before starting"
+          }
+        },
+        {
+          "title": {
+            "ar": "غسل اليدين",
+            "en": "Wash Hands"
+          },
+          "description": {
+            "ar": "اغسل يديك ثلاث مرات حتى المعصمين",
+            "en": "Wash your hands three times up to the wrists"
+          }
+        },
+        {
+          "title": {
+            "ar": "إزالة النجاسة",
+            "en": "Remove Impurities"
+          },
+          "description": {
+            "ar": "اغسل الأعضاء التناسلية وأزل أي نجاسة من الجسم",
+            "en": "Wash the private parts and remove any impurities from the body"
+          }
+        },
+        {
+          "title": {
+            "ar": "الوضوء",
+            "en": "Perform Wudu"
+          },
+          "description": {
+            "ar": "توضأ وضوءاً كاملاً كما تتوضأ للصلاة، ويمكن تأخير غسل القدمين للنهاية",
+            "en": "Perform complete wudu as you would for prayer, you may delay washing the feet until the end"
+          }
+        },
+        {
+          "title": {
+            "ar": "صب الماء على الرأس",
+            "en": "Pour Water on Head"
+          },
+          "description": {
+            "ar": "اصب الماء على رأسك ثلاث مرات، وتأكد من وصول الماء إلى جذور الشعر",
+            "en": "Pour water over your head three times, ensuring water reaches the hair roots"
+          }
+        },
+        {
+          "title": {
+            "ar": "غسل الجانب الأيمن",
+            "en": "Wash Right Side"
+          },
+          "description": {
+            "ar": "اغسل الجانب الأيمن من الجسم بالكامل من الكتف إلى القدم",
+            "en": "Wash the entire right side of the body from shoulder to foot"
+          }
+        },
+        {
+          "title": {
+            "ar": "غسل الجانب الأيسر",
+            "en": "Wash Left Side"
+          },
+          "description": {
+            "ar": "اغسل الجانب الأيسر من الجسم بالكامل من الكتف إلى القدم",
+            "en": "Wash the entire left side of the body from shoulder to foot"
+          }
+        },
+        {
+          "title": {
+            "ar": "غسل القدمين",
+            "en": "Wash Feet"
+          },
+          "description": {
+            "ar": "إذا لم تغسل قدميك في الوضوء، اغسلهما الآن",
+            "en": "If you didn't wash your feet during wudu, wash them now"
+          }
+        }
+      ]
+    },
+    {
+      "id": "wudu",
+      "title": {
+        "ar": "كيفية أداء الوضوء",
+        "en": "How to Perform Wudu (Ablution)"
+      },
+      "category": {
+        "ar": "الطهارة",
+        "en": "Purification"
+      },
+      "description": {
+        "ar": "خطوات الوضوء الصحيح للصلاة",
+        "en": "Correct steps for performing ablution for prayer"
+      },
+      "icon": "fas fa-hand-sparkles",
+      "steps": [
+        {
+          "title": {
+            "ar": "النية",
+            "en": "Intention"
+          },
+          "description": {
+            "ar": "اعقد النية في قلبك لأداء الوضوء",
+            "en": "Make the intention in your heart to perform wudu"
+          }
+        },
+        {
+          "title": {
+            "ar": "التسمية",
+            "en": "Say Bismillah"
+          },
+          "description": {
+            "ar": "قل 'بسم الله'",
+            "en": "Say 'Bismillah'"
+          }
+        },
+        {
+          "title": {
+            "ar": "غسل اليدين",
+            "en": "Wash Hands"
+          },
+          "description": {
+            "ar": "اغسل يديك ثلاث مرات حتى المعصمين",
+            "en": "Wash your hands three times up to the wrists"
+          }
+        },
+        {
+          "title": {
+            "ar": "المضمضة",
+            "en": "Rinse Mouth"
+          },
+          "description": {
+            "ar": "تمضمض ثلاث مرات",
+            "en": "Rinse your mouth three times"
+          }
+        },
+        {
+          "title": {
+            "ar": "الاستنشاق",
+            "en": "Sniff Water"
+          },
+          "description": {
+            "ar": "استنشق الماء في الأنف ثم استنثر ثلاث مرات",
+            "en": "Sniff water into the nose and blow it out three times"
+          }
+        },
+        {
+          "title": {
+            "ar": "غسل الوجه",
+            "en": "Wash Face"
+          },
+          "description": {
+            "ar": "اغسل وجهك ثلاث مرات من منابت الشعر إلى الذقن ومن الأذن إلى الأذن",
+            "en": "Wash your face three times from the hairline to the chin and from ear to ear"
+          }
+        },
+        {
+          "title": {
+            "ar": "غسل اليدين إلى المرفقين",
+            "en": "Wash Arms to Elbows"
+          },
+          "description": {
+            "ar": "اغسل يديك إلى المرفقين ثلاث مرات، ابدأ باليمين ثم اليسار",
+            "en": "Wash your arms up to the elbows three times, start with the right then left"
+          }
+        },
+        {
+          "title": {
+            "ar": "مسح الرأس",
+            "en": "Wipe Head"
+          },
+          "description": {
+            "ar": "امسح رأسك مرة واحدة من المقدمة إلى المؤخرة ثم ارجع",
+            "en": "Wipe your head once from front to back and then back to front"
+          }
+        },
+        {
+          "title": {
+            "ar": "مسح الأذنين",
+            "en": "Wipe Ears"
+          },
+          "description": {
+            "ar": "امسح أذنيك من الداخل والخارج",
+            "en": "Wipe your ears inside and outside"
+          }
+        },
+        {
+          "title": {
+            "ar": "غسل القدمين",
+            "en": "Wash Feet"
+          },
+          "description": {
+            "ar": "اغسل قدميك إلى الكعبين ثلاث مرات، ابدأ باليمين ثم اليسار",
+            "en": "Wash your feet up to the ankles three times, start with the right then left"
+          }
+        }
+      ]
+    },
+    {
+      "id": "salah-steps",
+      "title": {
+        "ar": "كيفية أداء الصلاة",
+        "en": "How to Perform Salah (Prayer)"
+      },
+      "category": {
+        "ar": "الصلاة",
+        "en": "Prayer"
+      },
+      "description": {
+        "ar": "دليل شامل لأداء الصلاة بالطريقة الصحيحة",
+        "en": "Complete guide for performing Islamic prayer correctly"
+      },
+      "icon": "fas fa-pray",
+      "steps": [
+        {
+          "title": {
+            "ar": "الطهارة والاتجاه",
+            "en": "Purification and Direction"
+          },
+          "description": {
+            "ar": "تأكد من الطهارة (الوضوء) واتجه نحو القبلة",
+            "en": "Ensure you are in a state of purification (wudu) and face the Qibla"
+          }
+        },
+        {
+          "title": {
+            "ar": "النية",
+            "en": "Intention"
+          },
+          "description": {
+            "ar": "اعقد النية في قلبك لأداء الصلاة المحددة",
+            "en": "Make the intention in your heart to perform the specific prayer"
+          }
+        },
+        {
+          "title": {
+            "ar": "تكبيرة الإحرام",
+            "en": "Opening Takbir"
+          },
+          "description": {
+            "ar": "ارفع يديك وقل 'الله أكبر' لبدء الصلاة",
+            "en": "Raise your hands and say 'Allahu Akbar' to begin the prayer"
+          }
+        },
+        {
+          "title": {
+            "ar": "دعاء الاستفتاح",
+            "en": "Opening Supplication"
+          },
+          "description": {
+            "ar": "اقرأ دعاء الاستفتاح سراً: 'سبحانك اللهم وبحمدك...'",
+            "en": "Recite the opening supplication silently: 'Subhanakallahumma wa bihamdika...'"
+          }
+        },
+        {
+          "title": {
+            "ar": "الفاتحة",
+            "en": "Al-Fatiha"
+          },
+          "description": {
+            "ar": "اقرأ سورة الفاتحة",
+            "en": "Recite Surah Al-Fatiha"
+          }
+        },
+        {
+          "title": {
+            "ar": "سورة أخرى",
+            "en": "Another Surah"
+          },
+          "description": {
+            "ar": "اقرأ سورة أخرى أو آيات من القرآن",
+            "en": "Recite another surah or verses from the Quran"
+          }
+        },
+        {
+          "title": {
+            "ar": "الركوع",
+            "en": "Bowing (Ruku)"
+          },
+          "description": {
+            "ar": "كبر واركع وقل 'سبحان ربي العظيم' ثلاث مرات",
+            "en": "Say 'Allahu Akbar' and bow, saying 'Subhana Rabbiyal Azeem' three times"
+          }
+        },
+        {
+          "title": {
+            "ar": "الاعتدال من الركوع",
+            "en": "Standing from Bowing"
+          },
+          "description": {
+            "ar": "قم من الركوع وقل 'سمع الله لمن حمده، ربنا ولك الحمد'",
+            "en": "Stand from bowing and say 'Sami Allahu liman hamidah, Rabbana wa lakal hamd'"
+          }
+        },
+        {
+          "title": {
+            "ar": "السجود",
+            "en": "Prostration (Sujud)"
+          },
+          "description": {
+            "ar": "كبر واسجد وقل 'سبحان ربي الأعلى' ثلاث مرات",
+            "en": "Say 'Allahu Akbar' and prostrate, saying 'Subhana Rabbiyal A'la' three times"
+          }
+        },
+        {
+          "title": {
+            "ar": "الجلوس بين السجدتين",
+            "en": "Sitting Between Prostrations"
+          },
+          "description": {
+            "ar": "اجلس بين السجدتين وقل 'رب اغفر لي'",
+            "en": "Sit between prostrations and say 'Rabbighfir li'"
+          }
+        },
+        {
+          "title": {
+            "ar": "السجدة الثانية",
+            "en": "Second Prostration"
+          },
+          "description": {
+            "ar": "اسجد مرة أخرى وقل 'سبحان ربي الأعلى' ثلاث مرات",
+            "en": "Prostrate again and say 'Subhana Rabbiyal A'la' three times"
+          }
+        },
+        {
+          "title": {
+            "ar": "التشهد والسلام",
+            "en": "Tashahhud and Salam"
+          },
+          "description": {
+            "ar": "اجلس للتشهد واقرأ التشهد والصلاة الإبراهيمية، ثم سلم يميناً ويساراً",
+            "en": "Sit for tashahhud, recite it and the Ibrahimi prayer, then give salam to right and left"
+          }
+        }
+      ]
+    },
+    {
+      "id": "hajj-umrah",
+      "title": {
+        "ar": "مناسك الحج والعمرة",
+        "en": "Hajj and Umrah Rituals"
+      },
+      "category": {
+        "ar": "الحج والعمرة",
+        "en": "Hajj & Umrah"
+      },
+      "description": {
+        "ar": "دليل شامل لأداء مناسك الحج والعمرة",
+        "en": "Complete guide for performing Hajj and Umrah rituals"
+      },
+      "icon": "fas fa-kaaba",
+      "steps": [
+        {
+          "title": {
+            "ar": "الإحرام",
+            "en": "Ihram"
+          },
+          "description": {
+            "ar": "الغسل ولبس ثياب الإحرام والنية وقول التلبية",
+            "en": "Perform ghusl, wear ihram clothes, make intention and recite Talbiyah"
+          }
+        },
+        {
+          "title": {
+            "ar": "دخول مكة والطواف",
+            "en": "Entering Mecca and Tawaf"
+          },
+          "description": {
+            "ar": "ادخل المسجد الحرام وطف حول الكعبة سبعة أشواط",
+            "en": "Enter Masjid al-Haram and perform seven circuits around the Kaaba"
+          }
+        },
+        {
+          "title": {
+            "ar": "السعي",
+            "en": "Sa'i"
+          },
+          "description": {
+            "ar": "اسع بين الصفا والمروة سبعة أشواط",
+            "en": "Perform Sa'i between Safa and Marwah seven times"
+          }
+        },
+        {
+          "title": {
+            "ar": "الحلق أو التقصير (للعمرة)",
+            "en": "Cutting Hair (for Umrah)"
+          },
+          "description": {
+            "ar": "احلق أو قصر الشعر لإنهاء العمرة",
+            "en": "Shave or trim hair to complete Umrah"
+          }
+        },
+        {
+          "title": {
+            "ar": "التوجه إلى منى (للحج)",
+            "en": "Going to Mina (for Hajj)"
+          },
+          "description": {
+            "ar": "في يوم التروية، توجه إلى منى واقض الليل هناك",
+            "en": "On the day of Tarwiyah, go to Mina and spend the night there"
+          }
+        },
+        {
+          "title": {
+            "ar": "الوقوف بعرفة",
+            "en": "Standing at Arafat"
+          },
+          "description": {
+            "ar": "في يوم عرفة، قف بعرفة من الزوال حتى المغرب",
+            "en": "On the day of Arafat, stand at Arafat from noon until sunset"
+          }
+        },
+        {
+          "title": {
+            "ar": "المبيت بمزدلفة",
+            "en": "Staying at Muzdalifah"
+          },
+          "description": {
+            "ar": "بت في مزدلفة واجمع الحصى للرمي",
+            "en": "Stay overnight at Muzdalifah and collect pebbles for stoning"
+          }
+        },
+        {
+          "title": {
+            "ar": "رمي الجمرات",
+            "en": "Stoning the Pillars"
+          },
+          "description": {
+            "ar": "ارم جمرة العقبة الكبرى، ثم الجمرات الثلاث في الأيام التالية",
+            "en": "Stone Jamrat al-Aqabah, then all three pillars on subsequent days"
+          }
+        },
+        {
+          "title": {
+            "ar": "الحلق والنحر",
+            "en": "Shaving and Sacrifice"
+          },
+          "description": {
+            "ar": "احلق أو قصر الشعر واذبح الهدي",
+            "en": "Shave or trim hair and offer sacrifice"
+          }
+        },
+        {
+          "title": {
+            "ar": "طواف الإفاضة",
+            "en": "Tawaf al-Ifadah"
+          },
+          "description": {
+            "ar": "طف طواف الإفاضة حول الكعبة",
+            "en": "Perform Tawaf al-Ifadah around the Kaaba"
+          }
+        }
+      ]
+    },
+    {
+      "id": "funeral-prayer",
+      "title": {
+        "ar": "صلاة الجنازة",
+        "en": "Funeral Prayer (Salat al-Janazah)"
+      },
+      "category": {
+        "ar": "الصلاة",
+        "en": "Prayer"
+      },
+      "description": {
+        "ar": "كيفية أداء صلاة الجنازة",
+        "en": "How to perform the funeral prayer"
+      },
+      "icon": "fas fa-hands-praying",
+      "steps": [
+        {
+          "title": {
+            "ar": "الوقوف والنية",
+            "en": "Standing and Intention"
+          },
+          "description": {
+            "ar": "قف خلف الإمام واعقد النية لصلاة الجنازة",
+            "en": "Stand behind the imam and make intention for funeral prayer"
+          }
+        },
+        {
+          "title": {
+            "ar": "التكبيرة الأولى",
+            "en": "First Takbir"
+          },
+          "description": {
+            "ar": "كبر مع الإمام واقرأ سورة الفاتحة سراً",
+            "en": "Say Takbir with the imam and recite Al-Fatiha silently"
+          }
+        },
+        {
+          "title": {
+            "ar": "التكبيرة الثانية",
+            "en": "Second Takbir"
+          },
+          "description": {
+            "ar": "كبر واقرأ الصلاة على النبي صلى الله عليه وسلم",
+            "en": "Say Takbir and recite prayers upon the Prophet (PBUH)"
+          }
+        },
+        {
+          "title": {
+            "ar": "التكبيرة الثالثة",
+            "en": "Third Takbir"
+          },
+          "description": {
+            "ar": "كبر وادع للميت بالمغفرة والرحمة",
+            "en": "Say Takbir and make dua for the deceased for forgiveness and mercy"
+          }
+        },
+        {
+          "title": {
+            "ar": "التكبيرة الرابعة والسلام",
+            "en": "Fourth Takbir and Salam"
+          },
+          "description": {
+            "ar": "كبر التكبيرة الرابعة ثم سلم يميناً ويساراً",
+            "en": "Say the fourth Takbir then give salam to the right and left"
+          }
+        }
+      ]
+    },
+    {
+      "id": "zakat",
+      "title": {
+        "ar": "كيفية أداء الزكاة",
+        "en": "How to Perform Zakat"
+      },
+      "category": {
+        "ar": "العبادات المالية",
+        "en": "Financial Worship"
+      },
+      "description": {
+        "ar": "دليل شامل لحساب وإخراج الزكاة بالطريقة الصحيحة",
+        "en": "Complete guide for calculating and paying Zakat correctly"
+      },
+      "icon": "fas fa-hand-holding-usd",
+      "steps": [
+        {
+          "title": {
+            "ar": "معرفة الأموال الزكوية",
+            "en": "Know Zakatable Wealth"
+          },
+          "description": {
+            "ar": "تحديد الأموال التي تجب فيها الزكاة: الذهب والفضة والنقود والتجارة والزروع والثمار والأنعام",
+            "en": "Identify wealth subject to Zakat: gold, silver, cash, trade goods, crops, fruits, and livestock"
+          }
+        },
+        {
+          "title": {
+            "ar": "حساب النصاب",
+            "en": "Calculate Nisab"
+          },
+          "description": {
+            "ar": "تأكد من وصول المال للنصاب المحدد شرعاً (85 جرام ذهب أو ما يعادلها)",
+            "en": "Ensure wealth reaches the prescribed minimum (85 grams of gold or equivalent)"
+          }
+        },
+        {
+          "title": {
+            "ar": "مرور الحول",
+            "en": "Completion of Lunar Year"
+          },
+          "description": {
+            "ar": "تأكد من مرور سنة هجرية كاملة على امتلاك المال",
+            "en": "Ensure a full lunar year has passed since owning the wealth"
+          }
+        },
+        {
+          "title": {
+            "ar": "حساب المقدار",
+            "en": "Calculate Amount"
+          },
+          "description": {
+            "ar": "احسب 2.5% من إجمالي المال الزكوي (ربع العشر)",
+            "en": "Calculate 2.5% of total zakatable wealth (quarter of a tenth)"
+          }
+        },
+        {
+          "title": {
+            "ar": "إخراج الزكاة",
+            "en": "Pay Zakat"
+          },
+          "description": {
+            "ar": "أخرج الزكاة للمستحقين الثمانية المذكورين في القرآن",
+            "en": "Pay Zakat to the eight categories of recipients mentioned in the Quran"
+          }
+        }
+      ]
+    },
+    {
+      "id": "sawm",
+      "title": {
+        "ar": "كيفية أداء الصوم",
+        "en": "How to Perform Sawm (Fasting)"
+      },
+      "category": {
+        "ar": "العبادات",
+        "en": "Worship"
+      },
+      "description": {
+        "ar": "دليل شامل لأداء الصيام بالطريقة الصحيحة",
+        "en": "Complete guide for performing fasting correctly"
+      },
+      "icon": "fas fa-moon",
+      "steps": [
+        {
+          "title": {
+            "ar": "النية قبل الفجر",
+            "en": "Intention Before Dawn"
+          },
+          "description": {
+            "ar": "اعقد النية للصيام قبل طلوع الفجر، يمكن أن تكون النية في القلب",
+            "en": "Make intention to fast before dawn, the intention can be in the heart"
+          }
+        },
+        {
+          "title": {
+            "ar": "السحور",
+            "en": "Pre-Dawn Meal (Suhur)"
+          },
+          "description": {
+            "ar": "تناول السحور قبل الفجر، فإن فيه بركة كما أخبر النبي ﷺ",
+            "en": "Eat the pre-dawn meal before Fajr, as it contains blessing as the Prophet ﷺ informed"
+          }
+        },
+        {
+          "title": {
+            "ar": "الإمساك عند الفجر",
+            "en": "Abstain from Dawn"
+          },
+          "description": {
+            "ar": "امتنع عن الطعام والشراب والجماع من طلوع الفجر حتى غروب الشمس",
+            "en": "Abstain from food, drink, and marital relations from dawn until sunset"
+          }
+        },
+        {
+          "title": {
+            "ar": "الإفطار عند المغرب",
+            "en": "Break Fast at Sunset"
+          },
+          "description": {
+            "ar": "أفطر عند غروب الشمس، ويستحب التعجيل بالإفطار والدعاء عنده",
+            "en": "Break the fast at sunset, it is recommended to hasten breaking the fast and make dua"
+          }
+        },
+        {
+          "title": {
+            "ar": "تجنب المفطرات",
+            "en": "Avoid Invalidators"
+          },
+          "description": {
+            "ar": "تجنب ما يفطر الصائم: الأكل والشرب والجماع والقيء المتعمد والحيض والنفاس",
+            "en": "Avoid what breaks the fast: eating, drinking, marital relations, intentional vomiting, menstruation, and postpartum bleeding"
+          }
+        }
+      ]
+    },
+    {
+      "id": "istikhara",
+      "title": {
+        "ar": "كيفية أداء صلاة الاستخارة",
+        "en": "How to Perform Istikhara Prayer"
+      },
+      "category": {
+        "ar": "الصلاة",
+        "en": "Prayer"
+      },
+      "description": {
+        "ar": "دليل لأداء صلاة الاستخارة لطلب الخيرة من الله",
+        "en": "Guide for performing Istikhara prayer to seek Allah's guidance"
+      },
+      "icon": "fas fa-compass",
+      "steps": [
+        {
+          "title": {
+            "ar": "الوضوء والنية",
+            "en": "Ablution and Intention"
+          },
+          "description": {
+            "ar": "توضأ واعقد النية لصلاة الاستخارة في الأمر الذي تريد الاستخارة فيه",
+            "en": "Perform ablution and make intention for Istikhara prayer regarding the matter you seek guidance for"
+          }
+        },
+        {
+          "title": {
+            "ar": "صلاة ركعتين",
+            "en": "Pray Two Rak'ahs"
+          },
+          "description": {
+            "ar": "صل ركعتين غير الفريضة، يستحب قراءة سورة الكافرون في الأولى والإخلاص في الثانية",
+            "en": "Pray two non-obligatory rak'ahs, it is recommended to recite Surah Al-Kafirun in the first and Al-Ikhlas in the second"
+          }
+        },
+        {
+          "title": {
+            "ar": "دعاء الاستخارة",
+            "en": "Istikhara Supplication"
+          },
+          "description": {
+            "ar": "ادع بدعاء الاستخارة: 'اللهم إني أستخيرك بعلمك وأستقدرك بقدرتك...'",
+            "en": "Make the Istikhara supplication: 'Allahumma inni astakhiruka bi 'ilmika wa astaqdiruka bi qudratika...'"
+          }
+        },
+        {
+          "title": {
+            "ar": "انتظار الإشارة",
+            "en": "Wait for Guidance"
+          },
+          "description": {
+            "ar": "انتظر الإشارة من الله، قد تأتي في المنام أو انشراح الصدر أو الظروف المحيطة",
+            "en": "Wait for Allah's guidance, it may come through dreams, peace of heart, or surrounding circumstances"
+          }
+        }
+      ]
+    },
+    {
+      "id": "tashahhud",
+      "title": {
+        "ar": "كيفية أداء التشهد",
+        "en": "How to Perform Tashahhud"
+      },
+      "category": {
+        "ar": "الصلاة",
+        "en": "Prayer"
+      },
+      "description": {
+        "ar": "دليل لأداء التشهد في الصلاة بالطريقة الصحيحة",
+        "en": "Guide for performing Tashahhud in prayer correctly"
+      },
+      "icon": "fas fa-hand-point-up",
+      "steps": [
+        {
+          "title": {
+            "ar": "الجلوس للتشهد",
+            "en": "Sitting for Tashahhud"
+          },
+          "description": {
+            "ar": "اجلس على قدمك اليسرى وانصب اليمنى، ضع يديك على فخذيك",
+            "en": "Sit on your left foot with the right foot upright, place your hands on your thighs"
+          }
+        },
+        {
+          "title": {
+            "ar": "التشهد الأول",
+            "en": "First Tashahhud"
+          },
+          "description": {
+            "ar": "اقرأ: 'التحيات لله والصلوات والطيبات، السلام عليك أيها النبي ورحمة الله وبركاته...'",
+            "en": "Recite: 'At-tahiyyatu lillahi was-salawatu wat-tayyibat, as-salamu 'alayka ayyuhan-nabiyyu wa rahmatullahi wa barakatuh...'"
+          }
+        },
+        {
+          "title": {
+            "ar": "الإشارة بالسبابة",
+            "en": "Point with Index Finger"
+          },
+          "description": {
+            "ar": "أشر بالسبابة عند قول 'إلا الله' في التشهد",
+            "en": "Point with the index finger when saying 'illa Allah' in the Tashahhud"
+          }
+        },
+        {
+          "title": {
+            "ar": "الصلاة الإبراهيمية",
+            "en": "Ibrahimi Prayer"
+          },
+          "description": {
+            "ar": "في التشهد الأخير، اقرأ الصلاة الإبراهيمية: 'اللهم صل على محمد وعلى آل محمد...'",
+            "en": "In the final Tashahhud, recite the Ibrahimi prayer: 'Allahumma salli 'ala Muhammad wa 'ala ali Muhammad...'"
+          }
+        }
+      ]
+    },
+    {
+      "id": "duha",
+      "title": {
+        "ar": "كيفية أداء صلاة الضحى",
+        "en": "How to Perform Duha Prayer"
+      },
+      "category": {
+        "ar": "الصلاة",
+        "en": "Prayer"
+      },
+      "description": {
+        "ar": "دليل لأداء صلاة الضحى المستحبة",
+        "en": "Guide for performing the recommended Duha prayer"
+      },
+      "icon": "fas fa-sun",
+      "steps": [
+        {
+          "title": {
+            "ar": "الوقت المناسب",
+            "en": "Appropriate Time"
+          },
+          "description": {
+            "ar": "صل الضحى بعد طلوع الشمس وارتفاعها بحوالي 15-20 دقيقة حتى قبل الزوال",
+            "en": "Pray Duha after sunrise and its elevation by about 15-20 minutes until before noon"
+          }
+        },
+        {
+          "title": {
+            "ar": "عدد الركعات",
+            "en": "Number of Rak'ahs"
+          },
+          "description": {
+            "ar": "صل ركعتين كحد أدنى، ويمكن الزيادة إلى 4 أو 6 أو 8 ركعات",
+            "en": "Pray a minimum of two rak'ahs, can be increased to 4, 6, or 8 rak'ahs"
+          }
+        },
+        {
+          "title": {
+            "ar": "النية والإحرام",
+            "en": "Intention and Ihram"
+          },
+          "description": {
+            "ar": "اعقد النية لصلاة الضحى وكبر تكبيرة الإحرام",
+            "en": "Make intention for Duha prayer and say the opening Takbir"
+          }
+        },
+        {
+          "title": {
+            "ar": "الدعاء بعد الصلاة",
+            "en": "Supplication After Prayer"
+          },
+          "description": {
+            "ar": "ادع الله بما تشاء، فإن الدعاء بعد الضحى مستجاب بإذن الله",
+            "en": "Make supplication to Allah as you wish, as dua after Duha is answered by Allah's permission"
+          }
+        }
+      ]
+    },
+    {
+      "id": "qiyam",
+      "title": {
+        "ar": "كيفية أداء قيام الليل",
+        "en": "How to Perform Qiyam al-Layl"
+      },
+      "category": {
+        "ar": "الصلاة",
+        "en": "Prayer"
+      },
+      "description": {
+        "ar": "دليل لأداء قيام الليل والتهجد",
+        "en": "Guide for performing night prayer and Tahajjud"
+      },
+      "icon": "fas fa-star-and-crescent",
+      "steps": [
+        {
+          "title": {
+            "ar": "الوقت المناسب",
+            "en": "Appropriate Time"
+          },
+          "description": {
+            "ar": "قم في الثلث الأخير من الليل، أو بعد منتصف الليل حتى الفجر",
+            "en": "Wake up in the last third of the night, or after midnight until dawn"
+          }
+        },
+        {
+          "title": {
+            "ar": "البدء بركعتين خفيفتين",
+            "en": "Start with Two Light Rak'ahs"
+          },
+          "description": {
+            "ar": "ابدأ بركعتين خفيفتين لتنشيط النفس للصلاة",
+            "en": "Begin with two light rak'ahs to energize yourself for prayer"
+          }
+        },
+        {
+          "title": {
+            "ar": "إطالة القراءة",
+            "en": "Lengthen Recitation"
+          },
+          "description": {
+            "ar": "أطل القراءة والقيام والركوع والسجود بما يناسب حالك",
+            "en": "Lengthen recitation, standing, bowing, and prostration as suits your condition"
+          }
+        },
+        {
+          "title": {
+            "ar": "الختام بالوتر",
+            "en": "End with Witr"
+          },
+          "description": {
+            "ar": "اختتم قيام الليل بصلاة الوتر (ركعة واحدة أو ثلاث أو خمس)",
+            "en": "End night prayer with Witr prayer (one, three, or five rak'ahs)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "takbir-tashriq",
+      "title": {
+        "ar": "كيفية أداء تكبير التشريق",
+        "en": "How to Perform Takbir al-Tashriq"
+      },
+      "category": {
+        "ar": "الأذكار",
+        "en": "Remembrance"
+      },
+      "description": {
+        "ar": "دليل لأداء تكبير التشريق في أيام العيد",
+        "en": "Guide for performing Takbir al-Tashriq during Eid days"
+      },
+      "icon": "fas fa-volume-up",
+      "steps": [
+        {
+          "title": {
+            "ar": "الوقت المحدد",
+            "en": "Specific Time"
+          },
+          "description": {
+            "ar": "من فجر يوم عرفة إلى عصر آخر أيام التشريق (13 ذو الحجة)",
+            "en": "From Fajr of the day of Arafat until Asr of the last day of Tashriq (13th Dhul Hijjah)"
+          }
+        },
+        {
+          "title": {
+            "ar": "التكبير بعد الصلاة",
+            "en": "Takbir After Prayer"
+          },
+          "description": {
+            "ar": "كبر بعد كل صلاة فريضة مباشرة",
+            "en": "Make Takbir immediately after each obligatory prayer"
+          }
+        },
+        {
+          "title": {
+            "ar": "صيغة التكبير",
+            "en": "Takbir Formula"
+          },
+          "description": {
+            "ar": "قل: 'الله أكبر الله أكبر لا إله إلا الله، والله أكبر الله أكبر ولله الحمد'",
+            "en": "Say: 'Allahu akbar Allahu akbar la ilaha illa Allah, wa Allahu akbar Allahu akbar wa lillahi'l-hamd'"
+          }
+        },
+        {
+          "title": {
+            "ar": "الجهر بالتكبير",
+            "en": "Audible Takbir"
+          },
+          "description": {
+            "ar": "اجهر بالتكبير، خاصة للرجال في المساجد والأماكن العامة",
+            "en": "Make Takbir audibly, especially for men in mosques and public places"
+          }
+        }
+      ]
+    },
+    {
+      "id": "tawbah",
+      "title": {
+        "ar": "كيفية التوبة النصوح",
+        "en": "How to Make Tawbah (Repentance)"
+      },
+      "category": {
+        "ar": "الأخلاق والسلوك",
+        "en": "Ethics & Conduct"
+      },
+      "description": {
+        "ar": "دليل للتوبة النصوح من الذنوب والمعاصي",
+        "en": "Guide for sincere repentance from sins and transgressions"
+      },
+      "icon": "fas fa-heart",
+      "steps": [
+        {
+          "title": {
+            "ar": "الندم على الذنب",
+            "en": "Regret the Sin"
+          },
+          "description": {
+            "ar": "اندم على ما فعلت من ذنب واستشعر عظمة الله وحقه عليك",
+            "en": "Regret the sin you committed and feel the greatness of Allah and His right upon you"
+          }
+        },
+        {
+          "title": {
+            "ar": "الإقلاع عن الذنب",
+            "en": "Cease the Sin"
+          },
+          "description": {
+            "ar": "اترك الذنب فوراً ولا تعد إليه",
+            "en": "Leave the sin immediately and do not return to it"
+          }
+        },
+        {
+          "title": {
+            "ar": "الاستغفار",
+            "en": "Seek Forgiveness"
+          },
+          "description": {
+            "ar": "استغفر الله كثيراً وادع بالمغفرة والعفو",
+            "en": "Seek Allah's forgiveness frequently and supplicate for forgiveness and pardon"
+          }
+        },
+        {
+          "title": {
+            "ar": "العزم على عدم العودة",
+            "en": "Resolve Not to Return"
+          },
+          "description": {
+            "ar": "اعزم عزماً صادقاً على عدم العودة إلى الذنب مرة أخرى",
+            "en": "Make a sincere resolve not to return to the sin again"
+          }
+        },
+        {
+          "title": {
+            "ar": "رد المظالم",
+            "en": "Return Rights"
+          },
+          "description": {
+            "ar": "إذا كان الذنب متعلقاً بحق الناس، فرد الحق إلى أهله أو استحللهم",
+            "en": "If the sin involves people's rights, return the right to its owner or seek their forgiveness"
+          }
+        }
+      ]
+    },
+    {
+      "id": "tahajjud",
+      "title": {
+        "ar": "كيفية أداء صلاة التهجد",
+        "en": "How to Perform Salat al-Tahajjud"
+      },
+      "category": {
+        "ar": "الصلاة",
+        "en": "Prayer"
+      },
+      "description": {
+        "ar": "دليل لأداء صلاة التهجد في جوف الليل",
+        "en": "Guide for performing Tahajjud prayer in the depths of night"
+      },
+      "icon": "fas fa-moon",
+      "steps": [
+        {
+          "title": {
+            "ar": "النوم ثم الاستيقاظ",
+            "en": "Sleep then Wake Up"
+          },
+          "description": {
+            "ar": "نم بعد العشاء ثم استيقظ في جوف الليل للصلاة",
+            "en": "Sleep after Isha then wake up in the depths of night for prayer"
+          }
+        },
+        {
+          "title": {
+            "ar": "الوضوء والتسوك",
+            "en": "Ablution and Miswak"
+          },
+          "description": {
+            "ar": "توضأ واستعمل السواك وتطهر للصلاة",
+            "en": "Perform ablution, use miswak, and purify yourself for prayer"
+          }
+        },
+        {
+          "title": {
+            "ar": "البدء بركعتين خفيفتين",
+            "en": "Start with Two Light Rak'ahs"
+          },
+          "description": {
+            "ar": "ابدأ بركعتين خفيفتين لتهيئة النفس",
+            "en": "Begin with two light rak'ahs to prepare yourself"
+          }
+        },
+        {
+          "title": {
+            "ar": "إطالة الصلاة",
+            "en": "Lengthen Prayer"
+          },
+          "description": {
+            "ar": "أطل في القراءة والقيام والدعاء بما يناسب حالك",
+            "en": "Lengthen recitation, standing, and supplication as suits your condition"
+          }
+        }
+      ]
+    },
+    {
+      "id": "eclipse",
+      "title": {
+        "ar": "كيفية أداء صلاة الكسوف والخسوف",
+        "en": "How to Perform Salat al-Khusuf and Salat al-Kusuf"
+      },
+      "category": {
+        "ar": "الصلاة",
+        "en": "Prayer"
+      },
+      "description": {
+        "ar": "دليل لأداء صلاة الكسوف والخسوف عند حدوثهما",
+        "en": "Guide for performing eclipse prayers when they occur"
+      },
+      "icon": "fas fa-circle",
+      "steps": [
+        {
+          "title": {
+            "ar": "الصلاة عند الكسوف",
+            "en": "Prayer During Eclipse"
+          },
+          "description": {
+            "ar": "صل عند كسوف الشمس أو خسوف القمر مع الجماعة في المسجد",
+            "en": "Pray during solar or lunar eclipse with congregation in the mosque"
+          }
+        },
+        {
+          "title": {
+            "ar": "ركعتان بأربع ركوعات",
+            "en": "Two Rak'ahs with Four Bowings"
+          },
+          "description": {
+            "ar": "صل ركعتين، في كل ركعة ركوعان وسجدتان",
+            "en": "Pray two rak'ahs, with two bowings and two prostrations in each rak'ah"
+          }
+        },
+        {
+          "title": {
+            "ar": "إطالة القراءة",
+            "en": "Lengthen Recitation"
+          },
+          "description": {
+            "ar": "أطل في القراءة والركوع والسجود أكثر من الصلاة العادية",
+            "en": "Lengthen recitation, bowing, and prostration more than regular prayer"
+          }
+        },
+        {
+          "title": {
+            "ar": "الدعاء والاستغفار",
+            "en": "Supplication and Seeking Forgiveness"
+          },
+          "description": {
+            "ar": "أكثر من الدعاء والاستغفار والذكر حتى ينجلي الكسوف",
+            "en": "Increase supplication, seeking forgiveness, and remembrance until the eclipse ends"
+          }
+        }
+      ]
+    },
+    {
+      "id": "tahiyyat-masjid",
+      "title": {
+        "ar": "كيفية أداء صلاة تحية المسجد",
+        "en": "How to Perform Salat al-Tahiyyat al-Masjid"
+      },
+      "category": {
+        "ar": "الصلاة",
+        "en": "Prayer"
+      },
+      "description": {
+        "ar": "دليل لأداء صلاة تحية المسجد عند الدخول",
+        "en": "Guide for performing mosque greeting prayer upon entering"
+      },
+      "icon": "fas fa-mosque",
+      "steps": [
+        {
+          "title": {
+            "ar": "دخول المسجد",
+            "en": "Enter the Mosque"
+          },
+          "description": {
+            "ar": "ادخل المسجد بالقدم اليمنى وقل دعاء دخول المسجد",
+            "en": "Enter the mosque with the right foot and say the supplication for entering the mosque"
+          }
+        },
+        {
+          "title": {
+            "ar": "عدم الجلوس قبل الصلاة",
+            "en": "Don't Sit Before Prayer"
+          },
+          "description": {
+            "ar": "لا تجلس حتى تصلي ركعتين تحية المسجد",
+            "en": "Don't sit until you pray two rak'ahs as greeting to the mosque"
+          }
+        },
+        {
+          "title": {
+            "ar": "صلاة ركعتين",
+            "en": "Pray Two Rak'ahs"
+          },
+          "description": {
+            "ar": "صل ركعتين خفيفتين في أي مكان في المسجد",
+            "en": "Pray two light rak'ahs anywhere in the mosque"
+          }
+        },
+        {
+          "title": {
+            "ar": "الجلوس بعد الصلاة",
+            "en": "Sit After Prayer"
+          },
+          "description": {
+            "ar": "اجلس بعد الصلاة واشتغل بالذكر والدعاء أو انتظار الصلاة",
+            "en": "Sit after prayer and engage in remembrance and supplication or wait for prayer"
+          }
+        }
+      ]
+    }
+  ]
+} 

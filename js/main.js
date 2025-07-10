@@ -389,6 +389,180 @@ let scrollTimeout = null;
           updateTasbihDisplay();
       }
 
+      // Islamic Guides functionality
+      let islamicGuidesData = null;
+      let islamicGuidesVisible = false;
+      let showAllGuides = false;
+      const INITIAL_GUIDES_COUNT = 6;
+
+      async function loadIslamicGuides() {
+          try {
+              const response = await fetch('./islamic-guides.json');
+              islamicGuidesData = await response.json();
+              renderIslamicGuides();
+          } catch (error) {
+              console.error('Error loading Islamic guides:', error);
+          }
+      }
+
+      function renderIslamicGuides() {
+          if (!islamicGuidesData) return;
+
+          const guidesList = document.getElementById('islamicGuidesList');
+          const showMoreContainer = document.getElementById('showMoreGuidesContainer');
+          
+          guidesList.innerHTML = '';
+          
+          // Determine how many guides to show
+          const guidesToShow = showAllGuides ? islamicGuidesData.guides : islamicGuidesData.guides.slice(0, INITIAL_GUIDES_COUNT);
+          
+          guidesToShow.forEach(guide => {
+              const guideCard = document.createElement('button');
+              guideCard.className = 'group bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 hover:from-amber-100 hover:to-yellow-100 dark:hover:from-amber-900/30 dark:hover:to-yellow-900/30 border border-amber-200 dark:border-amber-700 text-gray-700 dark:text-gray-300 hover:text-amber-800 dark:hover:text-amber-200 py-3 px-3 rounded-lg shadow-sm hover:shadow-md transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 text-left';
+              
+              guideCard.onclick = () => openGuideDetail(guide);
+              
+              guideCard.innerHTML = `
+                  <div class="flex items-center gap-2">
+                      <div class="bg-amber-100 dark:bg-amber-900/40 rounded-lg p-1.5 group-hover:bg-amber-200 dark:group-hover:bg-amber-800/50 transition-colors duration-300">
+                          <i class="${guide.icon} text-amber-600 dark:text-amber-400 text-sm"></i>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                          <h4 class="font-medium text-xs mb-0.5 truncate" dir="${currentLang === 'ar' ? 'rtl' : 'ltr'}">${guide.title[currentLang]}</h4>
+                          <p class="text-xs text-gray-500 dark:text-gray-400 leading-tight line-clamp-2" dir="${currentLang === 'ar' ? 'rtl' : 'ltr'}">${guide.description[currentLang]}</p>
+                      </div>
+                      <i class="fas fa-chevron-left text-gray-400 dark:text-gray-500 text-xs group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors duration-300"></i>
+                  </div>
+              `;
+              
+              guidesList.appendChild(guideCard);
+          });
+          
+          // Show/hide the "Show More" button
+          if (islamicGuidesData.guides.length > INITIAL_GUIDES_COUNT) {
+              showMoreContainer.classList.remove('hidden');
+              updateShowMoreButton();
+          } else {
+              showMoreContainer.classList.add('hidden');
+          }
+      }
+      
+      function toggleShowAllGuides() {
+          showAllGuides = !showAllGuides;
+          renderIslamicGuides();
+      }
+      
+      function updateShowMoreButton() {
+          const showMoreBtn = document.getElementById('showMoreGuidesBtn');
+          const showMoreText = document.getElementById('showMoreGuidesText');
+          const showMoreIcon = document.getElementById('showMoreGuidesIcon');
+          
+          if (showAllGuides) {
+              showMoreText.textContent = currentLang === 'ar' ? 'عرض أقل' : 'Show Less';
+              showMoreIcon.className = 'fas fa-chevron-up text-xs';
+          } else {
+              const remainingCount = islamicGuidesData.guides.length - INITIAL_GUIDES_COUNT;
+              showMoreText.textContent = currentLang === 'ar' ? 
+                  `عرض ${remainingCount} أدلة أخرى` : 
+                  `Show ${remainingCount} More Guides`;
+              showMoreIcon.className = 'fas fa-chevron-down text-xs';
+          }
+      }
+
+      function toggleIslamicGuides() {
+          const content = document.getElementById('islamicGuidesContent');
+          const toggleIcon = document.getElementById('guidesToggleIcon');
+          const toggleText = document.getElementById('guidesToggleText');
+          
+          islamicGuidesVisible = !islamicGuidesVisible;
+          
+          if (islamicGuidesVisible) {
+              content.classList.remove('hidden');
+              toggleIcon.classList.remove('fa-chevron-down');
+              toggleIcon.classList.add('fa-chevron-up');
+              toggleText.textContent = currentLang === 'ar' ? 'إخفاء الأدلة' : 'Hide Guides';
+              
+              if (!islamicGuidesData) {
+                  loadIslamicGuides();
+              }
+          } else {
+              content.classList.add('hidden');
+              toggleIcon.classList.remove('fa-chevron-up');
+              toggleIcon.classList.add('fa-chevron-down');
+              toggleText.textContent = currentLang === 'ar' ? 'عرض الأدلة' : 'Show Guides';
+          }
+      }
+
+      function openGuideDetail(guide) {
+          const modal = document.getElementById('guideDetailModal');
+          const icon = document.getElementById('guideIcon');
+          const title = document.getElementById('guideTitle');
+          const description = document.getElementById('guideDescription');
+          const steps = document.getElementById('guideSteps');
+          
+          // Update modal content
+          icon.className = guide.icon + ' text-3xl text-amber-600 dark:text-amber-400';
+          title.textContent = guide.title[currentLang];
+          description.textContent = guide.description[currentLang];
+          
+          // Clear and populate steps
+          steps.innerHTML = '';
+          guide.steps.forEach((step, index) => {
+              const stepElement = document.createElement('div');
+              stepElement.className = 'bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600 shadow-sm';
+              
+              stepElement.innerHTML = `
+                  <div class="flex items-start gap-4">
+                      <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-amber-500 to-yellow-500 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                          ${index + 1}
+                      </div>
+                      <div class="flex-1">
+                          <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-2" dir="${currentLang === 'ar' ? 'rtl' : 'ltr'}">${step.title[currentLang]}</h4>
+                          <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed" dir="${currentLang === 'ar' ? 'rtl' : 'ltr'}">${step.description[currentLang]}</p>
+                      </div>
+                  </div>
+              `;
+              
+              steps.appendChild(stepElement);
+          });
+          
+          // Show modal
+          modal.classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+      }
+
+      function closeGuideDetail() {
+          const modal = document.getElementById('guideDetailModal');
+          modal.classList.add('hidden');
+          document.body.style.overflow = 'auto';
+      }
+
+      function updateIslamicGuidesLanguage() {
+          const title = document.getElementById('islamicGuidesTitle');
+          const desc = document.getElementById('islamicGuidesDesc');
+          const toggleText = document.getElementById('guidesToggleText');
+          
+          if (currentLang === 'ar') {
+              title.textContent = 'الأدلة الإسلامية';
+              desc.textContent = 'تعلم كيفية أداء العبادات والأعمال الإسلامية بالطريقة الصحيحة';
+              toggleText.textContent = islamicGuidesVisible ? 'إخفاء الأدلة' : 'عرض الأدلة';
+          } else {
+              title.textContent = 'Islamic Guides';
+              desc.textContent = 'Learn how to perform Islamic worship and practices correctly';
+              toggleText.textContent = islamicGuidesVisible ? 'Hide Guides' : 'Show Guides';
+          }
+          
+          // Re-render guides if they're visible
+          if (islamicGuidesVisible && islamicGuidesData) {
+              renderIslamicGuides();
+          }
+          
+          // Update show more button text
+          if (islamicGuidesData && islamicGuidesData.guides.length > INITIAL_GUIDES_COUNT) {
+              updateShowMoreButton();
+          }
+      }
+
       // Daily rotating hadiths collection
       const dailyHadiths = [
           {
@@ -2400,6 +2574,9 @@ function showARUnsupported(errorType) {
 
           // Update daily reminder with today's hadith
           updateDailyReminder();
+          
+          // Update Islamic guides language
+          updateIslamicGuidesLanguage();
 
           // Update arrow directions based on language
           const arrowIcons = document.querySelectorAll('.arrow-icon');
@@ -5103,6 +5280,22 @@ function showARUnsupported(errorType) {
                    modal.classList.add('hidden');
                  }
                });
+
+               // Islamic Guides Modal Event Listeners
+               const guideDetailModal = document.getElementById('guideDetailModal');
+               const closeGuideDetailBtn = document.getElementById('closeGuideDetail');
+               
+               if (closeGuideDetailBtn) {
+                   closeGuideDetailBtn.addEventListener('click', closeGuideDetail);
+               }
+               
+               if (guideDetailModal) {
+                   guideDetailModal.addEventListener('click', function(e) {
+                       if (e.target === guideDetailModal) {
+                           closeGuideDetail();
+                       }
+                   });
+               }
                          //nnn
                          var quranHook = document.getElementById('quranHook');
                          if (quranHook) {
