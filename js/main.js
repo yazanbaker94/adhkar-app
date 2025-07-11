@@ -232,6 +232,7 @@ let singleVerseLoopTimeout = null;
 let touchStartX = 0;
 let touchEndX = 0;
 const swipeThreshold = 50;
+let autoSwipeEnabled = false;
 
       // Add these new variables at the top with other variables
       let notificationEnabled = false;
@@ -1311,7 +1312,9 @@ let scrollTimeout = null;
               dailyAdhkarDesc: "اختر من مجموعة متنوعة من الأذكار والأدعية",
               quickSurahsTitle: "السور الأكثر قراءة",
               quickSurahsDesc: "وصول سريع للسور الأكثر قراءة",
-              displayFullSurah: "عرض السورة كاملة"
+              displayFullSurah: "عرض السورة كاملة",
+              autoSwipeLabel: "تلقائي للتالي",
+              autoSwipeDesc: "ينتقل تلقائياً للذكر التالي عند الانتهاء"
           },
           en: {
               title: "Sakinah",
@@ -1546,7 +1549,9 @@ let scrollTimeout = null;
               dailyAdhkarDesc: "Choose from a variety of azkar and duas",
               quickSurahsTitle: "Most Read Surahs",
               quickSurahsDesc: "Quick access to commonly read surahs",
-              displayFullSurah: "Display full surah"
+              displayFullSurah: "Display full surah",
+              autoSwipeLabel: "Auto Next",
+              autoSwipeDesc: "Automatically moves to next dhikr when completed"
           }
       };
 
@@ -2524,12 +2529,47 @@ function showARUnsupported(errorType) {
           if ('vibrate' in navigator) {
               navigator.vibrate([200, 100, 200]);
           }
+          
+          // Auto-swipe to next dhikr if enabled and not at the last dhikr
+          if (autoSwipeEnabled && current < filteredAdhkar.length - 1) {
+              setTimeout(() => {
+                  nextDhikr();
+                  // Show toast notification
+                 
+              }, 1500); // Wait for celebration animation to complete
+          }
       }
 
 
 
       function updateRepeatCounter() {
           document.getElementById('repeatValue').innerText = filteredAdhkar[current].remainingRepeats;
+      }
+
+      // Auto-swipe toggle functions
+      function toggleAutoSwipe() {
+          const toggle = document.getElementById('autoSwipeToggle');
+          autoSwipeEnabled = toggle.checked;
+          
+          // Save preference to localStorage
+          localStorage.setItem('autoSwipeEnabled', autoSwipeEnabled);
+          
+          // Show feedback
+          const message = autoSwipeEnabled 
+              ? (currentLang === 'ar' ? 'تم تفعيل الانتقال التلقائي' : 'Auto-swipe enabled')
+              : (currentLang === 'ar' ? 'تم إلغاء الانتقال التلقائي' : 'Auto-swipe disabled');
+          showToast(message, 'info');
+      }
+
+      function loadAutoSwipePreference() {
+          const saved = localStorage.getItem('autoSwipeEnabled');
+          if (saved !== null) {
+              autoSwipeEnabled = saved === 'true';
+              const toggle = document.getElementById('autoSwipeToggle');
+              if (toggle) {
+                  toggle.checked = autoSwipeEnabled;
+              }
+          }
       }
 
       function switchLanguage() {
@@ -2641,7 +2681,9 @@ function showARUnsupported(errorType) {
               'dailyAdhkarTitle': lang.dailyAdhkarTitle,
               'dailyAdhkarDesc': lang.dailyAdhkarDesc,
               'quickSurahsTitle': lang.quickSurahsTitle,
-              'quickSurahsDesc': lang.quickSurahsDesc
+              'quickSurahsDesc': lang.quickSurahsDesc,
+              'autoSwipeLabel': lang.autoSwipeLabel,
+              'autoSwipeDesc': lang.autoSwipeDesc
 
           };
           
@@ -3039,6 +3081,9 @@ function showARUnsupported(errorType) {
                   progressRing.classList.add('text-yellow-500', 'dark:text-yellow-400');
               }
           }
+          
+          // Load auto-swipe preference
+          loadAutoSwipePreference();
           
           // Auto-scroll to ensure dhikr content is fully visible on mobile
           setTimeout(() => {
