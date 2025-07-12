@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "main": "download-quran.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx cap copy && npx cap sync",
+    "build:android": "npx cap copy android && npx cap sync android",
+    "open:android": "npx cap open android"
   },
   "repository": {
     "type": "git",
@@ -16,10 +19,17 @@
     "url": "https://github.com/yazanbaker94/adhkar-app/issues"
   },
   "homepage": "https://github.com/yazanbaker94/adhkar-app#readme",
-  "description": "",
+  "description": "<p align=\"center\">\r   <img src=\"icon2.png\" alt=\"SakinahTime Logo\" width=\"150\"/>\r </p>",
   "devDependencies": {
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.11"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.4.2",
+    "@capacitor/cli": "^7.4.2",
+    "@capacitor/core": "^7.4.2",
+    "@capacitor/geolocation": "^7.1.3",
+    "@capacitor/local-notifications": "^7.0.1"
   }
 }

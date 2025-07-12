@@ -228,13 +228,263 @@ let singleVerseLoopTimeout = null;
           }
       }
 
-// Variables for swipe detection
-let touchStartX = 0;
-let touchEndX = 0;
-const swipeThreshold = 50;
-let autoSwipeEnabled = false;
+        // Variables for swipe detection
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const swipeThreshold = 50;
+        let autoSwipeEnabled = false;
 
-      // Add these new variables at the top with other variables
+        // Universal geolocation function that works for both web and mobile
+        async function getCurrentPosition() {
+            // Check if running in Capacitor (mobile app)
+            if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Geolocation) {
+                try {
+                    console.log('Using Capacitor Geolocation for mobile app');
+                    
+                    // Request permission first
+                    const permission = await window.Capacitor.Plugins.Geolocation.requestPermissions();
+                    console.log('Permission result:', permission);
+                    
+                    if (permission.location !== 'granted') {
+                        const errorMessage = currentLang === 'ar' ? 
+                            'يرجى السماح بالوصول للموقع في إعدادات التطبيق' : 
+                            'Please allow location access in app settings';
+                        throw new Error(errorMessage);
+                    }
+                    
+                    // Get current position using Capacitor
+                    const position = await window.Capacitor.Plugins.Geolocation.getCurrentPosition({
+                        enableHighAccuracy: true,
+                        timeout: 15000,
+                        maximumAge: 60000
+                    });
+                    
+                    console.log('Capacitor position:', position);
+                    return position;
+                } catch (error) {
+                    console.error('Capacitor geolocation error:', error);
+                    
+                    // Provide user-friendly error messages
+                    let userMessage = error.message;
+                    if (error.message.includes('permission')) {
+                        userMessage = currentLang === 'ar' ? 
+                            'يرجى السماح بالوصول للموقع في إعدادات التطبيق' : 
+                            'Please allow location access in app settings';
+                    } else if (error.message.includes('timeout')) {
+                        userMessage = currentLang === 'ar' ? 
+                            'انتهت مهلة تحديد الموقع - يرجى المحاولة مرة أخرى' : 
+                            'Location timeout - please try again';
+                    }
+                    
+                    throw new Error(userMessage);
+                }
+            } else {
+                // Fallback to web geolocation API
+                console.log('Using web geolocation API');
+                return new Promise((resolve, reject) => {
+                    if (!navigator.geolocation) {
+                        const errorMessage = currentLang === 'ar' ? 
+                            'الموقع غير مدعوم في هذا المتصفح' : 
+                            'Geolocation is not supported by this browser';
+                        reject(new Error(errorMessage));
+                        return;
+                    }
+                    
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        enableHighAccuracy: true,
+                        timeout: 15000,
+                        maximumAge: 60000
+                    });
+                });
+            }
+                }
+
+        // Debug function to test geolocation
+        window.testGeolocation = async function() {
+            try {
+                console.log('Testing geolocation...');
+                const position = await getCurrentPosition();
+                console.log('Geolocation test successful:', position);
+                
+                const message = currentLang === 'ar' ? 
+                    `نجح تحديد الموقع: ${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)}` :
+                    `Location found: ${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)}`;
+                
+                showToast(message, 'success');
+                return position;
+            } catch (error) {
+                console.error('Geolocation test failed:', error);
+                showToast(error.message, 'error');
+                throw error;
+            }
+        };
+
+        // Universal notification functions for both web and mobile
+        async function requestNotificationPermissions() {
+            // Check if running in Capacitor (mobile app)
+            if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
+                try {
+                    console.log('Using Capacitor Local Notifications for mobile app');
+                    
+                    // Request permission
+                    const permission = await window.Capacitor.Plugins.LocalNotifications.requestPermissions();
+                    console.log('Notification permission result:', permission);
+                    
+                    return permission.display === 'granted';
+                } catch (error) {
+                    console.error('Capacitor notification permission error:', error);
+                    return false;
+                }
+            } else {
+                // Fallback to web Notification API
+                console.log('Using web Notification API');
+                try {
+                    if (!('Notification' in window)) {
+                        throw new Error('Notifications not supported');
+                    }
+                    
+                    const permission = await Notification.requestPermission();
+                    return permission === 'granted';
+                } catch (error) {
+                    console.error('Web notification permission error:', error);
+                    return false;
+                }
+            }
+        }
+
+        async function scheduleNotification(id, title, body, scheduleAt, prayerName) {
+            // Check if running in Capacitor (mobile app)
+            if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
+                try {
+                    console.log(`Scheduling Capacitor notification for ${prayerName} at ${scheduleAt}`);
+                    
+                    await window.Capacitor.Plugins.LocalNotifications.schedule({
+                        notifications: [
+                            {
+                                title: title,
+                                body: body,
+                                id: id,
+                                schedule: { at: scheduleAt },
+                                sound: 'beep.wav',
+                                smallIcon: 'ic_stat_icon_config_sample',
+                                iconColor: '#3B82F6',
+                                attachments: null,
+                                actionTypeId: '',
+                                extra: { prayerName: prayerName }
+                            }
+                        ]
+                    });
+                    
+                    console.log(`Capacitor notification scheduled for ${prayerName}`);
+                    return true;
+                } catch (error) {
+                    console.error('Error scheduling Capacitor notification:', error);
+                    return false;
+                }
+            } else {
+                // Fallback to web setTimeout for immediate notifications
+                console.log(`Scheduling web notification for ${prayerName}`);
+                const timeUntilNotification = scheduleAt.getTime() - Date.now();
+                
+                if (timeUntilNotification > 0) {
+                    const timeoutId = setTimeout(() => {
+                        try {
+                            new Notification(title, {
+                                body: body,
+                                icon: 'icon1.png',
+                                badge: 'icon1.png',
+                                tag: `prayer-${prayerName}`,
+                                requireInteraction: true,
+                                vibrate: [200, 100, 200],
+                                silent: false
+                            });
+                            
+                            // Play adhan sound
+                            const audio = new Audio('adhan.mp3');
+                            audio.volume = 0.5;
+                            audio.play().catch(error => console.error('Error playing adhan:', error));
+                        } catch (error) {
+                            console.error('Error showing web notification:', error);
+                        }
+                    }, timeUntilNotification);
+                    
+                    notificationTimeouts.push(timeoutId);
+                    return true;
+                } else {
+                    console.log('Notification time has already passed');
+                    return false;
+                }
+            }
+        }
+
+        async function cancelAllNotifications() {
+            // Check if running in Capacitor (mobile app)
+            if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
+                try {
+                    console.log('Cancelling all Capacitor notifications');
+                    await window.Capacitor.Plugins.LocalNotifications.cancel({
+                        notifications: [
+                            { id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }
+                        ]
+                    });
+                    return true;
+                } catch (error) {
+                    console.error('Error cancelling Capacitor notifications:', error);
+                    return false;
+                }
+            } else {
+                // Clear web timeouts
+                console.log('Clearing web notification timeouts');
+                clearAllNotificationTimeouts();
+                return true;
+            }
+        }
+
+        // Debug function to test notifications
+        window.testNotifications = async function() {
+            try {
+                console.log('Testing notifications...');
+                const hasPermission = await requestNotificationPermissions();
+                
+                if (!hasPermission) {
+                    const errorMessage = currentLang === 'ar' ? 
+                        'لم يتم منح إذن الإشعارات' : 
+                        'Notification permission not granted';
+                    showToast(errorMessage, 'error');
+                    return false;
+                }
+                
+                // Schedule a test notification for 5 seconds from now
+                const testTime = new Date(Date.now() + 5000);
+                const success = await scheduleNotification(
+                    999,
+                    currentLang === 'ar' ? 'اختبار الإشعارات' : 'Notification Test',
+                    currentLang === 'ar' ? 'هذا إشعار تجريبي' : 'This is a test notification',
+                    testTime,
+                    'test'
+                );
+                
+                if (success) {
+                    const successMessage = currentLang === 'ar' ? 
+                        'تم جدولة إشعار تجريبي خلال 5 ثوان' : 
+                        'Test notification scheduled in 5 seconds';
+                    showToast(successMessage, 'success');
+                } else {
+                    const errorMessage = currentLang === 'ar' ? 
+                        'فشل في جدولة الإشعار التجريبي' : 
+                        'Failed to schedule test notification';
+                    showToast(errorMessage, 'error');
+                }
+                
+                return success;
+            } catch (error) {
+                console.error('Notification test failed:', error);
+                showToast(error.message, 'error');
+                return false;
+            }
+        };
+
+        // Add these new variables at the top with other variables
       let notificationEnabled = false;
       let prayerNotifications = {};
       let notificationTimeouts = [];
@@ -1690,14 +1940,8 @@ let scrollTimeout = null;
                   }
               }
 
-              // Get user location
-              const position = await new Promise((resolve, reject) => {
-                  navigator.geolocation.getCurrentPosition(resolve, reject, {
-                      enableHighAccuracy: true,
-                      timeout: 10000,
-                      maximumAge: 60000
-                  });
-              });
+              // Get user location - use Capacitor Geolocation for mobile apps
+              const position = await getCurrentPosition();
 
               // Store location and calculate Qibla
               userLocation = {
@@ -2055,13 +2299,7 @@ let scrollTimeout = null;
           btn.innerHTML = '<i class="fas fa-spinner fa-spin text-sm"></i>';
           
           try {
-              const position = await new Promise((resolve, reject) => {
-                  navigator.geolocation.getCurrentPosition(resolve, reject, {
-                      enableHighAccuracy: true,
-                      timeout: 10000,
-                      maximumAge: 0
-                  });
-              });
+              const position = await getCurrentPosition();
               
               userLocation = {
                   lat: position.coords.latitude,
@@ -2388,13 +2626,7 @@ function showARUnsupported(errorType) {
               stream.getTracks().forEach(track => track.stop());
               
               // Try with different geolocation options
-              const position = await new Promise((resolve, reject) => {
-                  navigator.geolocation.getCurrentPosition(resolve, reject, {
-                      enableHighAccuracy: false, // Try with lower accuracy first
-                      timeout: 20000,
-                      maximumAge: 60000 // Allow cached location
-                  });
-              });
+              const position = await getCurrentPosition();
               
               
               // Wait a bit then retry full initialization
@@ -2411,13 +2643,7 @@ function showARUnsupported(errorType) {
             // Initialize location on page load
       async function initializeQiblaLocation() {
           try {
-              const position = await new Promise((resolve, reject) => {
-                  navigator.geolocation.getCurrentPosition(resolve, reject, {
-                      enableHighAccuracy: true,
-                      timeout: 10000,
-                      maximumAge: 300000 // 5 minutes cache
-                  });
-              });
+              const position = await getCurrentPosition();
               
            
               
@@ -3368,18 +3594,7 @@ function showARUnsupported(errorType) {
       async function detectCityAndFetchTimes() {
           try {
               // Request user's actual location using device geolocation
-              const position = await new Promise((resolve, reject) => {
-                  if (!navigator.geolocation) {
-                      reject(new Error('Geolocation is not supported by this browser'));
-                      return;
-                  }
-                  
-                  navigator.geolocation.getCurrentPosition(resolve, reject, {
-                      enableHighAccuracy: true,
-                      timeout: 10000,
-                      maximumAge: 300000 // 5 minutes
-                  });
-              });
+              const position = await getCurrentPosition();
               
               const lat = position.coords.latitude;
               const lng = position.coords.longitude;
@@ -3804,101 +4019,34 @@ function showARUnsupported(errorType) {
 
       async function requestNotificationPermission() {
           try {
-              const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+              // Use universal notification permission function
+              const hasPermission = await requestNotificationPermissions();
               
-              // Check if the app is running in standalone mode (added to home screen)
-              const isInStandaloneMode = ('standalone' in navigator) && (navigator.standalone);
-              
-              if (isIOS && !isInStandaloneMode) {
-                  // Show instructions for adding to home screen first
-                  showTutorial();
-                  return false;
-              }
-
-              // Check if notifications are supported
-              if (!('Notification' in window)) {
-                  const notSupportedMessage = currentLang === 'ar'
-                      ? 'المتصفح لا يدعم الإشعارات'
-                      : 'Notifications are not supported in this browser';
-                  alert(notSupportedMessage);
-                  return false;
-              }
-              
-              // Request permission
-              const permission = await Notification.requestPermission();
-              
-              if (permission === 'granted') {
-                  try {
-                      notificationEnabled = true;
-                      document.getElementById('notificationToggle').checked = true;
-                
-                      if (isIOS) {
-                          // For iOS, use basic notifications
-                          setupBasicNotifications();
-                          // Show success message
-                          const successMessage = currentLang === 'ar'
-                              ? 'تم تفعيل الإشعارات بنجاح'
-                              : 'Notifications enabled successfully';
-                          alert(successMessage);
-                      } else {
-                          // For Android, use push notifications
-                          const registration = await registerServiceWorker();
-                          if (registration) {
-                              try {
-                                  const subscription = await registration.pushManager.subscribe({
-                                      userVisibleOnly: true,
-                                      applicationServerKey: 'BOPaG1Jwr89JCSdQ1ejhuPmyKXGVQLQjI2SJfeaYT-LiUjf44KtxCS_JSq-cVxE9O0q7sExLbs2mO4aO0KWPJcc'
-                                  });
-                                  localStorage.setItem('pushSubscription', JSON.stringify(subscription));
-                                  setupPrayerNotifications();
-                                  // Show success message
-                                  const successMessage = currentLang === 'ar'
-                                      ? 'تم تفعيل الإشعارات بنجاح'
-                                      : 'Notifications enabled successfully';
-                                  alert(successMessage);
-                              } catch (error) {
-                                  console.error('Push subscription failed:', error);
-                                  setupBasicNotifications();
-                              }
-                          } else {
-                              setupBasicNotifications();
-                          }
-                      }
-                      return true;
-                  } catch (error) {
-                      console.error('Error setting up notifications:', error);
-                      notificationEnabled = false;
-                      document.getElementById('notificationToggle').checked = false;
-                      
-                      if (isIOS) {
-                          const iosErrorMessage = currentLang === 'ar'
-                              ? 'حدث خطأ في تفعيل الإشعارات. يرجى:\n\n1. التأكد من أن التطبيق مفتوح من الشاشة الرئيسية\n2. التأكد من تفعيل الإشعارات في إعدادات Safari\n3. إعادة تشغيل التطبيق'
-                              : 'Error enabling notifications. Please:\n\n1. Make sure the app is opened from home screen\n2. Check Safari settings for notifications\n3. Restart the app';
-                          alert(iosErrorMessage);
-                      } else {
-                          const errorMessage = currentLang === 'ar'
-                              ? 'حدث خطأ في تفعيل الإشعارات'
-                              : 'Error enabling notifications';
-                          alert(errorMessage);
-                      }
-                      return false;
-                  }
+              if (hasPermission) {
+                  notificationEnabled = true;
+                  document.getElementById('notificationToggle').checked = true;
+                  
+                  // Setup prayer notifications
+                  await setupPrayerNotifications();
+                  
+                  // Show success message
+                  const successMessage = currentLang === 'ar'
+                      ? 'تم تفعيل الإشعارات بنجاح'
+                      : 'Notifications enabled successfully';
+                  showToast(successMessage, 'success');
+                  
+                  // Save notification state
+                  saveNotificationState();
+                  
+                  return true;
               } else {
                   notificationEnabled = false;
                   document.getElementById('notificationToggle').checked = false;
                   
-                  // Show more detailed message for iOS
-                  if (isIOS) {
-                      const iosPermissionMessage = currentLang === 'ar'
-                          ? 'لتفعيل الإشعارات في iOS:\n\n1. افتح إعدادات جهازك\n2. انتقل إلى Safari > الإعدادات\n3. قم بتفعيل "السماح بالإشعارات"\n4. أعد تشغيل التطبيق'
-                          : 'To enable notifications on iOS:\n\n1. Open your device settings\n2. Go to Safari > Settings\n3. Enable "Allow Notifications"\n4. Restart the app';
-                      alert(iosPermissionMessage);
-                  } else {
-                      const permissionDeniedMessage = currentLang === 'ar'
-                          ? 'يرجى السماح بالإشعارات في إعدادات المتصفح'
-                          : 'Please allow notifications in your browser settings';
-                      alert(permissionDeniedMessage);
-                  }
+                  const deniedMessage = currentLang === 'ar'
+                      ? 'تم رفض إذن الإشعارات'
+                      : 'Notification permission denied';
+                  showToast(deniedMessage, 'error');
                   return false;
               }
           } catch (error) {
@@ -3908,7 +4056,7 @@ function showARUnsupported(errorType) {
               const errorMessage = currentLang === 'ar'
                   ? 'حدث خطأ أثناء تفعيل الإشعارات'
                   : 'An error occurred while enabling notifications';
-              alert(errorMessage);
+              showToast(errorMessage, 'error');
               return false;
           }
       }
@@ -4078,25 +4226,64 @@ function showARUnsupported(errorType) {
       async function setupPrayerNotifications() {
           if (!notificationEnabled) return;
 
-          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-          const isInStandaloneMode = ('standalone' in navigator) && (navigator.standalone);
+          // Cancel any existing notifications first
+          await cancelAllNotifications();
 
-          // For iOS in standalone mode, use background fetch
-          if (isIOS && isInStandaloneMode) {
-              try {
-                  const registration = await navigator.serviceWorker.ready;
-                  await registration.periodicSync.register('prayer-times', {
-                      minInterval: 15 * 60 * 1000 // 15 minutes
-                  });
-        
-              } catch (error) {
-                  console.error('Periodic sync registration failed:', error);
-                  // Fallback to basic notifications
-                  setupBasicNotifications();
+          const now = new Date();
+          const timings = prayerNotifications;
+          
+          if (!timings || Object.keys(timings).length === 0) {
+              console.log('No prayer timings available for notifications');
+              return;
+          }
+
+          // Schedule notifications for all remaining prayers today
+          const prayerOrder = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+          const prayerNames = {
+              'Fajr': currentLang === 'ar' ? 'الفجر' : 'Fajr',
+              'Dhuhr': currentLang === 'ar' ? 'الظهر' : 'Dhuhr',
+              'Asr': currentLang === 'ar' ? 'العصر' : 'Asr',
+              'Maghrib': currentLang === 'ar' ? 'المغرب' : 'Maghrib',
+              'Isha': currentLang === 'ar' ? 'العشاء' : 'Isha'
+          };
+
+          let scheduledCount = 0;
+
+          for (let i = 0; i < prayerOrder.length; i++) {
+              const prayer = prayerOrder[i];
+              if (timings[prayer]) {
+                  const prayerTime = parseTime(timings[prayer], now);
+                  
+                  if (prayerTime > now) {
+                      const title = currentLang === 'ar' ? 'وقت الصلاة' : 'Prayer Time';
+                      const body = currentLang === 'ar' 
+                          ? `حان الآن وقت صلاة ${prayerNames[prayer]} - ${timings[prayer]}`
+                          : `It's time for ${prayerNames[prayer]} prayer - ${timings[prayer]}`;
+                      
+                      const success = await scheduleNotification(
+                          i + 1, // Use prayer index as ID
+                          title,
+                          body,
+                          prayerTime,
+                          prayer
+                      );
+                      
+                      if (success) {
+                          scheduledCount++;
+                          console.log(`Scheduled notification for ${prayer} at ${timings[prayer]}`);
+                      }
+                  }
               }
-          } else {
-              // For Android or iOS not in standalone mode, use basic notifications
-              setupBasicNotifications();
+          }
+          
+          console.log(`Scheduled ${scheduledCount} prayer notifications`);
+          
+          // Save notification state
+          saveNotificationState();
+          
+          // If no prayers left today, schedule for tomorrow
+          if (scheduledCount === 0) {
+              scheduleNextDayNotifications();
           }
       }
 
@@ -4446,7 +4633,7 @@ function showARUnsupported(errorType) {
                   ayahText = ayahText.replace('بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ', '');
                   
                   bismillahHtml = `
-                    <div class="text-center my-6 text-xl md:text-3xl quran-uthmani-font text-gray-700 dark:text-gray-200 select-none max-w-full md:max-w-2xl mx-auto" dir="rtl" style="font-family: 'Quran.com Font', Arial, sans-serif; letter-spacing: 0.05em; margin-bottom: 2rem;">${bismillahText}</div>
+                    <div class="text-center my-6 text-xl md:text-3xl text-gray-700 dark:text-gray-200 select-none max-w-full md:max-w-2xl mx-auto" dir="rtl" style="letter-spacing: 0.05em; margin-bottom: 2rem;">${bismillahText}</div>
                   `;
                   // If ayahText is empty after removing Bismillah (e.g., Al-Fatiha where first ayah is only Bismillah), 
                   // skip to the actual first content ayah and increment currentAyah accordingly
@@ -4514,6 +4701,10 @@ function showARUnsupported(errorType) {
               arabicTextElement.innerHTML = html;
               translationTextElement.innerHTML = '';
               document.getElementById('btnReadingMode').disabled = false;
+              
+              // Apply saved font preference after content is loaded
+              const savedFont = localStorage.getItem('quranFontFamily') || 'font-quran-original';
+              changeFontFamily(savedFont);
               
               // Update tooltip for reading mode button when single verse is displayed - only on first visit
               const readingModeBtn = document.getElementById('btnReadingMode');
@@ -4749,9 +4940,9 @@ function showARUnsupported(errorType) {
         // Insert Bismillah at the top for all surahs except At-Tawbah (9)
         let bismillahHtml = '';
         if (currentSurah !== 8) {
-          bismillahHtml = `
-            <div class="text-center my-6 text-xl md:text-3xl quran-uthmani-font text-gray-700 dark:text-gray-200 select-none max-w-full md:max-w-2xl mx-auto" dir="rtl" style="font-family: 'Quran.com Font', Arial, sans-serif; letter-spacing: 0.05em; margin-bottom: 2rem;">${bismillahText}</div>
-          `;
+                            bismillahHtml = `
+                    <div class="text-center my-6 text-xl md:text-3xl text-gray-700 dark:text-gray-200 select-none max-w-full md:max-w-2xl mx-auto" dir="rtl" style="letter-spacing: 0.05em; margin-bottom: 2rem;">${bismillahText}</div>
+                  `;
         }
         
         // Add mobile navigation for reading mode
@@ -4836,6 +5027,10 @@ function showARUnsupported(errorType) {
         arabicText.innerHTML = html;
         translationText.innerHTML = '';
         const surah = quranData[currentSurah];
+        
+        // Apply saved font preference after content is loaded
+        const savedFont = localStorage.getItem('quranFontFamily') || 'font-quran-original';
+        changeFontFamily(savedFont);
 
         
         // Update mobile reading mode button states
@@ -5234,27 +5429,14 @@ function showARUnsupported(errorType) {
       }
 
       function handleNotificationToggleClick(e) {
-        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-        const isInStandaloneMode = window.navigator.standalone === true;
-
         if (!e.target.checked) {
           notificationEnabled = false;
+          cancelAllNotifications();
+          saveNotificationState();
           return;
         }
 
-        if (isIOS && !isInStandaloneMode) {
-          showTutorial();
-
-         
-
-
-          e.preventDefault();
-          e.target.checked = false;
-          return;
-        }
-
-        showTutorial();
-
+        // Request permission and setup notifications
         requestNotificationPermission().then((success) => {
           if (!success) {
             e.target.checked = false;
@@ -5802,6 +5984,13 @@ function showARUnsupported(errorType) {
                 arabicText.classList.remove('font-quran-original', 'font-utman-taha', 'font-al-mushaf', 'font-system-arabic');
                 // Add selected font class
                 arabicText.classList.add(fontClass);
+                
+                // Apply font to all Arabic text elements within the arabicText container
+                const allArabicElements = arabicText.querySelectorAll('div, span, .ayah');
+                allArabicElements.forEach(element => {
+                    element.classList.remove('font-quran-original', 'font-utman-taha', 'font-al-mushaf', 'font-system-arabic');
+                    element.classList.add(fontClass);
+                });
                 
                 // Save preference
                 localStorage.setItem('quranFontFamily', fontClass);

@@ -1,0 +1,15 @@
+{
+  "appId": "com.yazan.sakinahtime",
+  "appName": "SakinahTime",
+  "webDir": "www",
+  "plugins": {
+    "Geolocation": {
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
+    },
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_icon_config_sample",
+      "iconColor": "#3B82F6",
+      "sound": "beep.wav"
+    }
+  }
+}
