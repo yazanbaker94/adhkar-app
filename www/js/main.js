@@ -1965,27 +1965,10 @@ let scrollTimeout = null;
               // Remove any previous listeners to avoid duplicates
               window.removeEventListener('deviceorientation', handleCompassOrientation);
               window.removeEventListener('deviceorientationabsolute', handleCompassOrientation);
-              
-              // Detect platform for proper compass event selection
-              const isAndroidDevice = /Android/i.test(navigator.userAgent);
-              
-              if (isAndroidDevice && 'ondeviceorientationabsolute' in window) {
-                  // Android: Use deviceorientationabsolute for accurate magnetic north
-                  console.log('Using deviceorientationabsolute for Android');
+              if ('ondeviceorientationabsolute' in window) {
                   window.addEventListener('deviceorientationabsolute', handleCompassOrientation, true);
-              } else if (isIOS) {
-                  // iOS: Use deviceorientation (has webkitCompassHeading)
-                  console.log('Using deviceorientation for iOS');
-                  window.addEventListener('deviceorientation', handleCompassOrientation, true);
               } else {
-                  // Fallback: Try deviceorientationabsolute first, then deviceorientation
-                  if ('ondeviceorientationabsolute' in window) {
-                      console.log('Using deviceorientationabsolute as fallback');
-                      window.addEventListener('deviceorientationabsolute', handleCompassOrientation, true);
-                  } else {
-                      console.log('Using deviceorientation as fallback');
-                      window.addEventListener('deviceorientation', handleCompassOrientation, true);
-                  }
+                  window.addEventListener('deviceorientation', handleCompassOrientation, true);
               }
               
               // Hide start overlay and show compass
@@ -2036,7 +2019,6 @@ let scrollTimeout = null;
           if (!compassActive) return;
 
           let heading = 0;
-          const isAndroidDevice = /Android/i.test(navigator.userAgent);
           
           // Check if iOS with accurate webkitCompassHeading
           if (event.webkitCompassHeading !== undefined) {
@@ -2044,13 +2026,7 @@ let scrollTimeout = null;
               heading = event.webkitCompassHeading;
           } else if (event.alpha !== null) {
               // For Android and other devices, use alpha
-              if (isAndroidDevice && event.type === 'deviceorientationabsolute') {
-                  // Android deviceorientationabsolute: alpha is already relative to magnetic north
-                  heading = event.alpha;
-              } else {
-                  // Standard deviceorientation: need to convert
-                  heading = Math.abs(event.alpha - 360);
-              }
+              heading = Math.abs(event.alpha - 360);
           } else {
               return; // No valid orientation data
           }
