@@ -365,7 +365,7 @@ let singleVerseLoopTimeout = null;
                                 body: body,
                                 id: id,
                                 schedule: { at: scheduleAt },
-                                sound: 'beep.wav',
+                                sound: 'adhan.mp3',
                                 smallIcon: 'ic_stat_icon_config_sample',
                                 iconColor: '#3B82F6',
                                 attachments: null,
@@ -1419,6 +1419,10 @@ let scrollTimeout = null;
               gotIt: "فهمت",
               notificationLabel: "إشعارات أوقات الصلاة",
             timeFormatLabel: "تنسيق الوقت 24 ساعة",
+              testNotificationLabel: "اختبار الإشعارات",
+              testNotificationBtnText: "اختبار الآن",
+              testPrayerBtnText: "اختبار الصلاة",
+              toggleRandomNotificationBtnText: "تفعيل العشوائي",
               bookmarkVerse: "اضغط لتعيين علامة مرجعية",
               translationNames: {
                   // English
@@ -1656,6 +1660,10 @@ let scrollTimeout = null;
               gotIt: "Got it",
               notificationLabel: "Prayer Time Notifications",
             timeFormatLabel: "24-Hour Format",
+              testNotificationLabel: "Test Notifications",
+              testNotificationBtnText: "Test Now",
+              testPrayerBtnText: "Test Prayer",
+              toggleRandomNotificationBtnText: "Start Random",
               bookmarkVerse: "Click to bookmark this verse",
               translationNames: {
                   // English
@@ -2881,8 +2889,12 @@ function showARUnsupported(errorType) {
         'troubleshootText': lang.troubleshootText,
               'tasbihTab': lang.tasbihTab,
               'quranTab': lang.quranTab,
-              'notificationLabel': lang.notificationLabel,
-            'timeFormatLabel': lang.timeFormatLabel,
+                            'notificationLabel': lang.notificationLabel,
+              'timeFormatLabel': lang.timeFormatLabel,
+              'testNotificationLabel': lang.testNotificationLabel,
+              'testNotificationBtnText': lang.testNotificationBtnText,
+              'testPrayerBtnText': lang.testPrayerBtnText,
+              'toggleRandomNotificationBtnText': lang.toggleRandomNotificationBtnText,
               'quranTitle': lang.quranTitle,
               'surahMenuTitle': lang.selectSurah,
               // Adhkar home page elements
@@ -4294,6 +4306,250 @@ function showARUnsupported(errorType) {
     
               fetchPrayerTimes(currentCity);
           }, 60 * 60 * 1000); // Every hour
+      }
+
+      // Test notification functions
+      let randomNotificationInterval = null;
+      let randomNotificationEnabled = false;
+
+      async function testPrayerNotification() {
+          try {
+              // First request notification permissions if not already granted
+              const hasPermission = await requestNotificationPermissions();
+              
+              if (!hasPermission) {
+                  const errorMessage = currentLang === 'ar' 
+                      ? 'يرجى السماح بالإشعارات أولاً'
+                      : 'Please allow notifications first';
+                  showToast(errorMessage, 'error');
+                  return;
+              }
+
+              // Test notification content
+              const testTitle = currentLang === 'ar' ? 'اختبار الإشعارات' : 'Test Notification';
+              const testBody = currentLang === 'ar' 
+                  ? 'هذا اختبار للإشعارات - يعمل بشكل صحيح!'
+                  : 'This is a test notification - working correctly!';
+
+              // Schedule a test notification for 3 seconds from now
+              const testTime = new Date(Date.now() + 3000);
+              
+              const success = await scheduleNotification(
+                  999, // Use a unique ID for test
+                  testTitle,
+                  testBody,
+                  testTime,
+                  'Test'
+              );
+
+              if (success) {
+                  const successMessage = currentLang === 'ar' 
+                      ? 'سيتم إرسال إشعار تجريبي خلال 3 ثوانٍ'
+                      : 'Test notification will appear in 3 seconds';
+                  showToast(successMessage, 'success');
+              } else {
+                  const errorMessage = currentLang === 'ar' 
+                      ? 'فشل في جدولة الإشعار التجريبي'
+                      : 'Failed to schedule test notification';
+                  showToast(errorMessage, 'error');
+              }
+          } catch (error) {
+              console.error('Error testing notification:', error);
+              const errorMessage = currentLang === 'ar' 
+                  ? 'حدث خطأ أثناء اختبار الإشعار'
+                  : 'Error occurred while testing notification';
+              showToast(errorMessage, 'error');
+          }
+      }
+
+      function toggleRandomNotifications() {
+          if (randomNotificationEnabled) {
+              // Stop random notifications
+              if (randomNotificationInterval) {
+                  clearInterval(randomNotificationInterval);
+                  randomNotificationInterval = null;
+              }
+              randomNotificationEnabled = false;
+              
+              // Update button text
+              const buttonText = document.getElementById('toggleRandomNotificationBtnText');
+              buttonText.textContent = currentLang === 'ar' ? 'تفعيل العشوائي' : 'Start Random';
+              
+              const successMessage = currentLang === 'ar' 
+                  ? 'تم إيقاف الإشعارات العشوائية'
+                  : 'Random notifications stopped';
+              showToast(successMessage, 'info');
+          } else {
+              // Start random notifications
+              startRandomNotifications();
+              randomNotificationEnabled = true;
+              
+              // Update button text
+              const buttonText = document.getElementById('toggleRandomNotificationBtnText');
+              buttonText.textContent = currentLang === 'ar' ? 'إيقاف العشوائي' : 'Stop Random';
+              
+              const successMessage = currentLang === 'ar' 
+                  ? 'تم تفعيل الإشعارات العشوائية (كل دقيقة)'
+                  : 'Random notifications started (every minute)';
+              showToast(successMessage, 'success');
+          }
+      }
+
+      async function startRandomNotifications() {
+          // First request notification permissions if not already granted
+          const hasPermission = await requestNotificationPermissions();
+          
+          if (!hasPermission) {
+              const errorMessage = currentLang === 'ar' 
+                  ? 'يرجى السماح بالإشعارات أولاً'
+                  : 'Please allow notifications first';
+              showToast(errorMessage, 'error');
+              return;
+          }
+
+          // Random notification messages
+          const randomMessages = {
+              ar: [
+                  'تذكير: حان وقت الذكر والدعاء',
+                  'لا تنس قراءة القرآن اليوم',
+                  'استغفر الله العظيم',
+                  'سبحان الله وبحمده',
+                  'لا إله إلا الله محمد رسول الله',
+                  'الحمد لله رب العالمين',
+                  'اللهم صل على محمد وآل محمد',
+                  'تذكر: الصلاة على النبي',
+                  'اقرأ سورة الفاتحة',
+                  'تذكير بالدعاء والاستغفار'
+              ],
+              en: [
+                  'Reminder: Time for dhikr and dua',
+                  'Don\'t forget to read Quran today',
+                  'Astaghfirullah al-azeem',
+                  'Subhan Allah wa bihamdihi',
+                  'La ilaha illa Allah Muhammad rasul Allah',
+                  'Alhamdulillahi rabbil alameen',
+                  'Allahumma salli ala Muhammad wa aal Muhammad',
+                  'Remember: Send blessings upon the Prophet',
+                  'Read Surah Al-Fatiha',
+                  'Reminder for dua and istighfar'
+              ]
+          };
+
+          // Set interval for every minute (60000 ms)
+          randomNotificationInterval = setInterval(async () => {
+              const messages = randomMessages[currentLang];
+              const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+              
+              const title = currentLang === 'ar' ? 'تذكير إسلامي' : 'Islamic Reminder';
+              
+              // Schedule notification for 1 second from now
+              const notificationTime = new Date(Date.now() + 1000);
+              
+              try {
+                  await scheduleNotification(
+                      Math.floor(Math.random() * 1000) + 1000, // Random ID between 1000-1999
+                      title,
+                      randomMessage,
+                      notificationTime,
+                      'Random'
+                  );
+              } catch (error) {
+                  console.error('Error scheduling random notification:', error);
+              }
+          }, 3000); // Every minute
+      }
+
+      // Test prayer notification function
+      async function testPrayerTime() {
+          try {
+              // First request notification permissions if not already granted
+              const hasPermission = await requestNotificationPermissions();
+              
+              if (!hasPermission) {
+                  const errorMessage = currentLang === 'ar' 
+                      ? 'يرجى السماح بالإشعارات أولاً'
+                      : 'Please allow notifications first';
+                  showToast(errorMessage, 'error');
+                  return;
+              }
+
+              // Random prayer names for testing
+              const prayerNames = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+              const randomPrayer = prayerNames[Math.floor(Math.random() * prayerNames.length)];
+              
+              const prayerDisplayNames = {
+                  'Fajr': currentLang === 'ar' ? 'الفجر' : 'Fajr',
+                  'Dhuhr': currentLang === 'ar' ? 'الظهر' : 'Dhuhr',
+                  'Asr': currentLang === 'ar' ? 'العصر' : 'Asr',
+                  'Maghrib': currentLang === 'ar' ? 'المغرب' : 'Maghrib',
+                  'Isha': currentLang === 'ar' ? 'العشاء' : 'Isha'
+              };
+
+              // Test prayer notification content
+              const testTitle = currentLang === 'ar' ? 'وقت الصلاة' : 'Prayer Time';
+              const testBody = currentLang === 'ar' 
+                  ? `حان الآن وقت صلاة ${prayerDisplayNames[randomPrayer]} - اختبار`
+                  : `It's time for ${prayerDisplayNames[randomPrayer]} prayer - Test`;
+
+                            // Schedule a test prayer notification for 10 seconds from now
+              const testTime = new Date(Date.now() + 10000);
+              
+              const success = await scheduleNotification(
+                  888, // Use a unique ID for prayer test
+                  testTitle,
+                  testBody,
+                  testTime,
+                  `Test-${randomPrayer}` // Mark as test prayer
+              );
+
+              if (success) {
+                  const successMessage = currentLang === 'ar' 
+                      ? `سيتم إرسال إشعار صلاة ${prayerDisplayNames[randomPrayer]} خلال 10 ثوانٍ`
+                      : `${prayerDisplayNames[randomPrayer]} prayer notification will appear in 10 seconds`;
+                  showToast(successMessage, 'success');
+                  
+                  // Play a short preview of adhan sound immediately for feedback
+                  try {
+                      const previewAudio = new Audio('adhan.mp3');
+                      previewAudio.volume = 0.3;
+                      previewAudio.currentTime = 0;
+                      previewAudio.play().then(() => {
+                          // Stop after 2 seconds (preview only)
+                          setTimeout(() => {
+                              previewAudio.pause();
+                              previewAudio.currentTime = 0;
+                          }, 2000);
+                      }).catch(error => console.error('Error playing preview adhan:', error));
+                  } catch (error) {
+                      console.error('Error playing preview adhan sound:', error);
+                  }
+                  
+                  // For Capacitor (Android), also schedule adhan sound to play
+                  if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
+                      // Add listener for when notification is triggered
+                      setTimeout(() => {
+                          try {
+                              const audio = new Audio('adhan.mp3');
+                              audio.volume = 0.7;
+                              audio.play().catch(error => console.error('Error playing adhan in test:', error));
+                          } catch (error) {
+                              console.error('Error playing adhan sound:', error);
+                          }
+                      }, 10000); // Play adhan when notification should trigger
+                  }
+              } else {
+                  const errorMessage = currentLang === 'ar' 
+                      ? 'فشل في جدولة إشعار الصلاة التجريبي'
+                      : 'Failed to schedule test prayer notification';
+                  showToast(errorMessage, 'error');
+              }
+          } catch (error) {
+              console.error('Error testing prayer notification:', error);
+              const errorMessage = currentLang === 'ar' 
+                  ? 'حدث خطأ أثناء اختبار إشعار الصلاة'
+                  : 'Error occurred while testing prayer notification';
+              showToast(errorMessage, 'error');
+          }
       }
 
       // Add these functions to handle the tutorial
