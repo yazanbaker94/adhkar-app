@@ -31,6 +31,25 @@
         }
         window.Capacitor.Plugins.Geolocation = Geolocation;
         window.Capacitor.Plugins.LocalNotifications = LocalNotifications;
+        
+        // Add notification listener for playing adhan sound
+        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
+            window.Capacitor.Plugins.LocalNotifications.addListener('localNotificationReceived', (notification) => {
+                console.log('Notification received:', notification);
+                // Play adhan sound when prayer notification is received
+                if (notification.extra && notification.extra.prayerName && 
+                    (notification.extra.prayerName.includes('Test') || 
+                     ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].includes(notification.extra.prayerName))) {
+                    try {
+                        const audio = new Audio('adhan.mp3');
+                        audio.volume = 0.7;
+                        audio.play().catch(error => console.error('Error playing adhan:', error));
+                    } catch (error) {
+                        console.error('Error playing adhan sound:', error);
+                    }
+                }
+            });
+        }
     </script>
     <script>
         // Configure Tailwind dark mode
@@ -1189,6 +1208,34 @@
                                     <input type="checkbox" id="timeFormatToggle" class="sr-only peer">
                                     <div class="w-8 h-5 sm:w-10 sm:h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-purple-300/50 dark:peer-focus:ring-purple-800/50 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 sm:after:h-5 sm:after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-gradient-to-r peer-checked:from-purple-500 peer-checked:to-pink-600 shadow-inner"></div>
                                 </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Test Notification Button -->
+                <div class="mb-4">
+                    <div class="p-3 bg-gradient-to-r from-orange-50/70 to-red-50/70 dark:from-orange-900/30 dark:to-red-900/30 backdrop-blur-sm rounded-lg border border-orange-200/50 dark:border-orange-700/50">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-vial text-white text-xs"></i>
+                                </div>
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300" id="testNotificationLabel">اختبار الإشعارات</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <button id="testNotificationBtn" onclick="testPrayerNotification()" class="px-3 py-1.5 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white text-xs rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
+                                    <i class="fas fa-bell text-xs mr-1"></i>
+                                    <span id="testNotificationBtnText">اختبار الآن</span>
+                                </button>
+                                <button id="testPrayerBtn" onclick="testPrayerTime()" class="px-3 py-1.5 bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white text-xs rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
+                                    <i class="fas fa-mosque text-xs mr-1"></i>
+                                    <span id="testPrayerBtnText">اختبار الصلاة</span>
+                                </button>
+                                <button id="toggleRandomNotificationBtn" onclick="toggleRandomNotifications()" class="px-3 py-1.5 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white text-xs rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
+                                    <i class="fas fa-random text-xs mr-1"></i>
+                                    <span id="toggleRandomNotificationBtnText">تفعيل العشوائي</span>
+                                </button>
                             </div>
                         </div>
                     </div>
