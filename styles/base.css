@@ -1,0 +1,273 @@
+/* Base styles, transitions, and utility classes */
+
+.buttonActive {
+    color: #f39c12; /* Example color (golden/yellow) */
+    transform: scale(1.2); /* Slightly enlarge the element */
+    transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+/* Dark mode transitions - optimized */
+* {
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+/* Dark mode specific styles */
+.dark .toast {
+    background: rgba(0, 0, 0, 0.9);
+}
+
+.dark .toast.success {
+    background: rgba(34, 197, 94, 0.9);
+}
+
+.dark .toast.info {
+    background: rgba(59, 130, 246, 0.9);
+}
+
+/* Dark mode for select elements */
+.dark select {
+    background-color: #1f2937;
+    color: #f3f4f6;
+    border-color: #374151;
+}
+
+.dark select option {
+    background-color: #1f2937;
+    color: #f3f4f6;
+}
+
+/* Dark mode for buttons */
+.dark button:not(.bg-blue-500):not(.bg-green-500):not(#langToggle):not(#btnBack):not(.ayah-play-btn):not(#closeTafsirModal):not(#darkModeToggle):not(#closeTranslationModal):not(#closeSurahMenu):not(#surahMenuBtn):not(#settingsBtn):not(#closeSettingsBtn):not(#currentFontSize):not(#decreaseBtn):not(#increaseBtn):not(#btnReadingMode) {
+    background-color: #374151;
+    color: #f3f4f6;
+}
+
+.dark button:hover:not(.bg-blue-500):not(.bg-green-500):not(#langToggle):not(#btnBack):not(.ayah-play-btn):not(#ayahMenuPlay):not(#ayahMenuTranslation):not(#ayahMenuTafsir):not(#ayahMenuBookmark):not(#closeTafsirModal):not(#darkModeToggle):not(#closeTranslationModal):not(#closeSurahMenu):not(#surahMenuBtn):not(#closeSettingsBtn):not(#currentFontSize):not(#btnReadingMode){
+    background-color: #4b5563;
+}
+
+/* Dark mode for cards */
+.dark .bg-white {
+    background-color: #1f2937;
+}
+
+/* Dark mode for text */
+.dark .text-gray-600 {
+    color: #d1d5db;
+}
+
+.dark .text-gray-500 {
+    color: #9ca3af;
+}
+
+/* Dark mode for borders */
+.dark .border-gray-200 {
+    border-color: #374151;
+}
+
+/* Dark mode for hover states */
+.dark .hover\:bg-gray-100:hover {
+    background-color: #374151;
+}
+
+/* Dark mode for shadows */
+.dark .shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+/* General UI Element Styles */
+.no-select {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.clicked {
+    transform: scale(1.03);
+    opacity: 0.95;
+    transition: transform 0.15s ease-out, opacity 0.15s ease-out;
+}
+
+/* LTR Text Styling */
+.ltr-text {
+    direction: ltr !important;
+    text-align: left !important;
+    unicode-bidi: embed;
+}
+
+/* When main language is English, Arabic text should be RTL */
+[dir="ltr"] .arabic-text {
+    direction: rtl !important;
+    text-align: right !important;
+    unicode-bidi: embed;
+}
+
+/* Islamic Pattern Background */
+.islamic-pattern {
+    position: relative;
+    background-image: 
+        radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(139, 69, 19, 0.03) 0%, transparent 50%);
+}
+
+.islamic-pattern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(59, 130, 246, 0.015) 8px, rgba(59, 130, 246, 0.015) 16px),
+        repeating-linear-gradient(-45deg, transparent, transparent 8px, rgba(139, 69, 19, 0.015) 8px, rgba(139, 69, 19, 0.015) 16px);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Toast Notifications */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.toast.show {
+    opacity: 1;
+}
+
+.toast i {
+    font-size: 1.2em;
+}
+
+/* Settings Menu Overlay */
+.settings-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 40;
+}
+
+/* Font Definitions */
+@font-face {
+    font-family: 'KFGQPC Uthmanic Script HAFS';
+    src: url('https://cdn.jsdelivr.net/gh/quran/quran.com-frontend@master/static/fonts/KFGQPC-Uthmanic-Script-HAFS.woff2') format('woff2'),
+         url('https://cdn.jsdelivr.net/gh/quran/quran.com-frontend@master/static/fonts/KFGQPC-Uthmanic-Script-HAFS.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'KFGQPC Uthman Taha Naskh';
+    src: url('../fonts/UtmanTahaNaskh.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'AlMushafQuran';
+    src: url('../fonts/AlMushafQuran.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Quran.com exact font - UthmanicHafs1 Ver18 */
+@font-face {
+    font-family: 'Quran.com Font';
+    src: url('../fonts/UthmanicHafs1Ver18.ttf?v=3') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Quran.com Font';
+    src: url('../fonts/UthmanicHafs1Ver18.ttf?v=3') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Local font fallback */
+@font-face {
+    font-family: 'Uthmani Local';
+    src: url('../fonts/UtmanTahaNaskh.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Font Family Options */
+.font-quran-original {
+    font-family: 'UthmanicHafs1Ver18', 'Quran.com Font', Arial, sans-serif;
+}
+
+.font-utman-taha {
+    font-family: 'KFGQPC Uthman Taha Naskh', 'UtmanTahaNaskh', Arial, sans-serif;
+}
+
+.font-al-mushaf {
+    font-family: 'AlMushafQuran', Arial, sans-serif;
+}
+
+.font-system-arabic {
+    font-family: Arial, Tahoma, 'Segoe UI', sans-serif;
+}
+
+.quran-uthmani-font {
+    font-family: 'Quran.com Font', Arial, sans-serif;
+    font-size: 2rem;
+    line-height: 2.5rem;
+    letter-spacing: 0.01em;
+    font-weight: bold;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* General Fade transitions */
+.fade-enter {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s ease;
+}
+.fade-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+}
+.fade-leave {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.4s ease;
+}
+.fade-leave-active {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+/* Improved container for better reading flow */
+.quran-reading-container {
+    max-width: 1024px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+/* Ensure page numbers and UI elements don't inherit Quran font */
+.page-header, .page-header *, .text-blue-700, .text-blue-300 {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+} 
