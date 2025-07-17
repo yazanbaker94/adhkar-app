@@ -1,3 +1,31 @@
+/* iOS PWA Viewport Height Fix */
+:root {
+    --vh: 1vh;
+}
+
+/* iOS PWA specific styles */
+.standalone {
+    /* Hide Safari UI elements when in standalone mode */
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.standalone body {
+    /* Prevent bounce scrolling on iOS */
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.standalone main {
+    /* Enable scrolling within the main content area */
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
 /* Base styles, transitions, and utility classes */
 
 .buttonActive {
