@@ -80,11 +80,7 @@
 <body class="bg-gradient-to-b from-gray-100 to-white dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-150 overflow-x-hidden">
     <!-- Remove debug panel -->
     
-    <!-- PWA Status Indicator (for debugging) -->
-    <div id="pwaStatus" class="fixed top-0 left-0 right-0 bg-blue-500 text-white text-xs text-center py-1 z-50 hidden">
-        <span id="pwaStatusText">PWA Status</span>
-        <button onclick="testScroll()" class="ml-2 bg-white text-blue-500 px-2 py-1 rounded text-xs">Test Scroll</button>
-    </div>
+
 
     <!-- Header Section -->
     <header class="bg-gradient-to-r from-white via-gray-50 to-white dark:from-gray-800 dark:via-gray-850 dark:to-gray-800 shadow-lg border-b border-gray-100 dark:border-gray-700">
@@ -138,11 +134,12 @@
 
     <!-- Ayah Context Menu Popover -->
     <div id="ayahMenuPopover" style="display:none; position:absolute; z-index:10000;" class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-2 animate-general-fade-in">
-      <div class="flex gap-1">
+      <div class="flex gap-1 justify-center">
         <button id="ayahMenuPlay" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors" title="Play Ayah"><i class="fas fa-play"></i></button>
         <button id="ayahMenuTranslation" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors" title="Show Translation"><i class="fas fa-language"></i></button>
         <button id="ayahMenuTafsir" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors" title="Show Tafsir"><i class="fas fa-book-open"></i></button>
         <button id="ayahMenuBookmark" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors" title="Bookmark"><i class="far fa-bookmark"></i></button>
+        <button id="ayahMenuShare" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors" title="Share Verse"><i class="fas fa-share-alt"></i></button>
       </div>
     </div>
     <!-- Tutorial Modal -->
@@ -502,7 +499,7 @@
                             </div>
                             <h3 class="text-lg font-semibold text-gray-800 dark:text-white" id="locationTitle">الموقع الحالي</h3>
                         </div>
-                        <button id="refreshLocationBtn" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white p-2.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
+                        <button id="refreshLocationBtn" class="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 p-2.5 rounded-lg transition-colors duration-200">
                             <i class="fas fa-sync-alt text-sm"></i>
                         </button>
                     </div>
@@ -1154,130 +1151,358 @@
         <!-- Prayer Times Tab Content -->
         <div id="prayerContent" class="tab-content w-full max-w-lg p-3">
             <div class="bg-white/90 dark:bg-gray-800/90 rounded-2xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-4 islamic-pattern">
-                <!-- Compact Header Section -->
-                <div class="text-center mb-4">
-                    <div class="w-12 h-12 mx-auto mb-2 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center shadow-lg">
-                        <i class="fas fa-mosque text-lg text-white"></i>
-                    </div>
-                    <h2 class="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-1" id="prayerTitle">أوقات الصلاة</h2>
-                    <div class="flex items-center justify-center gap-2">
-                        <p id="azan-location" class="text-gray-600 dark:text-gray-400 text-xs">جاري تحديد الموقع...</p>
-                        <button id="requestLocationBtn" class="hidden bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-2 py-1 rounded-md text-xs transition-all duration-200 shadow-sm hover:shadow-md">
-                            <i class="fas fa-location-arrow text-xs mr-1"></i>
-                            <span id="requestLocationText">تحديد الموقع</span>
+                <!-- Compact Header Section with Settings Button -->
+                <div class="relative mb-4">
+                    <!-- Settings Button - Top Right Corner -->
+                    <div class="absolute top-0 right-0 z-10">
+                        <button onclick="togglePrayerSettings()" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 p-2 rounded-lg transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700" title="Prayer Settings - إعدادات الصلاة">
+                            <i class="fas fa-cog text-sm"></i>
                         </button>
+                    </div>
+                    
+                    <!-- Main Header Content -->
+                    <div class="text-center">
+                        <div class="w-12 h-12 mx-auto mb-2 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center shadow-lg">
+                            <i class="fas fa-mosque text-lg text-white"></i>
+                        </div>
+                        <h2 class="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-1" id="prayerTitle">أوقات الصلاة</h2>
+                        <div class="flex items-center justify-center gap-2">
+                            <p id="azan-location" class="text-gray-600 dark:text-gray-400 text-xs">جاري تحديد الموقع...</p>
+                            <button id="requestLocationBtn" class="hidden bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-2 py-1 rounded-md text-xs transition-all duration-200 shadow-sm hover:shadow-md">
+                                <i class="fas fa-location-arrow text-xs mr-1"></i>
+                                <span id="requestLocationText">تحديد الموقع</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Settings Cards -->
-                <div class="mb-4">
-                    <!-- Notification and Time Format Toggle Cards on Same Line -->
-                    <div class="grid grid-cols-2 gap-2">
-                        <!-- Notification Toggle Card -->
-                        <div class="p-2 sm:p-3 bg-gradient-to-r from-blue-50/70 to-indigo-50/70 dark:from-blue-900/30 dark:to-indigo-900/30 backdrop-blur-sm rounded-lg border border-blue-200/50 dark:border-blue-700/50">
-                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-                                <div class="flex items-center gap-1 sm:gap-2">
-                                    <div class="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <i class="fas fa-bell text-white text-xs"></i>
-                                    </div>
-                                    <span class="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 leading-tight" id="notificationLabel">إشعارات أوقات الصلاة</span>
-                                </div>
-                                <label class="relative inline-flex items-center cursor-pointer self-center sm:self-auto">
-                                    <input type="checkbox" id="notificationToggle" class="sr-only peer">
-                                    <div class="w-8 h-5 sm:w-10 sm:h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300/50 dark:peer-focus:ring-blue-800/50 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 sm:after:h-5 sm:after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-indigo-600 shadow-inner"></div>
-                                </label>
-                            </div>
-                        </div>
+                <!-- Settings Cards - REMOVED: Now handled in side settings menu -->
 
-                        <!-- Time Format Toggle Card -->
-                        <div class="p-2 sm:p-3 bg-gradient-to-r from-purple-50/70 to-pink-50/70 dark:from-purple-900/30 dark:to-pink-900/30 backdrop-blur-sm rounded-lg border border-purple-200/50 dark:border-purple-700/50">
-                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-                                <div class="flex items-center gap-1 sm:gap-2">
-                                    <div class="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <i class="fas fa-clock text-white text-xs"></i>
-                                    </div>
-                                    <span class="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 leading-tight" id="timeFormatLabel">تنسيق الوقت 24 ساعة</span>
-                                </div>
-                                <label class="relative inline-flex items-center cursor-pointer self-center sm:self-auto">
-                                    <input type="checkbox" id="timeFormatToggle" class="sr-only peer">
-                                    <div class="w-8 h-5 sm:w-10 sm:h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-purple-300/50 dark:peer-focus:ring-purple-800/50 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 sm:after:h-5 sm:after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-gradient-to-r peer-checked:from-purple-500 peer-checked:to-pink-600 shadow-inner"></div>
-                                </label>
-                            </div>
-                        </div>
+                <!-- Countdown to Next Prayer -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 backdrop-blur-sm p-4 rounded-lg border border-blue-200/50 dark:border-blue-700/50 shadow-sm mb-4">
+                    <div class="text-center">
+                        <div class="text-sm text-gray-600 dark:text-gray-400 mb-1" id="nextPrayerLabel">الوقت المتبقي للصلاة القادمة</div>
+                        <div class="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1" id="countdownDisplay">--:--:--</div>
+                        <div class="text-sm text-gray-700 dark:text-gray-300" id="nextPrayerName">--</div>
                     </div>
                 </div>
 
                 <!-- Compact Prayer Times List -->
                 <div class="space-y-2">
-                    <div class="bg-gradient-to-r from-white/60 to-gray-50/60 dark:from-gray-700/60 dark:to-gray-800/60 backdrop-blur-sm p-3 rounded-lg border border-gray-200/50 dark:border-gray-600/50 shadow-sm hover:shadow-md dark:hover:shadow-white/5 transition-all duration-200" id="azan-fajr">
+                    <div class="bg-gradient-to-r from-white/60 to-gray-50/60 dark:from-gray-700/60 dark:to-gray-800/60 backdrop-blur-sm p-3 rounded-lg border border-gray-200/50 dark:border-gray-600/50 shadow-sm hover:shadow-md dark:hover:shadow-white/5 transition-all duration-200 relative" id="azan-fajr">
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-2">
                                 <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center">
                                     <i class="fas fa-moon text-white text-xs"></i>
                                 </div>
-                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">الفجر</span>
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">الفجر</span>
+                                    <span class="text-xs text-blue-500 dark:text-blue-400 coming-prayer-indicator" id="coming-prayer-fajr" style="display: none;">قادمة</span>
+                                </div>
                             </div>
                             <span class="font-bold text-base text-gray-800 dark:text-gray-200">--:--</span>
                         </div>
                     </div>
                     
-                    <div class="bg-gradient-to-r from-white/60 to-gray-50/60 dark:from-gray-700/60 dark:to-gray-800/60 backdrop-blur-sm p-3 rounded-lg border border-gray-200/50 dark:border-gray-600/50 shadow-sm hover:shadow-md dark:hover:shadow-white/5 transition-all duration-200" id="azan-sunrise">
+                    
+                    <div class="bg-gradient-to-r from-white/60 to-gray-50/60 dark:from-gray-700/60 dark:to-gray-800/60 backdrop-blur-sm p-3 rounded-lg border border-gray-200/50 dark:border-gray-600/50 shadow-sm hover:shadow-md dark:hover:shadow-white/5 transition-all duration-200 relative" id="azan-sunrise">
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-2">
                                 <div class="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
                                     <i class="fas fa-sun text-white text-xs"></i>
                                 </div>
-                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">الشروق</span>
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">الشروق</span>
+                                    <span class="text-xs text-blue-500 dark:text-blue-400 coming-prayer-indicator" id="coming-prayer-sunrise" style="display: none;">قادمة</span>
+                                </div>
                             </div>
                             <span class="font-bold text-base text-gray-800 dark:text-gray-200">--:--</span>
                         </div>
                     </div>
                     
-                    <div class="bg-gradient-to-r from-white/60 to-gray-50/60 dark:from-gray-700/60 dark:to-gray-800/60 backdrop-blur-sm p-3 rounded-lg border border-gray-200/50 dark:border-gray-600/50 shadow-sm hover:shadow-md dark:hover:shadow-white/5 transition-all duration-200" id="azan-dhuhr">
+                    <div class="bg-gradient-to-r from-white/60 to-gray-50/60 dark:from-gray-700/60 dark:to-gray-800/60 backdrop-blur-sm p-3 rounded-lg border border-gray-200/50 dark:border-gray-600/50 shadow-sm hover:shadow-md dark:hover:shadow-white/5 transition-all duration-200 relative" id="azan-duha">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-sun text-white text-xs"></i>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">الضحى</span>
+                                    <span class="text-xs text-blue-500 dark:text-blue-400 coming-prayer-indicator" id="coming-prayer-duha" style="display: none;">قادمة</span>
+                                </div>
+                            </div>
+                            <span class="font-bold text-base text-gray-800 dark:text-gray-200">--:--</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-white/60 to-gray-50/60 dark:from-gray-700/60 dark:to-gray-800/60 backdrop-blur-sm p-3 rounded-lg border border-gray-200/50 dark:border-gray-600/50 shadow-sm hover:shadow-md dark:hover:shadow-white/5 transition-all duration-200 relative" id="azan-dhuhr">
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-2">
                                 <div class="w-8 h-8 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full flex items-center justify-center">
                                     <i class="fas fa-sun text-white text-xs"></i>
                                 </div>
-                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">الظهر</span>
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">الظهر</span>
+                                    <span class="text-xs text-blue-500 dark:text-blue-400 coming-prayer-indicator" id="coming-prayer-dhuhr" style="display: none;">قادمة</span>
+                                </div>
                             </div>
                             <span class="font-bold text-base text-gray-800 dark:text-gray-200">--:--</span>
                         </div>
                     </div>
                     
-                    <div class="bg-gradient-to-r from-white/60 to-gray-50/60 dark:from-gray-700/60 dark:to-gray-800/60 backdrop-blur-sm p-3 rounded-lg border border-gray-200/50 dark:border-gray-600/50 shadow-sm hover:shadow-md dark:hover:shadow-white/5 transition-all duration-200" id="azan-asr">
+                    <div class="bg-gradient-to-r from-white/60 to-gray-50/60 dark:from-gray-700/60 dark:to-gray-800/60 backdrop-blur-sm p-3 rounded-lg border border-gray-200/50 dark:border-gray-600/50 shadow-sm hover:shadow-md dark:hover:shadow-white/5 transition-all duration-200 relative" id="azan-asr">
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-2">
                                 <div class="w-8 h-8 bg-gradient-to-r from-orange-400 to-red-500 rounded-full flex items-center justify-center">
                                     <i class="fas fa-cloud-sun text-white text-xs"></i>
                                 </div>
-                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">العصر</span>
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">العصر</span>
+                                    <span class="text-xs text-blue-500 dark:text-blue-400 coming-prayer-indicator" id="coming-prayer-asr" style="display: none;">قادمة</span>
+                                </div>
                             </div>
                             <span class="font-bold text-base text-gray-800 dark:text-gray-200">--:--</span>
                         </div>
                     </div>
                     
-                    <div class="bg-gradient-to-r from-white/60 to-gray-50/60 dark:from-gray-700/60 dark:to-gray-800/60 backdrop-blur-sm p-3 rounded-lg border border-gray-200/50 dark:border-gray-600/50 shadow-sm hover:shadow-md dark:hover:shadow-white/5 transition-all duration-200" id="azan-maghrib">
+                    <div class="bg-gradient-to-r from-white/60 to-gray-50/60 dark:from-gray-700/60 dark:to-gray-800/60 backdrop-blur-sm p-3 rounded-lg border border-gray-200/50 dark:border-gray-600/50 shadow-sm hover:shadow-md dark:hover:shadow-white/5 transition-all duration-200 relative" id="azan-maghrib">
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-2">
                                 <div class="w-8 h-8 bg-gradient-to-r from-red-500 to-pink-600 rounded-full flex items-center justify-center">
                                     <i class="fas fa-moon text-white text-xs"></i>
                                 </div>
-                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">المغرب</span>
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">المغرب</span>
+                                    <span class="text-xs text-blue-500 dark:text-blue-400 coming-prayer-indicator" id="coming-prayer-maghrib" style="display: none;">قادمة</span>
+                                </div>
                             </div>
                             <span class="font-bold text-base text-gray-800 dark:text-gray-200">--:--</span>
                         </div>
                     </div>
                     
-                    <div class="bg-gradient-to-r from-white/60 to-gray-50/60 dark:from-gray-700/60 dark:to-gray-800/60 backdrop-blur-sm p-3 rounded-lg border border-gray-200/50 dark:border-gray-600/50 shadow-sm hover:shadow-md dark:hover:shadow-white/5 transition-all duration-200" id="azan-isha">
+                    <div class="bg-gradient-to-r from-white/60 to-gray-50/60 dark:from-gray-700/60 dark:to-gray-800/60 backdrop-blur-sm p-3 rounded-lg border border-gray-200/50 dark:border-gray-600/50 shadow-sm hover:shadow-md dark:hover:shadow-white/5 transition-all duration-200 relative" id="azan-isha">
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-2">
                                 <div class="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
                                     <i class="fas fa-star text-white text-xs"></i>
                                 </div>
-                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">العشاء</span>
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">العشاء</span>
+                                    <span class="text-xs text-blue-500 dark:text-blue-400 coming-prayer-indicator" id="coming-prayer-isha" style="display: none;">قادمة</span>
+                                </div>
                             </div>
                             <span class="font-bold text-base text-gray-800 dark:text-gray-200">--:--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Prayer Settings Side Menu -->
+        <div id="prayerSettingsMenu" class="fixed inset-y-0 right-0 w-80 bg-white/95 dark:bg-gray-900/95 shadow-2xl border-l border-white/30 dark:border-gray-600/50 transform translate-x-full transition-transform duration-200 ease-in-out z-50 hidden" style="background-image: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 40% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%);">
+            <div class="flex flex-col h-full">
+                <!-- Header -->
+                <div class="flex items-center justify-between p-4 border-b border-white/20 dark:border-gray-600/30 bg-gradient-to-r from-transparent via-white/10 to-transparent" style="min-height: 60px;">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center shadow-lg">
+                            <i class="fas fa-cog text-white text-lg"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 dark:text-white flex-1 min-w-0 pr-4" id="prayerSettingsTitle" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">إعدادات الصلاة</h3>
+                    </div>
+                    <button id="closePrayerSettingsBtn" onclick="togglePrayerSettings()" class="w-10 h-10 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-lg flex-shrink-0" style="min-width: 44px; min-height: 44px;">
+                        <i class="fas fa-times text-sm"></i>
+                    </button>
+                </div>
+
+                <!-- Settings Content -->
+                <div class="flex-1 p-4 space-y-6 overflow-y-auto">
+                    <!-- Notification Settings -->
+                    <div class="bg-white/70 dark:bg-gray-700/70 backdrop-blur-sm rounded-xl p-4 border border-white/30 dark:border-gray-600/50 shadow-md">
+                        <h4 class="text-md font-medium mb-3 flex items-center gap-2">
+                            <div class="w-8 h-8 bg-gradient-to-r from-red-500 to-pink-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-bell text-white text-sm"></i>
+                            </div>
+                            <span id="notificationSettingsTitle" class="font-bold text-gray-800 dark:text-gray-200">إشعارات أوقات الصلاة</span>
+                        </h4>
+                        <div class="space-y-3">
+                            <div class="bg-gradient-to-r from-blue-50/60 to-indigo-50/60 dark:from-blue-900/20 dark:to-indigo-900/20 backdrop-blur-sm border border-blue-200/50 dark:border-blue-700/50 rounded-lg p-3">
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input type="checkbox" id="prayerNotificationToggle" class="w-4 h-4 text-blue-600 bg-white/80 border-blue-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-blue-600">
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-800 dark:text-gray-200" id="prayerNotificationLabel">تفعيل إشعارات أوقات الصلاة</div>
+                                        <div class="text-xs text-gray-600 dark:text-gray-400" id="prayerNotificationDesc">استقبل إشعارات قبل وقت الصلاة</div>
+                                    </div>
+                                </label>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300" id="azanSoundLabel">صوت الأذان</label>
+                                <select id="azanSoundSelect" class="w-full p-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 shadow-sm" style="background-image: none;">
+                                    <option value="adhan.mp3" class="text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-800">الأذان الأساسي - Default Adhan</option>
+                                    <option value="adhan_makkah.mp3" class="text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-800">أذان مكة المكرمة - Makkah Adhan</option>
+                                    <option value="adhan_madinah.mp3" class="text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-800">أذان المدينة المنورة - Madinah Adhan</option>
+                                    <option value="adhan_egypt.mp3" class="text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-800">أذان مصر - Egypt Adhan</option>
+                                    <option value="adhan_morocco.mp3" class="text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-800">أذان المغرب - Morocco Adhan</option>
+                                    <option value="adhan_turkey.mp3" class="text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-800">أذان تركيا - Turkey Adhan</option>
+                                </select>
+                                
+                                <!-- Custom Adhan Upload Section -->
+                                <div class="mt-3 p-3 bg-gradient-to-r from-green-50/60 to-emerald-50/60 dark:from-green-900/20 dark:to-emerald-900/20 backdrop-blur-sm border border-green-200/50 dark:border-green-700/50 rounded-lg">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <i class="fas fa-upload text-green-600 dark:text-green-400 text-sm"></i>
+                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300" id="customAdhanLabel">رفع أذان مخصص</span>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <input type="file" id="customAdhanInput" accept=".mp3,.wav,.m4a" class="hidden">
+                                        <button onclick="document.getElementById('customAdhanInput').click()" class="w-full px-3 py-2 bg-green-100 hover:bg-green-200 dark:bg-green-800/60 dark:hover:bg-green-700/60 text-green-700 dark:text-green-300 rounded-lg transition-colors duration-200 text-sm">
+                                            <i class="fas fa-plus mr-2"></i>
+                                            <span id="uploadAdhanBtn">اختر ملف صوتي</span>
+                                        </button>
+                                        <div id="customAdhanInfo" class="text-xs text-gray-600 dark:text-gray-400 hidden">
+                                            <div id="customAdhanName" class="font-medium"></div>
+                                            <div id="customAdhanSize" class="text-gray-500"></div>
+                                        </div>
+                                        <div id="customAdhanActions" class="flex gap-2 hidden">
+                                            <button onclick="testCustomAdhan()" class="flex-1 px-2 py-1 bg-blue-100 hover:bg-blue-200 dark:bg-blue-800/60 dark:hover:bg-blue-700/60 text-blue-700 dark:text-blue-300 rounded text-xs transition-colors">
+                                                <i class="fas fa-play mr-1"></i>
+                                                <span id="testAdhanBtn">اختبار</span>
+                                            </button>
+                                            <button onclick="removeCustomAdhan()" class="px-2 py-1 bg-red-100 hover:bg-red-200 dark:bg-red-800/60 dark:hover:bg-red-700/60 text-red-700 dark:text-red-300 rounded text-xs transition-colors">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300" id="notificationTimeLabel">أوقات الإشعارات</label>
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input type="checkbox" id="notificationAtTime" class="w-4 h-4 text-blue-600 bg-white/80 border-blue-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-blue-600">
+                                        <span class="text-sm text-gray-800 dark:text-gray-200" id="notificationAtTimeLabel">في وقت الصلاة</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input type="checkbox" id="notification5min" class="w-4 h-4 text-blue-600 bg-white/80 border-blue-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-blue-600">
+                                        <span class="text-sm text-gray-800 dark:text-gray-200" id="notification5minLabel">5 دقائق قبل</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input type="checkbox" id="notification10min" class="w-4 h-4 text-blue-600 bg-white/80 border-blue-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-blue-600">
+                                        <span class="text-sm text-gray-800 dark:text-gray-200" id="notification10minLabel">10 دقائق قبل</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input type="checkbox" id="notification15min" class="w-4 h-4 text-blue-600 bg-white/80 border-blue-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-blue-600">
+                                        <span class="text-sm text-gray-800 dark:text-gray-200" id="notification15minLabel">15 دقيقة قبل</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input type="checkbox" id="notification30min" class="w-4 h-4 text-blue-600 bg-white/80 border-blue-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-blue-600">
+                                        <span class="text-sm text-gray-800 dark:text-gray-200" id="notification30minLabel">30 دقيقة قبل</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prayer Calculation Method Settings -->
+                    <div class="bg-white/70 dark:bg-gray-700/70 backdrop-blur-sm rounded-xl p-4 border border-white/30 dark:border-gray-600/50 shadow-md">
+                        <h4 class="text-md font-medium mb-3 flex items-center gap-2">
+                            <div class="w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-calculator text-white text-sm"></i>
+                            </div>
+                            <span id="calculationMethodTitle" class="font-bold text-gray-800 dark:text-gray-200">طريقة حساب أوقات الصلاة</span>
+                        </h4>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300" id="asrCalculationLabel">حساب العصر</label>
+                                <select id="asrCalculationSelect" class="w-full p-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 shadow-sm" style="background-image: none;">
+                                    <option value="shafi" class="text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-800">شافعي - Shafi'i</option>
+                                    <option value="hanafi" class="text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-800">حنفي - Hanafi</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Manual Prayer Time Offsets -->
+                    <div class="bg-white/70 dark:bg-gray-700/70 backdrop-blur-sm rounded-xl p-4 border border-white/30 dark:border-gray-600/50 shadow-md">
+                        <h4 class="text-md font-medium mb-3 flex items-center gap-2">
+                            <div class="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-sliders-h text-white text-sm"></i>
+                            </div>
+                            <span id="prayerOffsetsTitle" class="font-bold text-gray-800 dark:text-gray-200">تعديل أوقات الصلاة</span>
+                        </h4>
+                        <div class="space-y-3">
+                            <div class="text-xs text-gray-600 dark:text-gray-400 mb-3" id="prayerOffsetsDesc">إضافة أو طرح دقائق من أوقات الصلاة المحسوبة</div>
+                            
+                            <!-- Fajr Offset -->
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm text-gray-700 dark:text-gray-300" id="fajrOffsetLabel">الفجر</label>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="adjustPrayerOffset('fajr', -1)" class="w-8 h-8 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 rounded-lg transition-colors">-</button>
+                                    <span id="fajrOffset" class="w-12 text-center text-sm font-medium text-gray-800 dark:text-gray-200">+0</span>
+                                    <button onclick="adjustPrayerOffset('fajr', 1)" class="w-8 h-8 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 rounded-lg transition-colors">+</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Dhuhr Offset -->
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm text-gray-700 dark:text-gray-300" id="dhuhrOffsetLabel">الظهر</label>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="adjustPrayerOffset('dhuhr', -1)" class="w-8 h-8 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 rounded-lg transition-colors">-</button>
+                                    <span id="dhuhrOffset" class="w-12 text-center text-sm font-medium text-gray-800 dark:text-gray-200">+0</span>
+                                    <button onclick="adjustPrayerOffset('dhuhr', 1)" class="w-8 h-8 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 rounded-lg transition-colors">+</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Asr Offset -->
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm text-gray-700 dark:text-gray-300" id="asrOffsetLabel">العصر</label>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="adjustPrayerOffset('asr', -1)" class="w-8 h-8 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 rounded-lg transition-colors">-</button>
+                                    <span id="asrOffset" class="w-12 text-center text-sm font-medium text-gray-800 dark:text-gray-200">+0</span>
+                                    <button onclick="adjustPrayerOffset('asr', 1)" class="w-8 h-8 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 rounded-lg transition-colors">+</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Maghrib Offset -->
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm text-gray-700 dark:text-gray-300" id="maghribOffsetLabel">المغرب</label>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="adjustPrayerOffset('maghrib', -1)" class="w-8 h-8 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 rounded-lg transition-colors">-</button>
+                                    <span id="maghribOffset" class="w-12 text-center text-sm font-medium text-gray-800 dark:text-gray-200">+0</span>
+                                    <button onclick="adjustPrayerOffset('maghrib', 1)" class="w-8 h-8 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 rounded-lg transition-colors">+</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Isha Offset -->
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm text-gray-700 dark:text-gray-300" id="ishaOffsetLabel">العشاء</label>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="adjustPrayerOffset('isha', -1)" class="w-8 h-8 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 rounded-lg transition-colors">-</button>
+                                    <span id="ishaOffset" class="w-12 text-center text-sm font-medium text-gray-800 dark:text-gray-200">+0</span>
+                                    <button onclick="adjustPrayerOffset('isha', 1)" class="w-8 h-8 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 rounded-lg transition-colors">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Time Format Settings -->
+                    <div class="bg-white/70 dark:bg-gray-700/70 backdrop-blur-sm rounded-xl p-4 border border-white/30 dark:border-gray-600/50 shadow-md">
+                        <h4 class="text-md font-medium mb-3 flex items-center gap-2">
+                            <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-clock text-white text-sm"></i>
+                            </div>
+                            <span id="timeFormatSettingsTitle" class="font-bold text-gray-800 dark:text-gray-200">تنسيق الوقت</span>
+                        </h4>
+                        <div class="space-y-3">
+                            <div class="bg-gradient-to-r from-purple-50/60 to-pink-50/60 dark:from-purple-900/20 dark:to-pink-900/20 backdrop-blur-sm border border-purple-200/50 dark:border-purple-700/50 rounded-lg p-3">
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input type="checkbox" id="timeFormatToggle" class="w-4 h-4 text-purple-600 bg-white/80 border-purple-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-purple-600">
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-800 dark:text-gray-200" id="timeFormatLabel">تنسيق 24 ساعة</div>
+                                        <div class="text-xs text-gray-600 dark:text-gray-400" id="timeFormatDesc">عرض الوقت بتنسيق 24 ساعة بدلاً من 12 ساعة</div>
+                                    </div>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1436,7 +1661,7 @@
         <input 
           type="text" 
           id="surahSearchInput" 
-          placeholder="ابحث عن السورة... Search surah..."
+          placeholder=""
           class="w-full px-4 py-3 pl-12 pr-16 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-white/30 dark:border-gray-600/50 rounded-xl focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 dark:focus:ring-emerald-400/50 dark:focus:border-emerald-400/50 text-base text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 shadow-lg transition-all duration-200"
           style="font-size: 16px;"
         >
@@ -1488,7 +1713,6 @@
 
     // iOS PWA specific fixes
     if (window.navigator.standalone) {
-        console.log('App is running in standalone mode (PWA)');
         // App is running in standalone mode (added to home screen)
         document.documentElement.classList.add('standalone');
         
@@ -1505,8 +1729,6 @@
                 e.target.style.fontSize = '';
             }
         });
-    } else {
-        console.log('App is running in browser mode');
     }
 
     // Fix for iOS Safari 100vh issue
@@ -1523,37 +1745,12 @@
         }
         
         document.documentElement.style.setProperty('--vh', `${vh}px`);
-        console.log('Viewport height set to:', vh * 100, 'px');
     }
     
-    // PWA Status Check
-    function checkPWAStatus() {
-        const pwaStatus = document.getElementById('pwaStatus');
-        const pwaStatusText = document.getElementById('pwaStatusText');
-        
-        if (window.navigator.standalone) {
-            pwaStatus.classList.remove('hidden');
-            pwaStatus.classList.add('bg-green-500');
-            pwaStatusText.textContent = '✅ Running as PWA (Standalone Mode)';
-        } else if (window.matchMedia('(display-mode: standalone)').matches) {
-            pwaStatus.classList.remove('hidden');
-            pwaStatus.classList.add('bg-green-500');
-            pwaStatusText.textContent = '✅ Running as PWA (Display Mode)';
-        } else {
-            pwaStatus.classList.remove('hidden');
-            pwaStatus.classList.add('bg-yellow-500');
-            pwaStatusText.textContent = '🌐 Running in Browser Mode';
-        }
-        
-        // Hide status after 5 seconds
-        setTimeout(() => {
-            pwaStatus.classList.add('hidden');
-        }, 5000);
-    }
+
     
     window.addEventListener('load', function() {
         setVH();
-        checkPWAStatus();
     });
     window.addEventListener('resize', setVH);
     window.addEventListener('orientationchange', setVH);
@@ -1563,17 +1760,7 @@
         window.visualViewport.addEventListener('resize', setVH);
     }
     
-    // Test scroll function for debugging
-    window.testScroll = function() {
-        const main = document.querySelector('main');
-        if (main) {
-            main.scrollTo({
-                top: 100,
-                behavior: 'smooth'
-            });
-            console.log('Scroll test executed');
-        }
-    };
+
 </script>
 
 <script src="js/main.js"></script>
