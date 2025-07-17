@@ -1,0 +1,314 @@
+/* Responsive design and media queries */
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .reading-progress-container {
+        height: 3px;
+    }
+
+    .mobile-nav-buttons {
+        display: flex;
+    }
+
+    /* Prevent double-tap zoom on mobile */
+    #tasbihContent {
+        touch-action: manipulation;
+    }
+    
+    #tasbihContent button[onclick="incrementTasbih()"] {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+    }
+
+    /* Mobile Layout Fixes */
+    /* Fix header and navigation */
+    header {
+        padding: 0.001rem 0.05rem;
+        font-size: 0.5rem;
+    }
+
+    /* Fix tab navigation */
+    .tab {
+        padding: 8px 12px;
+        font-size: 0.8rem;  
+        white-space: nowrap;
+        margin: 0 1px;
+    }
+    
+    .tab:hover, .tab.active {
+        transform: none; /* Disable transform on mobile for better performance */
+    }
+
+    /* Fix Quran content layout - but NOT the sticky controls */
+    div#quranContent.tab-content .flex.justify-between:not(.quran-controls-sticky) {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    div#quranContent.tab-content .flex.gap-2:not(.quran-controls-sticky *) {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    /* Fix select dropdowns - completely reset and rebuild */
+    select { 
+        /* Remove ALL native styling */
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        
+        /* Add our custom styling */
+        background-color: #fff !important;
+        border: 1px solid #e5e7eb !important;
+        border-radius: 0.5rem;
+        padding: 0.5rem 0.5rem 0.5rem 2.5rem;
+        font-size: 1rem;
+        width: 100%;
+        text-align: right;
+        direction: rtl;
+        color: #000 !important;
+        
+        /* Add our custom arrow */
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+        background-repeat: no-repeat !important;
+        background-position: left 0.5rem center !important;
+        background-size: 1.5em 1.5em !important;
+    }
+    
+    /* Remove native dropdown arrows completely */
+    select {
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+    }
+    
+    select::-ms-expand {
+        display: none !important;
+    }
+    
+    /* Additional browser-specific arrow removal */
+    select::-webkit-inner-spin-button,
+    select::-webkit-outer-spin-button {
+        -webkit-appearance: none !important;
+        margin: 0 !important;
+    }
+    
+    /* English dropdowns should use LTR */
+    select[data-lang="en"], select.ltr {
+        background-position: right 0.5rem center;
+        padding-left: 0.5rem;
+        padding-right: 2.5rem;
+        text-align: left;
+        direction: ltr;
+    }
+
+    /* Fix buttons layout */
+    div#quranContent.tab-content .flex.justify-between.mt-6 { 
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    div#quranContent.tab-content .flex.justify-between.mt-6 > * {
+        width: 100%;
+    }
+
+    /* Fix reading mode buttons - but preserve our horizontal layout */
+    .quran-controls-sticky .flex.gap-2:not(.flex.items-center.gap-1) {
+        justify-content: center;
+        width: 100%;
+    }
+
+    /* Fix translation toggle */
+    #toggleTranslation, #toggleBookmark {
+        padding: 0.5rem;
+    }
+
+    /* Fix surah select container */
+    #surahSelect, #translationSelect {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Mobile responsive for horizontal header */
+    .quran-controls-sticky {
+        margin: -1rem -1rem 1rem -1rem;
+        padding: 0.5rem 0.75rem;
+        gap: 0.25rem;
+        flex-wrap: nowrap !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+    
+    .quran-controls-sticky > div {
+        flex-shrink: 0;
+        min-width: 0;
+    }
+    
+    /* Force horizontal layout on mobile */
+    .quran-controls-sticky.flex.items-center.justify-between {
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+    }
+    
+    /* Left section - controls */
+    .quran-controls-sticky > div:first-child {
+        flex: 0 0 auto;
+        max-width: 25%;
+    }
+    
+    /* Center section - page/juz indicator */
+    .quran-controls-sticky > div:nth-child(2) {
+        flex: 0 1 auto;
+        text-align: center;
+    }
+    
+    /* Right section - surah selector */
+    .quran-controls-sticky > div:last-child {
+        flex: 1 1 auto;
+        min-width: 120px;
+        max-width: 60%;
+    }
+    
+    .quran-controls-sticky #selectedSurahText {
+        max-width: 140px;
+        min-width: 80px;
+        font-size: 0.7rem;
+    }
+    
+    .quran-controls-sticky #surahMenuBtn {
+        min-width: 100px;
+        padding: 0.3rem 0.5rem !important;
+    }
+    
+    .quran-controls-sticky button {
+        padding: 0.3rem !important;
+        font-size: 0.7rem;
+    }
+
+    .quran-controls-sticky .flex.items-center.gap-1 {
+        gap: 0.125rem;
+    }
+
+    .quran-controls-sticky .flex.items-center.gap-1 button {
+        padding: 0.3rem 0.4rem !important;
+    }
+    
+    /* Fix Quran settings sidebar on mobile */
+    #quranSettingsMenu {
+        width: 100vw !important;
+        right: 0 !important;
+        left: auto !important;
+    }
+    
+    #quranSettingsMenu .flex.items-center.justify-between {
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        padding: 1rem !important;
+        gap: 1rem !important;
+    }
+    
+    #quranSettingsMenu h3 {
+        font-size: 0.9rem !important;
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        margin: 0 !important;
+    }
+    
+    #quranSettingsMenu .flex.items-center.justify-between button {
+        flex: 0 0 auto !important;
+        min-width: 44px !important;
+        min-height: 44px !important;
+        padding: 0.5rem !important;
+        margin: 0 !important;
+    }
+}
+
+/* iOS-specific fixes */
+@supports (-webkit-touch-callout: none) {
+    select {
+        -webkit-appearance: none !important;
+    }
+
+    /* Ensure the select is clickable */
+    select:active,
+    select:focus {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Fix for iOS select text alignment */
+    select option {
+        text-align: right;
+        direction: rtl;
+    }
+}
+
+/* Android-specific fixes */
+@supports not (-webkit-touch-callout: none) {
+    select {
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        background-color: #fff !important;
+        border: 1px solid #e5e7eb !important;
+        border-radius: 0.5rem;
+        padding: 0.5rem 0.5rem 0.5rem 2.5rem; /* RTL: left padding for arrow */
+        font-size: 1rem;
+        text-align: right;
+        direction: rtl;
+        color: #000 !important;
+        /* Background image is inherited from general rule */
+    }
+    
+    /* English dropdowns on Android */
+    select[data-lang="en"], select.ltr {
+        padding: 0.5rem 2.5rem 0.5rem 0.5rem !important; /* LTR: right padding for arrow */
+        background-position: right 0.5rem center !important; /* LTR: arrow on right */
+        text-align: left;
+        direction: ltr;
+    }
+}
+
+/* Better spacing for desktop reading */
+@media (min-width: 768px) {
+    .text-2xl.leading-loose {
+        line-height: 2.4 !important;
+    }
+
+    .quran-reading-container {
+        padding: 3rem 2rem;
+    }
+} 
+
+/* Mobile Prayer Time Interactions */
+@media (max-width: 768px) {
+    #prayerContent .prayer-time-item:active {
+        background: rgba(59, 130, 246, 0.1);
+        border-color: rgba(59, 130, 246, 0.2);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .dark #prayerContent .prayer-time-item:active {
+        background: rgba(96, 165, 250, 0.1);
+        border-color: rgba(96, 165, 250, 0.2);
+    }
+
+    /* Ensure next prayer highlight stays prominent on mobile */
+    #prayerContent .next-prayer-highlight:active {
+        transform: scale(1.02) !important;
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.9), rgba(16, 185, 129, 0.9)) !important;
+    }
+
+    .dark #prayerContent .next-prayer-highlight:active {
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.8), rgba(16, 185, 129, 0.8)) !important;
+    }
+} 

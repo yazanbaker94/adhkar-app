@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">SakinahTime</string>
-    <string name="title_activity_main">SakinahTime</string>
-    <string name="package_name">com.yazan.sakinahtime</string>
-    <string name="custom_url_scheme">com.yazan.sakinahtime</string>
-</resources>
