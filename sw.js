@@ -6,11 +6,18 @@ const API_CACHE_NAME = "api-cache-v1";
 
 // Files to cache
 const urlsToCache = [
-  "/",
-  "/index.html",
-  "/adhkar.json",
-  "/icon1.png",
-  "/adhan.mp3"
+  "./",
+  "./index.html",
+  "./adhkar.json",
+  "./icon1.png",
+  "./icon2.png",
+  "./adhan.mp3",
+  "./manifest.json",
+  "./styles/base.css",
+  "./styles/components.css",
+  "./styles/animations.css",
+  "./styles/responsive.css",
+  "./js/main.js"
 ];
 
 // Install event - cache static assets
@@ -123,7 +130,7 @@ self.addEventListener("push", event => {
 self.addEventListener("notificationclick", event => {
   event.notification.close();
   event.waitUntil(
-    clients.openWindow("/")
+    clients.openWindow("./")
   );
 });
 

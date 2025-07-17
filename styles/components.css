@@ -724,7 +724,7 @@
     bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(59, 130, 246, 0.95);
+    background: rgba(0, 0, 0, 0.9);
     color: white;
     padding: 6px 10px;
     border-radius: 4px;
@@ -743,7 +743,7 @@
     left: 50%;
     transform: translateX(-50%);
     border: 4px solid transparent;
-    border-top-color: rgba(59, 130, 246, 0.95);
+    border-top-color: rgba(236, 10, 10, 0.95);
     z-index: 1000;
     margin-bottom: -4px;
     pointer-events: none;
@@ -773,7 +773,7 @@
 .dark #ayahMenuPopover button.show-tooltip::before,
 .dark .verse-marker.show-tooltip::before,
 .dark #btnReadingMode.show-tooltip::before {
-    border-top-color: rgba(59, 130, 246, 0.95);
+    border-top-color: rgba(236, 10, 10, 0.95);
 }
 
 /* Dark mode mobile tooltips */
