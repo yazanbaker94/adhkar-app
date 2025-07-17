@@ -11,19 +11,44 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+/* Fix for iOS PWA viewport and scrolling issues */
 .standalone body {
-    /* Prevent bounce scrolling on iOS */
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
+    /* Use dynamic viewport height instead of fixed positioning */
+    min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
+    overflow-x: hidden;
+    /* Remove fixed positioning that was causing issues */
 }
 
 .standalone main {
-    /* Enable scrolling within the main content area */
-    height: 100%;
+    /* Allow normal scrolling behavior */
+    min-height: calc(var(--vh, 1vh) * 100 - 120px); /* Account for header */
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure adhkar content is scrollable in standalone mode */
+.standalone #adhkarContent {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    max-height: calc(var(--vh, 1vh) * 100 - 200px);
+}
+
+.standalone #adhkarView {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    max-height: calc(var(--vh, 1vh) * 100 - 200px);
+}
+
+/* Fix for iOS Safari address bar behavior */
+@supports (-webkit-touch-callout: none) {
+    .standalone body {
+        /* iOS Safari specific fixes */
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
 }
 
 /* Base styles, transitions, and utility classes */
