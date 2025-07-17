@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, height=device-height">
     <!-- Add iOS-specific meta tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -37,7 +37,7 @@
     <!-- Reliable Quran fonts from Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran:wght@400&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400&display=swap" rel="stylesheet">
-    <title>SakinahTime -- سكينة</title>
+    <title>SakinahTime - سكينة</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         // Configure Tailwind dark mode
@@ -77,12 +77,13 @@
 </head>
 
 
-<body class="bg-gradient-to-b from-gray-100 to-white dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-150">
+<body class="bg-gradient-to-b from-gray-100 to-white dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-150 overflow-x-hidden">
     <!-- Remove debug panel -->
     
     <!-- PWA Status Indicator (for debugging) -->
     <div id="pwaStatus" class="fixed top-0 left-0 right-0 bg-blue-500 text-white text-xs text-center py-1 z-50 hidden">
         <span id="pwaStatusText">PWA Status</span>
+        <button onclick="testScroll()" class="ml-2 bg-white text-blue-500 px-2 py-1 rounded text-xs">Test Scroll</button>
     </div>
 
     <!-- Header Section -->
@@ -183,7 +184,7 @@
         </div>
     </div>
 
-    <main class="flex-grow flex items-center justify-center islamic-pattern">
+    <main class="flex-grow flex items-center justify-center islamic-pattern overflow-y-auto">
         <!-- Loading Spinner -->
         <div id="loadingSpinner" class="fixed inset-0 flex justify-center items-center bg-white dark:bg-black z-50">
             <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
@@ -1491,13 +1492,7 @@
         // App is running in standalone mode (added to home screen)
         document.documentElement.classList.add('standalone');
         
-        // Fix for iOS Safari viewport issues
-        const viewport = document.querySelector('meta[name=viewport]');
-        if (viewport) {
-            viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
-        }
-        
-        // Prevent zoom on input focus
+        // Prevent zoom on input focus (iOS Safari issue)
         document.addEventListener('focusin', function(e) {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
                 e.target.style.fontSize = '16px';
@@ -1516,8 +1511,19 @@
 
     // Fix for iOS Safari 100vh issue
     function setVH() {
+        // Get the actual viewport height
         let vh = window.innerHeight * 0.01;
+        
+        // For iOS Safari in standalone mode, use a more reliable calculation
+        if (window.navigator.standalone) {
+            // Use visual viewport if available (more accurate for iOS)
+            if (window.visualViewport) {
+                vh = window.visualViewport.height * 0.01;
+            }
+        }
+        
         document.documentElement.style.setProperty('--vh', `${vh}px`);
+        console.log('Viewport height set to:', vh * 100, 'px');
     }
     
     // PWA Status Check
@@ -1551,6 +1557,23 @@
     });
     window.addEventListener('resize', setVH);
     window.addEventListener('orientationchange', setVH);
+    
+    // Listen for visual viewport changes (iOS Safari)
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', setVH);
+    }
+    
+    // Test scroll function for debugging
+    window.testScroll = function() {
+        const main = document.querySelector('main');
+        if (main) {
+            main.scrollTo({
+                top: 100,
+                behavior: 'smooth'
+            });
+            console.log('Scroll test executed');
+        }
+    };
 </script>
 
 <script src="js/main.js"></script>
