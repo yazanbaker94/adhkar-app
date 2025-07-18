@@ -2475,745 +2475,21 @@ function showARUnsupported(errorType) {
              // Call test function (remove in production)
        // testQiblaAccuracy();
 
-       // Test notification function (for debugging)
-       function testNotification() {
-           if (!notificationEnabled) {
-               console.log('Notifications are disabled. Please enable them first.');
-               return;
-           }
-           
-           // Test with a custom notification
-           try {
-               const notification = new Notification('Test Notification', {
-                   body: 'This is a test notification from the Adkhar App',
-                   icon: 'icon1.png',
-                   badge: 'icon1.png',
-                   tag: 'test-notification',
-                   requireInteraction: false,
-                   vibrate: [200, 100, 200],
-                   silent: false
-               });
-               
-               console.log('Test notification sent successfully!');
-               
-               // Auto-close after 5 seconds
-               setTimeout(() => {
-                   notification.close();
-               }, 5000);
-               
-           } catch (error) {
-               console.error('Error showing test notification:', error);
-               // Fallback to prayer notification
-               showBasicNotification('Dhuhr');
-           }
-       }
+
        
        // Add to global scope for console testing
-       window.testNotification = testNotification;
        window.requestNotificationPermission = requestNotificationPermission;
        window.testQiblaAccuracy = testQiblaAccuracy;
-       window.testAndroidBackgroundSync = testAndroidBackgroundSync;
-       window.testSimpleAndroidNotification = testSimpleAndroidNotification;
-       window.testEmulatorNotification = testEmulatorNotification;
        
-       // Test delayed notification function (for testing when app is closed)
-       function testDelayedNotification() {
-           if (!notificationEnabled) {
-               console.log('Notifications are disabled. Please enable them first.');
-               showToast(currentLang === 'ar' ? 'يرجى تفعيل الإشعارات أولاً' : 'Please enable notifications first', 'error');
-               return;
-           }
-           
-           const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-           const isAndroid = /Android/.test(navigator.userAgent);
-           const isStandalone = window.navigator.standalone;
-           
-           // Show platform-specific guidance
-           if (isIOS && !isStandalone) {
-               showToast(currentLang === 'ar' ? 
-                   'لأفضل النتائج على iOS، أضف التطبيق إلى الشاشة الرئيسية' : 
-                   'For best results on iOS, add the app to home screen', 'warning');
-           } else if (isAndroid) {
-               showToast(currentLang === 'ar' ? 
-                   'Android يدعم الإشعارات في الخلفية بشكل أفضل' : 
-                   'Android supports background notifications better', 'info');
-           }
-           
-           // Show immediate feedback
-           showToast(currentLang === 'ar' ? 'سيتم إرسال إشعار تجريبي بعد دقيقة واحدة' : 'Test notification will be sent in 1 minute', 'info');
-           
-           // Store the test notification data for iOS background handling
-           const testNotificationData = {
-               title: 'Test Notification (App Closed)',
-               body: currentLang === 'ar' ? 
-                   'هذا إشعار تجريبي لاختبار الإشعارات عندما يكون التطبيق مغلقاً' : 
-                   'This is a test notification to verify notifications work when the app is closed',
-               icon: 'icon1.png',
-               badge: 'icon1.png',
-               tag: 'delayed-test-notification',
-               timestamp: new Date().toISOString(),
-               scheduledTime: Date.now() + 60000 // 1 minute from now
-           };
-           
-           // Store in localStorage for service worker to access
-           try {
-               localStorage.setItem('pendingTestNotification', JSON.stringify(testNotificationData));
-               console.log('Test notification data stored for service worker');
-           } catch (error) {
-               console.error('Error storing test notification data:', error);
-           }
-           
-           // Schedule notification for 1 minute from now
-           setTimeout(() => {
-               try {
-                   // Check if app is in foreground
-                   if (document.visibilityState === 'visible') {
-                       // App is visible, show notification via service worker
-                       if ('serviceWorker' in navigator) {
-                           navigator.serviceWorker.ready.then(registration => {
-                               registration.showNotification(testNotificationData.title, {
-                                   body: testNotificationData.body,
-                                   icon: testNotificationData.icon,
-                                   badge: testNotificationData.badge,
-                                   tag: testNotificationData.tag,
-                                   requireInteraction: false,
-                                   vibrate: [200, 100, 200, 100, 200],
-                                   silent: false,
-                                   data: {
-                                       type: 'test',
-                                       timestamp: testNotificationData.timestamp
-                                   }
-                               }).then(() => {
-                                   console.log('Delayed test notification sent successfully (foreground)!');
-                               }).catch(error => {
-                                   console.error('Service worker notification failed:', error);
-                               });
-                           }).catch(error => {
-                               console.error('Service worker not ready:', error);
-                           });
-                       }
-                   } else {
-                       // App is in background, try to show notification
-                       console.log('App is in background, attempting to show notification...');
-                       
-                       if (isAndroid) {
-                           // Android has better background notification support
-                           // Use service worker for background notification
-                           if ('serviceWorker' in navigator) {
-                               navigator.serviceWorker.ready.then(registration => {
-                                   registration.showNotification(testNotificationData.title, {
-                                       body: testNotificationData.body,
-                                       icon: testNotificationData.icon,
-                                       badge: testNotificationData.badge,
-                                       tag: testNotificationData.tag,
-                                       requireInteraction: false,
-                                       vibrate: [200, 100, 200, 100, 200],
-                                       silent: false,
-                                       data: {
-                                           type: 'test',
-                                           timestamp: testNotificationData.timestamp
-                                       },
-                                       // Android-specific options
-                                       actions: [
-                                           {
-                                               action: 'open',
-                                               title: currentLang === 'ar' ? 'فتح التطبيق' : 'Open App',
-                                               icon: 'icon1.png'
-                                           }
-                                       ]
-                                   }).then(() => {
-                                       console.log('Android background notification sent via service worker');
-                                   }).catch(error => {
-                                       console.error('Service worker notification failed:', error);
-                                       // Fallback to direct notification
-                                       showDirectNotification();
-                                   });
-                               }).catch(error => {
-                                   console.error('Service worker not ready:', error);
-                                   // Fallback to direct notification
-                                   showDirectNotification();
-                               });
-                           } else {
-                               // Fallback to direct notification
-                               showDirectNotification();
-                           }
-                       } else if (isIOS) {
-                           // iOS background notification attempt via service worker
-                           if ('serviceWorker' in navigator) {
-                               navigator.serviceWorker.ready.then(registration => {
-                                   registration.showNotification(testNotificationData.title, {
-                                       body: testNotificationData.body,
-                                       icon: testNotificationData.icon,
-                                       badge: testNotificationData.badge,
-                                       tag: testNotificationData.tag,
-                                       requireInteraction: false,
-                                       vibrate: [200, 100, 200, 100, 200],
-                                       silent: false,
-                                       data: {
-                                           type: 'test',
-                                           timestamp: testNotificationData.timestamp
-                                       }
-                                   }).then(() => {
-                                       console.log('iOS background notification sent via service worker');
-                                   }).catch(error => {
-                                       console.error('iOS service worker notification failed:', error);
-                                   });
-                               }).catch(error => {
-                                   console.error('Service worker not ready:', error);
-                               });
-                           }
-                       } else {
-                           // Other platforms - try service worker notification
-                           if ('serviceWorker' in navigator) {
-                               navigator.serviceWorker.ready.then(registration => {
-                                   registration.showNotification(testNotificationData.title, {
-                                       body: testNotificationData.body,
-                                       icon: testNotificationData.icon,
-                                       badge: testNotificationData.badge,
-                                       tag: testNotificationData.tag,
-                                       requireInteraction: false,
-                                       vibrate: [200, 100, 200, 100, 200],
-                                       silent: false,
-                                       data: {
-                                           type: 'test',
-                                           timestamp: testNotificationData.timestamp
-                                       }
-                                   }).then(() => {
-                                       console.log('Background notification sent via service worker');
-                                   }).catch(error => {
-                                       console.error('Service worker notification failed:', error);
-                                       showDirectNotification();
-                                   });
-                               }).catch(error => {
-                                   console.error('Service worker not ready:', error);
-                                   showDirectNotification();
-                               });
-                           } else {
-                               showDirectNotification();
-                           }
-                       }
-                       
-                       // Helper function for direct notification
-                       function showDirectNotification() {
-                           const notification = new Notification(testNotificationData.title, {
-                               body: testNotificationData.body,
-                               icon: testNotificationData.icon,
-                               badge: testNotificationData.badge,
-                               tag: testNotificationData.tag,
-                               requireInteraction: false,
-                               vibrate: [200, 100, 200, 100, 200],
-                               silent: false,
-                               data: {
-                                   type: 'test',
-                                   timestamp: testNotificationData.timestamp
-                               }
-                           });
-                           
-                           console.log('Direct background notification sent');
-                           
-                           // Auto-close after 10 seconds
-                           setTimeout(() => {
-                               notification.close();
-                           }, 10000);
-                       }
-                   }
-                   
-                   // Clear the stored data
-                   localStorage.removeItem('pendingTestNotification');
-                   
-               } catch (error) {
-                   console.error('Error showing delayed test notification:', error);
-                   showToast(currentLang === 'ar' ? 'فشل في إرسال الإشعار التجريبي' : 'Failed to send test notification', 'error');
-                   
-                   // Clear the stored data on error
-                   localStorage.removeItem('pendingTestNotification');
-               }
-           }, 60000); // 1 minute delay
-           
-           console.log('Delayed test notification scheduled for 1 minute from now');
-           
-           // Platform-specific background handling
-           if (isAndroid) {
-               // Android: Try to use background sync for better reliability
-               if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
-                   navigator.serviceWorker.ready.then(registration => {
-                       // Register a background sync for the delayed notification
-                       registration.sync.register('delayed-notification').then(() => {
-                           console.log('Background sync registered for Android');
-                       }).catch(error => {
-                           console.log('Background sync registration failed:', error);
-                       });
-                   });
-               }
-           } else if (isIOS) {
-               // iOS: Set up periodic checks for when app becomes visible
-               const checkPendingNotifications = () => {
-                   try {
-                       const pendingData = localStorage.getItem('pendingTestNotification');
-                       if (pendingData) {
-                           const data = JSON.parse(pendingData);
-                           const now = Date.now();
-                           
-                           // If the scheduled time has passed and we're now visible
-                           if (data.scheduledTime <= now && document.visibilityState === 'visible') {
-                               console.log('Showing pending notification after app became visible');
-                               
-                               const notification = new Notification(data.title, {
-                                   body: data.body,
-                                   icon: data.icon,
-                                   badge: data.badge,
-                                   tag: data.tag,
-                                   requireInteraction: false,
-                                   vibrate: [200, 100, 200, 100, 200],
-                                   silent: false,
-                                   data: {
-                                       type: 'test',
-                                       timestamp: data.timestamp
-                                   }
-                               });
-                               
-                               // Auto-close after 10 seconds
-                               setTimeout(() => {
-                                   notification.close();
-                               }, 10000);
-                               
-                               // Clear the stored data
-                               localStorage.removeItem('pendingTestNotification');
-                           }
-                       }
-                   } catch (error) {
-                       console.error('Error checking pending notifications:', error);
-                   }
-               };
-               
-               // Check when app becomes visible
-               document.addEventListener('visibilitychange', checkPendingNotifications);
-               
-               // Also check periodically
-               const checkInterval = setInterval(checkPendingNotifications, 5000);
-               
-               // Clear interval after 2 minutes
-               setTimeout(() => {
-                   clearInterval(checkInterval);
-               }, 120000);
-           }
-       }
+
        
-       // Android-specific background sync test function
-       function testAndroidBackgroundSync() {
-           const isAndroid = /Android/.test(navigator.userAgent);
-           
-           if (!isAndroid) {
-               showToast(currentLang === 'ar' ? 
-                   'هذا الاختبار مخصص لأجهزة Android' : 
-                   'This test is for Android devices only', 'warning');
-               return;
-           }
-           
-           if (!notificationEnabled) {
-               console.log('Notifications are disabled. Please enable them first.');
-               showToast(currentLang === 'ar' ? 'يرجى تفعيل الإشعارات أولاً' : 'Please enable notifications first', 'error');
-               return;
-           }
-           
-           console.log('Starting Android background test...');
-           showToast(currentLang === 'ar' ? 
-               'اختبار Android: سيتم إرسال إشعار في الخلفية بعد 30 ثانية' : 
-               'Android Test: Background notification will be sent in 30 seconds', 'info');
-           
-           // Store test data for debugging
-           const testData = {
-               title: 'Android Background Test',
-               body: currentLang === 'ar' ? 
-                   'هذا إشعار اختبار لـ Android في الخلفية' : 
-                   'This is an Android background test notification',
-               icon: 'icon1.png',
-               badge: 'icon1.png',
-               tag: 'android-background-test',
-               timestamp: new Date().toISOString(),
-               scheduledTime: Date.now() + 30000
-           };
-           
-           // Store in localStorage for debugging
-           localStorage.setItem('androidTestData', JSON.stringify(testData));
-           
-           // Test Android background sync capabilities
-           if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
-               console.log('Service worker and sync supported, registering background sync...');
-               
-               navigator.serviceWorker.ready.then(registration => {
-                   console.log('Service worker ready, registration:', registration);
-                   
-                   // Register a background sync for testing
-                   registration.sync.register('android-background-test').then(() => {
-                       console.log('Android background sync test registered successfully');
-                       
-                       // Also schedule a direct notification for comparison
-                       setTimeout(() => {
-                           console.log('Attempting to send direct notification...');
-                           sendDirectNotification(testData);
-                       }, 30000); // 30 seconds
-                       
-                   }).catch(error => {
-                       console.error('Android background sync registration failed:', error);
-                       showToast(currentLang === 'ar' ? 
-                           'فشل في تسجيل المزامنة في الخلفية' : 
-                           'Background sync registration failed', 'warning');
-                       
-                       // Fallback to direct notification only
-                       setTimeout(() => {
-                           console.log('Falling back to direct notification...');
-                           sendDirectNotification(testData);
-                       }, 30000);
-                   });
-               }).catch(error => {
-                   console.error('Service worker ready failed:', error);
-                   showToast(currentLang === 'ar' ? 
-                       'فشل في تحضير Service Worker' : 
-                       'Service Worker preparation failed', 'warning');
-                   
-                   // Fallback to direct notification only
-                   setTimeout(() => {
-                       console.log('Falling back to direct notification...');
-                       sendDirectNotification(testData);
-                   }, 30000);
-               });
-           } else {
-               console.log('Service worker or sync not supported, using direct notification only');
-               showToast(currentLang === 'ar' ? 
-                   'المتصفح لا يدعم المزامنة في الخلفية، سيتم استخدام الإشعار المباشر' : 
-                   'Browser does not support background sync, using direct notification', 'info');
-               
-               // Use direct notification only
-               setTimeout(() => {
-                   console.log('Sending direct notification...');
-                   sendDirectNotification(testData);
-               }, 30000);
-           }
-           
-           // Helper function to send direct notification with better error handling
-           function sendDirectNotification(data) {
-               try {
-                   console.log('Creating notification with data:', data);
-                   
-                   // Check if we're in a visible context
-                   if (document.visibilityState === 'visible') {
-                       console.log('App is visible, sending notification directly');
-                   } else {
-                       console.log('App is not visible, attempting background notification');
-                   }
-                   
-                   // Use service worker to show notification instead of direct Notification constructor
-                   if ('serviceWorker' in navigator) {
-                       navigator.serviceWorker.ready.then(registration => {
-                           registration.showNotification(data.title, {
-                               body: data.body,
-                               icon: data.icon,
-                               badge: data.badge,
-                               tag: data.tag,
-                               requireInteraction: false,
-                               vibrate: [300, 100, 300, 100, 300],
-                               silent: false,
-                               data: {
-                                   type: 'android-test',
-                                   timestamp: data.timestamp
-                               },
-                               actions: [
-                                   {
-                                       action: 'open',
-                                       title: currentLang === 'ar' ? 'فتح التطبيق' : 'Open App',
-                                       icon: 'icon1.png'
-                                   }
-                               ]
-                           }).then(() => {
-                               console.log('Android background test notification sent successfully via service worker');
-                               showToast(currentLang === 'ar' ? 
-                                   'تم إرسال الإشعار بنجاح' : 
-                                   'Notification sent successfully', 'success');
-                           }).catch(error => {
-                               console.error('Service worker notification failed:', error);
-                               showToast(currentLang === 'ar' ? 
-                                   'فشل في إرسال الإشعار عبر Service Worker' : 
-                                   'Failed to send notification via Service Worker', 'error');
-                           });
-                       }).catch(error => {
-                           console.error('Service worker not ready:', error);
-                           showToast(currentLang === 'ar' ? 
-                               'Service Worker غير جاهز' : 
-                               'Service Worker not ready', 'error');
-                       });
-                   } else {
-                       throw new Error('Service Worker not supported');
-                   }
-                   
-               } catch (error) {
-                   console.error('Error sending Android background test notification:', error);
-                   console.error('Error details:', {
-                       name: error.name,
-                       message: error.message,
-                       stack: error.stack
-                   });
-                   
-                   // Try alternative approach with service worker
-                   try {
-                       console.log('Trying alternative notification approach...');
-                       
-                       if ('serviceWorker' in navigator) {
-                           navigator.serviceWorker.ready.then(registration => {
-                               // Try without actions first
-                               registration.showNotification(data.title, {
-                                   body: data.body,
-                                   icon: data.icon,
-                                   tag: data.tag,
-                                   requireInteraction: false,
-                                   silent: false
-                               }).then(() => {
-                                   console.log('Simple notification sent successfully via service worker');
-                                   showToast(currentLang === 'ar' ? 
-                                       'تم إرسال الإشعار البسيط بنجاح' : 
-                                       'Simple notification sent successfully', 'success');
-                               }).catch(error => {
-                                   console.error('Simple service worker notification failed:', error);
-                                   showToast(currentLang === 'ar' ? 
-                                       'فشل في إرسال الإشعار البسيط' : 
-                                       'Failed to send simple notification', 'error');
-                               });
-                           });
-                       } else {
-                           throw new Error('Service Worker not supported');
-                       }
-                       
-                   } catch (secondError) {
-                       console.error('Second attempt also failed:', secondError);
-                       showToast(currentLang === 'ar' ? 
-                           'فشل في إرسال الإشعار بعد محاولتين' : 
-                           'Failed to send notification after two attempts', 'error');
-                   }
-               }
-           }
-       }
+
        
-       // Simple Android notification test (no background sync)
-       function testSimpleAndroidNotification() {
-           const isAndroid = /Android/.test(navigator.userAgent);
-           const isEmulator = /Android/.test(navigator.userAgent) && (navigator.userAgent.includes('Emulator') || navigator.userAgent.includes('SDK'));
-           
-           if (!isAndroid) {
-               showToast(currentLang === 'ar' ? 
-                   'هذا الاختبار مخصص لأجهزة Android' : 
-                   'This test is for Android devices only', 'warning');
-               return;
-           }
-           
-           if (isEmulator) {
-               showToast(currentLang === 'ar' ? 
-                   'ملاحظة: أنت تستخدم محاكي Android. الإشعارات قد لا تعمل بشكل صحيح' : 
-                   'Note: You are using Android emulator. Notifications may not work properly', 'warning');
-           }
-           
-           if (!notificationEnabled) {
-               console.log('Notifications are disabled. Please enable them first.');
-               showToast(currentLang === 'ar' ? 'يرجى تفعيل الإشعارات أولاً' : 'Please enable notifications first', 'error');
-               return;
-           }
-           
-           console.log('Starting simple Android notification test...');
-           showToast(currentLang === 'ar' ? 
-               'اختبار بسيط: سيتم إرسال إشعار بعد 10 ثانية' : 
-               'Simple Test: Notification will be sent in 10 seconds', 'info');
-           
-           // Show visual countdown for emulator debugging
-           let countdown = 10;
-           const countdownInterval = setInterval(() => {
-               countdown--;
-               if (countdown > 0) {
-                   showToast(currentLang === 'ar' ? 
-                       `سيتم إرسال الإشعار خلال ${countdown} ثانية` : 
-                       `Notification will be sent in ${countdown} seconds`, 'info');
-               }
-           }, 1000);
-           
-           // Simple notification after 10 seconds
-           setTimeout(() => {
-               clearInterval(countdownInterval);
-               
-               try {
-                   console.log('Sending simple notification...');
-                   showToast(currentLang === 'ar' ? 
-                       'جاري إرسال الإشعار...' : 
-                       'Sending notification...', 'info');
-                   
-                   // Use service worker to show notification
-                   if ('serviceWorker' in navigator) {
-                       navigator.serviceWorker.ready.then(registration => {
-                           registration.showNotification('Simple Android Test', {
-                               body: currentLang === 'ar' ? 
-                                   'هذا إشعار اختبار بسيط لـ Android' : 
-                                   'This is a simple Android test notification',
-                               icon: 'icon1.png',
-                               tag: 'simple-android-test',
-                               requireInteraction: false,
-                               silent: false
-                           }).then(() => {
-                               console.log('Simple notification sent successfully via service worker');
-                               showToast(currentLang === 'ar' ? 
-                                   'تم إرسال الإشعار البسيط بنجاح' : 
-                                   'Simple notification sent successfully', 'success');
-                           }).catch(error => {
-                               console.error('Service worker notification failed:', error);
-                               showToast(currentLang === 'ar' ? 
-                                   'فشل في إرسال الإشعار عبر Service Worker' : 
-                                   'Failed to send notification via Service Worker', 'error');
-                           });
-                       }).catch(error => {
-                           console.error('Service worker not ready:', error);
-                           showToast(currentLang === 'ar' ? 
-                               'Service Worker غير جاهز' : 
-                               'Service Worker not ready', 'error');
-                       });
-                   } else {
-                       throw new Error('Service Worker not supported');
-                   }
-                   
-               } catch (error) {
-                   console.error('Simple notification failed:', error);
-                   
-                   // Show detailed error for emulator debugging
-                   const errorMessage = currentLang === 'ar' ? 
-                       `فشل في إرسال الإشعار: ${error.name} - ${error.message}` : 
-                       `Failed to send notification: ${error.name} - ${error.message}`;
-                   
-                   showToast(errorMessage, 'error');
-                   
-                   // For emulator, also show a visual notification
-                   if (isEmulator) {
-                       showEmulatorNotification('Simple Android Test', currentLang === 'ar' ? 
-                           'هذا إشعار اختبار بسيط لـ Android' : 
-                           'This is a simple Android test notification');
-                   }
-               }
-           }, 10000); // 10 seconds
-       }
+
        
-       // Visual notification for emulator testing
-       function showEmulatorNotification(title, body) {
-           // Create a visual notification element
-           const notificationDiv = document.createElement('div');
-           notificationDiv.style.cssText = `
-               position: fixed;
-               top: 20px;
-               right: 20px;
-               background: #4CAF50;
-               color: white;
-               padding: 15px;
-               border-radius: 8px;
-               box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-               z-index: 10000;
-               max-width: 300px;
-               font-family: Arial, sans-serif;
-               animation: slideIn 0.3s ease-out;
-           `;
-           
-           notificationDiv.innerHTML = `
-               <div style="font-weight: bold; margin-bottom: 5px;">${title}</div>
-               <div style="font-size: 14px;">${body}</div>
-               <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">Emulator Test Notification</div>
-           `;
-           
-           // Add CSS animation
-           const style = document.createElement('style');
-           style.textContent = `
-               @keyframes slideIn {
-                   from { transform: translateX(100%); opacity: 0; }
-                   to { transform: translateX(0); opacity: 1; }
-               }
-           `;
-           document.head.appendChild(style);
-           
-           document.body.appendChild(notificationDiv);
-           
-           // Auto-remove after 5 seconds
-           setTimeout(() => {
-               notificationDiv.style.animation = 'slideOut 0.3s ease-in';
-               setTimeout(() => {
-                   document.body.removeChild(notificationDiv);
-               }, 300);
-           }, 5000);
-           
-           // Add slideOut animation
-           const slideOutStyle = document.createElement('style');
-           slideOutStyle.textContent = `
-               @keyframes slideOut {
-                   from { transform: translateX(0); opacity: 1; }
-                   to { transform: translateX(100%); opacity: 0; }
-               }
-           `;
-           document.head.appendChild(slideOutStyle);
-       }
+
        
-       // Immediate emulator notification test
-       function testEmulatorNotification() {
-           const isEmulator = /Android/.test(navigator.userAgent) && (navigator.userAgent.includes('Emulator') || navigator.userAgent.includes('SDK'));
-           
-           if (!isEmulator) {
-               showToast(currentLang === 'ar' ? 
-                   'هذا الاختبار مخصص للمحاكي فقط' : 
-                   'This test is for emulator only', 'warning');
-               return;
-           }
-           
-           showToast(currentLang === 'ar' ? 
-               'اختبار إشعار المحاكي الفوري' : 
-               'Immediate emulator notification test', 'info');
-           
-           // Show visual notification immediately
-           showEmulatorNotification('Emulator Test', currentLang === 'ar' ? 
-               'هذا إشعار اختبار للمحاكي يعمل فوراً' : 
-               'This emulator test notification works immediately');
-           
-           // Also try real notification via service worker
-           try {
-               if ('serviceWorker' in navigator) {
-                   navigator.serviceWorker.ready.then(registration => {
-                       registration.showNotification('Emulator Test', {
-                           body: currentLang === 'ar' ? 
-                               'اختبار إشعار حقيقي للمحاكي' : 
-                               'Real notification test for emulator',
-                           icon: 'icon1.png',
-                           tag: 'emulator-test',
-                           requireInteraction: false,
-                           silent: false
-                       }).then(() => {
-                           console.log('Real notification sent successfully via service worker');
-                           showToast(currentLang === 'ar' ? 
-                               'تم إرسال الإشعار الحقيقي بنجاح' : 
-                               'Real notification sent successfully', 'success');
-                       }).catch(error => {
-                           console.error('Service worker notification failed:', error);
-                           showToast(currentLang === 'ar' ? 
-                               'فشل في إرسال الإشعار عبر Service Worker' : 
-                               'Failed to send notification via Service Worker', 'error');
-                       });
-                   }).catch(error => {
-                       console.error('Service worker not ready:', error);
-                       showToast(currentLang === 'ar' ? 
-                           'Service Worker غير جاهز' : 
-                           'Service Worker not ready', 'error');
-                   });
-               } else {
-                   throw new Error('Service Worker not supported');
-               }
-               
-           } catch (error) {
-               console.error('Real notification failed:', error);
-               showToast(currentLang === 'ar' ? 
-                   `فشل الإشعار الحقيقي: ${error.name}` : 
-                   `Real notification failed: ${error.name}`, 'error');
-           }
-       }
-       
-       // Add to global scope
-       window.testDelayedNotification = testDelayedNotification;
+
 
       // Samsung-specific retry function
       async function retrySamsungInit() {
@@ -4905,117 +4181,7 @@ function showARUnsupported(errorType) {
           return false;
       }
 
-      function showBasicNotification(prayer) {
-          if (!notificationEnabled) return;
 
-          const prayerNames = {
-              'Fajr': currentLang === 'ar' ? 'الفجر' : 'Fajr',
-              'Dhuhr': currentLang === 'ar' ? 'الظهر' : 'Dhuhr',
-              'Asr': currentLang === 'ar' ? 'العصر' : 'Asr',
-              'Maghrib': currentLang === 'ar' ? 'المغرب' : 'Maghrib',
-              'Isha': currentLang === 'ar' ? 'العشاء' : 'Isha'
-          };
-
-          const currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-          const prayerTime = prayerNotifications[prayer];
-
-          // Get selected azan sound from settings
-          const azanSound = localStorage.getItem('azanSound') || 'adhan.mp3';
-
-          try {
-              // Play notification sound if available
-              try {
-                  if (azanSound === 'custom_adhan') {
-                      // Use custom adhan
-                      const audio = playCustomAdhan();
-                      if (audio) {
-                          audio.volume = 0.5;
-                          audio.play().catch(() => {});
-                      }
-                  } else {
-                      // Use enhanced audio playback specifically for iOS background notifications
-                      const audioPath = `sounds/${azanSound}`;
-                      playAdhanForNotification(audioPath, 0.5).catch(error => {
-                          console.error('Failed to play adhan with notification method:', error);
-                          // Fallback to enhanced method
-                          playAudioWithFallback(audioPath, 0.5).catch(error2 => {
-                              console.error('Failed to play adhan with fallback:', error2);
-                              // Final fallback to original method
-                              const audio = new Audio(audioPath);
-                              audio.volume = 0.5;
-                              audio.play().catch(() => {});
-                          });
-                      });
-                  }
-              } catch (audioError) {
-                  console.error('Audio playback error:', audioError);
-              }
-
-              const notification = new Notification(languages[currentLang].prayerTimeNotification, {
-                  body: currentLang === 'ar' 
-                      ? `حان الآن وقت صلاة ${prayerNames[prayer]} - ${prayerTime}`
-                      : `It's time for ${prayerNames[prayer]} prayer - ${prayerTime}`,
-                  icon: 'icon1.png',
-                  badge: 'icon1.png',
-                  tag: `prayer-${prayer}`,
-                  requireInteraction: true,
-                  vibrate: [200, 100, 200, 100, 200],
-                  badge: 'icon1.png',
-                  requireInteraction: true,
-                  silent: false
-              });
-
-              // Play selected adhan sound
-              if (azanSound === 'custom_adhan') {
-                  // Use custom adhan
-                  const audio = playCustomAdhan();
-                  if (audio) {
-                      audio.play().catch(error => console.error('Error playing custom adhan:', error));
-                  }
-              } else {
-                  // Use enhanced audio playback specifically for iOS background notifications
-                  const audioPath = `sounds/${azanSound}`;
-                  playAdhanForNotification(audioPath, 0.5).catch(error => {
-                      console.error('Failed to play adhan with notification method:', error);
-                      // Fallback to enhanced method
-                      playAudioWithFallback(audioPath, 0.5).catch(error2 => {
-                          console.error('Failed to play adhan with fallback:', error2);
-                          // Final fallback to original method
-                          const audio = new Audio(audioPath);
-                          audio.play().catch(error => console.error('Error playing adhan:', error));
-                      });
-                  });
-              }
-
-              // Setup next notification
-              setupBasicNotifications();
-          } catch (error) {
-              console.error('Error showing notification:', error);
-              // Fallback to alert for iOS
-              if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-                  alert(`${prayerNames[prayer]} ${languages[currentLang].prayerTimeApproachingBody}`);
-                  if (azanSound === 'custom_adhan') {
-                      const audio = playCustomAdhan();
-                      if (audio) {
-                          audio.play().catch(error => console.error('Error playing custom adhan:', error));
-                      }
-                  } else {
-                      // Use enhanced audio playback specifically for iOS background notifications
-                      const audioPath = `sounds/${azanSound}`;
-                      playAdhanForNotification(audioPath, 0.5).catch(error => {
-                          console.error('Failed to play adhan with notification method:', error);
-                          // Fallback to enhanced method
-                          playAudioWithFallback(audioPath, 0.5).catch(error2 => {
-                              console.error('Failed to play adhan with fallback:', error2);
-                              // Final fallback to original method
-                              const audio = new Audio(audioPath);
-                              audio.play().catch(error => console.error('Error playing adhan:', error));
-                          });
-                      });
-                  }
-              }
-          }
-      }
 
       async function setupPrayerNotifications() {
           if (!notificationEnabled) return;
@@ -9121,50 +8287,7 @@ function showARUnsupported(errorType) {
             }
         }
         
-        // Function to check for pending notifications
-        function checkPendingNotifications() {
-            try {
-                const pendingData = localStorage.getItem('pendingTestNotification');
-                if (pendingData) {
-                    const data = JSON.parse(pendingData);
-                    const now = Date.now();
-                    
-                    // If the scheduled time has passed and we're now visible
-                    if (data.scheduledTime <= now && document.visibilityState === 'visible') {
-                        console.log('Showing pending notification after app became visible');
-                        
-                        const notification = new Notification(data.title, {
-                            body: data.body,
-                            icon: data.icon,
-                            badge: data.badge,
-                            tag: data.tag,
-                            requireInteraction: false,
-                            vibrate: [200, 100, 200, 100, 200],
-                            silent: false,
-                            data: {
-                                type: 'test',
-                                timestamp: data.timestamp
-                            }
-                        });
-                        
-                        // Auto-close after 10 seconds
-                        setTimeout(() => {
-                            notification.close();
-                        }, 10000);
-                        
-                        // Clear the stored data
-                        localStorage.removeItem('pendingTestNotification');
-                        
-                        // Show a toast to confirm the notification was shown
-                        showToast(currentLang === 'ar' ? 
-                            'تم إظهار الإشعار التجريبي' : 
-                            'Test notification was shown', 'success');
-                    }
-                }
-            } catch (error) {
-                console.error('Error checking pending notifications:', error);
-            }
-        }
+
 
         // Preload audio elements for better performance
         function preloadAudioElements() {
@@ -9745,9 +8868,13 @@ window.switchLanguage = function() {
   };
   document.getElementById('ayahMenuShare').onclick = function() {
     if (popoverSurah !== null && popoverAyah !== null) {
-      const shareURL = `${window.location.origin}${window.location.pathname}#quran/${popoverSurah + 1}/${popoverAyah + 1}`;
-      const surahName = quranData[popoverSurah].name;
-      shareVerse(shareURL, surahName, popoverAyah + 1);
+      // Store current verse info for video generation
+      window.currentVideoSurah = popoverSurah;
+      window.currentVideoAyah = popoverAyah;
+      window.currentVideoSurahName = quranData[popoverSurah].name;
+      
+      // Show share options modal
+      showShareOptionsModal();
     }
     closePopover();
   };
@@ -12067,4 +11194,771 @@ function loadPrayerOffsets() {
         childList: true,
         subtree: true
     });
+
+    // Video Generation Functions
+    function showShareOptionsModal() {
+        const modal = document.getElementById('shareOptionsModal');
+        modal.style.display = 'flex';
+        
+        // Set up event listeners
+        document.getElementById('closeShareOptionsModal').onclick = closeShareOptionsModal;
+        document.getElementById('shareLinkBtn').onclick = handleShareLink;
+        document.getElementById('createVideoBtn').onclick = handleCreateVideo;
+        
+        // Update language
+        updateShareOptionsLanguage();
+    }
+
+    function closeShareOptionsModal() {
+        document.getElementById('shareOptionsModal').style.display = 'none';
+    }
+
+    function updateShareOptionsLanguage() {
+        const isArabic = currentLang === 'ar';
+        
+        // Update modal title
+        const titleElement = document.querySelector('#shareOptionsModal h3');
+        if (titleElement) {
+            titleElement.textContent = isArabic ? 'خيارات المشاركة' : 'Share Options';
+        }
+        
+        // Update button texts
+        document.getElementById('shareLinkBtn').innerHTML = isArabic ? 
+            '<i class="fas fa-link"></i>مشاركة الرابط' : 
+            '<i class="fas fa-link"></i>Share Link';
+        
+        document.getElementById('createVideoBtn').innerHTML = isArabic ? 
+            '<i class="fas fa-video"></i>إنشاء فيديو' : 
+            '<i class="fas fa-video"></i>Create Video';
+    }
+
+    function handleShareLink() {
+        if (window.currentVideoSurah !== null && window.currentVideoAyah !== null) {
+            const shareURL = `${window.location.origin}${window.location.pathname}#quran/${window.currentVideoSurah + 1}/${window.currentVideoAyah + 1}`;
+            const surahName = window.currentVideoSurahName;
+            shareVerse(shareURL, surahName, window.currentVideoAyah + 1);
+        }
+        closeShareOptionsModal();
+    }
+
+    function handleCreateVideo() {
+        closeShareOptionsModal();
+        showVideoGenerationModal();
+    }
+
+    function showVideoGenerationModal() {
+        const modal = document.getElementById('videoGenerationModal');
+        modal.style.display = 'flex';
+        
+        // Set up event listeners
+        document.getElementById('closeVideoGenerationModal').onclick = closeVideoGenerationModal;
+        document.getElementById('previewVideoBtn').onclick = previewVideo;
+        document.getElementById('generateVideoBtn').onclick = generateVideo;
+        document.getElementById('downloadVideoBtn').onclick = downloadVideo;
+        document.getElementById('shareVideoBtn').onclick = shareVideo;
+        
+        // Set up slider event listeners
+        setupVideoGenerationSliders();
+        
+        // Set up translation toggle
+        document.getElementById('showTranslation').onchange = toggleTranslationOptions;
+        
+        // Load available background videos
+        loadAvailableBackgroundVideos();
+        
+        // Update language
+        updateVideoGenerationLanguage();
+        
+        // Initialize preview
+        updateVideoPreview();
+    }
+
+    function closeVideoGenerationModal() {
+        document.getElementById('videoGenerationModal').style.display = 'none';
+    }
+
+    function updateVideoGenerationLanguage() {
+        const isArabic = currentLang === 'ar';
+        
+        // Update modal title
+        document.getElementById('videoGenerationModalTitle').textContent = isArabic ? 
+            'إنشاء فيديو للآية' : 'Create Verse Video';
+        
+        // Update section headers
+        const previewHeader = document.querySelector('#videoGenerationModal h4');
+        if (previewHeader) {
+            previewHeader.textContent = isArabic ? 'معاينة الفيديو' : 'Video Preview';
+        }
+        
+        // Update button texts
+        document.getElementById('previewVideoBtn').innerHTML = isArabic ? 
+            '<i class="fas fa-eye mr-2"></i>معاينة' : 
+            '<i class="fas fa-eye mr-2"></i>Preview';
+        
+        document.getElementById('generateVideoBtn').innerHTML = isArabic ? 
+            '<i class="fas fa-video mr-2"></i>إنشاء الفيديو' : 
+            '<i class="fas fa-video mr-2"></i>Generate Video';
+        
+        document.getElementById('downloadVideoBtn').innerHTML = isArabic ? 
+            '<i class="fas fa-download mr-2"></i>تحميل' : 
+            '<i class="fas fa-download mr-2"></i>Download';
+        
+        document.getElementById('shareVideoBtn').innerHTML = isArabic ? 
+            '<i class="fas fa-share mr-2"></i>مشاركة' : 
+            '<i class="fas fa-share mr-2"></i>Share';
+        
+        // Update placeholder text
+        const previewPlaceholder = document.querySelector('#videoPreview p');
+        if (previewPlaceholder) {
+            previewPlaceholder.textContent = isArabic ? 'سيتم إنشاء معاينة هنا' : 'Preview will be generated here';
+        }
+    }
+
+    async function loadAvailableBackgroundVideos() {
+        const videoSelect = document.getElementById('backgroundVideoSelect');
+        const isArabic = currentLang === 'ar';
+        
+        // Clear existing options
+        videoSelect.innerHTML = '';
+        
+        // Known video files (you can expand this list)
+        const knownVideos = [
+            { filename: 'cloudsbackground.mp4', name: isArabic ? 'غيوم متحركة' : 'Moving Clouds' }
+        ];
+        
+        // Add known videos
+        knownVideos.forEach(video => {
+            const option = document.createElement('option');
+            option.value = video.filename;
+            option.textContent = `${video.name} - ${video.filename}`;
+            videoSelect.appendChild(option);
+        });
+        
+        // Try to detect additional videos (this is a simple approach)
+        // In a real implementation, you might want to create an API endpoint
+        // that returns the list of available videos from the server
+        try {
+            // Test if additional videos exist
+            const testVideos = [
+                'nature.mp4', 'ocean.mp4', 'forest.mp4', 'sky.mp4', 'stars.mp4'
+            ];
+            
+            for (const testVideo of testVideos) {
+                try {
+                    const response = await fetch(`videos/${testVideo}`, { method: 'HEAD' });
+                    if (response.ok) {
+                        const option = document.createElement('option');
+                        option.value = testVideo;
+                        option.textContent = `${testVideo.replace('.mp4', '')} - ${testVideo}`;
+                        videoSelect.appendChild(option);
+                    }
+                } catch (error) {
+                    // Video doesn't exist, continue
+                }
+            }
+        } catch (error) {
+            console.log('Could not detect additional videos:', error);
+        }
+    }
+
+    function setupVideoGenerationSliders() {
+        // Background type selector
+        const backgroundType = document.getElementById('backgroundType');
+        backgroundType.onchange = function() {
+            const colorOptions = document.getElementById('colorBackgroundOptions');
+            const videoOptions = document.getElementById('videoBackgroundOptions');
+            
+            if (this.value === 'color') {
+                colorOptions.style.display = 'block';
+                videoOptions.style.display = 'none';
+            } else {
+                colorOptions.style.display = 'none';
+                videoOptions.style.display = 'block';
+            }
+            updateVideoPreview();
+        };
+
+        // Background opacity slider
+        const opacitySlider = document.getElementById('backgroundOpacity');
+        const opacityValue = document.getElementById('opacityValue');
+        opacitySlider.oninput = function() {
+            opacityValue.textContent = this.value + '%';
+            updateVideoPreview();
+        };
+
+        // Video opacity slider
+        const videoOpacitySlider = document.getElementById('videoOpacity');
+        const videoOpacityValue = document.getElementById('videoOpacityValue');
+        videoOpacitySlider.oninput = function() {
+            videoOpacityValue.textContent = this.value + '%';
+            updateVideoPreview();
+        };
+
+        // Text size slider
+        const textSizeSlider = document.getElementById('textSizeSlider');
+        const textSizeValue = document.getElementById('textSizeValue');
+        textSizeSlider.oninput = function() {
+            textSizeValue.textContent = this.value;
+            updateVideoPreview();
+        };
+
+        // Translation size slider
+        const translationSizeSlider = document.getElementById('translationSizeSlider');
+        const translationSizeValue = document.getElementById('translationSizeValue');
+        translationSizeSlider.oninput = function() {
+            translationSizeValue.textContent = this.value;
+            updateVideoPreview();
+        };
+
+        // Border size slider
+        const borderSizeSlider = document.getElementById('borderSizeSlider');
+        const borderSizeValue = document.getElementById('borderSizeValue');
+        borderSizeSlider.oninput = function() {
+            borderSizeValue.textContent = this.value + 'px';
+            updateVideoPreview();
+        };
+
+        // Color pickers
+        document.getElementById('backgroundColorPicker').onchange = updateVideoPreview;
+        document.getElementById('textColorPicker').onchange = updateVideoPreview;
+        document.getElementById('borderColorPicker').onchange = updateVideoPreview;
+
+        // Select dropdowns
+        document.getElementById('textFontSelect').onchange = updateVideoPreview;
+        document.getElementById('reciterSelect').onchange = updateVideoPreview;
+        document.getElementById('videoDuration').onchange = updateVideoPreview;
+        document.getElementById('videoTranslationSelect').onchange = updateVideoPreview;
+        document.getElementById('backgroundVideoSelect').onchange = updateVideoPreview;
+        document.getElementById('videoLoop').onchange = updateVideoPreview;
+    }
+
+    function toggleTranslationOptions() {
+        const showTranslation = document.getElementById('showTranslation').checked;
+        const translationOptions = document.getElementById('translationOptions');
+        translationOptions.style.display = showTranslation ? 'block' : 'none';
+        updateVideoPreview();
+    }
+
+    function updateVideoPreview() {
+        const preview = document.getElementById('videoPreview');
+        const surah = window.currentVideoSurah;
+        const ayah = window.currentVideoAyah;
+        
+        if (surah === null || ayah === null) return;
+
+        const surahData = quranData[surah];
+        const ayahData = surahData.ayahs[ayah];
+        
+        // Get current settings
+        const backgroundType = document.getElementById('backgroundType').value;
+        const backgroundColor = document.getElementById('backgroundColorPicker').value;
+        const opacity = document.getElementById('backgroundOpacity').value;
+        const backgroundVideo = document.getElementById('backgroundVideoSelect').value;
+        const videoOpacity = document.getElementById('videoOpacity').value;
+        const textColor = document.getElementById('textColorPicker').value;
+        const textSize = document.getElementById('textSizeSlider').value;
+        const fontFamily = document.getElementById('textFontSelect').value;
+        const borderColor = document.getElementById('borderColorPicker').value;
+        const borderSize = document.getElementById('borderSizeSlider').value;
+        const showTranslation = document.getElementById('showTranslation').checked;
+        const translationSize = document.getElementById('translationSizeSlider').value;
+        
+        // Create preview HTML
+        let previewHTML = '';
+        
+        if (backgroundType === 'video') {
+            // Video background preview
+            previewHTML = `
+                <div style="
+                    position: relative;
+                    border: ${borderSize}px solid ${borderColor};
+                    border-radius: 10px;
+                    min-height: 150px;
+                    overflow: hidden;
+                ">
+                    <video 
+                        src="videos/${backgroundVideo}" 
+                        style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                            opacity: ${videoOpacity / 100};
+                        "
+                        autoplay 
+                        muted 
+                        loop
+                    ></video>
+                    <div style="
+                        position: relative;
+                        z-index: 10;
+                        padding: 20px;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        text-align: center;
+                        min-height: 150px;
+                    ">
+                        <div style="
+                            color: ${textColor};
+                            font-size: ${textSize}rem;
+                            font-family: '${fontFamily}', 'Uthmanic Hafs', serif;
+                            line-height: 1.8;
+                            margin-bottom: ${showTranslation ? '15px' : '0'};
+                        ">${ayahData.text}</div>
+            `;
+        } else {
+            // Color background preview
+            previewHTML = `
+                <div style="
+                    background-color: ${backgroundColor};
+                    opacity: ${opacity / 100};
+                    border: ${borderSize}px solid ${borderColor};
+                    padding: 20px;
+                    border-radius: 10px;
+                    min-height: 150px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    text-align: center;
+                ">
+                    <div style="
+                        color: ${textColor};
+                        font-size: ${textSize}rem;
+                        font-family: '${fontFamily}', 'Uthmanic Hafs', serif;
+                        line-height: 1.8;
+                        margin-bottom: ${showTranslation ? '15px' : '0'};
+                    ">${ayahData.text}</div>
+            `;
+        }
+        
+        if (showTranslation) {
+            const translationAyahs = translationData[surah];
+            const translationAyah = translationAyahs.ayahs[ayah];
+            if (translationAyah) {
+                previewHTML += `
+                    <div style="
+                        color: ${textColor};
+                        font-size: ${translationSize}rem;
+                        font-family: Arial, sans-serif;
+                        line-height: 1.4;
+                        opacity: 0.8;
+                    ">${translationAyah.text}</div>
+                `;
+            }
+        }
+        
+        previewHTML += '</div>';
+        preview.innerHTML = previewHTML;
+    }
+
+    function previewVideo() {
+        updateVideoPreview();
+        showToast(currentLang === 'ar' ? 'تم تحديث المعاينة' : 'Preview updated', 'success');
+    }
+
+    function generateVideo() {
+        const surah = window.currentVideoSurah;
+        const ayah = window.currentVideoAyah;
+        
+        if (surah === null || ayah === null) {
+            showToast(currentLang === 'ar' ? 'خطأ في البيانات' : 'Data error', 'error');
+            return;
+        }
+
+        // Show loading state
+        const generateBtn = document.getElementById('generateVideoBtn');
+        const originalText = generateBtn.innerHTML;
+        generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>جاري الإنشاء...';
+        generateBtn.disabled = true;
+
+        // Get video settings
+        const settings = {
+            backgroundType: document.getElementById('backgroundType').value,
+            backgroundColor: document.getElementById('backgroundColorPicker').value,
+            opacity: document.getElementById('backgroundOpacity').value / 100,
+            backgroundVideo: document.getElementById('backgroundVideoSelect').value,
+            videoOpacity: document.getElementById('videoOpacity').value / 100,
+            videoLoop: document.getElementById('videoLoop').value === 'true',
+            textColor: document.getElementById('textColorPicker').value,
+            textSize: document.getElementById('textSizeSlider').value,
+            fontFamily: document.getElementById('textFontSelect').value,
+            borderColor: document.getElementById('borderColorPicker').value,
+            borderSize: document.getElementById('borderSizeSlider').value,
+            showTranslation: document.getElementById('showTranslation').checked,
+            translationSize: document.getElementById('translationSizeSlider').value,
+            duration: parseInt(document.getElementById('videoDuration').value),
+            reciter: document.getElementById('reciterSelect').value
+        };
+
+        // Update preview to show progress
+        const preview = document.getElementById('videoPreview');
+        const isArabic = currentLang === 'ar';
+        preview.innerHTML = `
+            <div class="text-center">
+                <i class="fas fa-spinner fa-spin text-4xl text-blue-500 mb-2"></i>
+                <p class="text-blue-600 dark:text-blue-400 mb-2">${isArabic ? 'جاري إنشاء الفيديو' : 'Generating Video'}</p>
+                <p class="text-sm text-gray-500">${isArabic ? 'يرجى الانتظار...' : 'Please wait...'}</p>
+                <div class="w-full bg-gray-200 rounded-full h-2 mt-4">
+                    <div class="bg-blue-600 h-2 rounded-full animate-pulse" style="width: 100%"></div>
+                </div>
+            </div>
+        `;
+
+        // Create video using Canvas API
+        createVideoFromCanvas(settings).then(videoBlob => {
+            // Store the video blob for download/share
+            window.generatedVideoBlob = videoBlob;
+            window.generatedVideoUrl = URL.createObjectURL(videoBlob);
+
+            // Show success and enable download/share buttons
+            generateBtn.innerHTML = originalText;
+            generateBtn.disabled = false;
+            
+            document.getElementById('downloadVideoBtn').style.display = 'inline-block';
+            document.getElementById('shareVideoBtn').style.display = 'inline-block';
+            
+            showToast(currentLang === 'ar' ? 'تم إنشاء الفيديو بنجاح' : 'Video generated successfully', 'success');
+            
+            // Update preview with generated video
+            preview.innerHTML = `
+                <div class="text-center">
+                    <i class="fas fa-check-circle text-4xl text-green-500 mb-2"></i>
+                    <p class="text-green-600 dark:text-green-400 mb-2">${isArabic ? 'تم إنشاء الفيديو' : 'Video Generated'}</p>
+                    <p class="text-sm text-gray-500">${isArabic ? 'تم إنشاء الفيديو بنجاح' : 'Video generated successfully'}</p>
+                    <video controls class="mt-4 max-w-full rounded-lg" style="max-height: 200px;">
+                        <source src="${window.generatedVideoUrl}" type="video/webm">
+                        ${isArabic ? 'متصفحك لا يدعم تشغيل الفيديو' : 'Your browser does not support video playback'}
+                    </video>
+                </div>
+            `;
+        }).catch(error => {
+            console.error('Video generation error:', error);
+            generateBtn.innerHTML = originalText;
+            generateBtn.disabled = false;
+            
+            // Show error in preview
+            preview.innerHTML = `
+                <div class="text-center">
+                    <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-2"></i>
+                    <p class="text-red-600 dark:text-red-400 mb-2">${isArabic ? 'فشل في إنشاء الفيديو' : 'Video Generation Failed'}</p>
+                    <p class="text-sm text-gray-500">${isArabic ? 'يرجى المحاولة مرة أخرى' : 'Please try again'}</p>
+                </div>
+            `;
+            
+            showToast(currentLang === 'ar' ? 'فشل في إنشاء الفيديو' : 'Failed to generate video', 'error');
+        });
+    }
+
+    async function createVideoFromCanvas(settings) {
+        const surah = window.currentVideoSurah;
+        const ayah = window.currentVideoAyah;
+        const surahData = quranData[surah];
+        const ayahData = surahData.ayahs[ayah];
+        
+        // Get translation if enabled
+        let translationText = '';
+        if (settings.showTranslation) {
+            const translationAyahs = translationData[surah];
+            const translationAyah = translationAyahs.ayahs[ayah];
+            if (translationAyah) {
+                translationText = translationAyah.text;
+            }
+        }
+
+        // Create canvas
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Set canvas size (16:9 aspect ratio)
+        canvas.width = 1920;
+        canvas.height = 1080;
+        
+        // Create background video element if needed
+        let backgroundVideo = null;
+        if (settings.backgroundType === 'video') {
+            backgroundVideo = document.createElement('video');
+            backgroundVideo.src = `videos/${settings.backgroundVideo}`;
+            backgroundVideo.muted = true;
+            backgroundVideo.loop = settings.videoLoop;
+            backgroundVideo.crossOrigin = 'anonymous';
+            
+            // Wait for video to load
+            await new Promise((resolve, reject) => {
+                backgroundVideo.onloadeddata = resolve;
+                backgroundVideo.onerror = reject;
+                backgroundVideo.load();
+            });
+        }
+        
+        // Create audio element for the reciter
+        let audioElement = null;
+        let audioStream = null;
+        let audioContext = null;
+        
+        try {
+            // Create audio context first
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Create audio element for the reciter
+            const audioUrl = `https://cdn.islamic.network/quran/audio/${settings.reciter}/${surah + 1}/${ayah + 1}.mp3`;
+            audioElement = new Audio(audioUrl);
+            audioElement.crossOrigin = 'anonymous';
+            audioElement.preload = 'auto';
+            
+            // Preload audio first
+            await new Promise((resolve, reject) => {
+                audioElement.oncanplaythrough = resolve;
+                audioElement.onerror = (error) => {
+                    console.log('Audio loading error:', error);
+                    reject(error);
+                };
+                audioElement.load();
+            });
+            
+            // Create audio source and destination
+            const audioSource = audioContext.createMediaElementSource(audioElement);
+            const destination = audioContext.createMediaStreamDestination();
+            
+            // Connect audio nodes
+            audioSource.connect(destination);
+            audioSource.connect(audioContext.destination);
+            
+            audioStream = destination.stream;
+            
+            console.log('Audio loaded successfully, duration:', audioElement.duration);
+            
+            // Adjust video duration to match audio duration if needed
+            if (audioElement.duration > 0 && audioElement.duration < settings.duration) {
+                settings.duration = Math.ceil(audioElement.duration);
+                console.log('Adjusted video duration to match audio:', settings.duration);
+            }
+            
+        } catch (error) {
+            console.log('Audio not available, creating video without audio:', error);
+            // Try alternative audio source
+            try {
+                const alternativeUrl = `https://server8.mp3quran.net/${settings.reciter}/${String(surah + 1).padStart(3, '0')}${String(ayah + 1).padStart(3, '0')}.mp3`;
+                audioElement = new Audio(alternativeUrl);
+                audioElement.crossOrigin = 'anonymous';
+                audioElement.preload = 'auto';
+                
+                await new Promise((resolve, reject) => {
+                    audioElement.oncanplaythrough = resolve;
+                    audioElement.onerror = reject;
+                    audioElement.load();
+                });
+                
+                if (audioContext) {
+                    const audioSource = audioContext.createMediaElementSource(audioElement);
+                    const destination = audioContext.createMediaStreamDestination();
+                    audioSource.connect(destination);
+                    audioSource.connect(audioContext.destination);
+                    audioStream = destination.stream;
+                    console.log('Alternative audio loaded successfully');
+                }
+            } catch (altError) {
+                console.log('Alternative audio also failed:', altError);
+            }
+        }
+        
+        // Create MediaRecorder with video and audio streams
+        const videoStream = canvas.captureStream(30); // 30 FPS
+        let finalStream = videoStream;
+        
+        if (audioStream) {
+            // Combine video and audio streams
+            const tracks = [...videoStream.getTracks(), ...audioStream.getTracks()];
+            finalStream = new MediaStream(tracks);
+        }
+        
+        // Check for supported MIME types
+        let mimeType = 'video/webm;codecs=vp9';
+        if (!MediaRecorder.isTypeSupported(mimeType)) {
+            mimeType = 'video/webm;codecs=vp8';
+        }
+        if (!MediaRecorder.isTypeSupported(mimeType)) {
+            mimeType = 'video/webm';
+        }
+        if (!MediaRecorder.isTypeSupported(mimeType)) {
+            mimeType = 'video/mp4';
+        }
+        
+        const mediaRecorder = new MediaRecorder(finalStream, {
+            mimeType: mimeType
+        });
+        
+        const chunks = [];
+        mediaRecorder.ondataavailable = (event) => {
+            if (event.data.size > 0) {
+                chunks.push(event.data);
+            }
+        };
+        
+        return new Promise(async (resolve, reject) => {
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(chunks, { type: 'video/webm' });
+                resolve(blob);
+            };
+            
+            mediaRecorder.onerror = (error) => {
+                reject(error);
+            };
+            
+            // Start recording
+            mediaRecorder.start();
+            
+            // Resume audio context if suspended (required for some browsers)
+            if (audioContext && audioContext.state === 'suspended') {
+                await audioContext.resume();
+            }
+            
+            // Start background video if available
+            if (backgroundVideo) {
+                backgroundVideo.play().catch(error => {
+                    console.log('Could not play background video:', error);
+                });
+            }
+            
+            // Start audio if available
+            if (audioElement) {
+                try {
+                    await audioElement.play();
+                    console.log('Audio started successfully');
+                } catch (error) {
+                    console.log('Could not play audio:', error);
+                }
+            }
+            
+            // Animation variables
+            const startTime = Date.now();
+            const duration = settings.duration * 1000; // Convert to milliseconds
+            
+            // Animation loop
+            function animate() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Clear canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw background
+                if (settings.backgroundType === 'video' && backgroundVideo) {
+                    // Draw background video
+                    ctx.globalAlpha = settings.videoOpacity;
+                    ctx.drawImage(backgroundVideo, 0, 0, canvas.width, canvas.height);
+                    ctx.globalAlpha = 1;
+                } else {
+                    // Draw solid color background
+                    ctx.fillStyle = settings.backgroundColor;
+                    ctx.globalAlpha = settings.opacity;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.globalAlpha = 1;
+                }
+                
+                // Draw border
+                if (settings.borderSize > 0) {
+                    ctx.strokeStyle = settings.borderColor;
+                    ctx.lineWidth = settings.borderSize * 4; // Scale for high resolution
+                    ctx.strokeRect(0, 0, canvas.width, canvas.height);
+                }
+                
+                // Calculate text positioning
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                
+                // Draw Arabic text
+                ctx.fillStyle = settings.textColor;
+                ctx.font = `${settings.textSize * 60}px '${settings.fontFamily}', 'Uthmanic Hafs', serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                // Add fade-in effect
+                const fadeInDuration = 1000; // 1 second fade in
+                const fadeOutDuration = 1000; // 1 second fade out
+                let alpha = 1;
+                
+                if (elapsed < fadeInDuration) {
+                    alpha = elapsed / fadeInDuration;
+                } else if (elapsed > duration - fadeOutDuration) {
+                    alpha = (duration - elapsed) / fadeOutDuration;
+                }
+                
+                ctx.globalAlpha = alpha;
+                
+                // Draw verse text
+                ctx.fillText(ayahData.text, centerX, centerY - (settings.showTranslation ? 100 : 0));
+                
+                // Draw translation if enabled
+                if (settings.showTranslation && translationText) {
+                    ctx.font = `${settings.translationSize * 40}px Arial, sans-serif`;
+                    ctx.globalAlpha = alpha * 0.8;
+                    ctx.fillText(translationText, centerX, centerY + 100);
+                }
+                
+                ctx.globalAlpha = 1;
+                
+                // Continue animation if not finished
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    mediaRecorder.stop();
+                }
+            }
+            
+            // Start animation
+            animate();
+        });
+    }
+
+    function downloadVideo() {
+        if (!window.generatedVideoBlob) {
+            showToast(currentLang === 'ar' ? 'لا يوجد فيديو للتحميل' : 'No video to download', 'error');
+            return;
+        }
+
+        // Create a temporary link to download the video
+        const link = document.createElement('a');
+        link.href = window.generatedVideoUrl;
+        link.download = `quran-verse-${window.currentVideoSurah + 1}-${window.currentVideoAyah + 1}.webm`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        showToast(currentLang === 'ar' ? 'تم بدء التحميل' : 'Download started', 'success');
+    }
+
+    function shareVideo() {
+        if (!window.generatedVideoBlob) {
+            showToast(currentLang === 'ar' ? 'لا يوجد فيديو للمشاركة' : 'No video to share', 'error');
+            return;
+        }
+
+        const verseText = currentLang === 'ar' ? 
+            `فيديو آية من ${window.currentVideoSurahName} - الآية ${window.currentVideoAyah + 1}` : 
+            `Video verse from ${window.currentVideoSurahName} - Verse ${window.currentVideoAyah + 1}`;
+
+        // Check if native sharing is available and supports files
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [window.generatedVideoBlob] })) {
+            navigator.share({
+                title: verseText,
+                text: verseText,
+                files: [new File([window.generatedVideoBlob], `quran-verse-${window.currentVideoSurah + 1}-${window.currentVideoAyah + 1}.webm`, { type: 'video/webm' })]
+            }).then(() => {
+                showToast(currentLang === 'ar' ? 'تم المشاركة بنجاح' : 'Shared successfully', 'success');
+            }).catch(err => {
+                if (err.name !== 'AbortError') {
+                    // Fallback to copying video URL
+                    copyToClipboard(window.generatedVideoUrl);
+                }
+            });
+        } else {
+            // Fallback to copying video URL
+            copyToClipboard(window.generatedVideoUrl);
+        }
+    }
 
