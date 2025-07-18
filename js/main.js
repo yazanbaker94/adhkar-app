@@ -2568,36 +2568,38 @@ function showARUnsupported(errorType) {
                try {
                    // Check if app is in foreground
                    if (document.visibilityState === 'visible') {
-                       // App is visible, show notification directly
-                       const notification = new Notification(testNotificationData.title, {
-                           body: testNotificationData.body,
-                           icon: testNotificationData.icon,
-                           badge: testNotificationData.badge,
-                           tag: testNotificationData.tag,
-                           requireInteraction: false,
-                           vibrate: [200, 100, 200, 100, 200],
-                           silent: false,
-                           data: {
-                               type: 'test',
-                               timestamp: testNotificationData.timestamp
-                           }
-                       });
-                       
-                       console.log('Delayed test notification sent successfully (foreground)!');
-                       
-                       // Auto-close after 10 seconds
-                       setTimeout(() => {
-                           notification.close();
-                       }, 10000);
+                       // App is visible, show notification via service worker
+                       if ('serviceWorker' in navigator) {
+                           navigator.serviceWorker.ready.then(registration => {
+                               registration.showNotification(testNotificationData.title, {
+                                   body: testNotificationData.body,
+                                   icon: testNotificationData.icon,
+                                   badge: testNotificationData.badge,
+                                   tag: testNotificationData.tag,
+                                   requireInteraction: false,
+                                   vibrate: [200, 100, 200, 100, 200],
+                                   silent: false,
+                                   data: {
+                                       type: 'test',
+                                       timestamp: testNotificationData.timestamp
+                                   }
+                               }).then(() => {
+                                   console.log('Delayed test notification sent successfully (foreground)!');
+                               }).catch(error => {
+                                   console.error('Service worker notification failed:', error);
+                               });
+                           }).catch(error => {
+                               console.error('Service worker not ready:', error);
+                           });
+                       }
                    } else {
                        // App is in background, try to show notification
                        console.log('App is in background, attempting to show notification...');
                        
                        if (isAndroid) {
                            // Android has better background notification support
-                           // Try to use service worker for background notification
-                           if ('serviceWorker' in navigator && 'PushManager' in window) {
-                               // Use service worker to show notification
+                           // Use service worker for background notification
+                           if ('serviceWorker' in navigator) {
                                navigator.serviceWorker.ready.then(registration => {
                                    registration.showNotification(testNotificationData.title, {
                                        body: testNotificationData.body,
@@ -2619,11 +2621,15 @@ function showARUnsupported(errorType) {
                                                icon: 'icon1.png'
                                            }
                                        ]
+                                   }).then(() => {
+                                       console.log('Android background notification sent via service worker');
+                                   }).catch(error => {
+                                       console.error('Service worker notification failed:', error);
+                                       // Fallback to direct notification
+                                       showDirectNotification();
                                    });
-                                   
-                                   console.log('Android background notification sent via service worker');
                                }).catch(error => {
-                                   console.error('Service worker notification failed:', error);
+                                   console.error('Service worker not ready:', error);
                                    // Fallback to direct notification
                                    showDirectNotification();
                                });
@@ -2632,30 +2638,59 @@ function showARUnsupported(errorType) {
                                showDirectNotification();
                            }
                        } else if (isIOS) {
-                           // iOS background notification attempt
-                           const notification = new Notification(testNotificationData.title, {
-                               body: testNotificationData.body,
-                               icon: testNotificationData.icon,
-                               badge: testNotificationData.badge,
-                               tag: testNotificationData.tag,
-                               requireInteraction: false,
-                               vibrate: [200, 100, 200, 100, 200],
-                               silent: false,
-                               data: {
-                                   type: 'test',
-                                   timestamp: testNotificationData.timestamp
-                               }
-                           });
-                           
-                           console.log('iOS background notification attempted');
-                           
-                           // Auto-close after 10 seconds
-                           setTimeout(() => {
-                               notification.close();
-                           }, 10000);
+                           // iOS background notification attempt via service worker
+                           if ('serviceWorker' in navigator) {
+                               navigator.serviceWorker.ready.then(registration => {
+                                   registration.showNotification(testNotificationData.title, {
+                                       body: testNotificationData.body,
+                                       icon: testNotificationData.icon,
+                                       badge: testNotificationData.badge,
+                                       tag: testNotificationData.tag,
+                                       requireInteraction: false,
+                                       vibrate: [200, 100, 200, 100, 200],
+                                       silent: false,
+                                       data: {
+                                           type: 'test',
+                                           timestamp: testNotificationData.timestamp
+                                       }
+                                   }).then(() => {
+                                       console.log('iOS background notification sent via service worker');
+                                   }).catch(error => {
+                                       console.error('iOS service worker notification failed:', error);
+                                   });
+                               }).catch(error => {
+                                   console.error('Service worker not ready:', error);
+                               });
+                           }
                        } else {
-                           // Other platforms - try normal notification
-                           showDirectNotification();
+                           // Other platforms - try service worker notification
+                           if ('serviceWorker' in navigator) {
+                               navigator.serviceWorker.ready.then(registration => {
+                                   registration.showNotification(testNotificationData.title, {
+                                       body: testNotificationData.body,
+                                       icon: testNotificationData.icon,
+                                       badge: testNotificationData.badge,
+                                       tag: testNotificationData.tag,
+                                       requireInteraction: false,
+                                       vibrate: [200, 100, 200, 100, 200],
+                                       silent: false,
+                                       data: {
+                                           type: 'test',
+                                           timestamp: testNotificationData.timestamp
+                                       }
+                                   }).then(() => {
+                                       console.log('Background notification sent via service worker');
+                                   }).catch(error => {
+                                       console.error('Service worker notification failed:', error);
+                                       showDirectNotification();
+                                   });
+                               }).catch(error => {
+                                   console.error('Service worker not ready:', error);
+                                   showDirectNotification();
+                               });
+                           } else {
+                               showDirectNotification();
+                           }
                        }
                        
                        // Helper function for direct notification
@@ -2868,38 +2903,48 @@ function showARUnsupported(errorType) {
                        console.log('App is not visible, attempting background notification');
                    }
                    
-                   const notification = new Notification(data.title, {
-                       body: data.body,
-                       icon: data.icon,
-                       badge: data.badge,
-                       tag: data.tag,
-                       requireInteraction: false,
-                       vibrate: [300, 100, 300, 100, 300],
-                       silent: false,
-                       data: {
-                           type: 'android-test',
-                           timestamp: data.timestamp
-                       },
-                       actions: [
-                           {
-                               action: 'open',
-                               title: currentLang === 'ar' ? 'فتح التطبيق' : 'Open App',
-                               icon: 'icon1.png'
-                           }
-                       ]
-                   });
-                   
-                   console.log('Android background test notification sent successfully');
-                   
-                   // Show success toast
-                   showToast(currentLang === 'ar' ? 
-                       'تم إرسال الإشعار بنجاح' : 
-                       'Notification sent successfully', 'success');
-                   
-                   // Auto-close after 15 seconds
-                   setTimeout(() => {
-                       notification.close();
-                   }, 15000);
+                   // Use service worker to show notification instead of direct Notification constructor
+                   if ('serviceWorker' in navigator) {
+                       navigator.serviceWorker.ready.then(registration => {
+                           registration.showNotification(data.title, {
+                               body: data.body,
+                               icon: data.icon,
+                               badge: data.badge,
+                               tag: data.tag,
+                               requireInteraction: false,
+                               vibrate: [300, 100, 300, 100, 300],
+                               silent: false,
+                               data: {
+                                   type: 'android-test',
+                                   timestamp: data.timestamp
+                               },
+                               actions: [
+                                   {
+                                       action: 'open',
+                                       title: currentLang === 'ar' ? 'فتح التطبيق' : 'Open App',
+                                       icon: 'icon1.png'
+                                   }
+                               ]
+                           }).then(() => {
+                               console.log('Android background test notification sent successfully via service worker');
+                               showToast(currentLang === 'ar' ? 
+                                   'تم إرسال الإشعار بنجاح' : 
+                                   'Notification sent successfully', 'success');
+                           }).catch(error => {
+                               console.error('Service worker notification failed:', error);
+                               showToast(currentLang === 'ar' ? 
+                                   'فشل في إرسال الإشعار عبر Service Worker' : 
+                                   'Failed to send notification via Service Worker', 'error');
+                           });
+                       }).catch(error => {
+                           console.error('Service worker not ready:', error);
+                           showToast(currentLang === 'ar' ? 
+                               'Service Worker غير جاهز' : 
+                               'Service Worker not ready', 'error');
+                       });
+                   } else {
+                       throw new Error('Service Worker not supported');
+                   }
                    
                } catch (error) {
                    console.error('Error sending Android background test notification:', error);
@@ -2909,27 +2954,34 @@ function showARUnsupported(errorType) {
                        stack: error.stack
                    });
                    
-                   // Try alternative approach
+                   // Try alternative approach with service worker
                    try {
                        console.log('Trying alternative notification approach...');
                        
-                       // Try without actions first
-                       const simpleNotification = new Notification(data.title, {
-                           body: data.body,
-                           icon: data.icon,
-                           tag: data.tag,
-                           requireInteraction: false,
-                           silent: false
-                       });
-                       
-                       console.log('Simple notification sent successfully');
-                       showToast(currentLang === 'ar' ? 
-                           'تم إرسال الإشعار البسيط بنجاح' : 
-                           'Simple notification sent successfully', 'success');
-                       
-                       setTimeout(() => {
-                           simpleNotification.close();
-                       }, 15000);
+                       if ('serviceWorker' in navigator) {
+                           navigator.serviceWorker.ready.then(registration => {
+                               // Try without actions first
+                               registration.showNotification(data.title, {
+                                   body: data.body,
+                                   icon: data.icon,
+                                   tag: data.tag,
+                                   requireInteraction: false,
+                                   silent: false
+                               }).then(() => {
+                                   console.log('Simple notification sent successfully via service worker');
+                                   showToast(currentLang === 'ar' ? 
+                                       'تم إرسال الإشعار البسيط بنجاح' : 
+                                       'Simple notification sent successfully', 'success');
+                               }).catch(error => {
+                                   console.error('Simple service worker notification failed:', error);
+                                   showToast(currentLang === 'ar' ? 
+                                       'فشل في إرسال الإشعار البسيط' : 
+                                       'Failed to send simple notification', 'error');
+                               });
+                           });
+                       } else {
+                           throw new Error('Service Worker not supported');
+                       }
                        
                    } catch (secondError) {
                        console.error('Second attempt also failed:', secondError);
@@ -2991,25 +3043,37 @@ function showARUnsupported(errorType) {
                        'جاري إرسال الإشعار...' : 
                        'Sending notification...', 'info');
                    
-                   const notification = new Notification('Simple Android Test', {
-                       body: currentLang === 'ar' ? 
-                           'هذا إشعار اختبار بسيط لـ Android' : 
-                           'This is a simple Android test notification',
-                       icon: 'icon1.png',
-                       tag: 'simple-android-test',
-                       requireInteraction: false,
-                       silent: false
-                   });
-                   
-                   console.log('Simple notification sent successfully');
-                   showToast(currentLang === 'ar' ? 
-                       'تم إرسال الإشعار البسيط بنجاح' : 
-                       'Simple notification sent successfully', 'success');
-                   
-                   // Auto-close after 10 seconds
-                   setTimeout(() => {
-                       notification.close();
-                   }, 10000);
+                   // Use service worker to show notification
+                   if ('serviceWorker' in navigator) {
+                       navigator.serviceWorker.ready.then(registration => {
+                           registration.showNotification('Simple Android Test', {
+                               body: currentLang === 'ar' ? 
+                                   'هذا إشعار اختبار بسيط لـ Android' : 
+                                   'This is a simple Android test notification',
+                               icon: 'icon1.png',
+                               tag: 'simple-android-test',
+                               requireInteraction: false,
+                               silent: false
+                           }).then(() => {
+                               console.log('Simple notification sent successfully via service worker');
+                               showToast(currentLang === 'ar' ? 
+                                   'تم إرسال الإشعار البسيط بنجاح' : 
+                                   'Simple notification sent successfully', 'success');
+                           }).catch(error => {
+                               console.error('Service worker notification failed:', error);
+                               showToast(currentLang === 'ar' ? 
+                                   'فشل في إرسال الإشعار عبر Service Worker' : 
+                                   'Failed to send notification via Service Worker', 'error');
+                           });
+                       }).catch(error => {
+                           console.error('Service worker not ready:', error);
+                           showToast(currentLang === 'ar' ? 
+                               'Service Worker غير جاهز' : 
+                               'Service Worker not ready', 'error');
+                       });
+                   } else {
+                       throw new Error('Service Worker not supported');
+                   }
                    
                } catch (error) {
                    console.error('Simple notification failed:', error);
@@ -3107,26 +3171,38 @@ function showARUnsupported(errorType) {
                'هذا إشعار اختبار للمحاكي يعمل فوراً' : 
                'This emulator test notification works immediately');
            
-           // Also try real notification
+           // Also try real notification via service worker
            try {
-               const notification = new Notification('Emulator Test', {
-                   body: currentLang === 'ar' ? 
-                       'اختبار إشعار حقيقي للمحاكي' : 
-                       'Real notification test for emulator',
-                   icon: 'icon1.png',
-                   tag: 'emulator-test',
-                   requireInteraction: false,
-                   silent: false
-               });
-               
-               console.log('Real notification sent successfully');
-               showToast(currentLang === 'ar' ? 
-                   'تم إرسال الإشعار الحقيقي بنجاح' : 
-                   'Real notification sent successfully', 'success');
-               
-               setTimeout(() => {
-                   notification.close();
-               }, 5000);
+               if ('serviceWorker' in navigator) {
+                   navigator.serviceWorker.ready.then(registration => {
+                       registration.showNotification('Emulator Test', {
+                           body: currentLang === 'ar' ? 
+                               'اختبار إشعار حقيقي للمحاكي' : 
+                               'Real notification test for emulator',
+                           icon: 'icon1.png',
+                           tag: 'emulator-test',
+                           requireInteraction: false,
+                           silent: false
+                       }).then(() => {
+                           console.log('Real notification sent successfully via service worker');
+                           showToast(currentLang === 'ar' ? 
+                               'تم إرسال الإشعار الحقيقي بنجاح' : 
+                               'Real notification sent successfully', 'success');
+                       }).catch(error => {
+                           console.error('Service worker notification failed:', error);
+                           showToast(currentLang === 'ar' ? 
+                               'فشل في إرسال الإشعار عبر Service Worker' : 
+                               'Failed to send notification via Service Worker', 'error');
+                       });
+                   }).catch(error => {
+                       console.error('Service worker not ready:', error);
+                       showToast(currentLang === 'ar' ? 
+                           'Service Worker غير جاهز' : 
+                           'Service Worker not ready', 'error');
+                   });
+               } else {
+                   throw new Error('Service Worker not supported');
+               }
                
            } catch (error) {
                console.error('Real notification failed:', error);
