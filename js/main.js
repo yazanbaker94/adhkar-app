@@ -11197,8 +11197,86 @@ function loadPrayerOffsets() {
             return;
         }
         
-        // Simulate a click on the tab
-        tab.click();
+        // Get current active tab
+        const previousActiveTab = document.querySelector('.tab.active');
+        const previousTabId = previousActiveTab ? previousActiveTab.getAttribute('data-tab') : null;
+        
+        // Remove active class from all tabs and content
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        // Add active class to target tab and content
+        tab.classList.add('active');
+        document.getElementById(`${tabId}Content`).classList.add('active');
+        
+        // Handle Quran controls visibility
+        const controls = getQuranControls();
+        if (controls) {
+            if (tabId === 'quran') {
+                controls.style.display = 'flex';
+                controls.classList.remove('quran-controls-hidden');
+                console.log('Quran controls shown');
+            } else {
+                controls.style.display = 'none';
+                console.log('Quran controls hidden');
+            }
+        }
+        
+        // Handle other tab-specific logic
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        
+        // Reset reading mode when switching away from Quran tab
+        if (previousTabId === 'quran' && tabId !== 'quran' && isReadingMode) {
+            isReadingMode = false;
+            const btnReadingMode = document.getElementById('btnReadingMode');
+            if (btnReadingMode) {
+                btnReadingMode.innerHTML = '<i class="fas fa-book-open w-3 h-3"></i>';
+            }
+            // Remove scroll listener
+            if (window.currentScrollListener) {
+                window.removeEventListener('scroll', window.currentScrollListener);
+                window.currentScrollListener = null;
+            }
+            // Hide page/Juz indicator
+            hidePageJuzIndicator();
+        }
+        
+        // Stop compass when switching away from Qibla tab
+        if (previousTabId === 'qibla' && tabId !== 'qibla') {
+            stopCompass();
+        }
+        
+        // Handle Quran tab specific logic
+        if (tabId === 'quran') {
+            // Load Quran data asynchronously without blocking UI
+            (async () => {
+                try {
+                    if (!quranData || !translationData) {
+                        await loadQuranData();
+                    } else {
+                        resetQuranContent();
+                    }
+                    
+                    // Initialize Quran search if not already done
+                    const searchInput = document.getElementById('quranSearchInput');
+                    if (searchInput && !searchInput.hasAttribute('data-initialized')) {
+                        initializeQuranSearch();
+                        searchInput.setAttribute('data-initialized', 'true');
+                    }
+                } catch (error) {
+                    const arabicText = document.getElementById('arabicText');
+                    if (arabicText) {
+                        arabicText.innerHTML = `
+                            <div class="text-red-500 dark:text-red-400 py-8">
+                                <i class="fas fa-exclamation-circle text-4xl mb-4"></i>
+                                <p class="text-xl">${currentLang === 'ar' ? 'حدث خطأ في تحميل البيانات' : 'Error loading data'}</p>
+                                <p class="text-sm mt-4">${error.message}</p>
+                            </div>
+                        `;
+                    }
+                }
+            })();
+        }
     }
 
     // Function to update surah menu and dropdown for current surah
