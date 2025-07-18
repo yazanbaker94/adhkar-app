@@ -2512,6 +2512,55 @@ function showARUnsupported(errorType) {
        window.testNotification = testNotification;
        window.requestNotificationPermission = requestNotificationPermission;
        window.testQiblaAccuracy = testQiblaAccuracy;
+       
+       // Test delayed notification function (for testing when app is closed)
+       function testDelayedNotification() {
+           if (!notificationEnabled) {
+               console.log('Notifications are disabled. Please enable them first.');
+               showToast(currentLang === 'ar' ? 'يرجى تفعيل الإشعارات أولاً' : 'Please enable notifications first', 'error');
+               return;
+           }
+           
+           // Show immediate feedback
+           showToast(currentLang === 'ar' ? 'سيتم إرسال إشعار تجريبي بعد دقيقة واحدة' : 'Test notification will be sent in 1 minute', 'info');
+           
+           // Schedule notification for 1 minute from now
+           setTimeout(() => {
+               try {
+                   const notification = new Notification('Test Notification (App Closed)', {
+                       body: currentLang === 'ar' ? 
+                           'هذا إشعار تجريبي لاختبار الإشعارات عندما يكون التطبيق مغلقاً' : 
+                           'This is a test notification to verify notifications work when the app is closed',
+                       icon: 'icon1.png',
+                       badge: 'icon1.png',
+                       tag: 'delayed-test-notification',
+                       requireInteraction: false,
+                       vibrate: [200, 100, 200, 100, 200],
+                       silent: false,
+                       data: {
+                           type: 'test',
+                           timestamp: new Date().toISOString()
+                       }
+                   });
+                   
+                   console.log('Delayed test notification sent successfully!');
+                   
+                   // Auto-close after 10 seconds
+                   setTimeout(() => {
+                       notification.close();
+                   }, 10000);
+                   
+               } catch (error) {
+                   console.error('Error showing delayed test notification:', error);
+                   showToast(currentLang === 'ar' ? 'فشل في إرسال الإشعار التجريبي' : 'Failed to send test notification', 'error');
+               }
+           }, 60000); // 1 minute delay
+           
+           console.log('Delayed test notification scheduled for 1 minute from now');
+       }
+       
+       // Add to global scope
+       window.testDelayedNotification = testDelayedNotification;
 
       // Samsung-specific retry function
       async function retrySamsungInit() {
