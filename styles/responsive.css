@@ -136,7 +136,7 @@
     /* Mobile responsive for horizontal header */
     .quran-controls-sticky {
         position: sticky !important;
-        top: 0 !important;
+        top: var(--sticky-offset) !important; /* Account for header and tabs height */
         margin: -1rem -1rem 1rem -1rem;
         padding: 0.5rem 0.75rem;
         gap: 0.25rem;
@@ -292,7 +292,7 @@
     .quran-controls-sticky {
         position: -webkit-sticky !important;
         position: sticky !important;
-        top: 0 !important;
+        top: var(--sticky-offset) !important; /* Account for header and tabs height */
         z-index: 50 !important;
         /* Force hardware acceleration for better performance */
         transform: translateZ(0);
