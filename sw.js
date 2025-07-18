@@ -118,7 +118,10 @@ self.addEventListener("push", event => {
         title: "View Prayer Times",
         icon: "icon1.png"
       }
-    ]
+    ],
+    // iOS-specific options for better audio handling
+    silent: false,
+    requireInteraction: true
   };
 
   event.waitUntil(
@@ -151,4 +154,28 @@ self.addEventListener("backgroundfetchsuccess", event => {
       }
     })()
   );
+});
+
+// Handle periodic sync for prayer times
+self.addEventListener("periodicsync", event => {
+  if (event.tag === "prayer-times") {
+    event.waitUntil(
+      (async () => {
+        try {
+          // Update prayer times in background
+          const response = await fetch("https://api.aladhan.com/v1/timings/" + new Date().toISOString().split('T')[0] + "?latitude=31.9539&longitude=35.9106&method=2");
+          const data = await response.json();
+          
+          // Cache the updated prayer times
+          const cache = await caches.open(API_CACHE_NAME);
+          await cache.put(
+            new Request("https://api.aladhan.com/v1/timings/" + new Date().toISOString().split('T')[0] + "?latitude=31.9539&longitude=35.9106&method=2"),
+            new Response(JSON.stringify(data))
+          );
+        } catch (error) {
+          console.error("Periodic sync failed:", error);
+        }
+      })()
+    );
+  }
 });
