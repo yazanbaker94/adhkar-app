@@ -181,6 +181,36 @@
         </div>
     </div>
 
+    <!-- Quran Controls - Moved outside main for proper sticky behavior -->
+    <div class="quran-controls-sticky flex items-center justify-between px-4 py-2 mb-6 gap-2 flex-nowrap min-w-0 fixed top-0 left-0 right-0 z-50">
+        <!-- Left Section: Controls -->
+        <div class="flex items-center gap-1 flex-shrink-0">
+            <!-- Settings Button -->
+            <button onclick="toggleQuranSettings()" class="rounded-md p-2 transition-colors text-sm flex-shrink-0" id="settingsBtn" title="Quran Settings - إعدادات القرآن">
+                <i class="fas fa-cog w-3 h-3"></i>
+            </button>
+            
+            <!-- Reading Mode Button -->
+            <button onclick="toggleReadingMode()" id="btnReadingMode" class="text-green px-3 py-2 rounded-md  transition-colors text-sm flex-shrink-0" title="Toggle Reading Mode - تبديل وضع القراءة" disabled>
+                <i class="fas fa-book-open w-3 h-3"></i>
+            </button>
+        </div>
+
+        <!-- Center Section: Page & Juz Indicator -->
+        <div id="pageJuzIndicator" class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 hidden">
+            <span id="currentPageIndicator" class="px-2 py-1">صفحة ١</span>
+            <span id="currentJuzIndicator" class="px-2 py-1">جزء ١</span>
+        </div>
+
+        <!-- Right Section: Surah Selector -->
+        <div class="flex items-center flex-shrink-0 min-w-0">
+            <button id="surahMenuBtn" class="rounded-md px-3 py-2 flex items-center gap-2 text-sm transition-colors overflow-hidden" title="Select Surah - اختر السورة">
+                <span id="selectedSurahText" class="truncate">اختر السورة</span>
+                <i class="fas fa-chevron-down text-xs flex-shrink-0"></i>
+            </button>
+        </div>
+    </div>
+
     <main class="flex-grow flex items-center justify-center islamic-pattern overflow-y-auto">
         <!-- Loading Spinner -->
         <div id="loadingSpinner" class="fixed inset-0 flex justify-center items-center bg-white dark:bg-black z-50">
@@ -190,35 +220,6 @@
         <!-- Quran Tab Content -->
         <div id="quranContent" class="tab-content w-full max-w-4xl p-4">
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-
-                <div class="quran-controls-sticky flex items-center justify-between px-4 py-2 mb-6 gap-2 flex-nowrap min-w-0">
-                    <!-- Left Section: Controls -->
-                    <div class="flex items-center gap-1 flex-shrink-0">
-                        <!-- Settings Button -->
-                        <button onclick="toggleQuranSettings()" class="rounded-md p-2 transition-colors text-sm flex-shrink-0" id="settingsBtn" title="Quran Settings - إعدادات القرآن">
-                            <i class="fas fa-cog w-3 h-3"></i>
-                        </button>
-                        
-                        <!-- Reading Mode Button -->
-                        <button onclick="toggleReadingMode()" id="btnReadingMode" class="text-green px-3 py-2 rounded-md  transition-colors text-sm flex-shrink-0" title="Toggle Reading Mode - تبديل وضع القراءة" disabled>
-                            <i class="fas fa-book-open w-3 h-3"></i>
-                        </button>
-                        </div>
-
-                    <!-- Center Section: Page & Juz Indicator -->
-                    <div id="pageJuzIndicator" class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 hidden">
-                        <span id="currentPageIndicator" class="px-2 py-1">صفحة ١</span>
-                        <span id="currentJuzIndicator" class="px-2 py-1">جزء ١</span>
-                        </div>
-
-                    <!-- Right Section: Surah Selector -->
-                    <div class="flex items-center flex-shrink-0 min-w-0">
-                        <button id="surahMenuBtn" class="rounded-md px-3 py-2 flex items-center gap-2 text-sm transition-colors overflow-hidden" title="Select Surah - اختر السورة">
-                            <span id="selectedSurahText" class="truncate">اختر السورة</span>
-                            <i class="fas fa-chevron-down text-xs flex-shrink-0"></i>
-                        </button>
-                        </div>
-                        </div>
                         
                 <!-- Quran Search Bar -->
                 <div class="quran-search-container mb-4">
@@ -1398,6 +1399,35 @@
                                         <input type="checkbox" id="notification30min" class="w-4 h-4 text-blue-600 bg-white/80 border-blue-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-blue-600">
                                         <span class="text-sm text-gray-800 dark:text-gray-200" id="notification30minLabel">30 دقيقة قبل</span>
                                     </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Test Notification Buttons -->
+                            <div class="bg-gradient-to-r from-yellow-50/60 to-orange-50/60 dark:from-yellow-900/20 dark:to-orange-900/20 backdrop-blur-sm border border-yellow-200/50 dark:border-yellow-700/50 rounded-lg p-3">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <i class="fas fa-vial text-yellow-600 dark:text-yellow-400 text-sm"></i>
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">اختبار الإشعارات - Test Notifications</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button onclick="testNotification()" class="px-3 py-2 bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-800/60 dark:hover:bg-yellow-700/60 text-yellow-700 dark:text-yellow-300 rounded-lg transition-colors duration-200 text-sm">
+                                        <i class="fas fa-bell mr-1"></i>
+                                        اختبار عام - General Test
+                                    </button>
+                                    <button onclick="showBasicNotification('Dhuhr')" class="px-3 py-2 bg-blue-100 hover:bg-blue-200 dark:bg-blue-800/60 dark:hover:bg-blue-700/60 text-blue-700 dark:text-blue-300 rounded-lg transition-colors duration-200 text-sm">
+                                        <i class="fas fa-pray mr-1"></i>
+                                        اختبار الظهر - Dhuhr Test
+                                    </button>
+                                    <button onclick="showBasicNotification('Fajr')" class="px-3 py-2 bg-green-100 hover:bg-green-200 dark:bg-green-800/60 dark:hover:bg-green-700/60 text-green-700 dark:text-green-300 rounded-lg transition-colors duration-200 text-sm">
+                                        <i class="fas fa-sun mr-1"></i>
+                                        اختبار الفجر - Fajr Test
+                                    </button>
+                                    <button onclick="showBasicNotification('Maghrib')" class="px-3 py-2 bg-purple-100 hover:bg-purple-200 dark:bg-purple-800/60 dark:hover:bg-purple-700/60 text-purple-700 dark:text-purple-300 rounded-lg transition-colors duration-200 text-sm">
+                                        <i class="fas fa-moon mr-1"></i>
+                                        اختبار المغرب - Maghrib Test
+                                    </button>
+                                </div>
+                                <div class="mt-2 text-xs text-gray-600 dark:text-gray-400">
+                                    اضغط على أي زر لاختبار الإشعارات - Click any button to test notifications
                                 </div>
                             </div>
                         </div>

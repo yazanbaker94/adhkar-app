@@ -369,27 +369,31 @@
 
 /* Quran Sticky Controls */
 .quran-controls-sticky {
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    background: #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 20 !important;
+    background: #fff !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     border-radius: 0.5rem;
-    margin: -1.5rem -1.5rem 1rem -1.5rem;
+    margin: 0 0 1rem 0 !important;
     transition: transform 0.3s cubic-bezier(.4,2,.6,1), opacity 0.3s;
-    border-bottom: 1px solid #e5e7eb;
-    height: 56px;
 }
 
 .dark .quran-controls-sticky {
-    background: #1f2937;
+    background: rgba(31, 41, 55, 0.95) !important;
     border-bottom-color: #374151;
 }
 
+.dark .quran-controls-sticky {
+    background: rgba(31, 41, 55, 0.95);
+    border-bottom-color: #374151;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
 .quran-controls-hidden {
-    transform: translateY(-120%);
-    opacity: 0;
-    pointer-events: none;
+    opacity: 0.3 !important;
+    pointer-events: none !important;
 }
 
 /* Prayer Time Highlighting */

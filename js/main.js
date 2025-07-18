@@ -143,6 +143,21 @@ let isFirstVisit = localStorage.getItem('hasVisitedBefore') !== 'true';
 let isSingleVerseLoop = localStorage.getItem('isSingleVerseLoop') === 'true';
 let singleVerseLoopTimeout = null;
 
+// Quran Controls variables
+let quranControls = null;
+let lastScrollTop = 0;
+let scrollThreshold = 1; // Very small threshold for immediate response
+let quranScrollTimeout;
+let scrollHandler = null;
+
+// Function to get or update controls reference
+function getQuranControls() {
+  if (!quranControls || !document.contains(quranControls)) {
+    quranControls = document.querySelector('.quran-controls-sticky');
+  }
+  return quranControls;
+}
+
 // Simple Qibla Compass
       let compassActive = false;
       let currentHeading = 0;
@@ -1084,6 +1099,87 @@ let scrollTimeout = null;
                    marker.classList.remove('show-tooltip');
                });
            }, 5000);
+       }
+
+       // Function to handle scroll-based controls visibility
+       function handleScrollVisibility() {
+         const controls = getQuranControls();
+         if (!controls) return;
+         
+         const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+         
+         // Only trigger if we've scrolled enough distance
+         if (Math.abs(currentScrollTop - lastScrollTop) < scrollThreshold) {
+           return;
+         }
+         
+         // Show controls when scrolling up, hide when scrolling down
+         if (currentScrollTop > lastScrollTop && currentScrollTop > 100) {
+           // Scrolling down - hide controls
+           controls.classList.add('quran-controls-hidden');
+         } else if (currentScrollTop < lastScrollTop) {
+           // Scrolling up - show controls
+           controls.classList.remove('quran-controls-hidden');
+         }
+         
+         lastScrollTop = currentScrollTop;
+         
+         // Clear existing timeout
+         if (quranScrollTimeout) {
+           clearTimeout(quranScrollTimeout);
+         }
+         
+         // Show controls after scrolling stops
+         quranScrollTimeout = setTimeout(() => {
+           const controls = getQuranControls();
+           if (controls) {
+             controls.classList.remove('quran-controls-hidden');
+           }
+         }, 800);
+       }
+       
+       // Add scroll event listener with throttling to avoid conflicts
+       let ticking = false;
+       function throttledScrollHandler() {
+         if (!ticking) {
+           requestAnimationFrame(() => {
+             handleScrollVisibility();
+             ticking = false;
+           });
+           ticking = true;
+         }
+       }
+       
+       // Initialize scroll handler
+       function initScrollHandler() {
+         console.log('Initializing scroll handler');
+         
+         // Remove existing handler if any
+         if (scrollHandler) {
+           window.removeEventListener('scroll', scrollHandler);
+         }
+         
+         scrollHandler = throttledScrollHandler;
+         window.addEventListener('scroll', scrollHandler, { passive: true });
+         
+         // Show controls on initialization if Quran tab is active
+         const controls = getQuranControls();
+         console.log('Controls found:', !!controls);
+         
+         if (controls) {
+           const quranTab = document.querySelector('.tab[data-tab="quran"]');
+           console.log('Quran tab found:', !!quranTab);
+           console.log('Quran tab active:', quranTab?.classList.contains('active'));
+           
+           if (quranTab && quranTab.classList.contains('active')) {
+             controls.style.display = 'flex';
+             controls.classList.remove('quran-controls-hidden');
+             console.log('Controls should be visible now');
+           } else {
+             controls.style.display = 'none';
+             console.log('Controls hidden - not on Quran tab');
+           }
+         }
        }
 
       const languages = {
@@ -2381,14 +2477,39 @@ function showARUnsupported(errorType) {
        // Test notification function (for debugging)
        function testNotification() {
            if (!notificationEnabled) {
+               console.log('Notifications are disabled. Please enable them first.');
                return;
            }
            
-           showBasicNotification('Dhuhr');
+           // Test with a custom notification
+           try {
+               const notification = new Notification('Test Notification', {
+                   body: 'This is a test notification from the Adkhar App',
+                   icon: 'icon1.png',
+                   badge: 'icon1.png',
+                   tag: 'test-notification',
+                   requireInteraction: false,
+                   vibrate: [200, 100, 200],
+                   silent: false
+               });
+               
+               console.log('Test notification sent successfully!');
+               
+               // Auto-close after 5 seconds
+               setTimeout(() => {
+                   notification.close();
+               }, 5000);
+               
+           } catch (error) {
+               console.error('Error showing test notification:', error);
+               // Fallback to prayer notification
+               showBasicNotification('Dhuhr');
+           }
        }
        
        // Add to global scope for console testing
        window.testNotification = testNotification;
+       window.requestNotificationPermission = requestNotificationPermission;
        window.testQiblaAccuracy = testQiblaAccuracy;
 
       // Samsung-specific retry function
@@ -3509,6 +3630,17 @@ function showARUnsupported(errorType) {
 
                   // Handle tab-specific logic asynchronously to avoid blocking UI
                   setTimeout(() => {
+                      // Handle Quran controls visibility
+                      const controls = getQuranControls();
+                      if (controls) {
+                          if (tabId === 'quran') {
+                              controls.style.display = 'flex';
+                              controls.classList.remove('quran-controls-hidden');
+                          } else {
+                              controls.style.display = 'none';
+                          }
+                      }
+                      
                       // Reset reading mode when switching away from Quran tab
                       if (previousTabId === 'quran' && tabId !== 'quran' && isReadingMode) {
                           isReadingMode = false;
@@ -3826,10 +3958,10 @@ function showARUnsupported(errorType) {
               // Check if the app is running in standalone mode (added to home screen)
               const isInStandaloneMode = ('standalone' in navigator) && (navigator.standalone);
               
+              // For iOS not in standalone mode, show tutorial but still try to request permission
               if (isIOS && !isInStandaloneMode) {
-                  // Show instructions for adding to home screen first
                   showTutorial();
-                  return false;
+                  // Continue with permission request anyway
               }
 
               // Check if notifications are supported
@@ -3847,7 +3979,8 @@ function showARUnsupported(errorType) {
               if (permission === 'granted') {
                   try {
                       notificationEnabled = true;
-                      document.getElementById('notificationToggle').checked = true;
+                      const toggle = document.getElementById('prayerNotificationToggle');
+                      if (toggle) toggle.checked = true;
                 
                       if (isIOS) {
                           // For iOS, use basic notifications
@@ -3885,7 +4018,8 @@ function showARUnsupported(errorType) {
                   } catch (error) {
                       console.error('Error setting up notifications:', error);
                       notificationEnabled = false;
-                      document.getElementById('notificationToggle').checked = false;
+                      const toggle = document.getElementById('prayerNotificationToggle');
+                      if (toggle) toggle.checked = false;
                       
                       if (isIOS) {
                           const iosErrorMessage = currentLang === 'ar'
@@ -3902,7 +4036,8 @@ function showARUnsupported(errorType) {
                   }
               } else {
                   notificationEnabled = false;
-                  document.getElementById('notificationToggle').checked = false;
+                  const toggle = document.getElementById('prayerNotificationToggle');
+                  if (toggle) toggle.checked = false;
                   
                   // Show more detailed message for iOS
                   if (isIOS) {
@@ -3921,7 +4056,8 @@ function showARUnsupported(errorType) {
           } catch (error) {
               console.error('Error requesting notification permission:', error);
               notificationEnabled = false;
-              document.getElementById('notificationToggle').checked = false;
+              const toggle = document.getElementById('prayerNotificationToggle');
+              if (toggle) toggle.checked = false;
               const errorMessage = currentLang === 'ar'
                   ? 'حدث خطأ أثناء تفعيل الإشعارات'
                   : 'An error occurred while enabling notifications';
@@ -4055,7 +4191,8 @@ function showARUnsupported(errorType) {
                   // Check if it's the same day
                   if (lastSetup.toDateString() === now.toDateString() && state.enabled) {
                       notificationEnabled = true;
-                      document.getElementById('notificationToggle').checked = true;
+                      const toggle = document.getElementById('prayerNotificationToggle');
+                      if (toggle) toggle.checked = true;
                       return true;
                   }
               }
@@ -5325,34 +5462,45 @@ function showARUnsupported(errorType) {
           updateReadingProgress();
       }
 
-      function handleNotificationToggleClick(e) {
+      async function handleNotificationToggleClick(e) {
         const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
         const isInStandaloneMode = window.navigator.standalone === true;
 
+        // If turning off notifications
         if (!e.target.checked) {
           notificationEnabled = false;
+          saveNotificationState();
           return;
         }
 
+        // For iOS not in standalone mode, show tutorial but continue
         if (isIOS && !isInStandaloneMode) {
           showTutorial();
-
-         
-
-
-          e.preventDefault();
-          e.target.checked = false;
-          return;
         }
 
-        showTutorial();
-
-        requestNotificationPermission().then((success) => {
-          if (!success) {
+        // Request notification permission
+        try {
+          const success = await requestNotificationPermission();
+          if (success) {
+            notificationEnabled = true;
+            saveNotificationState();
+            // Setup notifications if prayer times are available
+            if (Object.keys(prayerNotifications).length > 0) {
+              setupBasicNotifications();
+            }
+          } else {
+            // Permission denied or failed
             e.target.checked = false;
+            notificationEnabled = false;
+            saveNotificationState();
           }
-        });
+        } catch (error) {
+          console.error('Error requesting notification permission:', error);
+          e.target.checked = false;
+          notificationEnabled = false;
+          saveNotificationState();
         }
+      }
 
         document.addEventListener('DOMContentLoaded', async () => {
                    initDarkMode();
@@ -5446,7 +5594,7 @@ function showARUnsupported(errorType) {
             }
 
             // Add notification toggle handler
-            const notificationToggle = document.getElementById('notificationToggle');
+            const notificationToggle = document.getElementById('prayerNotificationToggle');
             
           if (notificationToggle) {
           notificationToggle.addEventListener('click', handleNotificationToggleClick);
@@ -6490,6 +6638,12 @@ function showARUnsupported(errorType) {
             sideMenu.classList.remove('-translate-x-full');
             overlay.classList.remove('hidden');
             
+            // Hide Quran controls when side menu is open
+            const quranControls = getQuranControls();
+            if (quranControls) {
+                quranControls.classList.add('quran-controls-hidden');
+            }
+            
             // Initialize menu if not done yet
             if (surahsData.length === 0) {
                 const surahList = document.getElementById('surahList');
@@ -6536,6 +6690,12 @@ function showARUnsupported(errorType) {
             
             sideMenu.classList.add('-translate-x-full');
             overlay.classList.add('hidden');
+            
+            // Show Quran controls when side menu is closed
+            const quranControls = getQuranControls();
+            if (quranControls) {
+                quranControls.classList.remove('quran-controls-hidden');
+            }
             
             // Clear search
             document.getElementById('surahSearchInput').value = '';
@@ -7694,6 +7854,12 @@ function showARUnsupported(errorType) {
                 return;
             }
             
+            // Hide Quran controls when search results are shown
+            const quranControls = getQuranControls();
+            if (quranControls) {
+                quranControls.classList.add('quran-controls-hidden');
+            }
+            
             let html = '';
             
             quranSearchResults.forEach((result, index) => {
@@ -7838,6 +8004,12 @@ function showARUnsupported(errorType) {
             const resultsContainer = document.getElementById('quranSearchResults');
             if (resultsContainer) {
                 resultsContainer.classList.add('hidden');
+            }
+            
+            // Show Quran controls when search results are hidden
+            const quranControls = getQuranControls();
+            if (quranControls) {
+                quranControls.classList.remove('quran-controls-hidden');
             }
         }
         
@@ -8230,42 +8402,7 @@ function showARUnsupported(errorType) {
           loadAdhkar(section);
         }
     
-(function() {
-  const quranControls = document.querySelector('.quran-controls-sticky');
-  const quranHook = document.getElementById('quranHook');
-  let lastScrollY = window.scrollY;
-  let controlsHidden = false;
-  let ticking = false;
-  function onScroll() {
-    if (!quranControls || !quranHook) return;
-    if (window.scrollY > 120 && !controlsHidden) {
-      quranControls.classList.add('quran-controls-hidden');
-      quranHook.classList.add('quran-hook-visible');
-      controlsHidden = true;
-    } else if (window.scrollY <= 120 && controlsHidden) {
-      quranControls.classList.remove('quran-controls-hidden');
-      quranHook.classList.remove('quran-hook-visible');
-      controlsHidden = false;
-    }
-    ticking = false;
-  }
-  window.addEventListener('scroll', function() {
-    if (!ticking) {
-      window.requestAnimationFrame(onScroll);
-      ticking = true;
-    }
-  });
-  if (quranHook) {
-    quranHook.addEventListener('click', function() {
-      if (quranControls) {
-        quranControls.classList.remove('quran-controls-hidden');
-        quranHook.classList.remove('quran-hook-visible');
-        controlsHidden = false;
-        // Removed: window.scrollTo({top: 0, behavior: 'smooth'});
-      }
-    });
-  }
-})();
+
       
 
 
@@ -9698,6 +9835,7 @@ function savePrayerSettings() {
     
     // Update notification settings
     if (prayerNotifications) {
+        console.log("prayerNotifications", prayerNotifications);
         setupPrayerNotifications();
     } else {
         clearAllNotificationTimeouts();
@@ -10762,4 +10900,20 @@ function loadPrayerOffsets() {
             }, 10000);
         }
     }
+
+    // Initialize scroll handler
+    initScrollHandler();
+    
+    // Re-initialize when DOM changes (for tab switching)
+    const observer = new MutationObserver(() => {
+        const controls = getQuranControls();
+        if (controls && !scrollHandler) {
+            initScrollHandler();
+        }
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
 
