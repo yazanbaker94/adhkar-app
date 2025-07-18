@@ -5357,6 +5357,8 @@ function showARUnsupported(errorType) {
         document.addEventListener('DOMContentLoaded', async () => {
                    initDarkMode();
           initializeQiblaLocation(); // Immediate initialization
+            // Initialize audio context for iOS PWA
+            initializeAudioContext();
             // Load saved language preference first
             loadLanguagePreference();
             
@@ -7913,13 +7915,34 @@ function showARUnsupported(errorType) {
             const url = `https://everyayah.com/data/${reciter}/${surahStr}${ayahStr}.mp3`;
             const audio = new Audio(url);
             
-            // iOS specific audio setup
+            // Enhanced iOS PWA audio setup
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isPWA = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+            
             if (isIOS) {
-                // Set audio attributes for better iOS compatibility
+                // Set audio attributes for better iOS PWA compatibility
                 audio.preload = 'auto';
                 audio.setAttribute('playsinline', 'true');
                 audio.setAttribute('webkit-playsinline', 'true');
+                audio.setAttribute('controls', 'false');
+                audio.muted = false;
+                audio.volume = 1.0;
+                
+                // For iOS PWA, we need to ensure audio context is unlocked
+                if (isPWA) {
+                    // Create a silent audio context to unlock audio
+                    try {
+                        const AudioContext = window.AudioContext || window.webkitAudioContext;
+                        if (AudioContext) {
+                            const audioContext = new AudioContext();
+                            if (audioContext.state === 'suspended') {
+                                audioContext.resume();
+                            }
+                        }
+                    } catch (e) {
+                        console.log('Audio context setup failed:', e);
+                    }
+                }
             }
             
             // Apply playback speed from settings
@@ -7938,10 +7961,25 @@ function showARUnsupported(errorType) {
                 }).catch(error => {
                     console.error("Audio play error:", error);
                     
-                    // iOS specific error handling
+                    // Enhanced iOS PWA error handling
                     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-                    if (isIOS && error.name === 'NotAllowedError') {
-                        showToast(currentLang === 'ar' ? 'يرجى النقر على الآية مرة أخرى لتشغيل الصوت' : 'Please tap the verse again to play audio', 'info');
+                    const isPWA = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+                    
+                    if (isIOS && isPWA) {
+                        if (error.name === 'NotAllowedError') {
+                            showToast(currentLang === 'ar' ? 'يرجى النقر على الآية مرة أخرى لتشغيل الصوت في التطبيق' : 'Please tap the verse again to play audio in the app', 'info');
+                        } else if (error.name === 'AbortError') {
+                            // User cancelled or audio was interrupted
+                            console.log('Audio playback was interrupted');
+                        } else {
+                            showToast(currentLang === 'ar' ? 'حدث خطأ في تشغيل الصوت في التطبيق' : 'Error playing audio in the app', 'error');
+                        }
+                    } else if (isIOS) {
+                        if (error.name === 'NotAllowedError') {
+                            showToast(currentLang === 'ar' ? 'يرجى النقر على الآية مرة أخرى لتشغيل الصوت' : 'Please tap the verse again to play audio', 'info');
+                        } else {
+                            showToast(currentLang === 'ar' ? 'حدث خطأ أثناء تشغيل الصوت' : 'Error playing audio', 'error');
+                        }
                     } else {
                         showToast(currentLang === 'ar' ? 'حدث خطأ أثناء تشغيل الصوت' : 'Error playing audio', 'error');
                     }
@@ -8056,6 +8094,51 @@ function showARUnsupported(errorType) {
                 updateAyahHighlights();
                 window.isPlayingAudio = false;
             };
+        }
+
+        // Function to initialize audio context for iOS PWA
+        function initializeAudioContext() {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isPWA = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+            
+            if (isIOS && isPWA) {
+                // Create and resume audio context to unlock audio
+                try {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContext) {
+                        const audioContext = new AudioContext();
+                        if (audioContext.state === 'suspended') {
+                            audioContext.resume();
+                        }
+                        console.log('Audio context initialized for iOS PWA');
+                    }
+                } catch (e) {
+                    console.log('Audio context initialization failed:', e);
+                }
+                
+                // Add user interaction handler to unlock audio
+                const unlockAudio = () => {
+                    try {
+                        const AudioContext = window.AudioContext || window.webkitAudioContext;
+                        if (AudioContext) {
+                            const audioContext = new AudioContext();
+                            if (audioContext.state === 'suspended') {
+                                audioContext.resume();
+                            }
+                        }
+                        console.log('Audio unlocked on user interaction');
+                        // Remove the event listeners after first interaction
+                        document.removeEventListener('touchstart', unlockAudio);
+                        document.removeEventListener('click', unlockAudio);
+                    } catch (e) {
+                        console.log('Audio unlock failed:', e);
+                    }
+                };
+                
+                // Listen for first user interaction
+                document.addEventListener('touchstart', unlockAudio, { once: true });
+                document.addEventListener('click', unlockAudio, { once: true });
+            }
         }
 
         // Function to attach event listeners to ayah elements
