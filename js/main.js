@@ -5537,6 +5537,26 @@ function showARUnsupported(errorType) {
             setupIOSAudioSession();
             // Preload audio elements for better performance
             preloadAudioElements();
+            // Initialize dynamic sticky positioning
+            updateStickyPositioning();
+            
+            // Add event listeners for responsive sticky positioning
+            window.addEventListener('resize', updateStickyPositioning);
+            window.addEventListener('orientationchange', () => {
+                // Delay to allow orientation change to complete
+                setTimeout(updateStickyPositioning, 100);
+            });
+            
+            // Update sticky positioning when DOM changes (for dynamic content)
+            const observer = new MutationObserver(() => {
+                updateStickyPositioning();
+            });
+            
+            // Observe header and tabs for changes
+            const header = document.querySelector('header');
+            const tabs = document.querySelector('.flex.justify-center.bg-gradient-to-r');
+            if (header) observer.observe(header, { childList: true, subtree: true });
+            if (tabs) observer.observe(tabs, { childList: true, subtree: true });
             // Load saved language preference first
             loadLanguagePreference();
             
@@ -8518,6 +8538,32 @@ function showARUnsupported(errorType) {
                     });
                 }
             });
+        }
+
+        // Dynamic sticky positioning calculation
+        function updateStickyPositioning() {
+            try {
+                // Get actual header and tabs elements
+                const header = document.querySelector('header');
+                const tabs = document.querySelector('.flex.justify-center.bg-gradient-to-r');
+                
+                if (header && tabs) {
+                    // Calculate actual heights (for potential future use)
+                    const headerHeight = header.offsetHeight;
+                    const tabsHeight = tabs.offsetHeight;
+                    
+                    // Update CSS custom properties
+                    document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
+                    document.documentElement.style.setProperty('--tabs-height', `${tabsHeight}px`);
+                    
+                    console.log('Sticky positioning updated:', {
+                        headerHeight,
+                        tabsHeight
+                    });
+                }
+            } catch (error) {
+                console.error('Error updating sticky positioning:', error);
+            }
         }
 
         // Enhanced audio playback specifically for iOS background notifications
