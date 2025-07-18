@@ -381,6 +381,8 @@
     /* Ensure proper sticky behavior */
     position: -webkit-sticky !important;
     position: sticky !important;
+    /* Account for header and tabs height */
+    top: var(--sticky-offset) !important;
 }
 
 /* Ensure parent containers don't interfere with sticky positioning */
@@ -391,6 +393,28 @@ body {
 /* Ensure the main container doesn't interfere with sticky positioning */
 main {
     overflow-x: hidden;
+}
+
+/* Define header and tabs height for sticky positioning */
+:root {
+    --header-height: 60px;
+    --tabs-height: 60px;
+    --sticky-offset: calc(var(--header-height) + var(--tabs-height));
+}
+
+/* Responsive adjustments for different screen sizes */
+@media (max-width: 768px) {
+    :root {
+        --header-height: 50px;
+        --tabs-height: 50px;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --header-height: 45px;
+        --tabs-height: 45px;
+    }
 }
 
 .dark .quran-controls-sticky {
