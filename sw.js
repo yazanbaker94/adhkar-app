@@ -103,14 +103,30 @@ self.addEventListener("fetch", event => {
 
 // Handle push notifications
 self.addEventListener("push", event => {
+  let notificationData;
+  
+  try {
+    // Try to parse the data as JSON first
+    notificationData = event.data ? JSON.parse(event.data.text()) : {};
+  } catch (error) {
+    // Fallback to plain text
+    notificationData = {
+      title: "Prayer Time",
+      body: event.data ? event.data.text() : "Time for prayer",
+      type: "prayer"
+    };
+  }
+  
   const options = {
-    body: event.data.text(),
+    body: notificationData.body || "Time for prayer",
     icon: "icon1.png",
     badge: "icon1.png",
-    vibrate: [100, 50, 100],
+    vibrate: [200, 100, 200, 100, 200],
     data: {
       dateOfArrival: Date.now(),
-      primaryKey: 1
+      primaryKey: 1,
+      type: notificationData.type || "prayer",
+      ...notificationData.data
     },
     actions: [
       {
@@ -121,12 +137,98 @@ self.addEventListener("push", event => {
     ],
     // iOS-specific options for better audio handling
     silent: false,
-    requireInteraction: true
+    requireInteraction: false,
+    tag: notificationData.tag || "prayer-notification"
   };
 
   event.waitUntil(
-    self.registration.showNotification("Prayer Time", options)
+    self.registration.showNotification(notificationData.title || "Prayer Time", options)
   );
+});
+
+// Handle background sync for delayed notifications
+self.addEventListener("sync", event => {
+  if (event.tag === "delayed-notification") {
+    event.waitUntil(
+      (async () => {
+        try {
+          console.log("Background sync triggered for delayed notification");
+          
+          // Try to show the notification directly from service worker
+          const testNotificationData = {
+            title: "Test Notification (Background)",
+            body: "This notification was sent from background sync",
+            icon: "icon1.png",
+            badge: "icon1.png",
+            tag: "background-test-notification",
+            vibrate: [200, 100, 200, 100, 200]
+          };
+          
+          await self.registration.showNotification(testNotificationData.title, {
+            body: testNotificationData.body,
+            icon: testNotificationData.icon,
+            badge: testNotificationData.badge,
+            tag: testNotificationData.tag,
+            requireInteraction: false,
+            vibrate: testNotificationData.vibrate,
+            silent: false,
+            data: {
+              type: 'background-test',
+              timestamp: new Date().toISOString()
+            },
+            actions: [
+              {
+                action: "open",
+                title: "Open App",
+                icon: "icon1.png"
+              }
+            ]
+          });
+          
+          console.log("Background notification sent successfully via sync");
+        } catch (error) {
+          console.error("Background sync failed:", error);
+        }
+      })()
+    );
+  }
+  
+  // Handle Android-specific background sync test
+  if (event.tag === "android-background-test") {
+    event.waitUntil(
+      (async () => {
+        try {
+          console.log("Android background sync test triggered");
+          
+          // Show Android-specific test notification
+          await self.registration.showNotification("Android Background Test", {
+            body: "This notification was sent via Android background sync",
+            icon: "icon1.png",
+            badge: "icon1.png",
+            tag: "android-background-test",
+            requireInteraction: false,
+            vibrate: [300, 100, 300, 100, 300],
+            silent: false,
+            data: {
+              type: 'android-background-test',
+              timestamp: new Date().toISOString()
+            },
+            actions: [
+              {
+                action: "open",
+                title: "Open App",
+                icon: "icon1.png"
+              }
+            ]
+          });
+          
+          console.log("Android background test notification sent successfully");
+        } catch (error) {
+          console.error("Android background sync test failed:", error);
+        }
+      })()
+    );
+  }
 });
 
 // Handle notification clicks

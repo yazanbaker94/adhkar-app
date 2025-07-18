@@ -2512,6 +2512,7 @@ function showARUnsupported(errorType) {
        window.testNotification = testNotification;
        window.requestNotificationPermission = requestNotificationPermission;
        window.testQiblaAccuracy = testQiblaAccuracy;
+       window.testAndroidBackgroundSync = testAndroidBackgroundSync;
        
        // Test delayed notification function (for testing when app is closed)
        function testDelayedNotification() {
@@ -2521,42 +2522,327 @@ function showARUnsupported(errorType) {
                return;
            }
            
+           const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+           const isAndroid = /Android/.test(navigator.userAgent);
+           const isStandalone = window.navigator.standalone;
+           
+           // Show platform-specific guidance
+           if (isIOS && !isStandalone) {
+               showToast(currentLang === 'ar' ? 
+                   'لأفضل النتائج على iOS، أضف التطبيق إلى الشاشة الرئيسية' : 
+                   'For best results on iOS, add the app to home screen', 'warning');
+           } else if (isAndroid) {
+               showToast(currentLang === 'ar' ? 
+                   'Android يدعم الإشعارات في الخلفية بشكل أفضل' : 
+                   'Android supports background notifications better', 'info');
+           }
+           
            // Show immediate feedback
            showToast(currentLang === 'ar' ? 'سيتم إرسال إشعار تجريبي بعد دقيقة واحدة' : 'Test notification will be sent in 1 minute', 'info');
+           
+           // Store the test notification data for iOS background handling
+           const testNotificationData = {
+               title: 'Test Notification (App Closed)',
+               body: currentLang === 'ar' ? 
+                   'هذا إشعار تجريبي لاختبار الإشعارات عندما يكون التطبيق مغلقاً' : 
+                   'This is a test notification to verify notifications work when the app is closed',
+               icon: 'icon1.png',
+               badge: 'icon1.png',
+               tag: 'delayed-test-notification',
+               timestamp: new Date().toISOString(),
+               scheduledTime: Date.now() + 60000 // 1 minute from now
+           };
+           
+           // Store in localStorage for service worker to access
+           try {
+               localStorage.setItem('pendingTestNotification', JSON.stringify(testNotificationData));
+               console.log('Test notification data stored for service worker');
+           } catch (error) {
+               console.error('Error storing test notification data:', error);
+           }
            
            // Schedule notification for 1 minute from now
            setTimeout(() => {
                try {
-                   const notification = new Notification('Test Notification (App Closed)', {
-                       body: currentLang === 'ar' ? 
-                           'هذا إشعار تجريبي لاختبار الإشعارات عندما يكون التطبيق مغلقاً' : 
-                           'This is a test notification to verify notifications work when the app is closed',
-                       icon: 'icon1.png',
-                       badge: 'icon1.png',
-                       tag: 'delayed-test-notification',
-                       requireInteraction: false,
-                       vibrate: [200, 100, 200, 100, 200],
-                       silent: false,
-                       data: {
-                           type: 'test',
-                           timestamp: new Date().toISOString()
+                   // Check if app is in foreground
+                   if (document.visibilityState === 'visible') {
+                       // App is visible, show notification directly
+                       const notification = new Notification(testNotificationData.title, {
+                           body: testNotificationData.body,
+                           icon: testNotificationData.icon,
+                           badge: testNotificationData.badge,
+                           tag: testNotificationData.tag,
+                           requireInteraction: false,
+                           vibrate: [200, 100, 200, 100, 200],
+                           silent: false,
+                           data: {
+                               type: 'test',
+                               timestamp: testNotificationData.timestamp
+                           }
+                       });
+                       
+                       console.log('Delayed test notification sent successfully (foreground)!');
+                       
+                       // Auto-close after 10 seconds
+                       setTimeout(() => {
+                           notification.close();
+                       }, 10000);
+                   } else {
+                       // App is in background, try to show notification
+                       console.log('App is in background, attempting to show notification...');
+                       
+                       if (isAndroid) {
+                           // Android has better background notification support
+                           // Try to use service worker for background notification
+                           if ('serviceWorker' in navigator && 'PushManager' in window) {
+                               // Use service worker to show notification
+                               navigator.serviceWorker.ready.then(registration => {
+                                   registration.showNotification(testNotificationData.title, {
+                                       body: testNotificationData.body,
+                                       icon: testNotificationData.icon,
+                                       badge: testNotificationData.badge,
+                                       tag: testNotificationData.tag,
+                                       requireInteraction: false,
+                                       vibrate: [200, 100, 200, 100, 200],
+                                       silent: false,
+                                       data: {
+                                           type: 'test',
+                                           timestamp: testNotificationData.timestamp
+                                       },
+                                       // Android-specific options
+                                       actions: [
+                                           {
+                                               action: 'open',
+                                               title: currentLang === 'ar' ? 'فتح التطبيق' : 'Open App',
+                                               icon: 'icon1.png'
+                                           }
+                                       ]
+                                   });
+                                   
+                                   console.log('Android background notification sent via service worker');
+                               }).catch(error => {
+                                   console.error('Service worker notification failed:', error);
+                                   // Fallback to direct notification
+                                   showDirectNotification();
+                               });
+                           } else {
+                               // Fallback to direct notification
+                               showDirectNotification();
+                           }
+                       } else if (isIOS) {
+                           // iOS background notification attempt
+                           const notification = new Notification(testNotificationData.title, {
+                               body: testNotificationData.body,
+                               icon: testNotificationData.icon,
+                               badge: testNotificationData.badge,
+                               tag: testNotificationData.tag,
+                               requireInteraction: false,
+                               vibrate: [200, 100, 200, 100, 200],
+                               silent: false,
+                               data: {
+                                   type: 'test',
+                                   timestamp: testNotificationData.timestamp
+                               }
+                           });
+                           
+                           console.log('iOS background notification attempted');
+                           
+                           // Auto-close after 10 seconds
+                           setTimeout(() => {
+                               notification.close();
+                           }, 10000);
+                       } else {
+                           // Other platforms - try normal notification
+                           showDirectNotification();
                        }
-                   });
+                       
+                       // Helper function for direct notification
+                       function showDirectNotification() {
+                           const notification = new Notification(testNotificationData.title, {
+                               body: testNotificationData.body,
+                               icon: testNotificationData.icon,
+                               badge: testNotificationData.badge,
+                               tag: testNotificationData.tag,
+                               requireInteraction: false,
+                               vibrate: [200, 100, 200, 100, 200],
+                               silent: false,
+                               data: {
+                                   type: 'test',
+                                   timestamp: testNotificationData.timestamp
+                               }
+                           });
+                           
+                           console.log('Direct background notification sent');
+                           
+                           // Auto-close after 10 seconds
+                           setTimeout(() => {
+                               notification.close();
+                           }, 10000);
+                       }
+                   }
                    
-                   console.log('Delayed test notification sent successfully!');
-                   
-                   // Auto-close after 10 seconds
-                   setTimeout(() => {
-                       notification.close();
-                   }, 10000);
+                   // Clear the stored data
+                   localStorage.removeItem('pendingTestNotification');
                    
                } catch (error) {
                    console.error('Error showing delayed test notification:', error);
                    showToast(currentLang === 'ar' ? 'فشل في إرسال الإشعار التجريبي' : 'Failed to send test notification', 'error');
+                   
+                   // Clear the stored data on error
+                   localStorage.removeItem('pendingTestNotification');
                }
            }, 60000); // 1 minute delay
            
            console.log('Delayed test notification scheduled for 1 minute from now');
+           
+           // Platform-specific background handling
+           if (isAndroid) {
+               // Android: Try to use background sync for better reliability
+               if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
+                   navigator.serviceWorker.ready.then(registration => {
+                       // Register a background sync for the delayed notification
+                       registration.sync.register('delayed-notification').then(() => {
+                           console.log('Background sync registered for Android');
+                       }).catch(error => {
+                           console.log('Background sync registration failed:', error);
+                       });
+                   });
+               }
+           } else if (isIOS) {
+               // iOS: Set up periodic checks for when app becomes visible
+               const checkPendingNotifications = () => {
+                   try {
+                       const pendingData = localStorage.getItem('pendingTestNotification');
+                       if (pendingData) {
+                           const data = JSON.parse(pendingData);
+                           const now = Date.now();
+                           
+                           // If the scheduled time has passed and we're now visible
+                           if (data.scheduledTime <= now && document.visibilityState === 'visible') {
+                               console.log('Showing pending notification after app became visible');
+                               
+                               const notification = new Notification(data.title, {
+                                   body: data.body,
+                                   icon: data.icon,
+                                   badge: data.badge,
+                                   tag: data.tag,
+                                   requireInteraction: false,
+                                   vibrate: [200, 100, 200, 100, 200],
+                                   silent: false,
+                                   data: {
+                                       type: 'test',
+                                       timestamp: data.timestamp
+                                   }
+                               });
+                               
+                               // Auto-close after 10 seconds
+                               setTimeout(() => {
+                                   notification.close();
+                               }, 10000);
+                               
+                               // Clear the stored data
+                               localStorage.removeItem('pendingTestNotification');
+                           }
+                       }
+                   } catch (error) {
+                       console.error('Error checking pending notifications:', error);
+                   }
+               };
+               
+               // Check when app becomes visible
+               document.addEventListener('visibilitychange', checkPendingNotifications);
+               
+               // Also check periodically
+               const checkInterval = setInterval(checkPendingNotifications, 5000);
+               
+               // Clear interval after 2 minutes
+               setTimeout(() => {
+                   clearInterval(checkInterval);
+               }, 120000);
+           }
+       }
+       
+       // Android-specific background sync test function
+       function testAndroidBackgroundSync() {
+           const isAndroid = /Android/.test(navigator.userAgent);
+           
+           if (!isAndroid) {
+               showToast(currentLang === 'ar' ? 
+                   'هذا الاختبار مخصص لأجهزة Android' : 
+                   'This test is for Android devices only', 'warning');
+               return;
+           }
+           
+           if (!notificationEnabled) {
+               console.log('Notifications are disabled. Please enable them first.');
+               showToast(currentLang === 'ar' ? 'يرجى تفعيل الإشعارات أولاً' : 'Please enable notifications first', 'error');
+               return;
+           }
+           
+           showToast(currentLang === 'ar' ? 
+               'اختبار Android: سيتم إرسال إشعار في الخلفية بعد 30 ثانية' : 
+               'Android Test: Background notification will be sent in 30 seconds', 'info');
+           
+           // Test Android background sync capabilities
+           if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
+               navigator.serviceWorker.ready.then(registration => {
+                   // Register a background sync for testing
+                   registration.sync.register('android-background-test').then(() => {
+                       console.log('Android background sync test registered');
+                       
+                       // Also schedule a direct notification for comparison
+                       setTimeout(() => {
+                           try {
+                               const notification = new Notification('Android Background Test', {
+                                   body: currentLang === 'ar' ? 
+                                       'هذا إشعار اختبار لـ Android في الخلفية' : 
+                                       'This is an Android background test notification',
+                                   icon: 'icon1.png',
+                                   badge: 'icon1.png',
+                                   tag: 'android-background-test',
+                                   requireInteraction: false,
+                                   vibrate: [300, 100, 300, 100, 300],
+                                   silent: false,
+                                   data: {
+                                       type: 'android-test',
+                                       timestamp: new Date().toISOString()
+                                   },
+                                   actions: [
+                                       {
+                                           action: 'open',
+                                           title: currentLang === 'ar' ? 'فتح التطبيق' : 'Open App',
+                                           icon: 'icon1.png'
+                                       }
+                                   ]
+                               });
+                               
+                               console.log('Android background test notification sent');
+                               
+                               // Auto-close after 15 seconds
+                               setTimeout(() => {
+                                   notification.close();
+                               }, 15000);
+                               
+                           } catch (error) {
+                               console.error('Error sending Android background test notification:', error);
+                               showToast(currentLang === 'ar' ? 
+                                   'فشل في إرسال إشعار الاختبار' : 
+                                   'Failed to send test notification', 'error');
+                           }
+                       }, 30000); // 30 seconds
+                       
+                   }).catch(error => {
+                       console.log('Android background sync registration failed:', error);
+                       showToast(currentLang === 'ar' ? 
+                           'فشل في تسجيل المزامنة في الخلفية' : 
+                           'Background sync registration failed', 'warning');
+                   });
+               });
+           } else {
+               showToast(currentLang === 'ar' ? 
+                   'المتصفح لا يدعم المزامنة في الخلفية' : 
+                   'Browser does not support background sync', 'warning');
+           }
        }
        
        // Add to global scope
@@ -8438,7 +8724,7 @@ function showARUnsupported(errorType) {
             }
         }
 
-        // Handle visibility changes for iOS background audio
+        // Handle visibility changes for iOS background audio and pending notifications
         function handleVisibilityChange() {
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
             if (isIOS && globalAudioContext) {
@@ -8460,6 +8746,56 @@ function showARUnsupported(errorType) {
                         });
                     }
                 }
+            }
+            
+            // Check for pending notifications when app becomes visible
+            if (!document.hidden) {
+                checkPendingNotifications();
+            }
+        }
+        
+        // Function to check for pending notifications
+        function checkPendingNotifications() {
+            try {
+                const pendingData = localStorage.getItem('pendingTestNotification');
+                if (pendingData) {
+                    const data = JSON.parse(pendingData);
+                    const now = Date.now();
+                    
+                    // If the scheduled time has passed and we're now visible
+                    if (data.scheduledTime <= now && document.visibilityState === 'visible') {
+                        console.log('Showing pending notification after app became visible');
+                        
+                        const notification = new Notification(data.title, {
+                            body: data.body,
+                            icon: data.icon,
+                            badge: data.badge,
+                            tag: data.tag,
+                            requireInteraction: false,
+                            vibrate: [200, 100, 200, 100, 200],
+                            silent: false,
+                            data: {
+                                type: 'test',
+                                timestamp: data.timestamp
+                            }
+                        });
+                        
+                        // Auto-close after 10 seconds
+                        setTimeout(() => {
+                            notification.close();
+                        }, 10000);
+                        
+                        // Clear the stored data
+                        localStorage.removeItem('pendingTestNotification');
+                        
+                        // Show a toast to confirm the notification was shown
+                        showToast(currentLang === 'ar' ? 
+                            'تم إظهار الإشعار التجريبي' : 
+                            'Test notification was shown', 'success');
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking pending notifications:', error);
             }
         }
 
