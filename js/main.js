@@ -2,6 +2,7 @@
 
 
 
+
   // Dark mode functionality
         function initDarkMode() {
             const darkModeToggle = document.getElementById('darkModeToggle');
@@ -4222,22 +4223,30 @@ function showARUnsupported(errorType) {
           try {
               // Play notification sound if available
               try {
-                  let audio;
                   if (azanSound === 'custom_adhan') {
                       // Use custom adhan
-                      audio = playCustomAdhan();
+                      const audio = playCustomAdhan();
                       if (audio) {
                           audio.volume = 0.5;
                           audio.play().catch(() => {});
                       }
                   } else {
-                      // Use built-in adhan
-                      audio = new Audio(`sounds/${azanSound}`);
-                      audio.volume = 0.5;
-                      audio.play().catch(() => {});
+                      // Use enhanced audio playback specifically for iOS background notifications
+                      const audioPath = `sounds/${azanSound}`;
+                      playAdhanForNotification(audioPath, 0.5).catch(error => {
+                          console.error('Failed to play adhan with notification method:', error);
+                          // Fallback to enhanced method
+                          playAudioWithFallback(audioPath, 0.5).catch(error2 => {
+                              console.error('Failed to play adhan with fallback:', error2);
+                              // Final fallback to original method
+                              const audio = new Audio(audioPath);
+                              audio.volume = 0.5;
+                              audio.play().catch(() => {});
+                          });
+                      });
                   }
               } catch (audioError) {
-                  
+                  console.error('Audio playback error:', audioError);
               }
 
               const notification = new Notification(languages[currentLang].prayerTimeNotification, {
@@ -4255,17 +4264,25 @@ function showARUnsupported(errorType) {
               });
 
               // Play selected adhan sound
-              let audio;
               if (azanSound === 'custom_adhan') {
                   // Use custom adhan
-                  audio = playCustomAdhan();
+                  const audio = playCustomAdhan();
                   if (audio) {
                       audio.play().catch(error => console.error('Error playing custom adhan:', error));
                   }
               } else {
-                  // Use built-in adhan
-                  audio = new Audio(`sounds/${azanSound}`);
-                  audio.play().catch(error => console.error('Error playing adhan:', error));
+                  // Use enhanced audio playback specifically for iOS background notifications
+                  const audioPath = `sounds/${azanSound}`;
+                  playAdhanForNotification(audioPath, 0.5).catch(error => {
+                      console.error('Failed to play adhan with notification method:', error);
+                      // Fallback to enhanced method
+                      playAudioWithFallback(audioPath, 0.5).catch(error2 => {
+                          console.error('Failed to play adhan with fallback:', error2);
+                          // Final fallback to original method
+                          const audio = new Audio(audioPath);
+                          audio.play().catch(error => console.error('Error playing adhan:', error));
+                      });
+                  });
               }
 
               // Setup next notification
@@ -4275,15 +4292,24 @@ function showARUnsupported(errorType) {
               // Fallback to alert for iOS
               if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
                   alert(`${prayerNames[prayer]} ${languages[currentLang].prayerTimeApproachingBody}`);
-                  let audio;
                   if (azanSound === 'custom_adhan') {
-                      audio = playCustomAdhan();
+                      const audio = playCustomAdhan();
                       if (audio) {
                           audio.play().catch(error => console.error('Error playing custom adhan:', error));
                       }
                   } else {
-                      audio = new Audio(`sounds/${azanSound}`);
-                      audio.play().catch(error => console.error('Error playing adhan:', error));
+                      // Use enhanced audio playback specifically for iOS background notifications
+                      const audioPath = `sounds/${azanSound}`;
+                      playAdhanForNotification(audioPath, 0.5).catch(error => {
+                          console.error('Failed to play adhan with notification method:', error);
+                          // Fallback to enhanced method
+                          playAudioWithFallback(audioPath, 0.5).catch(error2 => {
+                              console.error('Failed to play adhan with fallback:', error2);
+                              // Final fallback to original method
+                              const audio = new Audio(audioPath);
+                              audio.play().catch(error => console.error('Error playing adhan:', error));
+                          });
+                      });
                   }
               }
           }
@@ -5507,6 +5533,10 @@ function showARUnsupported(errorType) {
           initializeQiblaLocation(); // Immediate initialization
             // Initialize audio context for iOS PWA
             initializeAudioContext();
+            // Setup iOS-specific audio session management
+            setupIOSAudioSession();
+            // Preload audio elements for better performance
+            preloadAudioElements();
             // Load saved language preference first
             loadLanguagePreference();
             
@@ -8268,6 +8298,11 @@ function showARUnsupported(errorType) {
             };
         }
 
+        // Enhanced audio context management for iOS background playback
+        let globalAudioContext = null;
+        let audioElements = new Map(); // Cache for audio elements
+        let isAudioUnlocked = false;
+
         // Function to initialize audio context for iOS PWA
         function initializeAudioContext() {
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -8278,11 +8313,25 @@ function showARUnsupported(errorType) {
                 try {
                     const AudioContext = window.AudioContext || window.webkitAudioContext;
                     if (AudioContext) {
-                        const audioContext = new AudioContext();
-                        if (audioContext.state === 'suspended') {
-                            audioContext.resume();
+                        globalAudioContext = new AudioContext();
+                        
+                        // Set audio session category for iOS
+                        if (globalAudioContext.setSinkId) {
+                            // This helps with iOS audio session management
+                            console.log('Audio context initialized for iOS PWA');
                         }
-                        console.log('Audio context initialized for iOS PWA');
+                        
+                        // Resume audio context if suspended
+                        if (globalAudioContext.state === 'suspended') {
+                            globalAudioContext.resume().then(() => {
+                                console.log('Audio context resumed successfully');
+                                isAudioUnlocked = true;
+                            }).catch(e => {
+                                console.log('Audio context resume failed:', e);
+                            });
+                        } else {
+                            isAudioUnlocked = true;
+                        }
                     }
                 } catch (e) {
                     console.log('Audio context initialization failed:', e);
@@ -8291,14 +8340,18 @@ function showARUnsupported(errorType) {
                 // Add user interaction handler to unlock audio
                 const unlockAudio = () => {
                     try {
-                        const AudioContext = window.AudioContext || window.webkitAudioContext;
-                        if (AudioContext) {
-                            const audioContext = new AudioContext();
-                            if (audioContext.state === 'suspended') {
-                                audioContext.resume();
-                            }
+                        if (globalAudioContext && globalAudioContext.state === 'suspended') {
+                            globalAudioContext.resume().then(() => {
+                                console.log('Audio unlocked on user interaction');
+                                isAudioUnlocked = true;
+                            }).catch(e => {
+                                console.log('Audio unlock failed:', e);
+                            });
                         }
-                        console.log('Audio unlocked on user interaction');
+                        
+                        // Preload audio elements for better performance
+                        preloadAudioElements();
+                        
                         // Remove the event listeners after first interaction
                         document.removeEventListener('touchstart', unlockAudio);
                         document.removeEventListener('click', unlockAudio);
@@ -8310,7 +8363,229 @@ function showARUnsupported(errorType) {
                 // Listen for first user interaction
                 document.addEventListener('touchstart', unlockAudio, { once: true });
                 document.addEventListener('click', unlockAudio, { once: true });
+                
+                // Also listen for visibility changes to handle background/foreground transitions
+                document.addEventListener('visibilitychange', handleVisibilityChange);
             }
+        }
+
+        // Handle visibility changes for iOS background audio
+        function handleVisibilityChange() {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            if (isIOS && globalAudioContext) {
+                if (document.hidden) {
+                    // App going to background - ensure audio context stays active
+                    if (globalAudioContext.state === 'suspended') {
+                        globalAudioContext.resume().catch(e => {
+                            console.log('Failed to resume audio context on background:', e);
+                        });
+                    }
+                } else {
+                    // App coming to foreground - resume audio context
+                    if (globalAudioContext.state === 'suspended') {
+                        globalAudioContext.resume().then(() => {
+                            console.log('Audio context resumed on foreground');
+                            isAudioUnlocked = true;
+                        }).catch(e => {
+                            console.log('Failed to resume audio context on foreground:', e);
+                        });
+                    }
+                }
+            }
+        }
+
+        // Preload audio elements for better performance
+        function preloadAudioElements() {
+            const audioFiles = [
+                'sounds/adhan.mp3',
+                'sounds/adhan_egypt.mp3',
+                'sounds/adhan_madinah.mp3',
+                'sounds/adhan_makkah.mp3',
+                'sounds/adhan_morocco.mp3',
+                'sounds/adhan_turkey.mp3'
+            ];
+
+            audioFiles.forEach(audioFile => {
+                if (!audioElements.has(audioFile)) {
+                    const audio = new Audio(audioFile);
+                    audio.preload = 'auto';
+                    audio.volume = 0.5;
+                    audioElements.set(audioFile, audio);
+                }
+            });
+        }
+
+        // Enhanced audio playback function for iOS background compatibility
+        function playAudioWithFallback(audioPath, volume = 0.5) {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            
+            return new Promise((resolve, reject) => {
+                try {
+                    // Try to use cached audio element first
+                    let audio = audioElements.get(audioPath);
+                    
+                    if (!audio) {
+                        audio = new Audio(audioPath);
+                        audio.preload = 'auto';
+                        audioElements.set(audioPath, audio);
+                    }
+                    
+                    // Reset audio to beginning
+                    audio.currentTime = 0;
+                    audio.volume = volume;
+                    
+                    // For iOS, ensure audio context is active
+                    if (isIOS && globalAudioContext && globalAudioContext.state === 'suspended') {
+                        globalAudioContext.resume().then(() => {
+                            return audio.play();
+                        }).then(() => {
+                            console.log('Audio played successfully with resumed context');
+                            resolve(audio);
+                        }).catch(error => {
+                            console.error('Failed to play audio with resumed context:', error);
+                            // Fallback to direct play
+                            audio.play().then(() => resolve(audio)).catch(reject);
+                        });
+                    } else {
+                        // Direct play for non-iOS or already active context
+                        audio.play().then(() => {
+                            console.log('Audio played successfully');
+                            resolve(audio);
+                        }).catch(error => {
+                            console.error('Failed to play audio:', error);
+                            reject(error);
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error in playAudioWithFallback:', error);
+                    reject(error);
+                }
+            });
+        }
+
+        // iOS-specific audio session management for background playback
+        function setupIOSAudioSession() {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            if (!isIOS) return;
+
+            // Set up audio session for background playback
+            if (globalAudioContext) {
+                // Configure audio context for background playback
+                globalAudioContext.suspend().then(() => {
+                    return globalAudioContext.resume();
+                }).then(() => {
+                    console.log('iOS audio session configured for background playback');
+                }).catch(error => {
+                    console.error('Failed to configure iOS audio session:', error);
+                });
+            }
+
+            // Add page visibility change handler for iOS
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    // App going to background - keep audio context active
+                    if (globalAudioContext && globalAudioContext.state === 'suspended') {
+                        globalAudioContext.resume().catch(e => {
+                            console.log('Failed to resume audio context on background:', e);
+                        });
+                    }
+                } else {
+                    // App coming to foreground - ensure audio context is active
+                    if (globalAudioContext && globalAudioContext.state === 'suspended') {
+                        globalAudioContext.resume().then(() => {
+                            console.log('Audio context resumed on foreground');
+                        }).catch(e => {
+                            console.log('Failed to resume audio context on foreground:', e);
+                        });
+                    }
+                }
+            });
+
+            // Add focus/blur handlers for better iOS audio management
+            window.addEventListener('focus', () => {
+                if (globalAudioContext && globalAudioContext.state === 'suspended') {
+                    globalAudioContext.resume().catch(e => {
+                        console.log('Failed to resume audio context on focus:', e);
+                    });
+                }
+            });
+
+            window.addEventListener('blur', () => {
+                // Keep audio context active when window loses focus
+                if (globalAudioContext && globalAudioContext.state === 'suspended') {
+                    globalAudioContext.resume().catch(e => {
+                        console.log('Failed to resume audio context on blur:', e);
+                    });
+                }
+            });
+        }
+
+        // Enhanced audio playback specifically for iOS background notifications
+        function playAdhanForNotification(audioPath, volume = 0.5) {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            
+            return new Promise((resolve, reject) => {
+                try {
+                    // Create a new audio element specifically for notifications
+                    const audio = new Audio(audioPath);
+                    audio.volume = volume;
+                    audio.preload = 'auto';
+                    
+                    // For iOS, try multiple approaches to ensure audio plays
+                    if (isIOS) {
+                        // Approach 1: Try to resume audio context first
+                        if (globalAudioContext && globalAudioContext.state === 'suspended') {
+                            globalAudioContext.resume().then(() => {
+                                return audio.play();
+                            }).then(() => {
+                                console.log('Adhan played with resumed audio context');
+                                resolve(audio);
+                            }).catch(error => {
+                                console.log('Failed with resumed context, trying direct play');
+                                // Approach 2: Direct play
+                                audio.play().then(() => {
+                                    console.log('Adhan played with direct play');
+                                    resolve(audio);
+                                }).catch(error2 => {
+                                    console.log('Failed with direct play, trying with user interaction simulation');
+                                    // Approach 3: Try to simulate user interaction
+                                    document.body.click();
+                                    setTimeout(() => {
+                                        audio.play().then(() => {
+                                            console.log('Adhan played with simulated interaction');
+                                            resolve(audio);
+                                        }).catch(reject);
+                                    }, 100);
+                                });
+                            });
+                        } else {
+                            // Audio context is already active, try direct play
+                            audio.play().then(() => {
+                                console.log('Adhan played with active audio context');
+                                resolve(audio);
+                            }).catch(error => {
+                                console.log('Failed with active context, trying with interaction simulation');
+                                document.body.click();
+                                setTimeout(() => {
+                                    audio.play().then(() => {
+                                        console.log('Adhan played with simulated interaction');
+                                        resolve(audio);
+                                    }).catch(reject);
+                                }, 100);
+                            });
+                        }
+                    } else {
+                        // Non-iOS devices
+                        audio.play().then(() => {
+                            console.log('Adhan played on non-iOS device');
+                            resolve(audio);
+                        }).catch(reject);
+                    }
+                } catch (error) {
+                    console.error('Error in playAdhanForNotification:', error);
+                    reject(error);
+                }
+            });
         }
 
         // Function to attach event listeners to ayah elements
