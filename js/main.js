@@ -2514,6 +2514,7 @@ function showARUnsupported(errorType) {
        window.testQiblaAccuracy = testQiblaAccuracy;
        window.testAndroidBackgroundSync = testAndroidBackgroundSync;
        window.testSimpleAndroidNotification = testSimpleAndroidNotification;
+       window.testEmulatorNotification = testEmulatorNotification;
        
        // Test delayed notification function (for testing when app is closed)
        function testDelayedNotification() {
@@ -2943,12 +2944,19 @@ function showARUnsupported(errorType) {
        // Simple Android notification test (no background sync)
        function testSimpleAndroidNotification() {
            const isAndroid = /Android/.test(navigator.userAgent);
+           const isEmulator = /Android/.test(navigator.userAgent) && (navigator.userAgent.includes('Emulator') || navigator.userAgent.includes('SDK'));
            
            if (!isAndroid) {
                showToast(currentLang === 'ar' ? 
                    'هذا الاختبار مخصص لأجهزة Android' : 
                    'This test is for Android devices only', 'warning');
                return;
+           }
+           
+           if (isEmulator) {
+               showToast(currentLang === 'ar' ? 
+                   'ملاحظة: أنت تستخدم محاكي Android. الإشعارات قد لا تعمل بشكل صحيح' : 
+                   'Note: You are using Android emulator. Notifications may not work properly', 'warning');
            }
            
            if (!notificationEnabled) {
@@ -2962,10 +2970,26 @@ function showARUnsupported(errorType) {
                'اختبار بسيط: سيتم إرسال إشعار بعد 10 ثانية' : 
                'Simple Test: Notification will be sent in 10 seconds', 'info');
            
+           // Show visual countdown for emulator debugging
+           let countdown = 10;
+           const countdownInterval = setInterval(() => {
+               countdown--;
+               if (countdown > 0) {
+                   showToast(currentLang === 'ar' ? 
+                       `سيتم إرسال الإشعار خلال ${countdown} ثانية` : 
+                       `Notification will be sent in ${countdown} seconds`, 'info');
+               }
+           }, 1000);
+           
            // Simple notification after 10 seconds
            setTimeout(() => {
+               clearInterval(countdownInterval);
+               
                try {
                    console.log('Sending simple notification...');
+                   showToast(currentLang === 'ar' ? 
+                       'جاري إرسال الإشعار...' : 
+                       'Sending notification...', 'info');
                    
                    const notification = new Notification('Simple Android Test', {
                        body: currentLang === 'ar' ? 
@@ -2989,11 +3013,127 @@ function showARUnsupported(errorType) {
                    
                } catch (error) {
                    console.error('Simple notification failed:', error);
-                   showToast(currentLang === 'ar' ? 
-                       'فشل في إرسال الإشعار البسيط' : 
-                       'Failed to send simple notification', 'error');
+                   
+                   // Show detailed error for emulator debugging
+                   const errorMessage = currentLang === 'ar' ? 
+                       `فشل في إرسال الإشعار: ${error.name} - ${error.message}` : 
+                       `Failed to send notification: ${error.name} - ${error.message}`;
+                   
+                   showToast(errorMessage, 'error');
+                   
+                   // For emulator, also show a visual notification
+                   if (isEmulator) {
+                       showEmulatorNotification('Simple Android Test', currentLang === 'ar' ? 
+                           'هذا إشعار اختبار بسيط لـ Android' : 
+                           'This is a simple Android test notification');
+                   }
                }
            }, 10000); // 10 seconds
+       }
+       
+       // Visual notification for emulator testing
+       function showEmulatorNotification(title, body) {
+           // Create a visual notification element
+           const notificationDiv = document.createElement('div');
+           notificationDiv.style.cssText = `
+               position: fixed;
+               top: 20px;
+               right: 20px;
+               background: #4CAF50;
+               color: white;
+               padding: 15px;
+               border-radius: 8px;
+               box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+               z-index: 10000;
+               max-width: 300px;
+               font-family: Arial, sans-serif;
+               animation: slideIn 0.3s ease-out;
+           `;
+           
+           notificationDiv.innerHTML = `
+               <div style="font-weight: bold; margin-bottom: 5px;">${title}</div>
+               <div style="font-size: 14px;">${body}</div>
+               <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">Emulator Test Notification</div>
+           `;
+           
+           // Add CSS animation
+           const style = document.createElement('style');
+           style.textContent = `
+               @keyframes slideIn {
+                   from { transform: translateX(100%); opacity: 0; }
+                   to { transform: translateX(0); opacity: 1; }
+               }
+           `;
+           document.head.appendChild(style);
+           
+           document.body.appendChild(notificationDiv);
+           
+           // Auto-remove after 5 seconds
+           setTimeout(() => {
+               notificationDiv.style.animation = 'slideOut 0.3s ease-in';
+               setTimeout(() => {
+                   document.body.removeChild(notificationDiv);
+               }, 300);
+           }, 5000);
+           
+           // Add slideOut animation
+           const slideOutStyle = document.createElement('style');
+           slideOutStyle.textContent = `
+               @keyframes slideOut {
+                   from { transform: translateX(0); opacity: 1; }
+                   to { transform: translateX(100%); opacity: 0; }
+               }
+           `;
+           document.head.appendChild(slideOutStyle);
+       }
+       
+       // Immediate emulator notification test
+       function testEmulatorNotification() {
+           const isEmulator = /Android/.test(navigator.userAgent) && (navigator.userAgent.includes('Emulator') || navigator.userAgent.includes('SDK'));
+           
+           if (!isEmulator) {
+               showToast(currentLang === 'ar' ? 
+                   'هذا الاختبار مخصص للمحاكي فقط' : 
+                   'This test is for emulator only', 'warning');
+               return;
+           }
+           
+           showToast(currentLang === 'ar' ? 
+               'اختبار إشعار المحاكي الفوري' : 
+               'Immediate emulator notification test', 'info');
+           
+           // Show visual notification immediately
+           showEmulatorNotification('Emulator Test', currentLang === 'ar' ? 
+               'هذا إشعار اختبار للمحاكي يعمل فوراً' : 
+               'This emulator test notification works immediately');
+           
+           // Also try real notification
+           try {
+               const notification = new Notification('Emulator Test', {
+                   body: currentLang === 'ar' ? 
+                       'اختبار إشعار حقيقي للمحاكي' : 
+                       'Real notification test for emulator',
+                   icon: 'icon1.png',
+                   tag: 'emulator-test',
+                   requireInteraction: false,
+                   silent: false
+               });
+               
+               console.log('Real notification sent successfully');
+               showToast(currentLang === 'ar' ? 
+                   'تم إرسال الإشعار الحقيقي بنجاح' : 
+                   'Real notification sent successfully', 'success');
+               
+               setTimeout(() => {
+                   notification.close();
+               }, 5000);
+               
+           } catch (error) {
+               console.error('Real notification failed:', error);
+               showToast(currentLang === 'ar' ? 
+                   `فشل الإشعار الحقيقي: ${error.name}` : 
+                   `Real notification failed: ${error.name}`, 'error');
+           }
        }
        
        // Add to global scope
