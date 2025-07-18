@@ -2513,6 +2513,7 @@ function showARUnsupported(errorType) {
        window.requestNotificationPermission = requestNotificationPermission;
        window.testQiblaAccuracy = testQiblaAccuracy;
        window.testAndroidBackgroundSync = testAndroidBackgroundSync;
+       window.testSimpleAndroidNotification = testSimpleAndroidNotification;
        
        // Test delayed notification function (for testing when app is closed)
        function testDelayedNotification() {
@@ -2779,70 +2780,220 @@ function showARUnsupported(errorType) {
                return;
            }
            
+           console.log('Starting Android background test...');
            showToast(currentLang === 'ar' ? 
                'اختبار Android: سيتم إرسال إشعار في الخلفية بعد 30 ثانية' : 
                'Android Test: Background notification will be sent in 30 seconds', 'info');
            
+           // Store test data for debugging
+           const testData = {
+               title: 'Android Background Test',
+               body: currentLang === 'ar' ? 
+                   'هذا إشعار اختبار لـ Android في الخلفية' : 
+                   'This is an Android background test notification',
+               icon: 'icon1.png',
+               badge: 'icon1.png',
+               tag: 'android-background-test',
+               timestamp: new Date().toISOString(),
+               scheduledTime: Date.now() + 30000
+           };
+           
+           // Store in localStorage for debugging
+           localStorage.setItem('androidTestData', JSON.stringify(testData));
+           
            // Test Android background sync capabilities
            if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
+               console.log('Service worker and sync supported, registering background sync...');
+               
                navigator.serviceWorker.ready.then(registration => {
+                   console.log('Service worker ready, registration:', registration);
+                   
                    // Register a background sync for testing
                    registration.sync.register('android-background-test').then(() => {
-                       console.log('Android background sync test registered');
+                       console.log('Android background sync test registered successfully');
                        
                        // Also schedule a direct notification for comparison
                        setTimeout(() => {
-                           try {
-                               const notification = new Notification('Android Background Test', {
-                                   body: currentLang === 'ar' ? 
-                                       'هذا إشعار اختبار لـ Android في الخلفية' : 
-                                       'This is an Android background test notification',
-                                   icon: 'icon1.png',
-                                   badge: 'icon1.png',
-                                   tag: 'android-background-test',
-                                   requireInteraction: false,
-                                   vibrate: [300, 100, 300, 100, 300],
-                                   silent: false,
-                                   data: {
-                                       type: 'android-test',
-                                       timestamp: new Date().toISOString()
-                                   },
-                                   actions: [
-                                       {
-                                           action: 'open',
-                                           title: currentLang === 'ar' ? 'فتح التطبيق' : 'Open App',
-                                           icon: 'icon1.png'
-                                       }
-                                   ]
-                               });
-                               
-                               console.log('Android background test notification sent');
-                               
-                               // Auto-close after 15 seconds
-                               setTimeout(() => {
-                                   notification.close();
-                               }, 15000);
-                               
-                           } catch (error) {
-                               console.error('Error sending Android background test notification:', error);
-                               showToast(currentLang === 'ar' ? 
-                                   'فشل في إرسال إشعار الاختبار' : 
-                                   'Failed to send test notification', 'error');
-                           }
+                           console.log('Attempting to send direct notification...');
+                           sendDirectNotification(testData);
                        }, 30000); // 30 seconds
                        
                    }).catch(error => {
-                       console.log('Android background sync registration failed:', error);
+                       console.error('Android background sync registration failed:', error);
                        showToast(currentLang === 'ar' ? 
                            'فشل في تسجيل المزامنة في الخلفية' : 
                            'Background sync registration failed', 'warning');
+                       
+                       // Fallback to direct notification only
+                       setTimeout(() => {
+                           console.log('Falling back to direct notification...');
+                           sendDirectNotification(testData);
+                       }, 30000);
                    });
+               }).catch(error => {
+                   console.error('Service worker ready failed:', error);
+                   showToast(currentLang === 'ar' ? 
+                       'فشل في تحضير Service Worker' : 
+                       'Service Worker preparation failed', 'warning');
+                   
+                   // Fallback to direct notification only
+                   setTimeout(() => {
+                       console.log('Falling back to direct notification...');
+                       sendDirectNotification(testData);
+                   }, 30000);
                });
            } else {
+               console.log('Service worker or sync not supported, using direct notification only');
                showToast(currentLang === 'ar' ? 
-                   'المتصفح لا يدعم المزامنة في الخلفية' : 
-                   'Browser does not support background sync', 'warning');
+                   'المتصفح لا يدعم المزامنة في الخلفية، سيتم استخدام الإشعار المباشر' : 
+                   'Browser does not support background sync, using direct notification', 'info');
+               
+               // Use direct notification only
+               setTimeout(() => {
+                   console.log('Sending direct notification...');
+                   sendDirectNotification(testData);
+               }, 30000);
            }
+           
+           // Helper function to send direct notification with better error handling
+           function sendDirectNotification(data) {
+               try {
+                   console.log('Creating notification with data:', data);
+                   
+                   // Check if we're in a visible context
+                   if (document.visibilityState === 'visible') {
+                       console.log('App is visible, sending notification directly');
+                   } else {
+                       console.log('App is not visible, attempting background notification');
+                   }
+                   
+                   const notification = new Notification(data.title, {
+                       body: data.body,
+                       icon: data.icon,
+                       badge: data.badge,
+                       tag: data.tag,
+                       requireInteraction: false,
+                       vibrate: [300, 100, 300, 100, 300],
+                       silent: false,
+                       data: {
+                           type: 'android-test',
+                           timestamp: data.timestamp
+                       },
+                       actions: [
+                           {
+                               action: 'open',
+                               title: currentLang === 'ar' ? 'فتح التطبيق' : 'Open App',
+                               icon: 'icon1.png'
+                           }
+                       ]
+                   });
+                   
+                   console.log('Android background test notification sent successfully');
+                   
+                   // Show success toast
+                   showToast(currentLang === 'ar' ? 
+                       'تم إرسال الإشعار بنجاح' : 
+                       'Notification sent successfully', 'success');
+                   
+                   // Auto-close after 15 seconds
+                   setTimeout(() => {
+                       notification.close();
+                   }, 15000);
+                   
+               } catch (error) {
+                   console.error('Error sending Android background test notification:', error);
+                   console.error('Error details:', {
+                       name: error.name,
+                       message: error.message,
+                       stack: error.stack
+                   });
+                   
+                   // Try alternative approach
+                   try {
+                       console.log('Trying alternative notification approach...');
+                       
+                       // Try without actions first
+                       const simpleNotification = new Notification(data.title, {
+                           body: data.body,
+                           icon: data.icon,
+                           tag: data.tag,
+                           requireInteraction: false,
+                           silent: false
+                       });
+                       
+                       console.log('Simple notification sent successfully');
+                       showToast(currentLang === 'ar' ? 
+                           'تم إرسال الإشعار البسيط بنجاح' : 
+                           'Simple notification sent successfully', 'success');
+                       
+                       setTimeout(() => {
+                           simpleNotification.close();
+                       }, 15000);
+                       
+                   } catch (secondError) {
+                       console.error('Second attempt also failed:', secondError);
+                       showToast(currentLang === 'ar' ? 
+                           'فشل في إرسال الإشعار بعد محاولتين' : 
+                           'Failed to send notification after two attempts', 'error');
+                   }
+               }
+           }
+       }
+       
+       // Simple Android notification test (no background sync)
+       function testSimpleAndroidNotification() {
+           const isAndroid = /Android/.test(navigator.userAgent);
+           
+           if (!isAndroid) {
+               showToast(currentLang === 'ar' ? 
+                   'هذا الاختبار مخصص لأجهزة Android' : 
+                   'This test is for Android devices only', 'warning');
+               return;
+           }
+           
+           if (!notificationEnabled) {
+               console.log('Notifications are disabled. Please enable them first.');
+               showToast(currentLang === 'ar' ? 'يرجى تفعيل الإشعارات أولاً' : 'Please enable notifications first', 'error');
+               return;
+           }
+           
+           console.log('Starting simple Android notification test...');
+           showToast(currentLang === 'ar' ? 
+               'اختبار بسيط: سيتم إرسال إشعار بعد 10 ثانية' : 
+               'Simple Test: Notification will be sent in 10 seconds', 'info');
+           
+           // Simple notification after 10 seconds
+           setTimeout(() => {
+               try {
+                   console.log('Sending simple notification...');
+                   
+                   const notification = new Notification('Simple Android Test', {
+                       body: currentLang === 'ar' ? 
+                           'هذا إشعار اختبار بسيط لـ Android' : 
+                           'This is a simple Android test notification',
+                       icon: 'icon1.png',
+                       tag: 'simple-android-test',
+                       requireInteraction: false,
+                       silent: false
+                   });
+                   
+                   console.log('Simple notification sent successfully');
+                   showToast(currentLang === 'ar' ? 
+                       'تم إرسال الإشعار البسيط بنجاح' : 
+                       'Simple notification sent successfully', 'success');
+                   
+                   // Auto-close after 10 seconds
+                   setTimeout(() => {
+                       notification.close();
+                   }, 10000);
+                   
+               } catch (error) {
+                   console.error('Simple notification failed:', error);
+                   showToast(currentLang === 'ar' ? 
+                       'فشل في إرسال الإشعار البسيط' : 
+                       'Failed to send simple notification', 'error');
+               }
+           }, 10000); // 10 seconds
        }
        
        // Add to global scope
