@@ -1,3 +1,40 @@
+/* System-installed Quran Fonts - Reference by their system names */
+/* These fonts are now installed system-wide and available by their internal names */
+/* No @font-face needed for system fonts, but we can create aliases for fallbacks */
+
+/* Fallback font declarations for preview (in case system fonts aren't available in browser) */
+@font-face {
+    font-family: 'KFGQPC HAFS Uthmanic Script';
+    src: local('KFGQPC HAFS Uthmanic Script'), 
+         local('Traditional Arabic'), 
+         url('../fonts/UthmanicHafs1Ver18.ttf') format('truetype');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Al Majeed Quranic Font';
+    src: local('Al Majeed Quranic Font'), 
+         local('Arabic Typesetting'), 
+         url('../fonts/AlMushafQuran.ttf') format('truetype');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'KFGQPC Uthman Taha Naskh';
+    src: local('KFGQPC Uthman Taha Naskh'), 
+         local('Tahoma'), 
+         url('../fonts/UtmanTahaNaskh.ttf') format('truetype');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'KFGQPC Uthmanic Script HAFS';
+    src: local('KFGQPC Uthmanic Script HAFS'), 
+         local('Segoe UI'), 
+         url('../fonts/UthmanicHafs1Ver09.ttf') format('truetype');
+    font-display: swap;
+}
+
 /* iOS PWA Viewport Height Fix */
 :root {
     --vh: 1vh;
