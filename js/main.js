@@ -3,6 +3,9 @@
 
 
 
+
+
+
   // Dark mode functionality
         function initDarkMode() {
             const darkModeToggle = document.getElementById('darkModeToggle');
@@ -2475,7 +2478,7 @@ function showARUnsupported(errorType) {
              // Call test function (remove in production)
        // testQiblaAccuracy();
 
-
+           
        
        // Add to global scope for console testing
        window.requestNotificationPermission = requestNotificationPermission;
@@ -3145,7 +3148,7 @@ function showARUnsupported(errorType) {
               ...d,
               remainingRepeats: d.repeat
           }));
-          
+
           current = 0;
           
           // Immediate transition without animation delay
@@ -3598,13 +3601,14 @@ function showARUnsupported(errorType) {
               tab.addEventListener('click', () => {
                   const previousActiveTab = document.querySelector('.tab.active');
                   const previousTabId = previousActiveTab ? previousActiveTab.getAttribute('data-tab') : null;
+                  const tabId = tab.getAttribute('data-tab');
+                  console.log('Tab clicked:', tabId);
                   
                   // Immediate visual feedback
                   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                   document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
                   tab.classList.add('active');
-                  const tabId = tab.getAttribute('data-tab');
                   document.getElementById(`${tabId}Content`).classList.add('active');
 
                   // Handle tab-specific logic asynchronously to avoid blocking UI
@@ -3619,69 +3623,74 @@ function showARUnsupported(errorType) {
                               controls.style.display = 'none';
                           }
                       }
-                      
-                      // Reset reading mode when switching away from Quran tab
-                      if (previousTabId === 'quran' && tabId !== 'quran' && isReadingMode) {
-                          isReadingMode = false;
-                          const btnReadingMode = document.getElementById('btnReadingMode');
-                          if (btnReadingMode) {
-                              btnReadingMode.innerHTML = '<i class="fas fa-book-open w-3 h-3"></i>';
-                          }
-                          // Remove scroll listener
-                          if (window.currentScrollListener) {
-                              window.removeEventListener('scroll', window.currentScrollListener);
-                              window.currentScrollListener = null;
-                          }
-                          // Hide page/Juz indicator
-                          hidePageJuzIndicator();
-                      }
-                      
-                      // Stop compass when switching away from Qibla tab
-                      if (previousTabId === 'qibla' && tabId !== 'qibla') {
-                          stopCompass();
-                      }
 
-                      if (tabId === 'qibla') {
-                         // Qibla tab is now ready - no auto-initialization needed
-                         // User will click the start button when ready
+                  // Reset reading mode when switching away from Quran tab
+                  if (previousTabId === 'quran' && tabId !== 'quran' && isReadingMode) {
+                      isReadingMode = false;
+                      const btnReadingMode = document.getElementById('btnReadingMode');
+                      if (btnReadingMode) {
+                          btnReadingMode.innerHTML = '<i class="fas fa-book-open w-3 h-3"></i>';
                       }
+                      // Remove scroll listener
+                      if (window.currentScrollListener) {
+                          window.removeEventListener('scroll', window.currentScrollListener);
+                          window.currentScrollListener = null;
+                      }
+                      // Hide page/Juz indicator
+                      hidePageJuzIndicator();
+                  }
+                  
+                  // Stop compass when switching away from Qibla tab
+                  if (previousTabId === 'qibla' && tabId !== 'qibla') {
+                      stopCompass();
+                  }
 
-                      if (tabId === 'prayer') {
+                  if (tabId === 'qibla') {
+                     // Qibla tab is now ready - no auto-initialization needed
+                     // User will click the start button when ready
+                      }
+            
+            if (tabId === 'prayer') {
                           // Prayer times tab activated
-                      }
+            }
 
-                      if (tabId === 'tasbih') {
+            if (tabId === 'tasbih') {
                           // Tasbih tab activated
-                      } 
+            } 
 
-                      if (tabId === 'quran') {
+                  if (tabId === 'quran') {
                           // Load Quran data asynchronously without blocking UI
                           (async () => {
-                              try {
-                                  if (!quranData || !translationData) {
-                                      await loadQuranData();
-                                  } else {
-                                      resetQuranContent();
-                                  }
-                                  
-                                  // Initialize Quran search if not already done
-                                  if (!document.getElementById('quranSearchInput').hasAttribute('data-initialized')) {
-                                      initializeQuranSearch();
-                                      document.getElementById('quranSearchInput').setAttribute('data-initialized', 'true');
-                                  }
-                              } catch (error) {
-                                  const arabicText = document.getElementById('arabicText');
-                                  if (arabicText) {
-                                      arabicText.innerHTML = `
-                                          <div class="text-red-500 dark:text-red-400 py-8">
-                                              <i class="fas fa-exclamation-circle text-4xl mb-4"></i>
-                                              <p class="text-xl">${currentLang === 'ar' ? 'حدث خطأ في تحميل البيانات' : 'Error loading data'}</p>
-                                              <p class="text-sm mt-4">${error.message}</p>
-                                          </div>
-                                      `;
-                                  }
-                              }
+                      try {
+                          if (!quranData || !translationData) {
+                              await loadQuranData();
+                          } else {
+                              resetQuranContent();
+                          }
+                          
+                          // Initialize Quran search if not already done
+                          if (!document.getElementById('quranSearchInput').hasAttribute('data-initialized')) {
+                              initializeQuranSearch();
+                              document.getElementById('quranSearchInput').setAttribute('data-initialized', 'true');
+                          }
+                      } catch (error) {
+                          const arabicText = document.getElementById('arabicText');
+                          if (arabicText) {
+                              arabicText.innerHTML = `
+                                  <div class="text-red-500 dark:text-red-400 py-8">
+                                      <i class="fas fa-exclamation-circle text-4xl mb-4"></i>
+                                      <p class="text-xl">${currentLang === 'ar' ? 'حدث خطأ في تحميل البيانات' : 'Error loading data'}</p>
+                                      <p class="text-sm mt-4">${error.message}</p>
+                                  </div>
+                              `;
+                          }
+                      }
                           })();
+                      }
+
+                      if (tabId === 'video') {
+                          console.log('setupTabs: Video tab clicked, initializing video generator...');
+                          initializeVideoGenerator();
                       }
                   }, 0);
               });
@@ -4097,19 +4106,19 @@ function showARUnsupported(errorType) {
                       
                       // Schedule notification if it's in the future
                       if (notificationTime > 0) {
-                          const timeoutId = setTimeout(() => {
-                              showBasicNotification(prayer);
-                              // Schedule next day's notifications after Isha
-                              if (prayer === 'Isha') {
-                                  setTimeout(() => {
-                                      setupBasicNotifications();
-                                  }, 60000); // Wait 1 minute after Isha, then setup next day
-                              }
+                      const timeoutId = setTimeout(() => {
+                          showBasicNotification(prayer);
+                          // Schedule next day's notifications after Isha
+                          if (prayer === 'Isha') {
+                              setTimeout(() => {
+                                  setupBasicNotifications();
+                              }, 60000); // Wait 1 minute after Isha, then setup next day
+                          }
                           }, notificationTime);
-                          
-                          notificationTimeouts.push(timeoutId);
-                          scheduledCount++;
-                      }
+                      
+                      notificationTimeouts.push(timeoutId);
+                      scheduledCount++;
+                  }
                   });
               }
           });
@@ -5397,6 +5406,43 @@ function showARUnsupported(errorType) {
       }
 
         document.addEventListener('DOMContentLoaded', async () => {
+    // Initialize preview aspect ratio
+    setTimeout(() => {
+        const updatePreviewAspectRatio = () => {
+            const preview = document.getElementById('videoPreview');
+            const orientationSelect = document.getElementById('videoOrientation');
+            
+            if (preview && orientationSelect) {
+                const orientation = orientationSelect.value || 'landscape';
+                
+                // Remove all aspect ratio classes
+                preview.classList.remove('aspect-video', 'aspect-square', 'aspect-[9/16]');
+                
+                // Add appropriate aspect ratio class based on orientation
+                switch (orientation) {
+                    case 'portrait':
+                        preview.classList.add('aspect-[9/16]'); // 9:16 for portrait
+                        break;
+                    case 'square':
+                        preview.classList.add('aspect-square'); // 1:1 for square
+                        break;
+                    case 'landscape':
+                    default:
+                        preview.classList.add('aspect-video'); // 16:9 for landscape
+                        break;
+                }
+            }
+        };
+        
+        // Initialize aspect ratio
+        updatePreviewAspectRatio();
+        
+        // Add event listener for orientation changes
+        const orientationSelect = document.getElementById('videoOrientation');
+        if (orientationSelect) {
+            orientationSelect.addEventListener('change', updatePreviewAspectRatio);
+        }
+    }, 100);
                    initDarkMode();
           initializeQiblaLocation(); // Immediate initialization
             // Initialize audio context for iOS PWA
@@ -5595,9 +5641,9 @@ function showARUnsupported(errorType) {
                initializeQuranSearch();
                
                // Immediate initialization for better performance
-               if (quranData && surahsData.length === 0) {
-                   initializeSurahMenu();
-               }
+                   if (quranData && surahsData.length === 0) {
+                       initializeSurahMenu();
+                   }
 
                const menuBtn = document.getElementById('adhkarMenuBtn');
                const modal = document.getElementById('adhkarMenuModal');
@@ -5782,7 +5828,7 @@ function showARUnsupported(errorType) {
                 modal.classList.remove('hidden');
                 
                 // Immediate opacity change
-                modal.style.opacity = '1';
+                    modal.style.opacity = '1';
             }
         }
 
@@ -5821,8 +5867,8 @@ function showARUnsupported(errorType) {
             const modal = document.getElementById('iosInstallModal');
             if (modal) {
                 modal.style.opacity = '0';
-                modal.style.display = 'none';
-                modal.classList.add('hidden');
+                    modal.style.display = 'none';
+                    modal.classList.add('hidden');
             }
         }
 
@@ -5917,7 +5963,7 @@ function showARUnsupported(errorType) {
             } else {
                 // Hide menu
                 menu.classList.add('translate-x-full');
-                menu.classList.add('hidden');
+                    menu.classList.add('hidden');
                 
                 // Remove overlay
                 const overlay = document.querySelector('.settings-overlay');
@@ -6506,13 +6552,13 @@ function showARUnsupported(errorType) {
             
             // Reset zoom on mobile devices immediately
             if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-                const viewport = document.querySelector('meta[name=viewport]');
-                if (viewport) {
-                    viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
-                    // Force a brief re-render to apply zoom reset
-                    document.body.style.zoom = '1.0001';
-                    document.body.style.zoom = '1';
-                }
+                    const viewport = document.querySelector('meta[name=viewport]');
+                    if (viewport) {
+                        viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+                        // Force a brief re-render to apply zoom reset
+                        document.body.style.zoom = '1.0001';
+                            document.body.style.zoom = '1';
+                    }
             }
                 
                 // Load Tafsir for the selected surah
@@ -6595,7 +6641,7 @@ function showARUnsupported(errorType) {
             } else {
                     // Data exists but menu not initialized
                     surahList.innerHTML = '<div class="p-4 text-center text-gray-500">جاري التحميل...</div>';
-                    initializeSurahMenu();
+                        initializeSurahMenu();
                 }
             }
             
@@ -8004,6 +8050,7 @@ function showARUnsupported(errorType) {
             const reciter = reciterMapping[selectedReciter] || 'Alafasy_64kbps';
             const url = `https://everyayah.com/data/${reciter}/${surahStr}${ayahStr}.mp3`;
             const audio = new Audio(url);
+            console.log(url);   
             
             // Enhanced iOS PWA audio setup
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -8066,7 +8113,7 @@ function showARUnsupported(errorType) {
                         }
                     } else if (isIOS) {
                         if (error.name === 'NotAllowedError') {
-                            showToast(currentLang === 'ar' ? 'يرجى النقر على الآية مرة أخرى لتشغيل الصوت' : 'Please tap the verse again to play audio', 'info');
+                        showToast(currentLang === 'ar' ? 'يرجى النقر على الآية مرة أخرى لتشغيل الصوت' : 'Please tap the verse again to play audio', 'info');
                         } else {
                             showToast(currentLang === 'ar' ? 'حدث خطأ أثناء تشغيل الصوت' : 'Error playing audio', 'error');
                         }
@@ -8868,13 +8915,9 @@ window.switchLanguage = function() {
   };
   document.getElementById('ayahMenuShare').onclick = function() {
     if (popoverSurah !== null && popoverAyah !== null) {
-      // Store current verse info for video generation
-      window.currentVideoSurah = popoverSurah;
-      window.currentVideoAyah = popoverAyah;
-      window.currentVideoSurahName = quranData[popoverSurah].name;
-      
-      // Show share options modal
-      showShareOptionsModal();
+      const shareURL = `${window.location.origin}${window.location.pathname}#quran/${popoverSurah + 1}/${popoverAyah + 1}`;
+      const surahName = quranData[popoverSurah].name;
+      shareVerse(shareURL, surahName, popoverAyah + 1);
     }
     closePopover();
   };
@@ -11107,6 +11150,12 @@ function loadPrayerOffsets() {
                 }
             })();
         }
+
+        // Handle video tab specific logic
+        if (tabId === 'video') {
+            console.log('switchTab: Video tab selected, initializing video generator...');
+            initializeVideoGenerator();
+        }
     }
 
     // Function to update surah menu and dropdown for current surah
@@ -11196,769 +11245,1091 @@ function loadPrayerOffsets() {
     });
 
     // Video Generation Functions
-    function showShareOptionsModal() {
-        const modal = document.getElementById('shareOptionsModal');
-        modal.style.display = 'flex';
+    let videoGeneratorInitialized = false;
+    let selectedVideoSurah = null;
+    let selectedVideoAyah = null;
+    let selectedVideoAyahTo = null; // For verse ranges
+    let selectedVideoReciter = null;
+    let selectedBackground = null;
+    let customBackgroundFile = null;
+
+    // Initialize video generator
+    function initializeVideoGenerator() {
+        console.log('=== VIDEO GENERATOR INITIALIZATION START ===');
         
-        // Set up event listeners
-        document.getElementById('closeShareOptionsModal').onclick = closeShareOptionsModal;
-        document.getElementById('shareLinkBtn').onclick = handleShareLink;
-        document.getElementById('createVideoBtn').onclick = handleCreateVideo;
+        if (videoGeneratorInitialized) {
+            console.log('Video generator already initialized, skipping...');
+            return;
+        }
+        
+        console.log('Initializing video generator...');
+        console.log('Current Quran data status:', !!quranData);
+        console.log('Current translation data status:', !!translationData);
+        
+        // Load reciters
+        console.log('Loading reciters...');
+        loadVideoReciters();
+        
+        // Load backgrounds
+        console.log('Loading backgrounds...');
+        loadVideoBackgrounds();
+        
+        // Load fonts
+        console.log('Loading fonts...');
+        loadVideoFonts();
+        
+        // Load surahs for video generation
+        console.log('Loading surahs...');
+        loadVideoSurahs();
+        
+        // Setup event listeners
+        console.log('Setting up event listeners...');
+        setupVideoEventListeners();
         
         // Update language
-        updateShareOptionsLanguage();
+        console.log('Updating language...');
+        updateVideoLanguage();
+        
+        // Show a helpful message if server is not running
+        setTimeout(() => {
+            const reciterSelect = document.getElementById('videoReciterSelect');
+            const backgroundGrid = document.getElementById('backgroundGrid');
+            
+            console.log('Checking server connection status...');
+            console.log('Reciter select children count:', reciterSelect ? reciterSelect.children.length : 'Element not found');
+            
+            if (reciterSelect && reciterSelect.children.length <= 1) {
+                showToast(currentLang === 'ar' ? 
+                    'ملاحظة: خادم الفيديو غير متصل. بعض الميزات قد لا تعمل.' : 
+                    'Note: Video server not connected. Some features may not work.', 'info');
+            }
+        }, 2000);
+        
+        videoGeneratorInitialized = true;
+        console.log('=== VIDEO GENERATOR INITIALIZATION COMPLETE ===');
     }
 
-    function closeShareOptionsModal() {
-        document.getElementById('shareOptionsModal').style.display = 'none';
-    }
-
-    function updateShareOptionsLanguage() {
-        const isArabic = currentLang === 'ar';
-        
-        // Update modal title
-        const titleElement = document.querySelector('#shareOptionsModal h3');
-        if (titleElement) {
-            titleElement.textContent = isArabic ? 'خيارات المشاركة' : 'Share Options';
-        }
-        
-        // Update button texts
-        document.getElementById('shareLinkBtn').innerHTML = isArabic ? 
-            '<i class="fas fa-link"></i>مشاركة الرابط' : 
-            '<i class="fas fa-link"></i>Share Link';
-        
-        document.getElementById('createVideoBtn').innerHTML = isArabic ? 
-            '<i class="fas fa-video"></i>إنشاء فيديو' : 
-            '<i class="fas fa-video"></i>Create Video';
-    }
-
-    function handleShareLink() {
-        if (window.currentVideoSurah !== null && window.currentVideoAyah !== null) {
-            const shareURL = `${window.location.origin}${window.location.pathname}#quran/${window.currentVideoSurah + 1}/${window.currentVideoAyah + 1}`;
-            const surahName = window.currentVideoSurahName;
-            shareVerse(shareURL, surahName, window.currentVideoAyah + 1);
-        }
-        closeShareOptionsModal();
-    }
-
-    function handleCreateVideo() {
-        closeShareOptionsModal();
-        showVideoGenerationModal();
-    }
-
-    function showVideoGenerationModal() {
-        const modal = document.getElementById('videoGenerationModal');
-        modal.style.display = 'flex';
-        
-        // Set up event listeners
-        document.getElementById('closeVideoGenerationModal').onclick = closeVideoGenerationModal;
-        document.getElementById('previewVideoBtn').onclick = previewVideo;
-        document.getElementById('generateVideoBtn').onclick = generateVideo;
-        document.getElementById('downloadVideoBtn').onclick = downloadVideo;
-        document.getElementById('shareVideoBtn').onclick = shareVideo;
-        
-        // Set up slider event listeners
-        setupVideoGenerationSliders();
-        
-        // Set up translation toggle
-        document.getElementById('showTranslation').onchange = toggleTranslationOptions;
-        
-        // Load available background videos
-        loadAvailableBackgroundVideos();
-        
-        // Update language
-        updateVideoGenerationLanguage();
-        
-        // Initialize preview
-        updateVideoPreview();
-    }
-
-    function closeVideoGenerationModal() {
-        document.getElementById('videoGenerationModal').style.display = 'none';
-    }
-
-    function updateVideoGenerationLanguage() {
-        const isArabic = currentLang === 'ar';
-        
-        // Update modal title
-        document.getElementById('videoGenerationModalTitle').textContent = isArabic ? 
-            'إنشاء فيديو للآية' : 'Create Verse Video';
-        
-        // Update section headers
-        const previewHeader = document.querySelector('#videoGenerationModal h4');
-        if (previewHeader) {
-            previewHeader.textContent = isArabic ? 'معاينة الفيديو' : 'Video Preview';
-        }
-        
-        // Update button texts
-        document.getElementById('previewVideoBtn').innerHTML = isArabic ? 
-            '<i class="fas fa-eye mr-2"></i>معاينة' : 
-            '<i class="fas fa-eye mr-2"></i>Preview';
-        
-        document.getElementById('generateVideoBtn').innerHTML = isArabic ? 
-            '<i class="fas fa-video mr-2"></i>إنشاء الفيديو' : 
-            '<i class="fas fa-video mr-2"></i>Generate Video';
-        
-        document.getElementById('downloadVideoBtn').innerHTML = isArabic ? 
-            '<i class="fas fa-download mr-2"></i>تحميل' : 
-            '<i class="fas fa-download mr-2"></i>Download';
-        
-        document.getElementById('shareVideoBtn').innerHTML = isArabic ? 
-            '<i class="fas fa-share mr-2"></i>مشاركة' : 
-            '<i class="fas fa-share mr-2"></i>Share';
-        
-        // Update placeholder text
-        const previewPlaceholder = document.querySelector('#videoPreview p');
-        if (previewPlaceholder) {
-            previewPlaceholder.textContent = isArabic ? 'سيتم إنشاء معاينة هنا' : 'Preview will be generated here';
-        }
-    }
-
-    async function loadAvailableBackgroundVideos() {
-        const videoSelect = document.getElementById('backgroundVideoSelect');
-        const isArabic = currentLang === 'ar';
-        
-        // Clear existing options
-        videoSelect.innerHTML = '';
-        
-        // Known video files (you can expand this list)
-        const knownVideos = [
-            { filename: 'cloudsbackground.mp4', name: isArabic ? 'غيوم متحركة' : 'Moving Clouds' }
-        ];
-        
-        // Add known videos
-        knownVideos.forEach(video => {
-            const option = document.createElement('option');
-            option.value = video.filename;
-            option.textContent = `${video.name} - ${video.filename}`;
-            videoSelect.appendChild(option);
-        });
-        
-        // Try to detect additional videos (this is a simple approach)
-        // In a real implementation, you might want to create an API endpoint
-        // that returns the list of available videos from the server
+    // Load reciters for video generation
+    async function loadVideoReciters() {
+        console.log('loadVideoReciters: Starting...');
         try {
-            // Test if additional videos exist
-            const testVideos = [
-                'nature.mp4', 'ocean.mp4', 'forest.mp4', 'sky.mp4', 'stars.mp4'
+            console.log('loadVideoReciters: Fetching from http://localhost:3000/api/reciters...');
+            const response = await fetch('http://localhost:3000/api/reciters');
+            console.log('loadVideoReciters: Response status:', response.status);
+            const reciters = await response.json();
+            console.log('loadVideoReciters: Received reciters:', reciters);
+            
+            const reciterSelect = document.getElementById('videoReciterSelect');
+            console.log('loadVideoReciters: Found reciter select element:', !!reciterSelect);
+            if (reciterSelect) {
+                reciterSelect.innerHTML = '<option value="">اختر القارئ</option>';
+                reciters.forEach(reciter => {
+                    const option = document.createElement('option');
+                    option.value = reciter.id;
+                    option.textContent = reciter.name;
+                    reciterSelect.appendChild(option);
+                });
+                console.log('loadVideoReciters: Added', reciters.length, 'reciters to dropdown');
+            } else {
+                console.error('loadVideoReciters: Reciter select element not found!');
+            }
+        } catch (error) {
+            console.error('loadVideoReciters: Error loading reciters:', error);
+            // Fallback to hardcoded reciters if server is not available
+            const fallbackReciters = [
+                { id: 'abdul_basit', name: 'Abdul Basit Abdul Samad' },
+                { id: 'mishary_rashid', name: 'Mishary Rashid Alafasy' },
+                { id: 'sudais', name: 'Abdur-Rahman As-Sudais' },
+                { id: 'shuraim', name: 'Saud Al-Shuraim' },
+                { id: 'ghamdi', name: 'Saad Al-Ghamdi' },
+                { id: 'husary', name: 'Mahmoud Khalil Al-Husary' },
+                { id: 'muhammad_siddiq', name: 'Muhammad Siddiq Al-Minshawi' }
             ];
             
-            for (const testVideo of testVideos) {
-                try {
-                    const response = await fetch(`videos/${testVideo}`, { method: 'HEAD' });
-                    if (response.ok) {
-                        const option = document.createElement('option');
-                        option.value = testVideo;
-                        option.textContent = `${testVideo.replace('.mp4', '')} - ${testVideo}`;
-                        videoSelect.appendChild(option);
-                    }
-                } catch (error) {
-                    // Video doesn't exist, continue
+            const reciterSelect = document.getElementById('videoReciterSelect');
+            if (reciterSelect) {
+                reciterSelect.innerHTML = '<option value="">اختر القارئ</option>';
+                fallbackReciters.forEach(reciter => {
+                    const option = document.createElement('option');
+                    option.value = reciter.id;
+                    option.textContent = reciter.name;
+                    reciterSelect.appendChild(option);
+                });
+                console.log('loadVideoReciters: Added fallback reciters');
+            }
+        }
+    }
+
+    // Load fonts for video generation
+    async function loadVideoFonts() {
+        try {
+            console.log('loadVideoFonts: Starting...');
+            const response = await fetch('http://localhost:3000/api/fonts');
+            console.log('loadVideoFonts: Response status:', response.status);
+            const fonts = await response.json();
+            console.log('loadVideoFonts: Received fonts:', fonts);
+            
+            const fontSelect = document.getElementById('videoFontFamily');
+            console.log('loadVideoFonts: Found font select element:', !!fontSelect);
+            
+            if (fontSelect && fonts && fonts.length > 0) {
+                fontSelect.innerHTML = '<option value="">اختر نوع الخط</option>';
+                fonts.forEach(font => {
+                    const option = document.createElement('option');
+                    option.value = font.family;
+                    option.textContent = font.name;
+                    fontSelect.appendChild(option);
+                });
+                console.log('loadVideoFonts: Added', fonts.length, 'fonts to dropdown');
+                
+                // Set default font
+                fontSelect.value = 'Uthmanic Hafs';
+                updateFontPreview();
+            } else {
+                console.error('loadVideoFonts: Font select element not found or no fonts received!');
+            }
+        } catch (error) {
+            console.error('loadVideoFonts: Error loading fonts:', error);
+            // Add fallback fonts - only keeping Al Mushaf and Uthmanic Hafs (old)
+            const fallbackFonts = [
+                { family: 'Uthmanic Hafs', name: 'Uthmanic Hafs (Old)' },
+                { family: 'Al Mushaf', name: 'Al Mushaf' }
+            ];
+            
+            const fontSelect = document.getElementById('videoFontFamily');
+            if (fontSelect) {
+                fontSelect.innerHTML = '<option value="">اختر نوع الخط</option>';
+                fallbackFonts.forEach(font => {
+                    const option = document.createElement('option');
+                    option.value = font.family;
+                    option.textContent = font.name;
+                    fontSelect.appendChild(option);
+                });
+                fontSelect.value = 'Uthmanic Hafs';
+                updateFontPreview();
+                console.log('loadVideoFonts: Added fallback fonts');
+            }
+        }
+    }
+
+    // Update font preview
+    function updateFontPreview() {
+        const fontSelect = document.getElementById('videoFontFamily');
+        const fontPreview = document.getElementById('fontPreview');
+        
+        if (fontSelect && fontPreview) {
+            const selectedFont = fontSelect.value || 'Uthmanic Hafs';
+            
+            // Map user-friendly names to actual system font names (same as server)
+            const fontMapping = {
+                'Uthmanic Hafs': 'UthmanicHafs1Ver18, KFGQPC HAFS Uthmanic Script, KFGQPC Uthmanic Script HAFS',
+                'Al Mushaf': 'Al Majeed Quranic Font, Arabic Typesetting',
+                'Utman Taha Naskh': 'KFGQPC Uthman Taha Naskh, Tahoma',
+                'Uthmanic Hafs Old': 'KFGQPC Uthmanic Script HAFS, Traditional Arabic'
+            };
+            
+            const systemFontNames = fontMapping[selectedFont] || selectedFont;
+            fontPreview.style.fontFamily = `${systemFontNames}, Arial, sans-serif`;
+            console.log('Updated font preview to:', selectedFont, '→', systemFontNames);
+        }
+    }
+
+    // Update orientation preview
+    function updateOrientationPreview() {
+        const orientationSelect = document.getElementById('videoOrientation');
+        const orientationPreview = document.getElementById('orientationPreview');
+        
+        if (orientationSelect && orientationPreview) {
+            const selectedOrientation = orientationSelect.value || 'landscape';
+            let previewText = '';
+            
+            switch (selectedOrientation) {
+                case 'portrait':
+                    previewText = 'عمودي - 1080x1920';
+                    break;
+                case 'square':
+                    previewText = 'مربع - 1080x1080';
+                    break;
+                case 'landscape':
+                default:
+                    previewText = 'أفقي - 1920x1080';
+                    break;
+            }
+            
+            orientationPreview.textContent = previewText;
+            console.log('Updated orientation preview to:', selectedOrientation, previewText);
+        }
+    }
+
+    // Load video backgrounds for video generation
+    async function loadVideoBackgrounds() {
+        try {
+            const response = await fetch('http://localhost:3000/api/backgrounds');
+            const backgrounds = await response.json();
+            
+            const backgroundGrid = document.getElementById('backgroundGrid');
+            if (backgroundGrid) {
+                backgroundGrid.innerHTML = '';
+                
+                backgrounds.forEach(background => {
+                    const backgroundItem = document.createElement('div');
+                    backgroundItem.className = 'relative cursor-pointer border-2 border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden transition-all duration-200 hover:border-purple-400 dark:hover:border-purple-500';
+                    backgroundItem.setAttribute('data-background-type', background.type);
+                    backgroundItem.setAttribute('data-background-filename', background.filename);
+                    
+                    backgroundItem.innerHTML = `
+                        <div class="relative">
+                            <img src="${background.thumbnailUrl}" alt="${background.displayName}" class="w-full h-32 object-cover">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <i class="fas fa-play text-white text-2xl opacity-80 bg-black bg-opacity-50 rounded-full p-3"></i>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 text-white text-sm p-2 text-center">
+                            ${background.displayName}
+                        </div>
+                    `;
+
+                    backgroundItem.addEventListener('click', () => {
+                        // Remove selected class from all backgrounds
+                        document.querySelectorAll('#backgroundGrid > div').forEach(item => {
+                            item.classList.remove('border-purple-500', 'dark:border-purple-400');
+                            item.classList.add('border-gray-300', 'dark:border-gray-600');
+                        });
+
+                        // Add selected class to clicked background
+                        backgroundItem.classList.remove('border-gray-300', 'dark:border-gray-600');
+                        backgroundItem.classList.add('border-purple-500', 'dark:border-purple-400');
+
+                        // Store selected background
+                        selectedBackground = {
+                            type: background.type,
+                            filename: background.filename
+                        };
+
+                        console.log('Selected video background:', selectedBackground);
+                        updateVideoPreview();
+                    });
+
+                    backgroundGrid.appendChild(backgroundItem);
+                });
+
+                // Auto-select first background if available
+                if (backgrounds.length > 0) {
+                    const firstItem = backgroundGrid.firstChild;
+                    firstItem.classList.remove('border-gray-300', 'dark:border-gray-600');
+                    firstItem.classList.add('border-purple-500', 'dark:border-purple-400');
+                    selectedBackground = {
+                        type: backgrounds[0].type,
+                        filename: backgrounds[0].filename
+                    };
                 }
             }
         } catch (error) {
-            console.log('Could not detect additional videos:', error);
-        }
-    }
-
-    function setupVideoGenerationSliders() {
-        // Background type selector
-        const backgroundType = document.getElementById('backgroundType');
-        backgroundType.onchange = function() {
-            const colorOptions = document.getElementById('colorBackgroundOptions');
-            const videoOptions = document.getElementById('videoBackgroundOptions');
+            console.error('Error loading backgrounds:', error);
+            // Fallback to placeholder backgrounds if server is not available
+            const fallbackBackgrounds = [
+                { id: 'mosque_1', name: 'Beautiful Mosque', url: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmZmY7c3RvcC1vcGFjaXR5OjEiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmMGYwZjA7c3RvcC1vcGFjaXR5OjEiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2cpIi8+PC9zdmc+' },
+                { id: 'kaaba', name: 'Kaaba', url: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmZmY7c3RvcC1vcGFjaXR5OjEiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmMGYwZjA7c3RvcC1vcGFjaXR5OjEiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2cpIi8+PC9zdmc+' },
+                { id: 'medina', name: 'Medina', url: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmZmY7c3RvcC1vcGFjaXR5OjEiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmMGYwZjA7c3RvcC1vcGFjaXR5OjEiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2cpIi8+PC9zdmc+' },
+                { id: 'nature', name: 'Nature', url: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmZmY7c3RvcC1vcGFjaXR5OjEiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmMGYwZjA7c3RvcC1vcGFjaXR5OjEiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2cpIi8+PC9zdmc+' },
+                { id: 'geometric', name: 'Geometric Pattern', url: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmZmY7c3RvcC1vcGFjaXR5OjEiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmMGYwZjA7c3RvcC1vcGFjaXR5OjEiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2cpIi8+PC9zdmc+' },
+                { id: 'gradient', name: 'Gradient', url: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmZmY7c3RvcC1vcGFjaXR5OjEiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmMGYwZjA7c3RvcC1vcGFjaXR5OjEiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2cpIi8+PC9zdmc+' }
+            ];
             
-            if (this.value === 'color') {
-                colorOptions.style.display = 'block';
-                videoOptions.style.display = 'none';
-            } else {
-                colorOptions.style.display = 'none';
-                videoOptions.style.display = 'block';
+            const backgroundGrid = document.getElementById('backgroundGrid');
+            if (backgroundGrid) {
+                backgroundGrid.innerHTML = '';
+                fallbackBackgrounds.forEach(background => {
+                    const backgroundItem = document.createElement('div');
+                    backgroundItem.className = 'aspect-square bg-cover bg-center rounded-lg border-2 border-gray-300 dark:border-gray-600 cursor-pointer hover:border-purple-500 dark:hover:border-purple-400 transition-all duration-200 flex items-center justify-center';
+                    backgroundItem.style.backgroundImage = `url(${background.url})`;
+                    backgroundItem.setAttribute('data-background-id', background.id);
+                    backgroundItem.setAttribute('title', background.name);
+                    
+                    // Add placeholder text
+                    backgroundItem.innerHTML = `<span class="text-xs text-gray-600 dark:text-gray-400 text-center">${background.name}</span>`;
+                    
+                    backgroundItem.addEventListener('click', () => {
+                        // Remove selected class from all backgrounds
+                        document.querySelectorAll('#backgroundGrid > div').forEach(item => {
+                            item.classList.remove('border-purple-500', 'dark:border-purple-400');
+                            item.classList.add('border-gray-300', 'dark:border-gray-600');
+                        });
+                        
+                        // Add selected class to clicked background
+                        backgroundItem.classList.remove('border-gray-300', 'dark:border-gray-600');
+                        backgroundItem.classList.add('border-purple-500', 'dark:border-purple-400');
+                        
+                        selectedBackground = background.id;
+                        customBackgroundFile = null;
+                        
+                        updateVideoPreview();
+                    });
+                    
+                    backgroundGrid.appendChild(backgroundItem);
+                });
             }
-            updateVideoPreview();
-        };
-
-        // Background opacity slider
-        const opacitySlider = document.getElementById('backgroundOpacity');
-        const opacityValue = document.getElementById('opacityValue');
-        opacitySlider.oninput = function() {
-            opacityValue.textContent = this.value + '%';
-            updateVideoPreview();
-        };
-
-        // Video opacity slider
-        const videoOpacitySlider = document.getElementById('videoOpacity');
-        const videoOpacityValue = document.getElementById('videoOpacityValue');
-        videoOpacitySlider.oninput = function() {
-            videoOpacityValue.textContent = this.value + '%';
-            updateVideoPreview();
-        };
-
-        // Text size slider
-        const textSizeSlider = document.getElementById('textSizeSlider');
-        const textSizeValue = document.getElementById('textSizeValue');
-        textSizeSlider.oninput = function() {
-            textSizeValue.textContent = this.value;
-            updateVideoPreview();
-        };
-
-        // Translation size slider
-        const translationSizeSlider = document.getElementById('translationSizeSlider');
-        const translationSizeValue = document.getElementById('translationSizeValue');
-        translationSizeSlider.oninput = function() {
-            translationSizeValue.textContent = this.value;
-            updateVideoPreview();
-        };
-
-        // Border size slider
-        const borderSizeSlider = document.getElementById('borderSizeSlider');
-        const borderSizeValue = document.getElementById('borderSizeValue');
-        borderSizeSlider.oninput = function() {
-            borderSizeValue.textContent = this.value + 'px';
-            updateVideoPreview();
-        };
-
-        // Color pickers
-        document.getElementById('backgroundColorPicker').onchange = updateVideoPreview;
-        document.getElementById('textColorPicker').onchange = updateVideoPreview;
-        document.getElementById('borderColorPicker').onchange = updateVideoPreview;
-
-        // Select dropdowns
-        document.getElementById('textFontSelect').onchange = updateVideoPreview;
-        document.getElementById('reciterSelect').onchange = updateVideoPreview;
-        document.getElementById('videoDuration').onchange = updateVideoPreview;
-        document.getElementById('videoTranslationSelect').onchange = updateVideoPreview;
-        document.getElementById('backgroundVideoSelect').onchange = updateVideoPreview;
-        document.getElementById('videoLoop').onchange = updateVideoPreview;
+        }
     }
 
-    function toggleTranslationOptions() {
-        const showTranslation = document.getElementById('showTranslation').checked;
-        const translationOptions = document.getElementById('translationOptions');
-        translationOptions.style.display = showTranslation ? 'block' : 'none';
-        updateVideoPreview();
-    }
-
-    function updateVideoPreview() {
-        const preview = document.getElementById('videoPreview');
-        const surah = window.currentVideoSurah;
-        const ayah = window.currentVideoAyah;
+    // Load surahs for video generation
+    function loadVideoSurahs() {
+        console.log('loadVideoSurahs: Starting...');
+        console.log('loadVideoSurahs: Quran data available:', !!quranData);
         
-        if (surah === null || ayah === null) return;
-
-        const surahData = quranData[surah];
-        const ayahData = surahData.ayahs[ayah];
+        if (!quranData) {
+            console.log('loadVideoSurahs: Quran data not available, attempting to load...');
+            // If Quran data isn't loaded yet, try to load it
+            loadQuranData().then(() => {
+                console.log('loadVideoSurahs: Quran data loaded successfully, retrying...');
+                loadVideoSurahs();
+            }).catch(error => {
+                console.error('loadVideoSurahs: Failed to load Quran data for video generator:', error);
+            });
+            return;
+        }
         
-        // Get current settings
-        const backgroundType = document.getElementById('backgroundType').value;
-        const backgroundColor = document.getElementById('backgroundColorPicker').value;
-        const opacity = document.getElementById('backgroundOpacity').value;
-        const backgroundVideo = document.getElementById('backgroundVideoSelect').value;
-        const videoOpacity = document.getElementById('videoOpacity').value;
-        const textColor = document.getElementById('textColorPicker').value;
-        const textSize = document.getElementById('textSizeSlider').value;
-        const fontFamily = document.getElementById('textFontSelect').value;
-        const borderColor = document.getElementById('borderColorPicker').value;
-        const borderSize = document.getElementById('borderSizeSlider').value;
-        const showTranslation = document.getElementById('showTranslation').checked;
-        const translationSize = document.getElementById('translationSizeSlider').value;
-        
-        // Create preview HTML
-        let previewHTML = '';
-        
-        if (backgroundType === 'video') {
-            // Video background preview
-            previewHTML = `
-                <div style="
-                    position: relative;
-                    border: ${borderSize}px solid ${borderColor};
-                    border-radius: 10px;
-                    min-height: 150px;
-                    overflow: hidden;
-                ">
-                    <video 
-                        src="videos/${backgroundVideo}" 
-                        style="
-                            position: absolute;
-                            top: 0;
-                            left: 0;
-                            width: 100%;
-                            height: 100%;
-                            object-fit: cover;
-                            opacity: ${videoOpacity / 100};
-                        "
-                        autoplay 
-                        muted 
-                        loop
-                    ></video>
-                    <div style="
-                        position: relative;
-                        z-index: 10;
-                        padding: 20px;
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: center;
-                        align-items: center;
-                        text-align: center;
-                        min-height: 150px;
-                    ">
-                        <div style="
-                            color: ${textColor};
-                            font-size: ${textSize}rem;
-                            font-family: '${fontFamily}', 'Uthmanic Hafs', serif;
-                            line-height: 1.8;
-                            margin-bottom: ${showTranslation ? '15px' : '0'};
-                        ">${ayahData.text}</div>
-            `;
+        const surahSelect = document.getElementById('videoSurahSelect');
+        console.log('loadVideoSurahs: Found surah select element:', !!surahSelect);
+        if (surahSelect) {
+            surahSelect.innerHTML = '<option value="">اختر السورة</option>';
+            console.log('loadVideoSurahs: Quran data structure:', quranData);
+            console.log('loadVideoSurahs: Number of surahs:', quranData.length);
+            
+            // quranData is already an array of surahs (extracted from data.surahs)
+            quranData.forEach((surah, index) => {
+                const option = document.createElement('option');
+                option.value = index + 1;
+                option.textContent = `${surah.number}. ${surah.name}`;
+                surahSelect.appendChild(option);
+            });
+            console.log('loadVideoSurahs: Added', quranData.length, 'surahs to dropdown');
         } else {
-            // Color background preview
-            previewHTML = `
-                <div style="
-                    background-color: ${backgroundColor};
-                    opacity: ${opacity / 100};
-                    border: ${borderSize}px solid ${borderColor};
-                    padding: 20px;
-                    border-radius: 10px;
-                    min-height: 150px;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: center;
-                    text-align: center;
-                ">
-                    <div style="
-                        color: ${textColor};
-                        font-size: ${textSize}rem;
-                        font-family: '${fontFamily}', 'Uthmanic Hafs', serif;
-                        line-height: 1.8;
-                        margin-bottom: ${showTranslation ? '15px' : '0'};
-                    ">${ayahData.text}</div>
-            `;
+            console.error('loadVideoSurahs: Surah select element not found!');
+        }
+    }
+
+    // Setup video event listeners
+    function setupVideoEventListeners() {
+        // Add event listener for "To verse" dropdown
+        const ayahToSelect = document.getElementById('videoAyahToSelect');
+        if (ayahToSelect) {
+            ayahToSelect.addEventListener('change', (e) => {
+                selectedVideoAyahTo = e.target.value ? parseInt(e.target.value) : null;
+                console.log('Ayah To selected:', selectedVideoAyahTo);
+                updateVideoPreview();
+            });
+        }
+        console.log('setupVideoEventListeners: Starting...');
+        
+        // Surah selection
+        const surahSelect = document.getElementById('videoSurahSelect');
+        console.log('setupVideoEventListeners: Found surah select:', !!surahSelect);
+        if (surahSelect) {
+            surahSelect.addEventListener('change', (e) => {
+                console.log('setupVideoEventListeners: Surah selected:', e.target.value);
+                selectedVideoSurah = parseInt(e.target.value);
+                loadVideoAyahs(selectedVideoSurah);
+                updateSelectedVerse();
+            });
+        }
+
+        // Ayah selection
+        const ayahSelect = document.getElementById('videoAyahSelect');
+        console.log('setupVideoEventListeners: Found ayah select:', !!ayahSelect);
+        if (ayahSelect) {
+            ayahSelect.addEventListener('change', (e) => {
+                console.log('setupVideoEventListeners: Ayah selected:', e.target.value);
+                selectedVideoAyah = parseInt(e.target.value);
+            selectedVideoAyahTo = null; // Reset range when changing start verse
+            updateAyahToDropdown(); // Update the "to verse" options
+                console.log('Current selections for preview:', {
+                    surah: selectedVideoSurah,
+                    ayah: selectedVideoAyah,
+                    background: selectedBackground
+                });
+                updateSelectedVerse();
+                updateVideoPreview();
+            });
+        }
+
+        // Reciter selection
+        const reciterSelect = document.getElementById('videoReciterSelect');
+        console.log('setupVideoEventListeners: Found reciter select:', !!reciterSelect);
+        if (reciterSelect) {
+            reciterSelect.addEventListener('change', (e) => {
+                console.log('setupVideoEventListeners: Reciter selected:', e.target.value);
+                selectedVideoReciter = e.target.value;
+            });
+        }
+
+
+
+        // Font size slider
+        const fontSizeSlider = document.getElementById('videoFontSize');
+        console.log('setupVideoEventListeners: Found font size slider:', !!fontSizeSlider);
+        if (fontSizeSlider) {
+            fontSizeSlider.addEventListener('input', (e) => {
+                const fontSizeValue = document.getElementById('fontSizeValue');
+                if (fontSizeValue) {
+                    fontSizeValue.textContent = `${e.target.value}px`;
+                }
+                updateVideoPreview();
+            });
+        }
+
+        // Text color picker
+        const textColorPicker = document.getElementById('videoTextColor');
+        console.log('setupVideoEventListeners: Found text color picker:', !!textColorPicker);
+        if (textColorPicker) {
+            textColorPicker.addEventListener('change', updateVideoPreview);
+        }
+
+        // Font family selector
+        const fontFamilySelect = document.getElementById('videoFontFamily');
+        console.log('setupVideoEventListeners: Found font family select:', !!fontFamilySelect);
+        if (fontFamilySelect) {
+            fontFamilySelect.addEventListener('change', (e) => {
+                console.log('setupVideoEventListeners: Font family selected:', e.target.value);
+                updateFontPreview();
+                updateVideoPreview();
+            });
+        }
+
+        // Orientation selector
+        const orientationSelect = document.getElementById('videoOrientation');
+        console.log('setupVideoEventListeners: Found orientation select:', !!orientationSelect);
+        if (orientationSelect) {
+            orientationSelect.addEventListener('change', (e) => {
+                console.log('setupVideoEventListeners: Orientation selected:', e.target.value);
+                updateOrientationPreview();
+                updateVideoPreview();
+            });
+        }
+
+        // Preview audio button
+        const previewAudioBtn = document.getElementById('previewAudioBtn');
+        console.log('setupVideoEventListeners: Found preview audio button:', !!previewAudioBtn);
+        if (previewAudioBtn) {
+            previewAudioBtn.addEventListener('click', previewAudio);
+        }
+
+        // Generate video button
+        const generateVideoBtn = document.getElementById('generateVideoBtn');
+        console.log('setupVideoEventListeners: Found generate video button:', !!generateVideoBtn);
+        if (generateVideoBtn) {
+            generateVideoBtn.addEventListener('click', generateVideo);
+        }
+
+        // Download video button
+        const downloadVideoBtn = document.getElementById('downloadVideoBtn');
+        console.log('setupVideoEventListeners: Found download video button:', !!downloadVideoBtn);
+        if (downloadVideoBtn) {
+            downloadVideoBtn.addEventListener('click', downloadVideo);
+        }
+
+        // Share video button
+        const shareVideoBtn = document.getElementById('shareVideoBtn');
+        console.log('setupVideoEventListeners: Found share video button:', !!shareVideoBtn);
+        if (shareVideoBtn) {
+            shareVideoBtn.addEventListener('click', shareVideo);
         }
         
-        if (showTranslation) {
-            const translationAyahs = translationData[surah];
-            const translationAyah = translationAyahs.ayahs[ayah];
-            if (translationAyah) {
-                previewHTML += `
-                    <div style="
-                        color: ${textColor};
-                        font-size: ${translationSize}rem;
-                        font-family: Arial, sans-serif;
-                        line-height: 1.4;
-                        opacity: 0.8;
-                    ">${translationAyah.text}</div>
-                `;
+        console.log('setupVideoEventListeners: Completed');
+    }
+
+    // Load ayahs for selected surah
+    // Function to update the "To verse" dropdown based on selected "From verse"
+    function updateAyahToDropdown() {
+        const ayahToSelect = document.getElementById('videoAyahToSelect');
+        if (!ayahToSelect || !selectedVideoAyah || !selectedVideoSurah) return;
+        
+        // Clear existing options
+        ayahToSelect.innerHTML = '<option value="">آية واحدة فقط</option>';
+        
+        // Get max verses for current surah
+        const surah = quranData[selectedVideoSurah - 1];
+        if (!surah) return;
+        
+        const maxVerse = Math.min(selectedVideoAyah + 2, surah.ayahs.length); // Max 3 verses total
+        
+        // Add options for up to 2 additional verses
+        for (let i = selectedVideoAyah + 1; i <= maxVerse; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = `الآية ${i}`;
+            ayahToSelect.appendChild(option);
+        }
+    }
+
+    function loadVideoAyahs(surahNumber) {
+        if (!quranData || !surahNumber) return;
+        
+        const surah = quranData[surahNumber - 1];
+        const ayahSelect = document.getElementById('videoAyahSelect');
+        
+        if (ayahSelect && surah) {
+            ayahSelect.innerHTML = '<option value="">اختر الآية</option>';
+            surah.ayahs.forEach((ayah, index) => {
+                const option = document.createElement('option');
+                option.value = index + 1;
+                option.textContent = `آية ${ayah.numberInSurah}`;
+                ayahSelect.appendChild(option);
+            });
+        }
+    }
+
+    // Update selected verse display
+    function updateSelectedVerse() {
+        if (!selectedVideoSurah || !selectedVideoAyah || !quranData || !translationData) {
+            document.getElementById('selectedVerseText').textContent = 'اختر سورة وآية لعرض النص';
+            document.getElementById('selectedVerseTranslation').textContent = 'Select a surah and ayah to display text';
+            return;
+        }
+
+        const surah = quranData[selectedVideoSurah - 1];
+        const ayah = surah.ayahs[selectedVideoAyah - 1];
+        const translation = translationData[selectedVideoSurah - 1].ayahs[selectedVideoAyah - 1];
+
+        // Handle verse ranges
+        let arabicText = '';
+        let translationText = '';
+        
+        const startVerse = selectedVideoAyah;
+        const endVerse = selectedVideoAyahTo || selectedVideoAyah;
+        
+        for (let i = startVerse; i <= endVerse; i++) {
+            const currentAyah = surah.ayahs[i - 1];
+            const currentTranslation = translationData[selectedVideoSurah - 1].ayahs[i - 1];
+            
+            if (currentAyah && currentTranslation) {
+                if (arabicText) arabicText += ' ';
+                if (translationText) translationText += ' ';
+                
+                arabicText += currentAyah.text;
+                translationText += currentTranslation.text;
             }
         }
         
-        previewHTML += '</div>';
-        preview.innerHTML = previewHTML;
-    }
-
-    function previewVideo() {
-        updateVideoPreview();
-        showToast(currentLang === 'ar' ? 'تم تحديث المعاينة' : 'Preview updated', 'success');
-    }
-
-    function generateVideo() {
-        const surah = window.currentVideoSurah;
-        const ayah = window.currentVideoAyah;
+        document.getElementById('selectedVerseText').textContent = arabicText;
+        document.getElementById('selectedVerseTranslation').textContent = translationText;
         
-        if (surah === null || ayah === null) {
-            showToast(currentLang === 'ar' ? 'خطأ في البيانات' : 'Data error', 'error');
+        updateVideoPreview();
+    }
+
+    // Preview audio
+    async function previewAudio() {
+        if (!selectedVideoSurah || !selectedVideoAyah || !selectedVideoReciter) {
+            showToast(currentLang === 'ar' ? 'يرجى اختيار السورة والآية والقارئ' : 'Please select surah, ayah, and reciter', 'warning');
+            return;
+        }
+
+        try {
+            const audioUrl = selectedVideoAyahTo 
+            ? `http://localhost:3000/api/verse-audio-range/${selectedVideoSurah}/${selectedVideoAyah}/${selectedVideoAyahTo}/${selectedVideoReciter}`
+            : `http://localhost:3000/api/verse-audio/${selectedVideoSurah}/${selectedVideoAyah}/${selectedVideoReciter}`;
+        
+        const response = await fetch(audioUrl);
+            const data = await response.json();
+            
+            const audio = new Audio(data.audioUrl);
+            audio.play();
+            
+            showToast(currentLang === 'ar' ? 'جاري تشغيل الصوت...' : 'Playing audio...', 'info');
+        } catch (error) {
+            console.error('Error playing audio:', error);
+            showToast(currentLang === 'ar' ? 'فشل في تشغيل الصوت' : 'Failed to play audio', 'error');
+        }
+    }
+
+    // Debounce function for preview generation
+    let previewTimeout;
+    function debounce(func, wait) {
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(previewTimeout);
+                func(...args);
+            };
+            clearTimeout(previewTimeout);
+            previewTimeout = setTimeout(later, wait);
+        };
+    }
+
+    // Generate real-time video preview
+    async function generateLivePreview() {
+        const preview = document.getElementById('videoPreview');
+        if (!preview) return;
+        
+        // Validate all required data before proceeding
+        if (!selectedVideoSurah || !selectedVideoAyah || !selectedBackground) {
+            console.log('Cannot generate preview - missing data:', {
+                surah: selectedVideoSurah,
+                ayah: selectedVideoAyah,
+                background: selectedBackground
+            });
             return;
         }
 
         // Show loading state
-        const generateBtn = document.getElementById('generateVideoBtn');
-        const originalText = generateBtn.innerHTML;
-        generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>جاري الإنشاء...';
-        generateBtn.disabled = true;
-
-        // Get video settings
-        const settings = {
-            backgroundType: document.getElementById('backgroundType').value,
-            backgroundColor: document.getElementById('backgroundColorPicker').value,
-            opacity: document.getElementById('backgroundOpacity').value / 100,
-            backgroundVideo: document.getElementById('backgroundVideoSelect').value,
-            videoOpacity: document.getElementById('videoOpacity').value / 100,
-            videoLoop: document.getElementById('videoLoop').value === 'true',
-            textColor: document.getElementById('textColorPicker').value,
-            textSize: document.getElementById('textSizeSlider').value,
-            fontFamily: document.getElementById('textFontSelect').value,
-            borderColor: document.getElementById('borderColorPicker').value,
-            borderSize: document.getElementById('borderSizeSlider').value,
-            showTranslation: document.getElementById('showTranslation').checked,
-            translationSize: document.getElementById('translationSizeSlider').value,
-            duration: parseInt(document.getElementById('videoDuration').value),
-            reciter: document.getElementById('reciterSelect').value
-        };
-
-        // Update preview to show progress
-        const preview = document.getElementById('videoPreview');
-        const isArabic = currentLang === 'ar';
         preview.innerHTML = `
-            <div class="text-center">
-                <i class="fas fa-spinner fa-spin text-4xl text-blue-500 mb-2"></i>
-                <p class="text-blue-600 dark:text-blue-400 mb-2">${isArabic ? 'جاري إنشاء الفيديو' : 'Generating Video'}</p>
-                <p class="text-sm text-gray-500">${isArabic ? 'يرجى الانتظار...' : 'Please wait...'}</p>
-                <div class="w-full bg-gray-200 rounded-full h-2 mt-4">
-                    <div class="bg-blue-600 h-2 rounded-full animate-pulse" style="width: 100%"></div>
+            <div class="flex items-center justify-center h-full bg-gray-800 rounded-lg">
+                <div class="text-center text-white">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
+                    <p>Generating live preview...</p>
                 </div>
             </div>
         `;
 
-        // Create video using Canvas API
-        createVideoFromCanvas(settings).then(videoBlob => {
-            // Store the video blob for download/share
-            window.generatedVideoBlob = videoBlob;
-            window.generatedVideoUrl = URL.createObjectURL(videoBlob);
-
-            // Show success and enable download/share buttons
-            generateBtn.innerHTML = originalText;
-            generateBtn.disabled = false;
-            
-            document.getElementById('downloadVideoBtn').style.display = 'inline-block';
-            document.getElementById('shareVideoBtn').style.display = 'inline-block';
-            
-            showToast(currentLang === 'ar' ? 'تم إنشاء الفيديو بنجاح' : 'Video generated successfully', 'success');
-            
-            // Update preview with generated video
-            preview.innerHTML = `
-                <div class="text-center">
-                    <i class="fas fa-check-circle text-4xl text-green-500 mb-2"></i>
-                    <p class="text-green-600 dark:text-green-400 mb-2">${isArabic ? 'تم إنشاء الفيديو' : 'Video Generated'}</p>
-                    <p class="text-sm text-gray-500">${isArabic ? 'تم إنشاء الفيديو بنجاح' : 'Video generated successfully'}</p>
-                    <video controls class="mt-4 max-w-full rounded-lg" style="max-height: 200px;">
-                        <source src="${window.generatedVideoUrl}" type="video/webm">
-                        ${isArabic ? 'متصفحك لا يدعم تشغيل الفيديو' : 'Your browser does not support video playback'}
-                    </video>
-                </div>
-            `;
-        }).catch(error => {
-            console.error('Video generation error:', error);
-            generateBtn.innerHTML = originalText;
-            generateBtn.disabled = false;
-            
-            // Show error in preview
-            preview.innerHTML = `
-                <div class="text-center">
-                    <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-2"></i>
-                    <p class="text-red-600 dark:text-red-400 mb-2">${isArabic ? 'فشل في إنشاء الفيديو' : 'Video Generation Failed'}</p>
-                    <p class="text-sm text-gray-500">${isArabic ? 'يرجى المحاولة مرة أخرى' : 'Please try again'}</p>
-                </div>
-            `;
-            
-            showToast(currentLang === 'ar' ? 'فشل في إنشاء الفيديو' : 'Failed to generate video', 'error');
-        });
-    }
-
-    async function createVideoFromCanvas(settings) {
-        const surah = window.currentVideoSurah;
-        const ayah = window.currentVideoAyah;
-        const surahData = quranData[surah];
-        const ayahData = surahData.ayahs[ayah];
-        
-        // Get translation if enabled
-        let translationText = '';
-        if (settings.showTranslation) {
-            const translationAyahs = translationData[surah];
-            const translationAyah = translationAyahs.ayahs[ayah];
-            if (translationAyah) {
-                translationText = translationAyah.text;
-            }
-        }
-
-        // Create canvas
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        
-        // Set canvas size (16:9 aspect ratio)
-        canvas.width = 1920;
-        canvas.height = 1080;
-        
-        // Create background video element if needed
-        let backgroundVideo = null;
-        if (settings.backgroundType === 'video') {
-            backgroundVideo = document.createElement('video');
-            backgroundVideo.src = `videos/${settings.backgroundVideo}`;
-            backgroundVideo.muted = true;
-            backgroundVideo.loop = settings.videoLoop;
-            backgroundVideo.crossOrigin = 'anonymous';
-            
-            // Wait for video to load
-            await new Promise((resolve, reject) => {
-                backgroundVideo.onloadeddata = resolve;
-                backgroundVideo.onerror = reject;
-                backgroundVideo.load();
-            });
-        }
-        
-        // Create audio element for the reciter
-        let audioElement = null;
-        let audioStream = null;
-        let audioContext = null;
-        
         try {
-            // Create audio context first
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            // Validate required data
+            if (!selectedVideoSurah || !selectedVideoAyah || !selectedBackground) {
+                console.log('Missing required data for preview:', {
+                    surah: selectedVideoSurah,
+                    ayah: selectedVideoAyah,
+                    background: selectedBackground
+                });
+                return;
+            }
+
+            const requestData = {
+                surah: selectedVideoSurah.toString(),
+                ayah: selectedVideoAyah.toString(),
+                reciter: document.getElementById('videoReciter')?.value || 'alafasy',
+                backgroundType: selectedBackground.type,
+                backgroundFilename: selectedBackground.filename,
+                textColor: document.getElementById('videoTextColor')?.value || '#ffffff',
+                fontSize: document.getElementById('videoFontSize')?.value || 48,
+                fontFamily: document.getElementById('videoFontFamily')?.value || 'Uthmanic Hafs',
+                orientation: document.getElementById('videoOrientation')?.value || 'landscape'
+            };
+
+            console.log('Requesting live preview generation...');
+            console.log('Preview request data:', requestData);
             
-            // Create audio element for the reciter
-            const audioUrl = `https://cdn.islamic.network/quran/audio/${settings.reciter}/${surah + 1}/${ayah + 1}.mp3`;
-            audioElement = new Audio(audioUrl);
-            audioElement.crossOrigin = 'anonymous';
-            audioElement.preload = 'auto';
-            
-            // Preload audio first
-            await new Promise((resolve, reject) => {
-                audioElement.oncanplaythrough = resolve;
-                audioElement.onerror = (error) => {
-                    console.log('Audio loading error:', error);
-                    reject(error);
-                };
-                audioElement.load();
+            const response = await fetch('http://localhost:3000/api/preview-video', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
             });
+
+            const result = await response.json();
             
-            // Create audio source and destination
-            const audioSource = audioContext.createMediaElementSource(audioElement);
-            const destination = audioContext.createMediaStreamDestination();
-            
-            // Connect audio nodes
-            audioSource.connect(destination);
-            audioSource.connect(audioContext.destination);
-            
-            audioStream = destination.stream;
-            
-            console.log('Audio loaded successfully, duration:', audioElement.duration);
-            
-            // Adjust video duration to match audio duration if needed
-            if (audioElement.duration > 0 && audioElement.duration < settings.duration) {
-                settings.duration = Math.ceil(audioElement.duration);
-                console.log('Adjusted video duration to match audio:', settings.duration);
+            if (result.success) {
+                console.log('Live preview generated:', result.previewUrl);
+                
+                // Show the actual generated video preview
+                preview.innerHTML = `
+                    <div class="relative w-full h-full rounded-lg overflow-hidden">
+                        <video 
+                            class="w-full h-full object-cover" 
+                            autoplay 
+                            muted 
+                            loop 
+                            playsinline
+                            controls
+                        >
+                            <source src="${result.previewUrl}?t=${Date.now()}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="absolute top-2 right-2 bg-black/50 text-white px-2 py-1 rounded text-xs">
+                            Live Preview
+                        </div>
+                    </div>
+                `;
+            } else {
+                throw new Error(result.error || 'Preview generation failed');
             }
-            
         } catch (error) {
-            console.log('Audio not available, creating video without audio:', error);
-            // Try alternative audio source
-            try {
-                const alternativeUrl = `https://server8.mp3quran.net/${settings.reciter}/${String(surah + 1).padStart(3, '0')}${String(ayah + 1).padStart(3, '0')}.mp3`;
-                audioElement = new Audio(alternativeUrl);
-                audioElement.crossOrigin = 'anonymous';
-                audioElement.preload = 'auto';
-                
-                await new Promise((resolve, reject) => {
-                    audioElement.oncanplaythrough = resolve;
-                    audioElement.onerror = reject;
-                    audioElement.load();
-                });
-                
-                if (audioContext) {
-                    const audioSource = audioContext.createMediaElementSource(audioElement);
-                    const destination = audioContext.createMediaStreamDestination();
-                    audioSource.connect(destination);
-                    audioSource.connect(audioContext.destination);
-                    audioStream = destination.stream;
-                    console.log('Alternative audio loaded successfully');
-                }
-            } catch (altError) {
-                console.log('Alternative audio also failed:', altError);
-            }
+            console.error('Live preview error:', error);
+            
+            // Show error message in preview
+            preview.innerHTML = `
+                <div class="flex items-center justify-center h-full bg-red-900/20 rounded-lg border border-red-500">
+                    <div class="text-center text-red-400">
+                        <i class="fas fa-exclamation-triangle text-4xl mb-2"></i>
+                        <p>Preview generation failed</p>
+                        <p class="text-sm mt-1">Using web preview fallback</p>
+                    </div>
+                </div>
+            `;
+            
+            // Fallback to web-based preview after a delay
+            setTimeout(() => {
+                updateWebPreview();
+            }, 2000);
         }
-        
-        // Create MediaRecorder with video and audio streams
-        const videoStream = canvas.captureStream(30); // 30 FPS
-        let finalStream = videoStream;
-        
-        if (audioStream) {
-            // Combine video and audio streams
-            const tracks = [...videoStream.getTracks(), ...audioStream.getTracks()];
-            finalStream = new MediaStream(tracks);
-        }
-        
-        // Check for supported MIME types
-        let mimeType = 'video/webm;codecs=vp9';
-        if (!MediaRecorder.isTypeSupported(mimeType)) {
-            mimeType = 'video/webm;codecs=vp8';
-        }
-        if (!MediaRecorder.isTypeSupported(mimeType)) {
-            mimeType = 'video/webm';
-        }
-        if (!MediaRecorder.isTypeSupported(mimeType)) {
-            mimeType = 'video/mp4';
-        }
-        
-        const mediaRecorder = new MediaRecorder(finalStream, {
-            mimeType: mimeType
-        });
-        
-        const chunks = [];
-        mediaRecorder.ondataavailable = (event) => {
-            if (event.data.size > 0) {
-                chunks.push(event.data);
-            }
-        };
-        
-        return new Promise(async (resolve, reject) => {
-            mediaRecorder.onstop = () => {
-                const blob = new Blob(chunks, { type: 'video/webm' });
-                resolve(blob);
-            };
-            
-            mediaRecorder.onerror = (error) => {
-                reject(error);
-            };
-            
-            // Start recording
-            mediaRecorder.start();
-            
-            // Resume audio context if suspended (required for some browsers)
-            if (audioContext && audioContext.state === 'suspended') {
-                await audioContext.resume();
-            }
-            
-            // Start background video if available
-            if (backgroundVideo) {
-                backgroundVideo.play().catch(error => {
-                    console.log('Could not play background video:', error);
-                });
-            }
-            
-            // Start audio if available
-            if (audioElement) {
-                try {
-                    await audioElement.play();
-                    console.log('Audio started successfully');
-                } catch (error) {
-                    console.log('Could not play audio:', error);
-                }
-            }
-            
-            // Animation variables
-            const startTime = Date.now();
-            const duration = settings.duration * 1000; // Convert to milliseconds
-            
-            // Animation loop
-            function animate() {
-                const elapsed = Date.now() - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                
-                // Clear canvas
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                // Draw background
-                if (settings.backgroundType === 'video' && backgroundVideo) {
-                    // Draw background video
-                    ctx.globalAlpha = settings.videoOpacity;
-                    ctx.drawImage(backgroundVideo, 0, 0, canvas.width, canvas.height);
-                    ctx.globalAlpha = 1;
-                } else {
-                    // Draw solid color background
-                    ctx.fillStyle = settings.backgroundColor;
-                    ctx.globalAlpha = settings.opacity;
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    ctx.globalAlpha = 1;
-                }
-                
-                // Draw border
-                if (settings.borderSize > 0) {
-                    ctx.strokeStyle = settings.borderColor;
-                    ctx.lineWidth = settings.borderSize * 4; // Scale for high resolution
-                    ctx.strokeRect(0, 0, canvas.width, canvas.height);
-                }
-                
-                // Calculate text positioning
-                const centerX = canvas.width / 2;
-                const centerY = canvas.height / 2;
-                
-                // Draw Arabic text
-                ctx.fillStyle = settings.textColor;
-                ctx.font = `${settings.textSize * 60}px '${settings.fontFamily}', 'Uthmanic Hafs', serif`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                
-                // Add fade-in effect
-                const fadeInDuration = 1000; // 1 second fade in
-                const fadeOutDuration = 1000; // 1 second fade out
-                let alpha = 1;
-                
-                if (elapsed < fadeInDuration) {
-                    alpha = elapsed / fadeInDuration;
-                } else if (elapsed > duration - fadeOutDuration) {
-                    alpha = (duration - elapsed) / fadeOutDuration;
-                }
-                
-                ctx.globalAlpha = alpha;
-                
-                // Draw verse text
-                ctx.fillText(ayahData.text, centerX, centerY - (settings.showTranslation ? 100 : 0));
-                
-                // Draw translation if enabled
-                if (settings.showTranslation && translationText) {
-                    ctx.font = `${settings.translationSize * 40}px Arial, sans-serif`;
-                    ctx.globalAlpha = alpha * 0.8;
-                    ctx.fillText(translationText, centerX, centerY + 100);
-                }
-                
-                ctx.globalAlpha = 1;
-                
-                // Continue animation if not finished
-                if (progress < 1) {
-                    requestAnimationFrame(animate);
-                } else {
-                    mediaRecorder.stop();
-                }
-            }
-            
-            // Start animation
-            animate();
-        });
     }
 
-    function downloadVideo() {
-        if (!window.generatedVideoBlob) {
-            showToast(currentLang === 'ar' ? 'لا يوجد فيديو للتحميل' : 'No video to download', 'error');
+    // Web-based preview (fallback)
+    function updateWebPreview() {
+        const preview = document.getElementById('videoPreview');
+        if (!preview) return;
+
+        if (!selectedVideoSurah || !selectedVideoAyah) {
+            preview.innerHTML = `
+                <div class="text-center text-gray-500 dark:text-gray-400">
+                    <i class="fas fa-video text-4xl mb-2"></i>
+                    <p id="previewText">معاينة الفيديو ستظهر هنا</p>
+                </div>
+            `;
             return;
         }
 
-        // Create a temporary link to download the video
+        const surah = quranData[selectedVideoSurah - 1];
+        const ayah = surah.ayahs[selectedVideoAyah - 1];
+        const translation = translationData[selectedVideoSurah - 1].ayahs[selectedVideoAyah - 1];
+        
+        const fontSize = document.getElementById('videoFontSize')?.value || 48;
+        const textColor = document.getElementById('videoTextColor')?.value || '#ffffff';
+        const fontFamily = document.getElementById('videoFontFamily')?.value || 'Uthmanic Hafs';
+        
+        // Map frontend font names to system font names (same as server)
+        const fontMapping = {
+            'Uthmanic Hafs': 'KFGQPC HAFS Uthmanic Script',
+            'Al Mushaf': 'Al Majeed Quranic Font',
+            'Utman Taha Naskh': 'KFGQPC Uthman Taha Naskh',
+            'Uthmanic Hafs Old': 'KFGQPC Uthmanic Script HAFS'
+        };
+        
+        // Get actual font name and fallback
+        const actualFont = fontMapping[fontFamily] || fontFamily;
+        const fallbackFont = fontFamily === 'Uthmanic Hafs' ? 'Traditional Arabic' : 
+                           fontFamily === 'Al Mushaf' ? 'Arabic Typesetting' :
+                           fontFamily === 'Utman Taha Naskh' ? 'Tahoma' : 'Segoe UI';
+        
+        // Calculate responsive font size for preview (scale down for smaller preview area)
+        const previewWidth = preview.offsetWidth || 640;
+        const videoWidth = 1920; // Actual video width
+        const fontScale = previewWidth / videoWidth;
+        const previewFontSize = Math.max(12, fontSize * fontScale);
+        const previewTranslationSize = Math.max(10, Math.floor(fontSize * 0.6) * fontScale);
+        
+        console.log('Preview font info:', {
+            selectedFont: fontFamily,
+            actualFont: actualFont,
+            fallbackFont: fallbackFont,
+            originalSize: fontSize,
+            previewSize: previewFontSize,
+            scale: fontScale
+        });
+
+        // Create preview with video background if selected
+        if (selectedBackground && selectedBackground.type === 'video') {
+            preview.innerHTML = `
+                <div class="relative w-full h-full rounded-lg overflow-hidden">
+                    <video 
+                        id="previewVideo"
+                        class="absolute inset-0 w-full h-full object-cover" 
+                        autoplay 
+                        muted 
+                        loop 
+                        playsinline
+                        onloadstart="console.log('Video loading started')"
+                        oncanplay="console.log('Video can play')"
+                        onerror="console.error('Video load error', event)"
+                    >
+                        <source src="/videos/${selectedBackground.filename}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="absolute inset-0 bg-black/30"></div>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
+                        <div class="font-bold mb-4" style="color: ${textColor}; font-size: ${previewFontSize}px; font-family: '${actualFont}', '${fallbackFont}', Arial, sans-serif; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); line-height: 1.2;">${ayah.text}</div>
+                        <div style="color: ${textColor}; font-size: ${previewTranslationSize}px; font-family: Arial, sans-serif; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); line-height: 1.4;">${translation.text}</div>
+                    </div>
+                </div>
+            `;
+            
+            // Add error handling for video loading
+            setTimeout(() => {
+                const videoElement = document.getElementById('previewVideo');
+                if (videoElement) {
+                    videoElement.addEventListener('error', (e) => {
+                        console.error('Video preview error:', e);
+                        // Fallback to static background on video error
+                        preview.innerHTML = `
+                            <div class="relative w-full h-full bg-gray-800 rounded-lg overflow-hidden flex items-center justify-center">
+                                <div class="text-center text-white">
+                                    <i class="fas fa-video-slash text-4xl mb-2"></i>
+                                    <p>Video preview unavailable</p>
+                                    <p class="text-sm text-gray-300">Video will work in generated output</p>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            }, 100);
+        } else {
+            // Fallback for image backgrounds or no background
+            preview.innerHTML = `
+                <div class="relative w-full h-full bg-cover bg-center rounded-lg overflow-hidden" style="background-image: url(${selectedBackground && selectedBackground.type === 'image' ? `/img/backgrounds/${selectedBackground.filename}` : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQwIiBoZWlnaHQ9IjM2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmZmY7c3RvcC1vcGFjaXR5OjEiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmMGYwZjA7c3RvcC1vcGFjaXR5OjEiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2cpIi8+PC9zdmc+'});">
+                    <div class="absolute inset-0 bg-black/30"></div>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
+                        <div class="font-bold mb-4" style="color: ${textColor}; font-size: ${previewFontSize}px; font-family: '${actualFont}', '${fallbackFont}', Arial, sans-serif; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); line-height: 1.2;">${ayah.text}</div>
+                        <div style="color: ${textColor}; font-size: ${previewTranslationSize}px; font-family: Arial, sans-serif; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); line-height: 1.4;">${translation.text}</div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    // Create debounced version of live preview (wait 500ms after user stops changing settings)
+    const debouncedLivePreview = debounce(generateLivePreview, 500);
+
+    // Function to update preview aspect ratio based on orientation
+    function updatePreviewAspectRatio() {
+        const preview = document.getElementById('videoPreview');
+        const orientationSelect = document.getElementById('videoOrientation');
+        
+        if (preview && orientationSelect) {
+            const orientation = orientationSelect.value || 'landscape';
+            
+            // Remove all aspect ratio classes
+            preview.classList.remove('aspect-video', 'aspect-square', 'aspect-[9/16]');
+            
+            // Add appropriate aspect ratio class based on orientation
+            switch (orientation) {
+                case 'portrait':
+                    preview.classList.add('aspect-[9/16]'); // 9:16 for portrait
+                    break;
+                case 'square':
+                    preview.classList.add('aspect-square'); // 1:1 for square
+                    break;
+                case 'landscape':
+                default:
+                    preview.classList.add('aspect-video'); // 16:9 for landscape
+                    break;
+            }
+        }
+    }
+
+    // Main update function - always use live preview for better accuracy
+    function updateVideoPreview() {
+        // Update preview aspect ratio first
+        updatePreviewAspectRatio();
+        
+        if (selectedBackground && selectedVideoSurah && selectedVideoAyah) {
+            // Generate live preview automatically (debounced)
+            debouncedLivePreview();
+        } else {
+            // Show placeholder when missing selections
+            const preview = document.getElementById('videoPreview');
+            if (preview) {
+                preview.innerHTML = `
+                    <div class="text-center text-gray-500 dark:text-gray-400">
+                        <i class="fas fa-video text-4xl mb-2"></i>
+                        <p id="previewText">معاينة الفيديو ستظهر هنا</p>
+                        <p class="text-sm mt-1">Select verse and background to see live preview</p>
+                    </div>
+                `;
+            }
+        }
+    }
+
+    // Generate video
+    async function generateVideo() {
+        console.log('generateVideo: Starting...');
+        console.log('generateVideo: Selected surah:', selectedVideoSurah);
+        console.log('generateVideo: Selected ayah:', selectedVideoAyah);
+        console.log('generateVideo: Selected reciter:', selectedVideoReciter);
+        
+        if (!selectedVideoSurah || !selectedVideoAyah || !selectedVideoReciter) {
+            console.log('generateVideo: Missing required selections');
+            showToast(currentLang === 'ar' ? 'يرجى اختيار السورة والآية والقارئ' : 'Please select surah, ayah, and reciter', 'warning');
+            return;
+        }
+
+        const generateBtn = document.getElementById('generateVideoBtn');
+        const progressDiv = document.getElementById('generationProgress');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+
+        console.log('generateVideo: Found UI elements:', {
+            generateBtn: !!generateBtn,
+            progressDiv: !!progressDiv,
+            progressBar: !!progressBar,
+            progressText: !!progressText
+        });
+
+        // Show progress
+        generateBtn.style.display = 'none';
+        progressDiv.classList.remove('hidden');
+
+        try {
+            console.log('generateVideo: Starting video generation process...');
+            
+            // Simulate progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 20;
+                if (progress > 90) progress = 90;
+                progressBar.style.width = `${progress}%`;
+                progressText.textContent = currentLang === 'ar' ? 
+                    `جاري إنشاء الفيديو... ${Math.floor(progress)}%` : 
+                    `Generating video... ${Math.floor(progress)}%`;
+            }, 500);
+
+            // Prepare form data
+            const formData = new FormData();
+            formData.append('surah', selectedVideoSurah);
+            formData.append('ayah', selectedVideoAyah);
+        if (selectedVideoAyahTo) {
+            formData.append('ayahTo', selectedVideoAyahTo);
+        }
+            formData.append('reciter', selectedVideoReciter);
+            if (selectedBackground && selectedBackground.type && selectedBackground.filename) {
+                formData.append('backgroundType', selectedBackground.type);
+                formData.append('backgroundFilename', selectedBackground.filename);
+            } else {
+                formData.append('backgroundType', 'image');
+                formData.append('backgroundFilename', 'mosque_1.jpg');
+            }
+            formData.append('textColor', document.getElementById('videoTextColor')?.value || '#ffffff');
+            formData.append('fontSize', document.getElementById('videoFontSize')?.value || 48);
+            const selectedFont = document.getElementById('videoFontFamily')?.value || 'Uthmanic Hafs';
+        console.log('generateVideo: Selected font from dropdown:', selectedFont);
+        formData.append('fontFamily', selectedFont);
+            formData.append('orientation', document.getElementById('videoOrientation')?.value || 'landscape');
+
+
+
+            console.log('generateVideo: Form data prepared, sending request to /api/generate-video...');
+            console.log('generateVideo: selectedBackground:', selectedBackground);
+            
+            // Debug form data
+            for (let [key, value] of formData.entries()) {
+                console.log('FormData:', key, '=', value);
+            }
+
+            // Send request
+            const response = await fetch('http://localhost:3000/api/generate-video', {
+                method: 'POST',
+                body: formData
+            });
+
+            console.log('generateVideo: Response received, status:', response.status);
+
+            clearInterval(progressInterval);
+            progressBar.style.width = '100%';
+            progressText.textContent = currentLang === 'ar' ? 'تم إنشاء الفيديو!' : 'Video generated!';
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log('generateVideo: Video generated successfully:', result);
+                
+                // Store video info for download/share
+                window.generatedVideoInfo = result;
+                
+                // Show results
+                document.getElementById('videoResults').classList.remove('hidden');
+                
+                showToast(currentLang === 'ar' ? 'تم إنشاء الفيديو بنجاح!' : 'Video generated successfully!', 'success');
+            } else {
+                console.error('generateVideo: Server returned error status:', response.status);
+                throw new Error('Failed to generate video');
+            }
+
+        } catch (error) {
+            console.error('generateVideo: Error generating video:', error);
+            
+            // Check if it's a network error (server not running)
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                console.error('generateVideo: Network error - server may not be running');
+                showToast(currentLang === 'ar' ? 
+                    'خادم الفيديو غير متصل. يرجى تشغيل الخادم أولاً.' : 
+                    'Video server not connected. Please start the server first.', 'error');
+            } else {
+                showToast(currentLang === 'ar' ? 'فشل في إنشاء الفيديو' : 'Failed to generate video', 'error');
+            }
+        } finally {
+            // Hide progress
+            generateBtn.style.display = 'block';
+            progressDiv.classList.add('hidden');
+            progressBar.style.width = '0%';
+        }
+    }
+
+    // Download video
+    function downloadVideo() {
+        if (!window.generatedVideoInfo) {
+            showToast(currentLang === 'ar' ? 'لا يوجد فيديو للتحميل' : 'No video to download', 'warning');
+            return;
+        }
+
         const link = document.createElement('a');
-        link.href = window.generatedVideoUrl;
-        link.download = `quran-verse-${window.currentVideoSurah + 1}-${window.currentVideoAyah + 1}.webm`;
+        link.href = `http://localhost:3000${window.generatedVideoInfo.downloadUrl}`;
+        link.download = `quran-verse-${window.generatedVideoInfo.videoId}.mp4`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
-        showToast(currentLang === 'ar' ? 'تم بدء التحميل' : 'Download started', 'success');
     }
 
+    // Share video
     function shareVideo() {
-        if (!window.generatedVideoBlob) {
-            showToast(currentLang === 'ar' ? 'لا يوجد فيديو للمشاركة' : 'No video to share', 'error');
+        if (!window.generatedVideoInfo) {
+            showToast(currentLang === 'ar' ? 'لا يوجد فيديو للمشاركة' : 'No video to share', 'warning');
             return;
         }
 
-        const verseText = currentLang === 'ar' ? 
-            `فيديو آية من ${window.currentVideoSurahName} - الآية ${window.currentVideoAyah + 1}` : 
-            `Video verse from ${window.currentVideoSurahName} - Verse ${window.currentVideoAyah + 1}`;
-
-        // Check if native sharing is available and supports files
-        if (navigator.share && navigator.canShare && navigator.canShare({ files: [window.generatedVideoBlob] })) {
+        const shareUrl = `${window.location.origin}${window.generatedVideoInfo.shareUrl}`;
+        
+        if (navigator.share) {
             navigator.share({
-                title: verseText,
-                text: verseText,
-                files: [new File([window.generatedVideoBlob], `quran-verse-${window.currentVideoSurah + 1}-${window.currentVideoAyah + 1}.webm`, { type: 'video/webm' })]
-            }).then(() => {
-                showToast(currentLang === 'ar' ? 'تم المشاركة بنجاح' : 'Shared successfully', 'success');
-            }).catch(err => {
-                if (err.name !== 'AbortError') {
-                    // Fallback to copying video URL
-                    copyToClipboard(window.generatedVideoUrl);
-                }
+                title: currentLang === 'ar' ? 'فيديو قرآن' : 'Quran Video',
+                text: currentLang === 'ar' ? 'شاهد هذا الفيديو الجميل للقرآن' : 'Check out this beautiful Quran video',
+                url: shareUrl
             });
         } else {
-            // Fallback to copying video URL
-            copyToClipboard(window.generatedVideoUrl);
+            // Fallback to clipboard
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                showToast(currentLang === 'ar' ? 'تم نسخ رابط المشاركة' : 'Share link copied to clipboard', 'success');
+            }).catch(() => {
+                showToast(currentLang === 'ar' ? 'فشل في نسخ الرابط' : 'Failed to copy link', 'error');
+            });
         }
     }
+
+    // Update video language
+    function updateVideoLanguage() {
+        const elements = {
+            'videoGeneratorTitle': currentLang === 'ar' ? 'إنشاء فيديو القرآن' : 'Quran Video Generator',
+            'videoGeneratorSubtitle': currentLang === 'ar' ? 'مولد فيديو القرآن' : 'Video Quran Generator',
+            'verseSelectionTitle': currentLang === 'ar' ? 'اختيار الآية' : 'Verse Selection',
+            'surahLabel': currentLang === 'ar' ? 'السورة' : 'Surah',
+            'ayahFromLabel': currentLang === 'ar' ? 'من الآية' : 'From Verse',
+        'ayahToLabel': currentLang === 'ar' ? 'إلى الآية (اختياري)' : 'To Verse (Optional)',
+            'reciterTitle': currentLang === 'ar' ? 'القارئ' : 'Reciter',
+            'backgroundTitle': currentLang === 'ar' ? 'الخلفية' : 'Background',
+            'customBackgroundLabel': currentLang === 'ar' ? 'أو ارفع صورة مخصصة' : 'Or upload custom image',
+            'customizationTitle': currentLang === 'ar' ? 'تخصيص النص' : 'Text Customization',
+            'fontSizeLabel': currentLang === 'ar' ? 'حجم الخط' : 'Font Size',
+            'textColorLabel': currentLang === 'ar' ? 'لون النص' : 'Text Color',
+            'previewTitle': currentLang === 'ar' ? 'معاينة الفيديو' : 'Video Preview',
+            'generateButtonText': currentLang === 'ar' ? 'إنشاء الفيديو' : 'Generate Video',
+            'downloadText': currentLang === 'ar' ? 'تحميل' : 'Download',
+            'shareText': currentLang === 'ar' ? 'مشاركة' : 'Share',
+            'successTitle': currentLang === 'ar' ? 'تم إنشاء الفيديو بنجاح!' : 'Video generated successfully!',
+            'previewAudioText': currentLang === 'ar' ? 'استمع للآية' : 'Preview Audio'
+        };
+
+        Object.entries(elements).forEach(([id, text]) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = text;
+            }
+        });
+
+        // Update preview text
+        const previewText = document.getElementById('previewText');
+        if (previewText) {
+            previewText.textContent = currentLang === 'ar' ? 'معاينة الفيديو ستظهر هنا' : 'Video preview will appear here';
+        }
+
+        // Update progress text
+        const progressText = document.getElementById('progressText');
+        if (progressText) {
+            progressText.textContent = currentLang === 'ar' ? 'جاري إنشاء الفيديو...' : 'Generating video...';
+        }
+}
 
