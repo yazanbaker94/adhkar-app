@@ -8,6 +8,7 @@ const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
 const { createCanvas, registerFont } = require('canvas');
 
+
 // Register fonts with their correct internal names
 try {
   const fontFiles = [
@@ -753,7 +754,7 @@ app.post('/api/preview-video', async (req, res) => {
     res.json({
       success: true,
       previewId: previewId,
-      previewUrl: `/previews/${previewId}.mp4`,
+      previewUrl: `https://adhkar-app-backend.fly.dev/previews/${previewId}.mp4`,
       duration: previewDuration
     });
     
@@ -775,7 +776,7 @@ app.get('/api/backgrounds', (req, res) => {
       type: 'video',
       filename: f,
       displayName: f.replace(/\.[^.]+$/, '').replace(/_/g, ' '),
-      thumbnailUrl: `http://localhost:3000/api/thumbnail/${f}`
+      thumbnailUrl: `https://adhkar-app-backend.fly.dev/api/thumbnail/${f}`
     }));
   }
 
