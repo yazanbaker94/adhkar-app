@@ -8,7 +8,7 @@ package-lock.json
 # Generated content
 generated/
 temp/
-
+videos/
 # Environment variables
 .env
 .env.local
