@@ -1,5 +1,159 @@
 /* Component-specific styles */
 
+/* Video Generator Tab System */
+.video-tab-btn {
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.video-tab-btn.active {
+    background-color: rgba(255, 255, 255, 0.8);
+    border-color: #8B5CF6;
+    color: #8B5CF6;
+}
+
+.dark .video-tab-btn.active {
+    background-color: rgba(31, 41, 55, 0.8);
+    color: #A78BFA;
+}
+
+.video-tab-content {
+    display: none;
+}
+
+.video-tab-content.active {
+    display: block;
+}
+
+/* Custom Slider Styles */
+.slider {
+    -webkit-appearance: none;
+    background: linear-gradient(to right, #E5E7EB 0%, #E5E7EB 100%);
+    outline: none;
+    border-radius: 15px;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #8B5CF6, #EC4899);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #8B5CF6, #EC4899);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.dark .slider {
+    background: linear-gradient(to right, #374151 0%, #374151 100%);
+}
+
+/* Scrollbar Hide */
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+/* Font Arabic Class */
+.font-arabic {
+    font-family: 'KFGQPC HAFS Uthmanic Script', 'UthmanicHafs1Ver18', 'Al Majeed Quranic Font', 'Amiri Quran', 'Scheherazade New', Arial, sans-serif;
+    line-height: 1.8;
+}
+
+/* Video Preview Container Responsive */
+#videoPreviewContainer {
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+/* Desktop constraints for different orientations */
+@media (min-width: 768px) {
+    /* Landscape - full width is fine */
+    #videoPreviewContainer.orientation-landscape {
+        max-width: 100%;
+    }
+    
+    /* Portrait - limit width to prevent huge size */
+    #videoPreviewContainer.orientation-portrait {
+        max-width: 400px;
+    }
+    
+    /* Square - limit width */
+    #videoPreviewContainer.orientation-square {
+        max-width: 450px;
+    }
+}
+
+/* Large desktop - even more constraints */
+@media (min-width: 1024px) {
+    /* Portrait - slightly larger but still constrained */
+    #videoPreviewContainer.orientation-portrait {
+        max-width: 450px;
+    }
+    
+    /* Square - slightly larger */
+    #videoPreviewContainer.orientation-square {
+        max-width: 500px;
+    }
+}
+
+/* Mobile Responsive Improvements */
+@media (max-width: 640px) {
+    .video-tab-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    
+    .video-tab-btn i {
+        font-size: 12px;
+    }
+    
+    /* Stack form elements vertically on mobile */
+    .video-tab-content .grid-cols-2 {
+        grid-template-columns: 1fr;
+    }
+    
+    .video-tab-content .sm\\:grid-cols-2 {
+        grid-template-columns: 1fr;
+    }
+    
+    .video-tab-content .sm\\:grid-cols-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Mobile - all orientations use full width */
+    #videoPreviewContainer {
+        max-width: 100%;
+    }
+    
+    /* Fix footer positioning on mobile for video tab */
+    #videoContent {
+        min-height: auto;
+        padding-bottom: 2rem;
+    }
+    
+    /* Ensure main content area takes proper space */
+    main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+}
+
 /* Reading Progress Bar Styles */
 .reading-progress-container {
     position: fixed;

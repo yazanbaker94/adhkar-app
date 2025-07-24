@@ -33,14 +33,53 @@
 
     /* Fix tab navigation */
     .tab {
-        padding: 8px 12px;
-        font-size: 0.8rem;  
+        padding: 8px 6px;
+        font-size: 0.75rem;  
         white-space: nowrap;
         margin: 0 1px;
+        flex-shrink: 0;
+        min-width: fit-content;
+        flex: 1;
+        text-align: center;
     }
     
     .tab:hover, .tab.active {
         transform: none; /* Disable transform on mobile for better performance */
+    }
+    
+    /* Make tab container scrollable on mobile */
+    .main-tab-container {
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        max-width: 100%;
+        gap: 1px;
+        justify-content: flex-start;
+        min-width: 100%;
+        width: 100%;
+    }
+    
+    .main-tab-container::-webkit-scrollbar {
+        display: none;
+    }
+    
+    /* Adjust main tab navigation container */
+    .main-tab-navigation {
+        padding: 8px 8px;
+    }
+    
+    /* Make tabs more responsive to content */
+    .main-tab-container .tab {
+        max-width: none;
+        overflow: visible;
+        text-overflow: clip;
+    }
+    
+    /* Special handling for longer English text */
+    [lang="en"] .main-tab-container .tab {
+        font-size: 0.7rem;
+        padding: 6px 4px;
+        line-height: 1.1;
     }
 
     /* Fix Quran content layout - but NOT the sticky controls */
