@@ -1406,6 +1406,8 @@ let scrollTimeout = null;
               eveningCardDesc: "اختتم يومك بالذكر والاستغفار",
               moreAdhkarTitle: "المزيد من الأذكار",
               moreAdhkarDesc: "اكتشف جميع أقسام الأذكار",
+              tasbihButtonTitle: "التسبيح الرقمي",
+              tasbihButtonDesc: "عداد التسبيح والذكر",
               popularCategoriesTitle: "الأذكار الأكثر استخداماً",
               protectionLabel: "أذكار الحماية",
               istighfarLabel: "الاستغفار",
@@ -1645,6 +1647,8 @@ let scrollTimeout = null;
               eveningCardDesc: "End your day with dhikr and istighfar",
               moreAdhkarTitle: "More Azkar",
               moreAdhkarDesc: "Discover all sections of azkar",
+              tasbihButtonTitle: "Digital Tasbih",
+              tasbihButtonDesc: "Dhikr and Tasbih Counter",
               popularCategoriesTitle: "Most Used Azkar",
               protectionLabel: "Protection",
               istighfarLabel: "Forgiveness",
@@ -2708,6 +2712,8 @@ function showARUnsupported(errorType) {
           updatePrayerSettingsLanguage();
           updatePrayerOffsetsLanguage();
           updateComingPrayerIndicator(); // Update coming prayer indicator with new language
+          updateVideoLanguage(); // Update video generator language
+          updateMainTabLanguage(); // Update main tab names
           }, 0);
           
           // Update Surah dropdown with appropriate language names
@@ -2785,6 +2791,8 @@ function showARUnsupported(errorType) {
               'eveningCardDesc': lang.eveningCardDesc,
               'moreAdhkarTitle': lang.moreAdhkarTitle,
               'moreAdhkarDesc': lang.moreAdhkarDesc,
+              'tasbihButtonTitle': lang.tasbihButtonTitle,
+              'tasbihButtonDesc': lang.tasbihButtonDesc,
               'popularCategoriesTitle': lang.popularCategoriesTitle,
               'protectionLabel': lang.protectionLabel,
               'istighfarLabel': lang.istighfarLabel,
@@ -5472,6 +5480,9 @@ function showARUnsupported(errorType) {
             if (tabs) observer.observe(tabs, { childList: true, subtree: true });
             // Load saved language preference first
             loadLanguagePreference();
+            
+            // Update main tab language after loading preference
+            updateMainTabLanguage();
             
             tafsirLang = currentLang;
 
@@ -11285,9 +11296,17 @@ function loadPrayerOffsets() {
         console.log('Setting up event listeners...');
         setupVideoEventListeners();
         
+        // Setup video tabs
+        console.log('Setting up video tabs...');
+        setupVideoTabs();
+        
         // Update language
         console.log('Updating language...');
         updateVideoLanguage();
+        
+        // Update orientation preview initially
+        console.log('Setting initial orientation preview...');
+        updateOrientationPreview();
         
         // Show a helpful message if server is not running
         setTimeout(() => {
@@ -11312,8 +11331,8 @@ function loadPrayerOffsets() {
     async function loadVideoReciters() {
         console.log('loadVideoReciters: Starting...');
         try {
-            console.log('loadVideoReciters: Fetching from https://adhkar-app-backend.fly.dev/api/reciters...');
-            const response = await fetch('https://adhkar-app-backend.fly.dev/api/reciters');
+            console.log('loadVideoReciters: Fetching from https://adkar.zeabur.app/api/reciters...');
+            const response = await fetch('https://adkar.zeabur.app/api/reciters');
             console.log('loadVideoReciters: Response status:', response.status);
             const reciters = await response.json();
             console.log('loadVideoReciters: Received reciters:', reciters);
@@ -11363,7 +11382,7 @@ function loadPrayerOffsets() {
     async function loadVideoFonts() {
         try {
             console.log('loadVideoFonts: Starting...');
-            const response = await fetch('https://adhkar-app-backend.fly.dev/api/fonts');
+            const response = await fetch('https://adkar.zeabur.app/api/fonts');
             console.log('loadVideoFonts: Response status:', response.status);
             const fonts = await response.json();
             console.log('loadVideoFonts: Received fonts:', fonts);
@@ -11437,25 +11456,56 @@ function loadPrayerOffsets() {
     function updateOrientationPreview() {
         const orientationSelect = document.getElementById('videoOrientation');
         const orientationPreview = document.getElementById('orientationPreview');
+        const videoPreviewContainer = document.getElementById('videoPreviewContainer');
         
         if (orientationSelect && orientationPreview) {
             const selectedOrientation = orientationSelect.value || 'landscape';
             let previewText = '';
+            let aspectRatio = '16/9'; // Default landscape
             
             switch (selectedOrientation) {
                 case 'portrait':
-                    previewText = 'عمودي - 1080x1920';
+                    previewText = currentLang === 'ar' ? 'عمودي - 1080x1920' : 'Portrait - 1080x1920';
+                    aspectRatio = '9/16'; // Portrait
                     break;
                 case 'square':
-                    previewText = 'مربع - 1080x1080';
+                    previewText = currentLang === 'ar' ? 'مربع - 1080x1080' : 'Square - 1080x1080';
+                    aspectRatio = '1/1'; // Square
                     break;
                 case 'landscape':
                 default:
-                    previewText = 'أفقي - 1920x1080';
+                    previewText = currentLang === 'ar' ? 'أفقي - 1920x1080' : 'Landscape - 1920x1080';
+                    aspectRatio = '16/9'; // Landscape
                     break;
             }
             
+            // Update preview text
             orientationPreview.textContent = previewText;
+            
+            // Update preview container aspect ratio
+            if (videoPreviewContainer) {
+                videoPreviewContainer.style.aspectRatio = aspectRatio;
+                
+                // Remove existing orientation classes
+                videoPreviewContainer.classList.remove('orientation-landscape', 'orientation-portrait', 'orientation-square');
+                
+                // Add appropriate orientation class
+                switch (selectedOrientation) {
+                    case 'portrait':
+                        videoPreviewContainer.classList.add('orientation-portrait');
+                        break;
+                    case 'square':
+                        videoPreviewContainer.classList.add('orientation-square');
+                        break;
+                    case 'landscape':
+                    default:
+                        videoPreviewContainer.classList.add('orientation-landscape');
+                        break;
+                }
+                
+                console.log('Updated preview container aspect ratio to:', aspectRatio, 'with class:', `orientation-${selectedOrientation}`);
+            }
+            
             console.log('Updated orientation preview to:', selectedOrientation, previewText);
         }
     }
@@ -11463,7 +11513,7 @@ function loadPrayerOffsets() {
     // Load video backgrounds for video generation
     async function loadVideoBackgrounds() {
         try {
-            const response = await fetch('https://adhkar-app-backend.fly.dev/api/backgrounds');
+            const response = await fetch('https://adkar.zeabur.app/api/backgrounds');
             const backgrounds = await response.json();
             
             const backgroundGrid = document.getElementById('backgroundGrid');
@@ -11605,6 +11655,65 @@ function loadPrayerOffsets() {
             console.log('loadVideoSurahs: Added', quranData.length, 'surahs to dropdown');
         } else {
             console.error('loadVideoSurahs: Surah select element not found!');
+        }
+    }
+
+    // Setup video tabs
+    function setupVideoTabs() {
+        console.log('Setting up video tabs...');
+        
+        // Get all tab buttons and content
+        const tabButtons = document.querySelectorAll('.video-tab-btn');
+        const tabContents = document.querySelectorAll('.video-tab-content');
+        
+        console.log('Found tab buttons:', tabButtons.length);
+        console.log('Found tab contents:', tabContents.length);
+        
+        // Add click event listeners to tab buttons
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetTab = button.getAttribute('data-tab');
+                console.log('Tab clicked:', targetTab);
+                
+                // Remove active class from all buttons
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.classList.add('text-gray-500', 'dark:text-gray-400', 'border-transparent');
+                    btn.classList.remove('text-purple-600', 'dark:text-purple-400', 'border-purple-500', 'bg-white/50', 'dark:bg-gray-800/50');
+                });
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                button.classList.remove('text-gray-500', 'dark:text-gray-400', 'border-transparent');
+                button.classList.add('text-purple-600', 'dark:text-purple-400', 'border-purple-500', 'bg-white/50', 'dark:bg-gray-800/50');
+                
+                // Hide all tab contents
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    content.classList.add('hidden');
+                });
+                
+                // Show target tab content
+                const targetContent = document.getElementById(targetTab + 'Tab');
+                if (targetContent) {
+                    targetContent.classList.add('active');
+                    targetContent.classList.remove('hidden');
+                    console.log('Showing tab:', targetTab);
+                } else {
+                    console.error('Tab content not found for:', targetTab);
+                }
+            });
+        });
+        
+        // Set initial active tab (verse tab)
+        const verseTab = document.querySelector('[data-tab="verse"]');
+        const verseContent = document.getElementById('verseTab');
+        
+        if (verseTab && verseContent) {
+            verseTab.classList.add('active');
+            verseContent.classList.add('active');
+            verseContent.classList.remove('hidden');
+            console.log('Initial tab set to verse');
         }
     }
 
@@ -11825,8 +11934,8 @@ function loadPrayerOffsets() {
 
         try {
             const audioUrl = selectedVideoAyahTo 
-            ? `https://adhkar-app-backend.fly.dev/api/verse-audio-range/${selectedVideoSurah}/${selectedVideoAyah}/${selectedVideoAyahTo}/${selectedVideoReciter}`
-            : `https://adhkar-app-backend.fly.dev/api/verse-audio/${selectedVideoSurah}/${selectedVideoAyah}/${selectedVideoReciter}`;
+            ? `https://adkar.zeabur.app/api/verse-audio-range/${selectedVideoSurah}/${selectedVideoAyah}/${selectedVideoAyahTo}/${selectedVideoReciter}`
+            : `https://adkar.zeabur.app/api/verse-audio/${selectedVideoSurah}/${selectedVideoAyah}/${selectedVideoReciter}`;
         
         const response = await fetch(audioUrl);
             const data = await response.json();
@@ -11905,7 +12014,7 @@ function loadPrayerOffsets() {
             console.log('Requesting live preview generation...');
             console.log('Preview request data:', requestData);
             
-            const response = await fetch('https://adhkar-app-backend.fly.dev/api/preview-video', {
+            const response = await fetch('https://adkar.zeabur.app/api/preview-video', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -12202,7 +12311,7 @@ function loadPrayerOffsets() {
             }
 
             // Send request
-            const response = await fetch('https://adhkar-app-backend.fly.dev/api/generate-video', {
+            const response = await fetch('https://adkar.zeabur.app/api/generate-video', {
                 method: 'POST',
                 body: formData
             });
@@ -12257,7 +12366,7 @@ function loadPrayerOffsets() {
         }
 
         const link = document.createElement('a');
-        link.href = `https://adhkar-app-backend.onrender.com${window.generatedVideoInfo.downloadUrl}`;
+        link.href = `https://adkar.zeabur.app${window.generatedVideoInfo.downloadUrl}`;
         link.download = `quran-verse-${window.generatedVideoInfo.videoId}.mp4`;
         document.body.appendChild(link);
         link.click();
@@ -12292,18 +12401,32 @@ function loadPrayerOffsets() {
     // Update video language
     function updateVideoLanguage() {
         const elements = {
+            // Main titles
             'videoGeneratorTitle': currentLang === 'ar' ? 'إنشاء فيديو القرآن' : 'Quran Video Generator',
             'videoGeneratorSubtitle': currentLang === 'ar' ? 'مولد فيديو القرآن' : 'Video Quran Generator',
-            'verseSelectionTitle': currentLang === 'ar' ? 'اختيار الآية' : 'Verse Selection',
+            
+            // Tab titles
+            'verseTabTitle': currentLang === 'ar' ? 'الآية' : 'Verse',
+            'audioTabTitle': currentLang === 'ar' ? 'الصوت' : 'Audio',
+            'styleTabTitle': currentLang === 'ar' ? 'التصميم' : 'Style',
+            'backgroundTabTitle': currentLang === 'ar' ? 'الخلفية' : 'Background',
+            
+            // Form labels
             'surahLabel': currentLang === 'ar' ? 'السورة' : 'Surah',
             'ayahFromLabel': currentLang === 'ar' ? 'من الآية' : 'From Verse',
-        'ayahToLabel': currentLang === 'ar' ? 'إلى الآية (اختياري)' : 'To Verse (Optional)',
-            'reciterTitle': currentLang === 'ar' ? 'القارئ' : 'Reciter',
-            'backgroundTitle': currentLang === 'ar' ? 'الخلفية' : 'Background',
-            'customBackgroundLabel': currentLang === 'ar' ? 'أو ارفع صورة مخصصة' : 'Or upload custom image',
-            'customizationTitle': currentLang === 'ar' ? 'تخصيص النص' : 'Text Customization',
+            'ayahToLabel': currentLang === 'ar' ? 'إلى الآية' : 'To Verse',
+            'reciterLabel': currentLang === 'ar' ? 'القارئ' : 'Reciter',
+            'backgroundTitle': currentLang === 'ar' ? 'خلفية الفيديو' : 'Video Background',
+            
+            // Style settings
+            'fontSettingsTitle': currentLang === 'ar' ? 'إعدادات الخط' : 'Font Settings',
+            'videoSettingsTitle': currentLang === 'ar' ? 'إعدادات الفيديو' : 'Video Settings',
+            'fontFamilyLabel': currentLang === 'ar' ? 'نوع الخط' : 'Font Family',
             'fontSizeLabel': currentLang === 'ar' ? 'حجم الخط' : 'Font Size',
             'textColorLabel': currentLang === 'ar' ? 'لون النص' : 'Text Color',
+            'orientationLabel': currentLang === 'ar' ? 'الاتجاه' : 'Orientation',
+            
+            // Actions
             'previewTitle': currentLang === 'ar' ? 'معاينة الفيديو' : 'Video Preview',
             'generateButtonText': currentLang === 'ar' ? 'إنشاء الفيديو' : 'Generate Video',
             'downloadText': currentLang === 'ar' ? 'تحميل' : 'Download',
@@ -12330,5 +12453,102 @@ function loadPrayerOffsets() {
         if (progressText) {
             progressText.textContent = currentLang === 'ar' ? 'جاري إنشاء الفيديو...' : 'Generating video...';
         }
-}
+
+        // Update select placeholders
+        const videoSurahSelect = document.getElementById('videoSurahSelect');
+        if (videoSurahSelect && videoSurahSelect.options[0]) {
+            videoSurahSelect.options[0].textContent = currentLang === 'ar' ? 'اختر السورة' : 'Select Surah';
+        }
+
+        const videoAyahSelect = document.getElementById('videoAyahSelect');
+        if (videoAyahSelect && videoAyahSelect.options[0]) {
+            videoAyahSelect.options[0].textContent = currentLang === 'ar' ? 'اختر الآية' : 'Select Verse';
+        }
+
+        const videoAyahToSelect = document.getElementById('videoAyahToSelect');
+        if (videoAyahToSelect && videoAyahToSelect.options[0]) {
+            videoAyahToSelect.options[0].textContent = currentLang === 'ar' ? 'آية واحدة' : 'Single Verse';
+        }
+
+        const videoReciterSelect = document.getElementById('videoReciterSelect');
+        if (videoReciterSelect && videoReciterSelect.options[0]) {
+            videoReciterSelect.options[0].textContent = currentLang === 'ar' ? 'اختر القارئ' : 'Select Reciter';
+        }
+
+        const videoFontFamily = document.getElementById('videoFontFamily');
+        if (videoFontFamily && videoFontFamily.options[0]) {
+            videoFontFamily.options[0].textContent = currentLang === 'ar' ? 'اختر نوع الخط' : 'Select Font';
+        }
+
+        // Update selected verse text placeholder
+        const selectedVerseText = document.getElementById('selectedVerseText');
+        if (selectedVerseText && selectedVerseText.textContent.includes('اختر سورة')) {
+            selectedVerseText.textContent = currentLang === 'ar' ? 'اختر سورة وآية لعرض النص' : 'Select a surah and verse to display text';
+        }
+
+        const selectedVerseTranslation = document.getElementById('selectedVerseTranslation');
+        if (selectedVerseTranslation && selectedVerseTranslation.textContent.includes('Select a surah')) {
+            selectedVerseTranslation.textContent = currentLang === 'ar' ? 'اختر سورة وآية لعرض الترجمة' : 'Select a surah and verse to display translation';
+        }
+
+        // Update orientation select options
+        const orientationSelect = document.getElementById('videoOrientation');
+        if (orientationSelect) {
+            Array.from(orientationSelect.options).forEach(option => {
+                const arText = option.getAttribute('data-ar');
+                const enText = option.getAttribute('data-en');
+                if (arText && enText) {
+                    option.textContent = currentLang === 'ar' ? arText : enText;
+                }
+            });
+        }
+
+        // Update orientation preview after language change
+        updateOrientationPreview();
+    }
+
+    // Update main tab language
+    function updateMainTabLanguage() {
+        const tabElements = {
+            'qiblaTab': currentLang === 'ar' ? 'القبلة' : 'Qibla',
+            'adhkarTab': currentLang === 'ar' ? 'الأذكار' : 'Adhkar',
+            'prayerTab': currentLang === 'ar' ? 'أوقات الصلاة' : 'Prayer Times',
+            'quranTab': currentLang === 'ar' ? 'القرآن' : 'Quran',
+            'videoTab': currentLang === 'ar' ? 'إنشاء الفيديو' : 'Shorts'
+        };
+
+        Object.entries(tabElements).forEach(([id, text]) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = text;
+            }
+        });
+    }
+
+    // Function to switch to Tasbih tab (called from Adhkar page)
+    function switchToTab(tabId) {
+        console.log('Switching to tab:', tabId);
+        
+        // Remove active class from all tabs and content
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+        // Add active class to the target content
+        const targetContent = document.getElementById(`${tabId}Content`);
+        if (targetContent) {
+            targetContent.classList.add('active');
+            console.log('Activated content:', `${tabId}Content`);
+        } else {
+            console.error('Target content not found:', `${tabId}Content`);
+        }
+
+        // Handle special cases for specific tabs
+        if (tabId === 'tasbih') {
+            // Hide Quran controls when switching to Tasbih
+            const controls = document.querySelector('.quran-controls-sticky');
+            if (controls) {
+                controls.style.display = 'none';
+            }
+        }
+    }
 
